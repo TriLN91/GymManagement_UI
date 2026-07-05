@@ -1,0 +1,45 @@
+{
+  "appName": "AI Fitness Coaching",
+  "loading": "Loading...",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "save": "Save",
+  "signOut": "Sign out",
+  "switchLanguage": "Switch language",
+  "switchTheme": "Switch theme",
+  "comingSoon": "This feature is coming soon.",
+  "portals": {
+    "member": "Member Portal",
+    "pt": "Trainer Portal",
+    "admin": "Gym Admin Portal",
+    "superadmin": "Super Admin Portal"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "coaching": "AI Coaching",
+    "workout": "Workout",
+    "nutrition": "Nutrition",
+    "progress": "Progress",
+    "checkin": "Check-in",
+    "membership": "Membership",
+    "rewards": "Rewards",
+    "wearable": "Wearables",
+    "members": "Members",
+    "schedule": "Schedule",
+    "planBuilder": "Plan Builder",
+    "pts": "Personal Trainers",
+    "packages": "Packages",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "tenants": "Tenants",
+    "platformAnalytics": "Platform Analytics",
+    "featureFlags": "Feature Flags"
+  },
+  "dashboards": {
+    "member": "Welcome to your member portal.",
+    "pt": "Trainer dashboard",
+    "admin": "Gym administration",
+    "superadmin": "Platform control center"
+  }
+}

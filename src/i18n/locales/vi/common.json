@@ -1,0 +1,45 @@
+{
+  "appName": "AI Fitness Coaching",
+  "loading": "Đang tải...",
+  "retry": "Thử lại",
+  "cancel": "Hủy",
+  "submit": "Gửi",
+  "save": "Lưu",
+  "signOut": "Đăng xuất",
+  "switchLanguage": "Chuyển ngôn ngữ",
+  "switchTheme": "Chuyển giao diện",
+  "comingSoon": "Tính năng này sắp ra mắt.",
+  "portals": {
+    "member": "Cổng thành viên",
+    "pt": "Cổng huấn luyện viên",
+    "admin": "Cổng quản trị phòng tập",
+    "superadmin": "Cổng quản trị nền tảng"
+  },
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "coaching": "Huấn luyện AI",
+    "workout": "Tập luyện",
+    "nutrition": "Dinh dưỡng",
+    "progress": "Tiến trình",
+    "checkin": "Check-in",
+    "membership": "Hội viên",
+    "rewards": "Phần thưởng",
+    "wearable": "Thiết bị đeo",
+    "members": "Thành viên",
+    "schedule": "Lịch trình",
+    "planBuilder": "Tạo kế hoạch",
+    "pts": "Huấn luyện viên",
+    "packages": "Gói tập",
+    "analytics": "Phân tích",
+    "settings": "Cài đặt",
+    "tenants": "Doanh nghiệp",
+    "platformAnalytics": "Phân tích nền tảng",
+    "featureFlags": "Cờ tính năng"
+  },
+  "dashboards": {
+    "member": "Chào mừng đến cổng thành viên của bạn.",
+    "pt": "Bảng điều khiển huấn luyện viên",
+    "admin": "Quản trị phòng tập",
+    "superadmin": "Trung tâm điều khiển nền tảng"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "goals": {
+    "weight_loss": "Weight loss",
+    "muscle_gain": "Muscle gain",
+    "endurance": "Endurance",
+    "recomposition": "Body recomposition",
+    "maintenance": "Maintenance"
+  },
+  "experience": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "plan": {
+    "title": "Your coaching plan (v{{version}})",
+    "goal": "Goal: {{value}}",
+    "experience": "Experience: {{value}}",
+    "workout": {
+      "title": "Weekly schedule",
+      "minutes": "{{count}} min/week",
+      "day": "Day {{n}}",
+      "exercises": "{{count}} exercises",
+      "duration": "{{count}} min"
+    },
+    "nutrition": {
+      "title": "Daily nutrition",
+      "calories": "Calories",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "water": "Water",
+      "grams": "{{value}} g",
+      "liters": "{{value}} L",
+      "kcal": "{{value}} kcal"
+    },
+    "empty": {
+      "title": "No plan yet",
+      "description": "Your AI coach is still preparing your first plan. Check back soon."
+    }
+  },
+  "checkin": {
+    "title": "Daily check-in",
+    "description": "Tell the AI coach how today went so it can adjust your plan.",
+    "weight": "Weight (kg)",
+    "completion": "Workout completion (%)",
+    "energy": "Energy (1-5)",
+    "fatigue": "Fatigue (1-5)",
+    "notes": "Notes",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Check-in submitted. Plan will adapt on next refresh.",
+    "openButton": "New check-in",
+    "error": {
+      "generic": "Could not submit your check-in. Please try again."
+    },
+    "validation": {
+      "weight": "Weight must be between 1 and 500 kg",
+      "completion": "Completion rate must be between 0 and 100",
+      "energy": "Energy must be between 1 and 5",
+      "fatigue": "Fatigue must be between 1 and 5",
+      "notes": "Notes cannot exceed 500 characters"
+    }
+  }
+}

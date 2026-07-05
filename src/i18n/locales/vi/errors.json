@@ -1,0 +1,30 @@
+{
+  "page": {
+    "notFoundTitle": "404 — Không tìm thấy",
+    "notFoundBody": "Trang bạn yêu cầu không tồn tại.",
+    "forbiddenTitle": "403 — Bị cấm",
+    "forbiddenBody": "Bạn không có quyền truy cập khu vực này.",
+    "goHome": "Về trang chủ"
+  },
+  "boundary": {
+    "title": "Đã xảy ra lỗi",
+    "description": "Một lỗi bất ngờ đã ngăn chế độ xem này hiển thị. Bạn có thể thử lại hoặc tải lại trang.",
+    "retry": "Thử lại"
+  },
+  "global": {
+    "title": "Lỗi bất ngờ",
+    "description": "Đã xảy ra lỗi ở nền. Vui lòng thử lại."
+  },
+  "generic": {
+    "unknown": "Đã xảy ra lỗi không mong đợi."
+  },
+  "auth": {
+    "invalidSession": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại."
+  },
+  "validation": {
+    "failed": "Một số trường không hợp lệ. Vui lòng kiểm tra và thử lại."
+  },
+  "network": {
+    "offline": "Không thể kết nối máy chủ. Kiểm tra mạng và thử lại."
+  }
+}

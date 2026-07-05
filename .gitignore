@@ -1,0 +1,81 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+
+# Build output
+dist/
+dist-ssr/
+build/
+storybook-static/
+*.local
+
+# Test / coverage output
+coverage/
+playwright-report/
+test-results/
+.playwright/
+.vite/
+
+# TypeScript incremental
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment (keep .env.example committed)
+.env
+.env.*
+.env.example
+.env.*.local
+
+# IDE — keep shared team config, ignore personal state
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor swap / backup files
+*.sw?
+*.swo
+*.bak
+*.tmp
+
+# Editors (VS / Rider / VSCode project descriptors)
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.user
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+.turbo/
+.turbo-*
+
+# Tooling state (Husky + lint-staged)
+.husky/_/
+.husky/_.gitignore
+
+# Test artifacts (browser binaries, msw state)
+playwright/.cache/
+msw/
+
+# Vite 8 timestamp files
+vite.config.*.timestamp-*

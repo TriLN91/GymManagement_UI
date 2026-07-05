@@ -1,0 +1,64 @@
+{
+  "goals": {
+    "weight_loss": "Giảm cân",
+    "muscle_gain": "Tăng cơ",
+    "endurance": "Sức bền",
+    "recomposition": "Tái cấu trúc cơ thể",
+    "maintenance": "Duy trì"
+  },
+  "experience": {
+    "beginner": "Mới bắt đầu",
+    "intermediate": "Trung bình",
+    "advanced": "Nâng cao"
+  },
+  "plan": {
+    "title": "Kế hoạch huấn luyện của bạn (v{{version}})",
+    "goal": "Mục tiêu: {{value}}",
+    "experience": "Trình độ: {{value}}",
+    "workout": {
+      "title": "Lịch tập hàng tuần",
+      "minutes": "{{count}} phút/tuần",
+      "day": "Ngày {{n}}",
+      "exercises": "{{count}} bài tập",
+      "duration": "{{count}} phút"
+    },
+    "nutrition": {
+      "title": "Dinh dưỡng hàng ngày",
+      "calories": "Calories",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "water": "Nước",
+      "grams": "{{value}} g",
+      "liters": "{{value}} L",
+      "kcal": "{{value}} kcal"
+    },
+    "empty": {
+      "title": "Chưa có kế hoạch",
+      "description": "AI huấn luyện của bạn đang chuẩn bị kế hoạch đầu tiên. Vui lòng quay lại sau."
+    }
+  },
+  "checkin": {
+    "title": "Check-in hàng ngày",
+    "description": "Cho AI huấn luyện biết hôm nay của bạn thế nào để điều chỉnh kế hoạch.",
+    "weight": "Cân nặng (kg)",
+    "completion": "Hoàn thành tập luyện (%)",
+    "energy": "Năng lượng (1-5)",
+    "fatigue": "Mệt mỏi (1-5)",
+    "notes": "Ghi chú",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "success": "Đã gửi check-in. Kế hoạch sẽ được điều chỉnh ở lần làm mới tiếp theo.",
+    "openButton": "Check-in mới",
+    "error": {
+      "generic": "Không thể gửi check-in. Vui lòng thử lại."
+    },
+    "validation": {
+      "weight": "Cân nặng phải từ 1 đến 500 kg",
+      "completion": "Tỷ lệ hoàn thành phải từ 0 đến 100",
+      "energy": "Năng lượng phải từ 1 đến 5",
+      "fatigue": "Mệt mỏi phải từ 1 đến 5",
+      "notes": "Ghi chú không được vượt quá 500 ký tự"
+    }
+  }
+}

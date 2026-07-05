@@ -1,0 +1,30 @@
+{
+  "page": {
+    "notFoundTitle": "404 — Not Found",
+    "notFoundBody": "The page you requested does not exist.",
+    "forbiddenTitle": "403 — Forbidden",
+    "forbiddenBody": "You do not have access to this area.",
+    "goHome": "Go home"
+  },
+  "boundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error prevented this view from rendering. You can try again, or refresh the page.",
+    "retry": "Try again"
+  },
+  "global": {
+    "title": "Unexpected error",
+    "description": "A background error occurred. Please try again."
+  },
+  "generic": {
+    "unknown": "An unexpected error occurred."
+  },
+  "auth": {
+    "invalidSession": "Your session has expired. Please sign in again."
+  },
+  "validation": {
+    "failed": "Some fields are invalid. Please review and try again."
+  },
+  "network": {
+    "offline": "Cannot reach the server. Check your connection and try again."
+  }
+}
