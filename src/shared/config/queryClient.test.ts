@@ -4,7 +4,6 @@ import { queryClient } from './queryClient';
 
 import { AuthError, ValidationError } from '@/shared/api/errorTypes';
 
-
 describe('queryClient', () => {
   it('does not retry on AuthError', () => {
     const retry = queryClient.getDefaultOptions().queries?.retry;
@@ -14,9 +13,9 @@ describe('queryClient', () => {
 
   it('does not retry on ValidationError', () => {
     const retry = queryClient.getDefaultOptions().queries?.retry;
-    expect((retry as (n: number, e: unknown) => boolean)(0, new ValidationError(422, 'x', {}))).toBe(
-      false,
-    );
+    expect(
+      (retry as (n: number, e: unknown) => boolean)(0, new ValidationError(422, 'x', {})),
+    ).toBe(false);
   });
 
   it('retries transient errors up to 2 times', () => {

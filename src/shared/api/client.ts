@@ -141,7 +141,10 @@ function unwrap<T>(response: AxiosResponse<ApiEnvelope<T>>): T {
   return response.data.data;
 }
 
-export async function apiGet<T>(url: string, config?: Parameters<AxiosInstance['get']>[1]): Promise<T> {
+export async function apiGet<T>(
+  url: string,
+  config?: Parameters<AxiosInstance['get']>[1],
+): Promise<T> {
   const res = await instance.get<ApiEnvelope<T>>(url, config);
   return unwrap(res);
 }
@@ -173,7 +176,10 @@ export async function apiPatch<T, B = unknown>(
   return unwrap(res);
 }
 
-export async function apiDelete<T>(url: string, config?: Parameters<AxiosInstance['delete']>[1]): Promise<T> {
+export async function apiDelete<T>(
+  url: string,
+  config?: Parameters<AxiosInstance['delete']>[1],
+): Promise<T> {
   const res = await instance.delete<ApiEnvelope<T>>(url, config);
   return unwrap(res);
 }

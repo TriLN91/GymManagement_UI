@@ -8,7 +8,6 @@ import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user
 import { tokenManager } from '@/shared/api/client';
 import { QUERY_KEYS } from '@/shared/config/constants';
 
-
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({

@@ -57,7 +57,8 @@ export function PlanCard({ plan, isLoading, headingId }: PlanCardProps) {
           {t('plan.title', { version: plan.version })}
         </CardTitle>
         <CardDescription>
-          {t('plan.goal', { value: goalLabel })} · {t('plan.experience', { value: experienceLabel })}
+          {t('plan.goal', { value: goalLabel })} ·{' '}
+          {t('plan.experience', { value: experienceLabel })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -91,11 +92,26 @@ export function PlanCard({ plan, isLoading, headingId }: PlanCardProps) {
         <section>
           <h3 className="mb-2 text-sm font-semibold">{t('plan.nutrition.title')}</h3>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-            <NutritionStat label={t('plan.nutrition.calories')} value={t('plan.nutrition.kcal', { value: plan.nutritionPlan.dailyCalories })} />
-            <NutritionStat label={t('plan.nutrition.protein')} value={t('plan.nutrition.grams', { value: plan.nutritionPlan.proteinGrams })} />
-            <NutritionStat label={t('plan.nutrition.carbs')} value={t('plan.nutrition.grams', { value: plan.nutritionPlan.carbsGrams })} />
-            <NutritionStat label={t('plan.nutrition.fat')} value={t('plan.nutrition.grams', { value: plan.nutritionPlan.fatGrams })} />
-            <NutritionStat label={t('plan.nutrition.water')} value={t('plan.nutrition.liters', { value: plan.nutritionPlan.waterLiters })} />
+            <NutritionStat
+              label={t('plan.nutrition.calories')}
+              value={t('plan.nutrition.kcal', { value: plan.nutritionPlan.dailyCalories })}
+            />
+            <NutritionStat
+              label={t('plan.nutrition.protein')}
+              value={t('plan.nutrition.grams', { value: plan.nutritionPlan.proteinGrams })}
+            />
+            <NutritionStat
+              label={t('plan.nutrition.carbs')}
+              value={t('plan.nutrition.grams', { value: plan.nutritionPlan.carbsGrams })}
+            />
+            <NutritionStat
+              label={t('plan.nutrition.fat')}
+              value={t('plan.nutrition.grams', { value: plan.nutritionPlan.fatGrams })}
+            />
+            <NutritionStat
+              label={t('plan.nutrition.water')}
+              value={t('plan.nutrition.liters', { value: plan.nutritionPlan.waterLiters })}
+            />
           </div>
         </section>
       </CardContent>

@@ -1,4 +1,4 @@
-import { QueryCache, MutationCache, QueryClient } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
 import { notifyError } from '@/shared/lib/errorNotifier';
@@ -6,7 +6,11 @@ import { notifyError } from '@/shared/lib/errorNotifier';
 function reportQuery(error: unknown): void {
   // Network/auth/validation errors are surfaced by their own UI hooks (login
   // form, error states, redirect to /login). Toasting them here would double up.
-  if (error instanceof AuthError || error instanceof ValidationError || error instanceof NetworkError) {
+  if (
+    error instanceof AuthError ||
+    error instanceof ValidationError ||
+    error instanceof NetworkError
+  ) {
     return;
   }
   notifyError(error);

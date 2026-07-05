@@ -13,7 +13,8 @@ function apply(theme: Theme): void {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
   const isDark =
-    theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   root.classList.toggle('dark', isDark);
 }
 

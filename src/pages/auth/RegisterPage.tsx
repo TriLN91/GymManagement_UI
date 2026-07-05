@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-
 const schema = z.object({
   fullName: z.string().min(1, 'required'),
   email: z.string().email('invalid'),
@@ -81,9 +80,7 @@ export function RegisterPage() {
                 {...registerField('password')}
               />
             </div>
-            {errors.root ? (
-              <p className="text-sm text-destructive">{errors.root.message}</p>
-            ) : null}
+            {errors.root ? <p className="text-sm text-destructive">{errors.root.message}</p> : null}
             <Button type="submit" className="w-full" disabled={register.isPending}>
               {t('auth:register.submit')}
             </Button>

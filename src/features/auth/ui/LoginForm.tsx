@@ -15,7 +15,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-
 const schema = z.object({
   email: z.string().email('auth:errors.invalidCredentials'),
   password: z.string().min(1, 'auth:errors.invalidCredentials'),

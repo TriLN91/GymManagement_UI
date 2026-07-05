@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-
 const schema = z.object({ password: z.string().min(8, 'min8') });
 type FormValues = z.infer<typeof schema>;
 

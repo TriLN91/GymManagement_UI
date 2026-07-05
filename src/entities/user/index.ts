@@ -1,4 +1,9 @@
-export {
-  ALL_ROLES,
+export { ALL_ROLES } from './types';
+export type {
+  AuthSession,
+  AuthTokens,
+  AuthUser,
+  LoginPayload,
+  RegisterPayload,
+  Role,
 } from './types';
-export type { AuthUser, AuthSession, AuthTokens, Role, LoginPayload, RegisterPayload } from './types';

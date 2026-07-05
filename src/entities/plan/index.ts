@@ -1,5 +1,6 @@
 // CoachingPlan and its parts — domain entity.
-export type GoalType = 'weight_loss' | 'muscle_gain' | 'endurance' | 'recomposition' | 'maintenance';
+export type GoalType =
+  'weight_loss' | 'muscle_gain' | 'endurance' | 'recomposition' | 'maintenance';
 export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export interface Exercise {

@@ -7,7 +7,9 @@ import { Button } from '@/shared/ui/button';
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation('common');
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   return (
     <Button

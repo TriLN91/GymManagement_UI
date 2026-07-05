@@ -21,7 +21,6 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { toast } from '@/shared/ui/toast';
 
-
 type CheckInDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -97,8 +96,7 @@ export function CheckInDialog({ open, onOpenChange }: CheckInDialogProps) {
       toast.success(t('checkin.success'));
       onOpenChange(false);
     } catch (error) {
-      const message =
-        error instanceof ApiError ? error.message : t('checkin.error.generic');
+      const message = error instanceof ApiError ? error.message : t('checkin.error.generic');
       toast.error(message);
     }
   });
@@ -112,7 +110,11 @@ export function CheckInDialog({ open, onOpenChange }: CheckInDialogProps) {
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4" noValidate>
-          <Field htmlFor={fieldIds.weightKg} label={t('checkin.weight')} error={errors.weightKg?.message}>
+          <Field
+            htmlFor={fieldIds.weightKg}
+            label={t('checkin.weight')}
+            error={errors.weightKg?.message}
+          >
             <Input
               id={fieldIds.weightKg}
               type="number"
@@ -123,7 +125,11 @@ export function CheckInDialog({ open, onOpenChange }: CheckInDialogProps) {
             />
           </Field>
 
-          <Field htmlFor={fieldIds.workoutCompletionRate} label={t('checkin.completion')} error={errors.workoutCompletionRate?.message}>
+          <Field
+            htmlFor={fieldIds.workoutCompletionRate}
+            label={t('checkin.completion')}
+            error={errors.workoutCompletionRate?.message}
+          >
             <Input
               id={fieldIds.workoutCompletionRate}
               type="number"
@@ -134,7 +140,11 @@ export function CheckInDialog({ open, onOpenChange }: CheckInDialogProps) {
           </Field>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field htmlFor={fieldIds.energyLevel} label={t('checkin.energy')} error={errors.energyLevel?.message}>
+            <Field
+              htmlFor={fieldIds.energyLevel}
+              label={t('checkin.energy')}
+              error={errors.energyLevel?.message}
+            >
               <Input
                 id={fieldIds.energyLevel}
                 type="number"
@@ -143,7 +153,11 @@ export function CheckInDialog({ open, onOpenChange }: CheckInDialogProps) {
                 {...register('energyLevel')}
               />
             </Field>
-            <Field htmlFor={fieldIds.fatigueLevel} label={t('checkin.fatigue')} error={errors.fatigueLevel?.message}>
+            <Field
+              htmlFor={fieldIds.fatigueLevel}
+              label={t('checkin.fatigue')}
+              error={errors.fatigueLevel?.message}
+            >
               <Input
                 id={fieldIds.fatigueLevel}
                 type="number"

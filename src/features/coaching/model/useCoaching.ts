@@ -5,7 +5,6 @@ import { coachingApi } from '../api/coachingApi';
 import type { CheckInPayload } from '@/entities/plan';
 import { QUERY_KEYS } from '@/shared/config/constants';
 
-
 export function useCurrentPlan() {
   return useQuery({
     queryKey: QUERY_KEYS.currentPlan(),

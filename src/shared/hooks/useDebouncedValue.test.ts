@@ -30,10 +30,9 @@ describe('useDebouncedValue', () => {
   });
 
   it('cleans up the timer on unmount (no late state updates)', () => {
-    const { result, rerender, unmount } = renderHook(
-      ({ value }) => useDebouncedValue(value, 200),
-      { initialProps: { value: 'x' } },
-    );
+    const { result, rerender, unmount } = renderHook(({ value }) => useDebouncedValue(value, 200), {
+      initialProps: { value: 'x' },
+    });
     rerender({ value: 'y' });
     unmount();
     act(() => {
