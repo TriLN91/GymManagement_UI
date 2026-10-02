@@ -1,0 +1,251 @@
+import {
+  Award,
+  CalendarDays,
+  Crown,
+  Flame,
+  Goal,
+  Medal,
+  ShieldCheck,
+  Sparkles,
+  Trophy,
+} from 'lucide-react';
+import type { ComponentType } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { calculateAchievementProgress } from '../model/achievementProgress';
+
+import { useWorkoutSessionStore } from '@/features/workout-plans/model/useWorkoutSessionStore';
+import { WorkoutFlowShell } from '@/features/workout-plans/ui/WorkoutFlowShell';
+import { ROUTES } from '@/shared/config/constants';
+
+import './achievements.css';
+
+interface TowerLevel {
+  id: string;
+  title: string;
+  category: string;
+  value: number;
+  target: number;
+  icon: ComponentType<{ size?: number; 'aria-hidden'?: boolean }>;
+}
+
+export function AchievementsPage() {
+  const { i18n } = useTranslation();
+  const isVi = i18n.resolvedLanguage === 'vi';
+  const sessions = useWorkoutSessionStore((state) => state.completedSessions);
+  const progress = calculateAchievementProgress(sessions);
+  const copy = isVi
+    ? {
+        title: 'Thành tích',
+        back: 'Về lịch tập',
+        tower: 'Tháp chinh phục',
+        floor: 'Tầng',
+        next: 'Mốc tiếp theo',
+        streak: 'Chuỗi ngày hiện tại',
+        weekly: 'Mục tiêu tuần',
+        shield: 'Tiến độ được bảo vệ',
+        shieldBody:
+          'Tầng đã mở luôn được giữ lại. Ngày nghỉ có kế hoạch không xóa thành tích; người tập quay lại từ tầng gần nhất thay vì bị đưa về đầu.',
+        unlocked: 'Đã mở',
+        sessions: 'Tổng buổi tập',
+        volume: 'Tổng tải',
+        highestLoad: 'Mức tạ cao nhất',
+        first: 'Bước chân đầu tiên',
+        week: 'Nhịp tuần ổn định',
+        sevenDays: 'Ngọn lửa 7 ngày',
+        month: 'Một tháng bền bỉ',
+        season: 'Ba tháng liên tục',
+        pr: 'Thợ săn kỷ lục',
+        year: 'Kỷ luật năm',
+        summit: 'Đỉnh tháp',
+        start: 'Khởi đầu',
+        consistency: 'Duy trì',
+        mastery: 'Chinh phục',
+      }
+    : {
+        title: 'Achievements',
+        back: 'Back to schedule',
+        tower: 'Progression tower',
+        floor: 'Floor',
+        next: 'Next milestone',
+        streak: 'Current day streak',
+        weekly: 'Weekly target',
+        shield: 'Progress is protected',
+        shieldBody:
+          'Unlocked floors remain permanent. Planned rest never erases achievements; members return from their nearest floor instead of starting over.',
+        unlocked: 'Unlocked',
+        sessions: 'Total sessions',
+        volume: 'Total volume',
+        highestLoad: 'Highest load',
+        first: 'First step',
+        week: 'Weekly rhythm',
+        sevenDays: 'Seven-day flame',
+        month: 'Consistent month',
+        season: 'Three-month run',
+        pr: 'Record hunter',
+        year: 'Year discipline',
+        summit: 'Tower summit',
+        start: 'Start',
+        consistency: 'Consistency',
+        mastery: 'Mastery',
+      };
+
+  const levels: TowerLevel[] = [
+    {
+      id: 'first-session',
+      title: copy.first,
+      category: copy.start,
+      value: progress.totalSessions,
+      target: 1,
+      icon: Goal,
+    },
+    {
+      id: 'weekly-rhythm',
+      title: copy.week,
+      category: copy.consistency,
+      value: progress.bestWeekSessions,
+      target: 3,
+      icon: CalendarDays,
+    },
+    {
+      id: 'seven-day-streak',
+      title: copy.sevenDays,
+      category: copy.consistency,
+      value: progress.longestStreak,
+      target: 7,
+      icon: Flame,
+    },
+    {
+      id: 'month',
+      title: copy.month,
+      category: copy.consistency,
+      value: progress.bestMonthSessions,
+      target: 12,
+      icon: Medal,
+    },
+    {
+      id: 'season',
+      title: copy.season,
+      category: copy.consistency,
+      value: progress.activeMonths,
+      target: 3,
+      icon: Award,
+    },
+    {
+      id: 'records',
+      title: copy.pr,
+      category: copy.mastery,
+      value: progress.recordBreaks,
+      target: 3,
+      icon: Trophy,
+    },
+    {
+      id: 'year',
+      title: copy.year,
+      category: copy.mastery,
+      value: progress.bestYearSessions,
+      target: 100,
+      icon: Sparkles,
+    },
+    {
+      id: 'summit',
+      title: copy.summit,
+      category: copy.mastery,
+      value: progress.totalSessions,
+      target: 250,
+      icon: Crown,
+    },
+  ];
+  const nextLevel = levels.find((level) => level.value < level.target) ?? levels.at(-1);
+  const unlockedCount = levels.filter((level) => level.value >= level.target).length;
+  const weeklyPercent = Math.min(100, Math.round((progress.sessionsThisWeek / 3) * 100));
+
+  return (
+    <WorkoutFlowShell backTo={ROUTES.member.workoutSchedule} backLabel={copy.back}>
+      <section className="achievement-hero">
+        <div>
+          <span>PROGRESSION / {unlockedCount.toString().padStart(2, '0')}</span>
+          <h2>{copy.tower}</h2>
+          <p>
+            {copy.next}: {nextLevel?.title}
+          </p>
+        </div>
+        <div className="achievement-streak">
+          <Flame aria-hidden size={26} />
+          <strong>{progress.currentStreak}</strong>
+          <span>{copy.streak}</span>
+        </div>
+      </section>
+
+      <section className="achievement-weekly" aria-label={copy.weekly}>
+        <div>
+          <CalendarDays aria-hidden size={20} />
+          <strong>{copy.weekly}</strong>
+        </div>
+        <span>{Math.min(progress.sessionsThisWeek, 3)}/3</span>
+        <i>
+          <b style={{ width: `${weeklyPercent}%` }} />
+        </i>
+      </section>
+
+      <section className="achievement-tower" aria-label={copy.tower}>
+        {[...levels].reverse().map((level, reverseIndex) => {
+          const Icon = level.icon;
+          const percentage = Math.min(100, Math.round((level.value / level.target) * 100));
+          const unlocked = percentage === 100;
+          const floor = levels.length - reverseIndex;
+          return (
+            <article
+              className={[unlocked ? 'is-unlocked' : '', floor >= 6 ? 'is-high-tier' : '']
+                .filter(Boolean)
+                .join(' ')}
+              key={level.id}
+            >
+              <span className="achievement-tower__floor">
+                {copy.floor} {String(floor).padStart(2, '0')}
+              </span>
+              <span className="achievement-tower__medallion">
+                <Icon aria-hidden size={19} />
+              </span>
+              <div>
+                <em>{level.category}</em>
+                <strong>{level.title}</strong>
+              </div>
+              <div className="achievement-tower__progress">
+                <span>{unlocked ? copy.unlocked : `${level.value}/${level.target}`}</span>
+                <i>
+                  <b style={{ width: `${percentage}%` }} />
+                </i>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+
+      <section className="achievement-grid">
+        <article>
+          <Goal aria-hidden size={21} />
+          <span>{copy.sessions}</span>
+          <strong>{progress.totalSessions}</strong>
+        </article>
+        <article>
+          <Trophy aria-hidden size={21} />
+          <span>{copy.volume}</span>
+          <strong>{progress.totalVolumeKg.toLocaleString()} kg</strong>
+        </article>
+        <article>
+          <Award aria-hidden size={21} />
+          <span>{copy.highestLoad}</span>
+          <strong>{progress.highestLoadKg.toLocaleString()} kg</strong>
+        </article>
+      </section>
+      <section className="achievement-protection">
+        <ShieldCheck aria-hidden size={22} />
+        <div>
+          <strong>{copy.shield}</strong>
+          <span>{copy.shieldBody}</span>
+        </div>
+      </section>
+    </WorkoutFlowShell>
+  );
+}

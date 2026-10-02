@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 
+import { AuthLayout } from './components/AuthLayout';
+
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 import { ROUTES } from '@/shared/config/constants';
@@ -16,16 +18,17 @@ const portalForRole = (roles: ReadonlyArray<string>): string => {
 export function LoginPage() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   useEffect(() => {
-    document.title = `${t('auth:login.title')} — AI Fitness Coaching`;
+    document.title = `${t('auth:login.title')} — FIT AI`;
   }, [t]);
 
-  if (user) return <Navigate to={portalForRole(user.roles)} replace />;
+  if (isAuthenticated && user) return <Navigate to={portalForRole(user.roles)} replace />;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <AuthLayout>
       <LoginForm />
-    </div>
+    </AuthLayout>
   );
 }

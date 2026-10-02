@@ -1,0 +1,446 @@
+.gym-commerce-page {
+  display: grid;
+  gap: 18px;
+}
+
+.gym-commerce-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gym-commerce-toolbar .inline-flex,
+.gym-commerce-toolbar .inline-flex > svg,
+.gym-commerce-toolbar > span > svg {
+  flex: none;
+}
+
+.gym-commerce-notice {
+  margin: 0;
+  border-left: 3px solid hsl(var(--forest));
+  background: hsl(var(--muted) / 0.45);
+  padding: 10px 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.gym-orders-table-shell,
+.gym-settlement-table-shell {
+  border-color: hsl(var(--border));
+  background: white;
+}
+
+.gym-orders-table,
+.gym-settlement-table {
+  min-width: 1180px;
+}
+
+.gym-orders-table th.is-money,
+.gym-orders-table td.is-money,
+.gym-settlement-table th.is-money,
+.gym-settlement-table td.is-money {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.gym-orders-table td.is-money,
+.gym-settlement-table td.is-money {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.gym-orders-table td.is-discount,
+.gym-settlement-table td.is-discount {
+  color: hsl(var(--muted-foreground));
+}
+
+.gym-orders-table td.is-plus,
+.gym-settlement-table td.is-plus {
+  background: hsl(var(--mint) / 0.18);
+  color: hsl(var(--forest));
+}
+
+.gym-orders-table td.is-commission,
+.gym-settlement-table td.is-commission {
+  color: hsl(var(--foreground) / 0.72);
+}
+
+.gym-orders-table td.is-net,
+.gym-settlement-table td.is-net {
+  background: var(--energy-lime-faint);
+  color: hsl(var(--forest));
+  font-weight: 800;
+}
+
+.gym-order-identity,
+.gym-order-item,
+.gym-order-statuses {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.gym-order-identity strong,
+.gym-order-item strong {
+  color: hsl(var(--foreground));
+  font-size: 12px;
+}
+
+.gym-order-identity span,
+.gym-order-statuses > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-commerce-state {
+  display: grid;
+  min-height: 230px;
+  place-content: center;
+  gap: 12px;
+  border: 1px solid hsl(var(--border));
+  background: white;
+  padding: 20px;
+}
+
+.gym-commerce-state.is-error {
+  justify-items: center;
+  border-color: hsl(var(--destructive) / 0.35);
+  background: hsl(var(--destructive) / 0.05);
+  color: hsl(var(--destructive));
+}
+
+.gym-commerce-empty {
+  border-radius: 0;
+  background: white;
+}
+
+.gym-order-detail-card,
+.gym-order-request-panel {
+  border: 1px solid hsl(var(--border));
+  background: white;
+  padding: 22px;
+}
+
+.gym-detail-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.gym-detail-section-heading > div,
+.gym-order-request-panel > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.gym-detail-section-heading span,
+.gym-order-request-panel > div:first-child > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gym-detail-section-heading h2,
+.gym-order-request-panel h2 {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: 'Sora', 'Be Vietnam Pro', sans-serif;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 700;
+}
+
+.gym-order-metadata {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border: 1px solid hsl(var(--border));
+}
+
+.gym-order-metadata > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px;
+  border-left: 1px solid hsl(var(--border));
+}
+
+.gym-order-metadata > div:first-child {
+  border-left: 0;
+}
+
+.gym-order-metadata dt,
+.gym-financial-grid dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gym-order-metadata dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gym-financial-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.gym-financial-grid > div {
+  display: grid;
+  align-content: space-between;
+  gap: 14px;
+  min-height: 94px;
+  border: 1px solid hsl(var(--border));
+  padding: 14px;
+}
+
+.gym-financial-grid > div.is-plus {
+  background: hsl(var(--mint) / 0.18);
+}
+
+.gym-financial-grid > div.is-net {
+  border-color: hsl(var(--pebble) / 0.55);
+  background: var(--energy-lime-faint);
+}
+
+.gym-financial-grid dd {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(13px, 1.5vw, 17px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.gym-order-request-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-color: hsl(var(--pebble) / 0.6);
+  background: var(--energy-lime-faint);
+}
+
+.gym-order-request-panel > div:first-child > span {
+  max-width: 660px;
+  color: hsl(var(--forest) / 0.72);
+  letter-spacing: normal;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.gym-submitted-request {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+  text-align: right;
+}
+
+.gym-submitted-request strong {
+  font-size: 12px;
+}
+
+.gym-submitted-request > span:last-child {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-request-form {
+  display: grid;
+  gap: 18px;
+}
+
+.gym-request-form > div {
+  display: grid;
+  gap: 8px;
+}
+
+.gym-request-error {
+  margin: 0;
+  color: hsl(var(--destructive));
+  font-size: 11px;
+}
+
+@media (max-width: 980px) {
+  .gym-order-metadata,
+  .gym-financial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gym-order-metadata > div {
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .gym-order-metadata > div:nth-child(odd) {
+    border-left: 0;
+  }
+
+  .gym-order-metadata > div:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .gym-financial-grid > div.is-net {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .gym-commerce-toolbar,
+  .gym-order-request-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gym-commerce-toolbar .inline-flex,
+  .gym-order-request-panel .inline-flex {
+    width: 100%;
+  }
+
+  .gym-orders-table-shell,
+  .gym-settlement-table-shell {
+    border: 0;
+    background: transparent;
+  }
+
+  .gym-orders-table,
+  .gym-orders-table tbody,
+  .gym-orders-table tr,
+  .gym-orders-table td,
+  .gym-settlement-table,
+  .gym-settlement-table tbody,
+  .gym-settlement-table tr,
+  .gym-settlement-table td {
+    display: block;
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  .gym-orders-table thead,
+  .gym-settlement-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
+
+  .gym-orders-table tbody,
+  .gym-settlement-table tbody {
+    display: grid;
+    gap: 14px;
+  }
+
+  .gym-orders-table tr,
+  .gym-settlement-table tr {
+    border: 1px solid hsl(var(--border));
+    background: white;
+  }
+
+  .gym-orders-table td,
+  .gym-settlement-table td,
+  .gym-orders-table td.is-money,
+  .gym-settlement-table td.is-money {
+    display: grid;
+    grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1.2fr);
+    align-items: start;
+    gap: 12px;
+    border-top: 1px solid hsl(var(--border));
+    padding: 12px;
+    text-align: left;
+  }
+
+  .gym-orders-table td:first-child,
+  .gym-settlement-table td:first-child {
+    border-top: 0;
+    background: var(--energy-lime-faint);
+  }
+
+  .gym-orders-table td::before,
+  .gym-settlement-table td::before {
+    content: attr(data-label);
+    padding-top: 3px;
+    color: hsl(var(--muted-foreground));
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .gym-orders-table td.is-plus,
+  .gym-settlement-table td.is-plus,
+  .gym-orders-table td.is-net,
+  .gym-settlement-table td.is-net {
+    background: white;
+  }
+
+  .gym-order-detail-card,
+  .gym-order-request-panel {
+    padding: 16px;
+  }
+
+  .gym-submitted-request {
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .gym-order-metadata,
+  .gym-financial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-order-metadata > div,
+  .gym-order-metadata > div:nth-child(odd),
+  .gym-order-metadata > div:nth-child(-n + 2) {
+    border-top: 1px solid hsl(var(--border));
+    border-left: 0;
+  }
+
+  .gym-order-metadata > div:first-child {
+    border-top: 0;
+  }
+
+  .gym-financial-grid > div.is-net {
+    grid-column: auto;
+  }
+
+  .gym-orders-table td,
+  .gym-settlement-table td,
+  .gym-orders-table td.is-money,
+  .gym-settlement-table td.is-money {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gym-commerce-page *,
+  .gym-commerce-page *::before,
+  .gym-commerce-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

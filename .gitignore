@@ -79,3 +79,5 @@ msw/
 
 # Vite 8 timestamp files
 vite.config.*.timestamp-*
+# Project documentation
+*.md

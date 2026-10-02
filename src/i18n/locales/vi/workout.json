@@ -1,0 +1,231 @@
+{
+  "system": {
+    "context": "Hệ thống // 01.Kế hoạch",
+    "catalog": "Danh mục dữ liệu mẫu cục bộ",
+    "synced": "Đã nạp 6 giáo án"
+  },
+  "eyebrow": "Lập trình giáo án",
+  "title": "Kế Hoạch Tập Luyện",
+  "description": "Chọn giáo án phù hợp với mục tiêu và theo dõi tiến trình tập luyện của bạn.",
+  "filters": {
+    "all": "Tất cả [{{count}}]",
+    "active": "Đang tập",
+    "hypertrophy": "Tăng cơ",
+    "strength": "Sức mạnh",
+    "metabolic": "Trao đổi chất"
+  },
+  "featured": {
+    "label": "Giáo án đang hoạt động",
+    "status": "Đang tập",
+    "cycle": "Mã chu kỳ",
+    "preview": "Xem trước buổi tập",
+    "targetLabel": "Nhóm cơ chính",
+    "target": "Ngực & vai",
+    "title": "Ma Trận Tăng Cơ Thân Trên // Lịch 4 Ngày",
+    "description": "Giáo án thân trên cân bằng động tác đẩy ngang, đẩy dọc và khả năng ổn định xương bả vai.",
+    "split": "Lịch 4 ngày",
+    "level": "Trung cấp nâng cao",
+    "progress": "Tiến trình chu kỳ // Hiệp {{completed}} trên {{total}}"
+  },
+  "metrics": {
+    "exercises": "Bài tập",
+    "stations": "Trạm",
+    "targetTime": "Thời gian",
+    "minutes": "Phút",
+    "expenditure": "Năng lượng",
+    "calories": "Kcal",
+    "cycleTier": "Cấp độ",
+    "apparatus": "Dụng cụ",
+    "duration": "Thời lượng"
+  },
+  "archive": {
+    "title": "Giáo án có sẵn",
+    "count": "Tổng: {{count}}",
+    "sort": "Sắp xếp theo mã giáo án"
+  },
+  "levels": {
+    "beginner": "Trình độ cơ bản",
+    "intermediate": "Trình độ trung cấp",
+    "advanced": "Trình độ nâng cao",
+    "elite": "Trình độ chuyên sâu",
+    "allLevels": "Mọi trình độ"
+  },
+  "categories": {
+    "hypertrophy": "Tăng cơ",
+    "strength": "Sức mạnh",
+    "metabolic": "Trao đổi chất"
+  },
+  "status": {
+    "completed": "Hoàn thành {{progress}}%",
+    "active": "Đang tập {{progress}}%",
+    "ready": "Sẵn sàng",
+    "complete": "Đã hoàn thành chu kỳ",
+    "sets": "Hiệp {{completed}}/{{total}}",
+    "notStarted": "Chưa bắt đầu"
+  },
+  "actions": {
+    "continue": "Xem lịch tập tuần",
+    "resume": "Tiếp tục",
+    "start": "Bắt đầu",
+    "restart": "Tập lại",
+    "unavailable": "Sẽ có trong Milestone 02"
+  },
+  "plans": {
+    "foundation": {
+      "title": "Nền Tảng Vận Động Toàn Thân",
+      "description": "Các mẫu vận động đa khớp nền tảng giúp ổn định vùng lõi và kiểm soát tư thế."
+    },
+    "posterior": {
+      "title": "Sức Mạnh Chuỗi Cơ Sau",
+      "description": "Giáo án tăng tiến cho đùi sau, mông và khả năng tạo lực có kiểm soát."
+    },
+    "chest": {
+      "title": "Ngực & Tay Sau Chính Xác",
+      "description": "Động tác đẩy và bài tay sau được tổ chức quanh biên độ vận động ổn định."
+    },
+    "core": {
+      "title": "Vùng Lõi & Cơ Sinh Học",
+      "description": "Ổn định chống xoay, gồng bụng và kiểm soát thân người để vận động bền vững."
+    },
+    "olympic": {
+      "title": "Kéo Olympic & Tốc Độ",
+      "description": "Bài kéo kỹ thuật tập trung vào tốc độ, nhịp và phát triển sức mạnh an toàn."
+    },
+    "deltoid": {
+      "title": "Vai & Lưng Trên",
+      "description": "Khối lượng tập cân bằng cho vai và lưng trên với chuyển động bả vai có kiểm soát."
+    }
+  },
+  "states": {
+    "loading": "Đang tải kế hoạch tập luyện",
+    "errorTitle": "Không thể tải kế hoạch tập luyện",
+    "errorDescription": "Danh mục giáo án tạm thời chưa khả dụng.",
+    "emptyTitle": "Không tìm thấy giáo án",
+    "emptyDescription": "Hãy thử bộ lọc khác để xem các giáo án đang có.",
+    "retry": "Thử lại"
+  },
+  "footnote": "Dữ liệu mẫu cho Milestone 01",
+  "release": "Danh mục giáo án",
+  "flow": {
+    "backToPlans": "Kế hoạch tập",
+    "schedule": {
+      "eyebrow": "Chu kỳ hiện tại / Tuần 03",
+      "title": "Lịch Tập Trong Tuần",
+      "description": "Xem từng ngày tập, ngày nghỉ và mục tiêu do huấn luyện viên thiết lập.",
+      "summary": "Tổng quan tiến độ tuần",
+      "week": "Tuần tập",
+      "trainingDays": "Ngày tập",
+      "completed": "Đã hoàn thành",
+      "weekProgress": "Tiến độ tuần",
+      "recovery": "Phục hồi",
+      "resume": "Tiếp tục buổi tập",
+      "view": "Xem buổi tập",
+      "note": "Ngày nghỉ được ghi rõ và không chứa bài tập được tạo giả.",
+      "weekRange": "21 — 27 THG 9",
+      "optionalCount": "{{count}} bài tập bổ sung",
+      "optionalTitle": "Bài tập bổ sung",
+      "optionalProtected": "Không ảnh hưởng tiến độ plan AI/PT"
+    },
+    "weekdays": {
+      "monday": "Thứ Hai",
+      "tuesday": "Thứ Ba",
+      "wednesday": "Thứ Tư",
+      "thursday": "Thứ Năm",
+      "friday": "Thứ Sáu",
+      "saturday": "Thứ Bảy",
+      "sunday": "Chủ Nhật"
+    },
+    "days": {
+      "monday-upper-push": "Thân trên — nhóm đẩy",
+      "tuesday-back-lats": "Lưng và xô",
+      "wednesday-cardio": "Cardio nền tảng",
+      "thursday-rest": "Ngày nghỉ",
+      "friday-lower-body": "Thân dưới",
+      "saturday-hiit": "HIIT toàn thân",
+      "sunday-rest": "Ngày nghỉ"
+    },
+    "exercises": {
+      "bent-over-row": "Kéo tạ đòn gập người",
+      "dead-hang": "Treo xà thụ động",
+      "ergometer-row": "Chèo máy 2 km",
+      "tabata-row": "Chèo máy Tabata"
+    },
+    "detail": {
+      "weeklySchedule": "Lịch tập tuần",
+      "day": "Ngày",
+      "review": "Xem mục tiêu",
+      "stations": "Bài tập",
+      "targetTime": "Thời lượng mục tiêu",
+      "protocol": "Phương thức",
+      "mixedTracking": "Theo dõi hỗn hợp",
+      "source": "Nguồn",
+      "coachPlan": "Kế hoạch HLV",
+      "pipeline": "Danh sách bài tập",
+      "targets": "Mục tiêu từ kế hoạch",
+      "target": "Mục tiêu",
+      "start": "Bắt đầu buổi tập",
+      "continue": "Tiếp tục buổi tập",
+      "optional": "Bài tập bổ sung",
+      "optionalProtected": "Không tính vào hoàn thành plan AI/PT"
+    },
+    "execution": {
+      "exit": "Thoát buổi tập",
+      "liveSession": "Buổi tập đang diễn ra",
+      "complete": "Hoàn thành {{completed}}/{{total}}",
+      "station": "Bài {{current}} / {{total}}",
+      "assessExercise": "Đánh giá động tác của tôi",
+      "video": "Video hướng dẫn bài tập",
+      "sessionExercises": "Danh sách bài tập",
+      "liveTimer": "Đồng hồ trực tiếp",
+      "pause": "Tạm dừng",
+      "start": "Bắt đầu",
+      "reset": "Đặt lại",
+      "useTime": "Dùng thời gian",
+      "strength": "Hiệp / Lần / Tạ",
+      "recordSets": "Ghi kết quả thực tế",
+      "set": "Hiệp",
+      "load": "Mức tạ (kg)",
+      "reps": "Số lần",
+      "rpe": "RPE (không bắt buộc)",
+      "saveContinue": "Lưu và tiếp tục",
+      "duration": "Thời lượng",
+      "recordTime": "Ghi thời gian thực tế",
+      "seconds": "giây",
+      "distance": "Quãng đường",
+      "recordDistance": "Ghi quãng đường thực tế",
+      "actualDistance": "Quãng đường thực tế (km)",
+      "minutes": "Phút",
+      "computedPace": "Pace tự tính",
+      "interval": "Interval / Vòng",
+      "recordRounds": "Ghi số vòng hoàn thành",
+      "completedRounds": "Số vòng hoàn thành",
+      "targetRounds": "trên {{count}} vòng mục tiêu",
+      "saveFinish": "Lưu và hoàn thành"
+    },
+    "completion": {
+      "saved": "Đã lưu buổi tập",
+      "title": "Hoàn thành buổi tập",
+      "weeklySchedule": "Lịch tập tuần",
+      "backPlans": "Về kế hoạch tập",
+      "completed": "Hoàn thành",
+      "trainingVolume": "Tổng khối lượng",
+      "trackedDuration": "Thời gian đã ghi",
+      "distance": "Quãng đường",
+      "rounds": "Số vòng",
+      "actual": "Kết quả thực tế",
+      "logged": "Đã ghi {{logged}}/{{total}} bài tập",
+      "noData": "Chưa có dữ liệu thực tế",
+      "sets": "{{count}} hiệp",
+      "volume": "Tổng tải {{value}} kg"
+    },
+    "dates": {
+      "monday-upper-push": "21 Thg 9",
+      "tuesday-back-lats": "22 Thg 9",
+      "wednesday-cardio": "23 Thg 9",
+      "thursday-rest": "24 Thg 9",
+      "friday-lower-body": "25 Thg 9",
+      "saturday-hiit": "26 Thg 9",
+      "sunday-rest": "27 Thg 9"
+    }
+  }
+}

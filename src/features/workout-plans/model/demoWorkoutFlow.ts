@@ -1,0 +1,133 @@
+import type { WorkoutDayPlan } from './workoutFlowTypes';
+
+const backDayExercises = [
+  {
+    id: 'bent-over-row',
+    name: 'Bent-over barbell row',
+    muscleGroup: 'Back & lats',
+    equipment: 'Barbell',
+    trackingType: 'strength' as const,
+    target: { sets: 4, reps: 10, loadKg: 60, restSeconds: 90 },
+    instructions: [
+      'Keep your spine neutral and brace your core.',
+      'Pull the bar toward the lower ribs.',
+    ],
+  },
+  {
+    id: 'dead-hang',
+    name: 'Dead hang',
+    muscleGroup: 'Grip & shoulders',
+    equipment: 'Pull-up bar',
+    trackingType: 'duration' as const,
+    target: { sets: 3, durationSeconds: 60, restSeconds: 45 },
+    instructions: [
+      'Use a comfortable overhand grip.',
+      'Keep the shoulders active and breathe evenly.',
+    ],
+  },
+  {
+    id: 'ergometer-row',
+    name: 'Ergometer row',
+    muscleGroup: 'Back & conditioning',
+    equipment: 'Rowing machine',
+    trackingType: 'distance' as const,
+    target: { distanceKm: 2, durationSeconds: 900 },
+    instructions: ['Drive through the legs before pulling.', 'Keep a consistent stroke rate.'],
+  },
+  {
+    id: 'tabata-row',
+    name: 'Tabata row',
+    muscleGroup: 'Full body conditioning',
+    equipment: 'Rowing machine',
+    trackingType: 'interval' as const,
+    target: { rounds: 8, workSeconds: 20, restSeconds: 10 },
+    instructions: [
+      'Work hard during each work interval.',
+      'Use every rest interval to reset your posture.',
+    ],
+  },
+] as const;
+
+export const currentWorkoutWeek: ReadonlyArray<WorkoutDayPlan> = Object.freeze([
+  {
+    id: 'monday-upper-push',
+    dayNumber: 1,
+    weekday: 'Monday',
+    dateLabel: 'Sep 21',
+    title: 'Upper Push',
+    focus: 'Chest & shoulders',
+    durationMinutes: 46,
+    status: 'completed',
+    exercises: [],
+  },
+  {
+    id: 'tuesday-back-lats',
+    dayNumber: 2,
+    weekday: 'Tuesday',
+    dateLabel: 'Sep 22',
+    title: 'Back & Lats',
+    focus: 'Hypertrophy protocol',
+    durationMinutes: 50,
+    status: 'ready',
+    exercises: backDayExercises,
+  },
+  {
+    id: 'wednesday-cardio',
+    dayNumber: 3,
+    weekday: 'Wednesday',
+    dateLabel: 'Sep 23',
+    title: 'Cardio Base',
+    focus: 'Aerobic capacity',
+    durationMinutes: 35,
+    status: 'upcoming',
+    exercises: [],
+  },
+  {
+    id: 'thursday-rest',
+    dayNumber: 4,
+    weekday: 'Thursday',
+    dateLabel: 'Sep 24',
+    title: 'Rest Day',
+    focus: 'Recovery',
+    durationMinutes: 0,
+    status: 'rest',
+    exercises: [],
+  },
+  {
+    id: 'friday-lower-body',
+    dayNumber: 5,
+    weekday: 'Friday',
+    dateLabel: 'Sep 25',
+    title: 'Lower Body',
+    focus: 'Posterior chain',
+    durationMinutes: 52,
+    status: 'upcoming',
+    exercises: [],
+  },
+  {
+    id: 'saturday-hiit',
+    dayNumber: 6,
+    weekday: 'Saturday',
+    dateLabel: 'Sep 26',
+    title: 'HIIT Circuit',
+    focus: 'Metabolic conditioning',
+    durationMinutes: 28,
+    status: 'upcoming',
+    exercises: [],
+  },
+  {
+    id: 'sunday-rest',
+    dayNumber: 7,
+    weekday: 'Sunday',
+    dateLabel: 'Sep 27',
+    title: 'Rest Day',
+    focus: 'Recovery',
+    durationMinutes: 0,
+    status: 'rest',
+    exercises: [],
+  },
+]);
+
+export function getWorkoutDay(dayId: string) {
+  return currentWorkoutWeek.find((day) => day.id === dayId);
+}

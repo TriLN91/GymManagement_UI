@@ -1,0 +1,232 @@
+{
+  "system": {
+    "context": "System // 01.Plans",
+    "catalog": "Local demo catalog",
+    "synced": "6 protocols cached"
+  },
+  "eyebrow": "Architectural programming",
+  "title": "Workout Plans",
+  "description": "Choose a plan that fits your goal and review your training progress.",
+  "filters": {
+    "all": "All plans [{{count}}]",
+    "active": "Active / In progress",
+    "hypertrophy": "Hypertrophy",
+    "strength": "Strength",
+    "metabolic": "Metabolic"
+  },
+  "featured": {
+    "label": "Current active protocol",
+    "status": "In progress",
+    "cycle": "Cycle ID",
+    "preview": "Training preview",
+    "targetLabel": "Primary target",
+    "target": "Pectoralis & deltoids",
+    "title": "Upper Body Hypertrophy Matrix // 4-Day Split",
+    "description": "A structured upper-body program balancing horizontal press, vertical drive and scapular stability.",
+    "split": "4-day split",
+    "level": "Advanced intermediate",
+    "progress": "Cycle completion // Set {{completed}} of {{total}}"
+  },
+  "metrics": {
+    "exercises": "Exercises",
+    "stations": "Stations",
+    "targetTime": "Target time",
+    "minutes": "Min",
+    "expenditure": "Expenditure",
+    "calories": "Kcal",
+    "cycleTier": "Cycle tier",
+    "apparatus": "Apparatus",
+    "duration": "Duration"
+  },
+  "archive": {
+    "title": "Available plans",
+    "count": "Total: {{count}}",
+    "sort": "Sorted by program index"
+  },
+  "levels": {
+    "beginner": "Beginner level",
+    "intermediate": "Intermediate level",
+    "advanced": "Advanced level",
+    "elite": "Elite level",
+    "allLevels": "All levels"
+  },
+  "categories": {
+    "hypertrophy": "Hypertrophy",
+    "strength": "Strength",
+    "metabolic": "Metabolic"
+  },
+  "status": {
+    "completed": "Completed {{progress}}%",
+    "active": "Active {{progress}}%",
+    "ready": "Ready",
+    "complete": "Cycle complete",
+    "sets": "Set {{completed}}/{{total}}",
+    "notStarted": "Not started"
+  },
+  "actions": {
+    "continue": "View weekly schedule",
+    "resume": "Resume",
+    "start": "Start plan",
+    "restart": "Restart plan",
+    "unavailable": "Available in Milestone 02"
+  },
+  "plans": {
+    "foundation": {
+      "title": "Full Body Kinetic Foundation",
+      "description": "Foundational compound movement patterns for core stability and postural control."
+    },
+    "posterior": {
+      "title": "Lower Body Posterior Power",
+      "description": "Progressive posterior-chain training for hamstrings, glutes and controlled force production."
+    },
+    "chest": {
+      "title": "Chest & Triceps Precision",
+      "description": "Pressing patterns and triceps work organized around consistent range of motion."
+    },
+    "core": {
+      "title": "Core & Biomechanics",
+      "description": "Rotational stability, bracing and trunk control for resilient movement."
+    },
+    "olympic": {
+      "title": "Olympic Pull & Velocity",
+      "description": "Technical pulling progressions focused on speed, timing and safe power development."
+    },
+    "deltoid": {
+      "title": "Deltoid & Upper Back",
+      "description": "Balanced shoulder and upper-back volume with controlled scapular movement."
+    }
+  },
+  "states": {
+    "loading": "Loading workout plans",
+    "errorTitle": "Workout plans could not be loaded",
+    "errorDescription": "The plan catalog is temporarily unavailable.",
+    "emptyTitle": "No workout plans found",
+    "emptyDescription": "Try another filter to see the available plans.",
+    "retry": "Try again"
+  },
+  "footnote": "Demo data for Milestone 01",
+  "release": "Workout plan catalog",
+  "flow": {
+    "backToPlans": "Workout plans",
+    "schedule": {
+      "eyebrow": "Current cycle / Week 03",
+      "title": "Weekly Schedule",
+      "description": "Review each training day, recovery day and the targets assigned by your coach.",
+      "summary": "Weekly progress summary",
+      "week": "Training week",
+      "trainingDays": "Workout days",
+      "completed": "Completed",
+      "weekProgress": "Week progress",
+      "recovery": "Recovery",
+      "resume": "Resume session",
+      "view": "View day",
+      "note": "Rest days are explicit and do not contain fabricated workouts.",
+      "weekRange": "21 — 27 SEP",
+      "optionalCount_one": "{{count}} optional exercise",
+      "optionalCount_other": "{{count}} optional exercises",
+      "optionalTitle": "Optional exercises",
+      "optionalProtected": "Does not affect AI/PT plan progress"
+    },
+    "weekdays": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "days": {
+      "monday-upper-push": "Upper Push",
+      "tuesday-back-lats": "Back & Lats",
+      "wednesday-cardio": "Cardio Base",
+      "thursday-rest": "Rest Day",
+      "friday-lower-body": "Lower Body",
+      "saturday-hiit": "HIIT Circuit",
+      "sunday-rest": "Rest Day"
+    },
+    "exercises": {
+      "bent-over-row": "Bent-over barbell row",
+      "dead-hang": "Dead hang",
+      "ergometer-row": "Ergometer row",
+      "tabata-row": "Tabata row"
+    },
+    "detail": {
+      "weeklySchedule": "Weekly schedule",
+      "day": "Day",
+      "review": "Review target",
+      "stations": "Stations",
+      "targetTime": "Target time",
+      "protocol": "Protocol",
+      "mixedTracking": "Mixed tracking",
+      "source": "Source",
+      "coachPlan": "Coach plan",
+      "pipeline": "Station pipeline",
+      "targets": "Targets defined by plan",
+      "target": "Target",
+      "start": "Start session",
+      "continue": "Continue session",
+      "optional": "Optional exercises",
+      "optionalProtected": "Excluded from AI/PT plan completion"
+    },
+    "execution": {
+      "exit": "Exit session",
+      "liveSession": "Live session",
+      "complete": "{{completed}}/{{total}} complete",
+      "station": "Station {{current}} / {{total}}",
+      "assessExercise": "Assess my form",
+      "video": "Exercise demonstration video",
+      "sessionExercises": "Session exercises",
+      "liveTimer": "Live timer",
+      "pause": "Pause",
+      "start": "Start",
+      "reset": "Reset",
+      "useTime": "Use time",
+      "strength": "Set / Rep / Load",
+      "recordSets": "Record actual sets",
+      "set": "Set",
+      "load": "Load (kg)",
+      "reps": "Reps",
+      "rpe": "RPE (optional)",
+      "saveContinue": "Save actual & continue",
+      "duration": "Duration",
+      "recordTime": "Record actual time",
+      "seconds": "seconds",
+      "distance": "Distance",
+      "recordDistance": "Record actual distance",
+      "actualDistance": "Actual distance (km)",
+      "minutes": "Minutes",
+      "computedPace": "Computed pace",
+      "interval": "Interval / Round",
+      "recordRounds": "Record completed rounds",
+      "completedRounds": "Completed rounds",
+      "targetRounds": "of {{count}} target rounds",
+      "saveFinish": "Save actual & finish"
+    },
+    "completion": {
+      "saved": "Session saved",
+      "title": "Workout complete",
+      "weeklySchedule": "Weekly schedule",
+      "backPlans": "Back to plans",
+      "completed": "Completed",
+      "trainingVolume": "Training volume",
+      "trackedDuration": "Tracked duration",
+      "distance": "Distance",
+      "rounds": "Rounds",
+      "actual": "Actual performance",
+      "logged": "{{logged}}/{{total}} exercises logged",
+      "noData": "No actual data",
+      "sets": "{{count}} sets",
+      "volume": "{{value}} kg volume"
+    },
+    "dates": {
+      "monday-upper-push": "Sep 21",
+      "tuesday-back-lats": "Sep 22",
+      "wednesday-cardio": "Sep 23",
+      "thursday-rest": "Sep 24",
+      "friday-lower-body": "Sep 25",
+      "saturday-hiit": "Sep 26",
+      "sunday-rest": "Sep 27"
+    }
+  }
+}
