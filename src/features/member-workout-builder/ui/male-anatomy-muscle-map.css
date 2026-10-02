@@ -1,0 +1,253 @@
+.muscle-map__canvas.muscle-map__canvas--anatomy {
+  position: relative;
+  display: block;
+  min-height: 0;
+  padding: 10px 8px 7px;
+  border: 1px solid #d5dddb;
+  border-radius: 16px;
+  background: #e8eef1;
+  overflow: hidden;
+}
+
+.muscle-map__zoom-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid #a4b7ac;
+  border-radius: 9px;
+  color: #173917;
+  background: rgb(255 255 255 / 90%);
+  cursor: pointer;
+}
+
+.muscle-map__zoom-button:hover,
+.muscle-map__zoom-button:focus-visible {
+  background: #e5f796;
+}
+
+.muscle-map__gender {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 1px solid #c7d6aa;
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: #173917;
+  background: #e5f796;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.muscle-map__zoom-dialog {
+  width: min(calc(100vw - 24px), 760px);
+  max-width: 760px;
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.muscle-map__canvas--anatomy.is-zoomed {
+  padding: 6px 12px 10px;
+}
+
+.muscle-map__canvas--anatomy.is-zoomed .muscle-map__figures {
+  max-width: min(680px, 80vh);
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.muscle-map__canvas--anatomy::before {
+  display: none;
+}
+
+.muscle-map__figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 2px;
+}
+
+.muscle-map__figure {
+  min-width: 0;
+  margin: 0;
+  padding: 0 1px;
+}
+
+.muscle-map__canvas--anatomy .muscle-map--anatomy {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  overflow: hidden;
+  filter: none;
+}
+
+.muscle-map__figure figcaption {
+  padding: 4px 0 2px;
+  color: #475b56;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.muscle-map__legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 2px auto 0;
+  color: #536b5d;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.muscle-map__legend i {
+  display: block;
+  width: 80px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e8eef1, #a7f0dd, #e5f796);
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 4;
+  cursor: pointer;
+  outline: none;
+  pointer-events: all;
+  transition:
+    fill 140ms ease,
+    stroke 140ms ease;
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region.has-volume {
+  fill: rgb(229 247 150 / var(--heat-opacity));
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region.has-exercises:not(.has-volume) {
+  fill: transparent;
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region:hover,
+.muscle-map__canvas--anatomy .muscle-map__region:focus-visible {
+  fill: rgb(167 240 221 / 65%);
+  stroke: #345c32;
+  stroke-width: 4;
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region.is-selected,
+.muscle-map__canvas--anatomy .muscle-map__region.is-selected:hover,
+.muscle-map__canvas--anatomy .muscle-map__region.is-selected:focus-visible {
+  fill: rgb(229 247 150 / 82%);
+  stroke: #173917;
+  stroke-width: 5;
+}
+
+.muscle-map__canvas--anatomy .muscle-map__region:focus-visible {
+  filter: drop-shadow(0 0 6px rgb(23 57 23 / 30%));
+}
+
+.muscle-map__canvas--anatomy .muscle-map__tooltip {
+  bottom: 31px;
+  font-size: 10px;
+}
+
+.trainer-live-map .muscle-map__canvas.muscle-map__canvas--anatomy {
+  display: block;
+  min-height: 0;
+  background: #e8eef1;
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map--anatomy {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 4;
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region.has-volume {
+  fill: rgb(229 247 150 / var(--heat-opacity));
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region.has-exercises:not(.has-volume) {
+  fill: transparent;
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region:hover,
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region:focus-visible {
+  fill: rgb(167 240 221 / 65%);
+  stroke: #345c32;
+}
+
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region.is-selected,
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region.is-selected:hover,
+.trainer-live-map .muscle-map__canvas--anatomy .muscle-map__region.is-selected:focus-visible {
+  fill: rgb(229 247 150 / 82%);
+  stroke: #173917;
+  stroke-width: 5;
+}
+
+.trainer-live-map__selection {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 10px;
+  color: #173917;
+  font-size: 10px;
+}
+
+.trainer-live-map__selection strong {
+  font-size: 11px;
+}
+
+.trainer-live-map__selection span {
+  color: #536b5d;
+}
+
+.trainer-live-map__selection button {
+  min-height: 26px;
+  margin-left: auto;
+  border: 1px solid #345c32;
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: #345c32;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .muscle-map__canvas--anatomy .muscle-map__region {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .muscle-map__zoom-dialog {
+    padding: 16px;
+  }
+
+  .muscle-map__canvas--anatomy.is-zoomed .muscle-map__figures {
+    grid-template-columns: 1fr;
+    max-width: 260px;
+  }
+}

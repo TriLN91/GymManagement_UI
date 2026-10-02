@@ -1,0 +1,51 @@
+import type { PurchaserDataState } from './types';
+
+export const gymOwnerPurchaserMockResource: PurchaserDataState = {
+  state: 'loaded',
+  data: [
+    {
+      orderId: 'FIT-2026-1048',
+      purchaserName: 'Mai Nguyen',
+      purchaserEmail: 'mai@fit.local',
+      purchaseKind: 'gym_offer',
+      productName: '90-day Progress',
+      purchasedAt: '2026-09-30T08:45:00.000Z',
+      paymentMethod: 'card',
+      paymentStatus: 'succeeded',
+      processingStatus: 'pending_gym_confirmation',
+    },
+    {
+      orderId: 'FIT-2026-1047',
+      purchaserName: 'Alex Volkov',
+      purchaserEmail: 'alex@fit.local',
+      purchaseKind: 'pt_package',
+      productName: 'Strength Foundation · 8 sessions',
+      purchasedAt: '2026-09-29T10:20:00.000Z',
+      paymentMethod: 'bank_transfer',
+      paymentStatus: 'succeeded',
+      processingStatus: 'trainer_assignment_active',
+    },
+    {
+      orderId: 'FIT-2026-1043',
+      purchaserName: 'Hana Kim',
+      purchaserEmail: 'hana.member@fit.local',
+      purchaseKind: 'gym_offer',
+      productName: '30-day Flex',
+      purchasedAt: '2026-09-25T04:10:00.000Z',
+      paymentMethod: 'card',
+      paymentStatus: 'succeeded',
+      processingStatus: 'pending_gym_confirmation',
+    },
+    {
+      orderId: 'FIT-2026-1039',
+      purchaserName: 'Jordan Lee',
+      purchaserEmail: 'jordan.member@fit.local',
+      purchaseKind: 'pt_package',
+      productName: 'Progress Coaching · 16 sessions',
+      purchasedAt: '2026-09-21T09:05:00.000Z',
+      paymentMethod: 'card',
+      paymentStatus: 'succeeded',
+      processingStatus: 'trainer_assignment_active',
+    },
+  ],
+};

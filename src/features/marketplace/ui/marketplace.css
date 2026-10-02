@@ -1,0 +1,697 @@
+.marketplace-page {
+  min-height: calc(100vh - 64px);
+  padding: 34px clamp(22px, 4vw, 58px) 70px;
+  color: #172015;
+  background: #f6f8f2;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.marketplace-page h1,
+.marketplace-page h2,
+.marketplace-page h3 {
+  margin: 0;
+  color: #173917;
+  font-family: var(--font-display);
+}
+.marketplace-gym-detail-hero > div > span,
+.marketplace-trainer-profile > div > span {
+  color: #345c32;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.marketplace-filters {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 220px 220px;
+  gap: 10px;
+  border: 1px solid #d4d9ca;
+  padding: 10px;
+  background: #fff;
+}
+.marketplace-filters.is-single {
+  max-width: 520px;
+  grid-template-columns: 1fr;
+}
+.marketplace-filters label {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #d4d9ca;
+  padding: 0 13px;
+  color: #345c32;
+  background: #fbfcf8;
+}
+.marketplace-filters input,
+.marketplace-filters select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: #173917;
+  background: transparent;
+  font:
+    600 11px/1.3 'Be Vietnam Pro',
+    sans-serif;
+}
+.marketplace-result-count {
+  margin: 20px 0 12px;
+  color: #667061;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.marketplace-result-count strong {
+  color: #345c32;
+  font:
+    700 18px/1 'IBM Plex Mono',
+    monospace;
+}
+.marketplace-gym-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.marketplace-gym-card,
+.marketplace-trainer-card,
+.marketplace-offer,
+.marketplace-package-card {
+  border: 1px solid #d4d9ca;
+  background: #fff;
+}
+.marketplace-gym-card {
+  min-width: 0;
+  overflow: hidden;
+}
+.marketplace-gym-visual {
+  --gym-accent: #345c32;
+  position: relative;
+  display: grid;
+  height: 190px;
+  place-items: center;
+  color: #fff;
+  background:
+    linear-gradient(135deg, transparent 44%, rgb(255 255 255 / 13%) 44% 45%, transparent 45%),
+    linear-gradient(145deg, color-mix(in srgb, var(--gym-accent) 76%, #0e1b0f), var(--gym-accent));
+  overflow: hidden;
+}
+.marketplace-gym-visual::before,
+.marketplace-gym-visual::after {
+  position: absolute;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 50%;
+  content: '';
+}
+.marketplace-gym-visual::before {
+  width: 190px;
+  height: 190px;
+  transform: translate(-74%, 44%);
+}
+.marketplace-gym-visual::after {
+  width: 130px;
+  height: 130px;
+  transform: translate(95%, -55%);
+}
+.marketplace-gym-visual > span {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  font:
+    800 11px/1 'IBM Plex Mono',
+    monospace;
+  letter-spacing: 0.12em;
+}
+.marketplace-gym-visual i {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 52px;
+  height: 4px;
+  background: #a7f0dd;
+}
+.marketplace-gym-visual.is-compact {
+  height: 130px;
+}
+.marketplace-gym-card__body {
+  display: grid;
+  gap: 10px;
+  padding: 17px;
+}
+.marketplace-card-flags,
+.marketplace-rating,
+.marketplace-gym-card__body > p,
+.marketplace-gym-detail-hero p:first-of-type {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.marketplace-card-flags {
+  justify-content: space-between;
+}
+.marketplace-card-flags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #345c32;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.marketplace-gym-card h2 {
+  font-size: 20px;
+}
+.marketplace-gym-card__body > p {
+  margin: 0;
+  color: #667061;
+  font-size: 11px;
+}
+.marketplace-rating {
+  color: #9cac54;
+  font-size: 11px;
+}
+.marketplace-rating span {
+  color: #667061;
+}
+.marketplace-card-price {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  border-top: 1px solid #e2e6dc;
+  padding-top: 12px;
+}
+.marketplace-card-price span {
+  color: #667061;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+.marketplace-card-price strong,
+.marketplace-offer > strong,
+.marketplace-package-card > strong {
+  color: #173917;
+  font:
+    700 20px/1 'IBM Plex Mono',
+    monospace;
+}
+.marketplace-gym-card a,
+.marketplace-trainer-card a,
+.marketplace-section > header a,
+.marketplace-result > a,
+.marketplace-empty a,
+.marketplace-offer-gym {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #345c32;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.marketplace-gym-card a {
+  min-height: 40px;
+  color: #fff;
+  background: #345c32;
+}
+.marketplace-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  color: #345c32;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.marketplace-gym-detail-hero,
+.marketplace-trainer-profile {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.8fr) 1fr;
+  border: 1px solid #d4d9ca;
+  background: #fff;
+}
+.marketplace-gym-detail-hero .marketplace-gym-visual {
+  height: 100%;
+  min-height: 330px;
+}
+.marketplace-gym-detail-hero > div:last-child,
+.marketplace-trainer-profile > div:last-child {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  padding: clamp(28px, 4vw, 54px);
+}
+.marketplace-gym-detail-hero h1,
+.marketplace-trainer-profile h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.marketplace-gym-detail-hero p,
+.marketplace-trainer-profile p,
+.marketplace-trainer-profile blockquote {
+  margin: 0;
+  color: #667061;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.marketplace-section {
+  margin-top: 30px;
+}
+.marketplace-section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.marketplace-section > header > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.marketplace-section > header > div > span {
+  color: #9cac54;
+  font:
+    700 12px/1 'IBM Plex Mono',
+    monospace;
+}
+.marketplace-section h2 {
+  font-size: 22px;
+}
+.marketplace-facilities {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #d4d9ca;
+  background: #fff;
+}
+.marketplace-facilities span {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  gap: 8px;
+  border-right: 1px solid #d4d9ca;
+  padding: 14px;
+  color: #345c32;
+  font-size: 11px;
+  font-weight: 700;
+}
+.marketplace-facilities span:last-child {
+  border-right: 0;
+}
+.marketplace-offer-grid,
+.marketplace-package-grid,
+.marketplace-trainer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.marketplace-offer-grid.is-wide {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.marketplace-offer-grid.is-wide > div {
+  display: grid;
+  align-content: start;
+}
+.marketplace-offer-gym {
+  justify-content: space-between;
+  border: 1px solid #d4d9ca;
+  border-bottom: 0;
+  padding: 11px 13px;
+  background: #f3f6ec;
+}
+.marketplace-offer,
+.marketplace-package-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 18px;
+}
+.marketplace-offer.is-popular {
+  border-top: 4px solid #345c32;
+  padding-top: 15px;
+  background: var(--energy-lime-soft);
+}
+.marketplace-offer > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #345c32;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.marketplace-offer h3,
+.marketplace-package-card h3 {
+  min-height: 42px;
+  font-size: 18px;
+}
+.marketplace-offer del {
+  color: #8a9286;
+  font-size: 10px;
+}
+.marketplace-offer ul,
+.marketplace-package-card ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.marketplace-offer li,
+.marketplace-package-card li {
+  display: flex;
+  align-items: start;
+  gap: 7px;
+  color: #667061;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.marketplace-offer p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #1c6a5b;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.marketplace-offer button,
+.marketplace-package-card button,
+.marketplace-confirm {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #345c32;
+  color: #fff;
+  background: #345c32;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.marketplace-trainer-grid.is-directory {
+  margin-top: 18px;
+}
+.marketplace-trainer-card {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px;
+}
+.marketplace-trainer-avatar {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font: 800 16px/1 var(--font-display);
+}
+.marketplace-trainer-avatar.is-large {
+  width: 100%;
+  height: 100%;
+  min-height: 330px;
+  border-radius: 0;
+  font-size: 72px;
+}
+.marketplace-trainer-card > div:nth-child(2) {
+  min-width: 0;
+}
+.marketplace-trainer-card > div > span,
+.marketplace-package-card > span {
+  color: #667061;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.marketplace-trainer-card h2 {
+  margin-top: 3px;
+  font-size: 17px;
+}
+.marketplace-trainer-card p,
+.marketplace-trainer-card > div > div,
+.marketplace-package-card > div {
+  margin: 5px 0 0;
+  color: #667061;
+  font-size: 10px;
+  line-height: 1.45;
+}
+.marketplace-trainer-card > a {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  border-top: 1px solid #e1e6dc;
+  padding-top: 12px;
+}
+.marketplace-trainer-profile {
+  grid-template-columns: minmax(300px, 0.65fr) 1fr;
+}
+.marketplace-trainer-profile blockquote {
+  border-left: 3px solid #a7f0dd;
+  padding-left: 14px;
+}
+.marketplace-package-card > div {
+  display: grid;
+  gap: 6px;
+}
+.marketplace-package-card > div span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.marketplace-empty {
+  display: grid;
+  min-height: 260px;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  border: 1px dashed #aeb7a7;
+  color: #667061;
+  background: #fff;
+  font-size: 12px;
+}
+.marketplace-checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.7fr);
+  gap: 18px;
+  align-items: start;
+}
+.marketplace-checkout form > section,
+.marketplace-checkout > aside {
+  display: grid;
+  gap: 18px;
+  border: 1px solid #d4d9ca;
+  padding: clamp(20px, 3vw, 30px);
+  background: #fff;
+}
+.marketplace-payment-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.marketplace-payment-methods button {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d4d9ca;
+  padding: 0 14px;
+  color: #667061;
+  background: #fbfcf8;
+  font-weight: 700;
+}
+.marketplace-payment-methods button.is-active {
+  border-color: #345c32;
+  color: #345c32;
+  background: var(--energy-lime);
+}
+.marketplace-card-fields {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 10px;
+}
+.marketplace-card-fields label {
+  display: grid;
+  gap: 6px;
+}
+.marketplace-card-fields label:first-child {
+  grid-column: 1 / -1;
+}
+.marketplace-card-fields span {
+  color: #667061;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.marketplace-card-fields input {
+  min-height: 44px;
+  border: 1px solid #d4d9ca;
+  padding: 0 12px;
+  outline: 0;
+}
+.marketplace-card-fields input:focus {
+  border-color: #345c32;
+}
+.marketplace-terms,
+.marketplace-plus-toggle {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  color: #667061;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.marketplace-confirm:disabled {
+  opacity: 0.45;
+}
+.marketplace-checkout > aside > div {
+  display: grid;
+  gap: 4px;
+  border-bottom: 1px solid #e1e6dc;
+  padding-bottom: 14px;
+}
+.marketplace-checkout > aside > div span {
+  color: #667061;
+  font-size: 10px;
+}
+.marketplace-plus-toggle {
+  border: 1px solid #a7f0dd;
+  padding: 13px;
+  background: var(--energy-lime-soft);
+}
+.marketplace-plus-toggle > span {
+  display: grid;
+  gap: 5px;
+}
+.marketplace-plus-toggle strong {
+  color: #1c6a5b;
+}
+.marketplace-plus-toggle small {
+  color: #667061;
+  line-height: 1.45;
+}
+.marketplace-checkout dl,
+.marketplace-result dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.marketplace-checkout dl > div,
+.marketplace-result dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #e1e6dc;
+  padding: 12px 0;
+}
+.marketplace-checkout dt,
+.marketplace-result dt {
+  display: grid;
+  gap: 4px;
+  color: #667061;
+  font-size: 10px;
+}
+.marketplace-checkout dt small {
+  font-size: 8px;
+}
+.marketplace-checkout dd,
+.marketplace-result dd {
+  margin: 0;
+  color: #173917;
+  font:
+    700 12px/1.4 'IBM Plex Mono',
+    monospace;
+  text-align: right;
+}
+.marketplace-checkout .is-discount dd {
+  color: #1c6a5b;
+}
+.marketplace-checkout .is-total {
+  border-bottom: 0;
+  padding-top: 18px;
+}
+.marketplace-checkout .is-total dt,
+.marketplace-checkout .is-total dd {
+  color: #173917;
+  font-size: 18px;
+  font-weight: 800;
+}
+.marketplace-result {
+  display: grid;
+  max-width: 720px;
+  gap: 16px;
+  margin: 28px auto;
+  border: 1px solid #d4d9ca;
+  padding: clamp(28px, 5vw, 54px);
+  background: #fff;
+}
+.marketplace-result__icon {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  border-radius: 50%;
+  color: #173917;
+  background: #a7f0dd;
+}
+.marketplace-result > span:nth-child(2) {
+  color: #345c32;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.marketplace-result h1 {
+  font-size: clamp(34px, 5vw, 52px);
+}
+.marketplace-result > p {
+  margin: 0;
+  color: #667061;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.marketplace-result > a {
+  justify-self: start;
+  min-height: 42px;
+  padding: 0 16px;
+  color: #fff;
+  background: #345c32;
+}
+@media (max-width: 1180px) {
+  .marketplace-gym-grid,
+  .marketplace-offer-grid.is-wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .marketplace-offer-grid,
+  .marketplace-package-grid,
+  .marketplace-trainer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 820px) {
+  .marketplace-page {
+    padding: 24px 14px 48px;
+  }
+  .marketplace-filters,
+  .marketplace-checkout,
+  .marketplace-gym-detail-hero,
+  .marketplace-trainer-profile {
+    grid-template-columns: 1fr;
+  }
+  .marketplace-facilities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .marketplace-trainer-avatar.is-large {
+    min-height: 220px;
+  }
+}
+@media (max-width: 560px) {
+  .marketplace-gym-grid,
+  .marketplace-offer-grid,
+  .marketplace-offer-grid.is-wide,
+  .marketplace-package-grid,
+  .marketplace-trainer-grid,
+  .marketplace-payment-methods {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 async function loginAsMember(page: Page) {
   await page.goto('/login');
@@ -27,5 +27,32 @@ test.describe('Auth flow', () => {
     await loginAsMember(page);
     await page.goto('/admin');
     await expect(page).toHaveURL(/\/403$/);
+  });
+
+  test('stale persisted user without a session can still open login', async ({ page }) => {
+    await page.goto('/login');
+    await page.evaluate(() => {
+      window.localStorage.setItem(
+        'app:auth',
+        JSON.stringify({
+          state: {
+            user: {
+              id: 'stale-member',
+              email: 'stale@demo.gym',
+              fullName: 'Stale Member',
+              roles: ['member'],
+              tenantId: 'demo-gym',
+            },
+          },
+          version: 1,
+        }),
+      );
+      window.sessionStorage.clear();
+    });
+
+    await page.reload();
+
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByLabel(/email/i)).toBeVisible();
   });
 });

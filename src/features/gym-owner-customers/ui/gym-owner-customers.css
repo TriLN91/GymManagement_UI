@@ -1,0 +1,228 @@
+.gym-customers-page {
+  display: grid;
+  gap: 16px;
+  color: hsl(var(--foreground));
+}
+
+.gym-customers-toolbar {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.gym-customers-toolbar .inline-flex {
+  gap: 6px;
+}
+
+.gym-customers-table-shell {
+  overflow: hidden;
+}
+
+.gym-customers-table th:first-child,
+.gym-customers-table td:first-child {
+  width: 25%;
+}
+
+.gym-customers-table th:nth-child(2),
+.gym-customers-table td:nth-child(2) {
+  width: 25%;
+}
+
+.gym-customers-table th:nth-child(3),
+.gym-customers-table td:nth-child(3) {
+  width: 30%;
+}
+
+.gym-customers-table thead {
+  background: var(--energy-lime-faint);
+}
+
+.gym-customers-table tbody tr:hover {
+  background: color-mix(in srgb, var(--energy-lime-faint) 70%, white);
+}
+
+.gym-customer-identity,
+.gym-customer-purchase,
+.gym-customer-order {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 11px;
+}
+
+.gym-customer-identity > span {
+  display: grid;
+  width: 42px;
+  height: 50px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, #9cac54 52%, white);
+  background: var(--energy-lime-soft);
+  color: hsl(var(--primary));
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.gym-customer-identity > div,
+.gym-customer-order {
+  display: grid;
+  gap: 4px;
+}
+
+.gym-customer-identity strong,
+.gym-customer-purchase strong,
+.gym-customer-order > strong {
+  font-size: 12px;
+}
+
+.gym-customer-identity > div > span {
+  overflow: hidden;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gym-customer-purchase {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gym-customer-order dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  margin: 0;
+}
+
+.gym-customer-order dl > div {
+  display: flex;
+  gap: 5px;
+  font-size: 9px;
+}
+
+.gym-customer-order dt {
+  color: hsl(var(--muted-foreground));
+}
+
+.gym-customer-order dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.gym-customers-state {
+  display: grid;
+  min-height: 220px;
+  place-content: center;
+  gap: 10px;
+  border: 1px solid hsl(var(--border));
+  background: white;
+  padding: 20px;
+}
+
+.gym-customers-state.is-error {
+  justify-items: center;
+  border-color: hsl(var(--destructive) / 0.35);
+  background: hsl(var(--destructive) / 0.05);
+  color: hsl(var(--destructive));
+}
+
+.gym-customers-empty {
+  border-radius: 0;
+  background: white;
+}
+
+@media (max-width: 840px) {
+  .gym-customers-table-shell {
+    border: 0;
+    background: transparent;
+  }
+
+  .gym-customers-table,
+  .gym-customers-table tbody,
+  .gym-customers-table tr,
+  .gym-customers-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .gym-customers-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
+
+  .gym-customers-table tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .gym-customers-table tr {
+    border: 1px solid hsl(var(--border));
+    background: white;
+  }
+
+  .gym-customers-table td {
+    display: grid;
+    grid-template-columns: 126px minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+    border-top: 1px solid hsl(var(--border));
+    padding: 12px;
+  }
+
+  .gym-customers-table td:first-child {
+    border-top: 0;
+    background: var(--energy-lime-faint);
+  }
+
+  .gym-customers-table td::before {
+    content: attr(data-label);
+    padding-top: 4px;
+    color: hsl(var(--muted-foreground));
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+@media (max-width: 620px) {
+  .gym-customers-toolbar {
+    justify-content: stretch;
+  }
+
+  .gym-customers-toolbar .inline-flex {
+    width: 100%;
+  }
+
+  .gym-customers-table tbody {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-customers-table td {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .gym-customers-table td::before {
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gym-customers-page *,
+  .gym-customers-page *::before,
+  .gym-customers-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

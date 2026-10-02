@@ -1,0 +1,587 @@
+.gym-dashboard-page {
+  display: grid;
+  gap: 16px;
+}
+
+.gym-dashboard-toolbar {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.gym-dashboard-toolbar p {
+  margin: 0 auto 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gym-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.gym-dashboard-grid__item {
+  min-width: 0;
+}
+
+.gym-dashboard-grid__item[data-widget-id='alerts'] {
+  grid-column: 1 / -1;
+}
+
+.gym-dashboard-widget {
+  display: flex;
+  min-height: 360px;
+  height: 100%;
+  flex-direction: column;
+  color: hsl(var(--foreground));
+}
+
+.gym-dashboard-widget.is-wide {
+  min-height: 0;
+}
+
+.gym-dashboard-widget__header {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 13px 18px;
+}
+
+.gym-dashboard-widget__header > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.gym-dashboard-widget__header > div > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, #9cac54 48%, white);
+  background: var(--energy-lime-soft);
+  color: var(--brand-strong);
+}
+
+.gym-dashboard-widget__header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.gym-dashboard-widget__body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px;
+}
+
+.gym-dashboard-primary-metric {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-left: 4px solid #9cac54;
+  background: var(--energy-lime-faint);
+  padding: 13px 15px;
+}
+
+.gym-dashboard-primary-metric strong {
+  font-family: var(--font-data);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.gym-dashboard-primary-metric span {
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gym-dashboard-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: 18px 0 0;
+  border-top: 1px solid hsl(var(--border));
+  border-left: 1px solid hsl(var(--border));
+}
+
+.gym-dashboard-status-grid > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-right: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 12px;
+}
+
+.gym-dashboard-status-grid dt {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gym-dashboard-status-grid dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.gym-dashboard-status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border: 1px solid hsl(var(--primary));
+  border-radius: 50%;
+  background: white;
+}
+
+.gym-dashboard-status-dot.is-active {
+  background: var(--energy-lime);
+}
+
+.gym-dashboard-status-dot.is-hidden {
+  background: var(--mint);
+}
+
+.gym-dashboard-status-dot.is-suspended {
+  border-color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.55);
+}
+
+.gym-dashboard-status-dot.is-unlinked {
+  border-color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted-foreground) / 0.22);
+}
+
+.gym-dashboard-dual-metric {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 14px;
+  border: 1px solid hsl(var(--border));
+}
+
+.gym-dashboard-dual-metric > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.gym-dashboard-dual-metric > div:first-child {
+  border-right: 1px solid hsl(var(--border));
+  background: var(--energy-lime-faint);
+}
+
+.gym-dashboard-dual-metric dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gym-dashboard-dual-metric dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.gym-dashboard-record-list,
+.gym-dashboard-compact-list,
+.gym-dashboard-appointment-list,
+.gym-dashboard-alert-list {
+  display: grid;
+}
+
+.gym-dashboard-record-list article {
+  display: grid;
+  gap: 5px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 11px 0;
+}
+
+.gym-dashboard-record-list article:first-child {
+  padding-top: 0;
+}
+
+.gym-dashboard-record-list article:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gym-dashboard-record-list article > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gym-dashboard-record-list strong,
+.gym-dashboard-compact-list strong,
+.gym-dashboard-appointment-list strong,
+.gym-dashboard-alert-list strong {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gym-dashboard-record-list p {
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+
+.gym-dashboard-record-list dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+}
+
+.gym-dashboard-record-list dl > div {
+  display: flex;
+  gap: 5px;
+  font-size: 10px;
+}
+
+.gym-dashboard-record-list dt {
+  color: hsl(var(--muted-foreground));
+}
+
+.gym-dashboard-record-list dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.gym-dashboard-compact-list article,
+.gym-dashboard-appointment-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 12px 0;
+}
+
+.gym-dashboard-compact-list article:first-child,
+.gym-dashboard-appointment-list article:first-child {
+  padding-top: 0;
+}
+
+.gym-dashboard-compact-list article:last-child,
+.gym-dashboard-appointment-list article:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gym-dashboard-record-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid hsl(var(--border));
+  background: var(--energy-lime-faint);
+  color: hsl(var(--primary));
+}
+
+.gym-dashboard-compact-list article > div:nth-child(2),
+.gym-dashboard-appointment-list article > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.gym-dashboard-compact-list article > div:nth-child(2) span,
+.gym-dashboard-appointment-list article > div span {
+  overflow: hidden;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gym-dashboard-compact-list article > div:last-child {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+
+.gym-dashboard-compact-list time,
+.gym-dashboard-alert-list time {
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-data);
+  font-size: 9px;
+}
+
+.gym-dashboard-appointment-list time {
+  width: 72px;
+  color: hsl(var(--primary));
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.gym-dashboard-appointment-list article.is-cancelled {
+  color: hsl(var(--muted-foreground));
+}
+
+.gym-dashboard-alert-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.gym-dashboard-alert-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid hsl(var(--border));
+  border-left-width: 4px;
+  padding: 12px;
+}
+
+.gym-dashboard-alert-list article.is-high {
+  border-left-color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.06);
+}
+
+.gym-dashboard-alert-list article.is-medium {
+  border-left-color: hsl(var(--destructive) / 0.55);
+}
+
+.gym-dashboard-alert-list article.is-low {
+  border-left-color: #9cac54;
+  background: var(--energy-lime-faint);
+}
+
+.gym-dashboard-alert-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.gym-dashboard-alert-list article.is-high .gym-dashboard-alert-icon,
+.gym-dashboard-alert-list article.is-medium .gym-dashboard-alert-icon {
+  color: hsl(var(--destructive));
+}
+
+.gym-dashboard-alert-list article.is-low .gym-dashboard-alert-icon {
+  color: hsl(var(--primary));
+}
+
+.gym-dashboard-alert-list article > div:nth-child(2) {
+  display: grid;
+  gap: 3px;
+}
+
+.gym-dashboard-alert-list article > div:nth-child(2) span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-dashboard-alert-list article > div:last-child {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+
+.gym-dashboard-state {
+  display: grid;
+  min-height: 220px;
+  place-content: center;
+  gap: 10px;
+}
+
+.gym-dashboard-state.is-loading {
+  width: 100%;
+  place-content: stretch;
+}
+
+.gym-dashboard-state.is-loading > div:first-of-type {
+  background: var(--energy-lime-soft);
+}
+
+.gym-dashboard-state.is-error {
+  justify-items: center;
+  border: 1px solid hsl(var(--destructive) / 0.35);
+  background: hsl(var(--destructive) / 0.05);
+  padding: 20px;
+  color: hsl(var(--destructive));
+  text-align: center;
+}
+
+.gym-dashboard-state.is-error strong {
+  max-width: 32ch;
+  font-size: 12px;
+}
+
+.gym-dashboard-empty {
+  min-height: 220px;
+  border: 0;
+}
+
+.gym-dashboard-all-hidden {
+  min-height: 360px;
+  background: white;
+}
+
+.gym-dashboard-customization {
+  max-height: min(90vh, 720px);
+  max-width: 620px;
+  overflow-y: auto;
+}
+
+.gym-dashboard-customization__list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gym-dashboard-customization__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid hsl(var(--border));
+  padding: 10px 11px;
+}
+
+.gym-dashboard-customization__list label {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.gym-dashboard-customization__list label > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.gym-dashboard-customization__list strong {
+  font-size: 12px;
+}
+
+.gym-dashboard-customization__list small {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-dashboard-customization__list li > div {
+  display: flex;
+  gap: 2px;
+}
+
+.gym-dashboard-customization__list li > div button {
+  width: 34px;
+  height: 34px;
+}
+
+.gym-dashboard-customization__footer {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 920px) {
+  .gym-dashboard-grid,
+  .gym-dashboard-alert-list {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-dashboard-grid__item[data-widget-id='alerts'] {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .gym-dashboard-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gym-dashboard-toolbar p:empty {
+    display: none;
+  }
+
+  .gym-dashboard-toolbar button {
+    width: 100%;
+  }
+
+  .gym-dashboard-widget {
+    min-height: 0;
+  }
+
+  .gym-dashboard-widget__header {
+    align-items: flex-start;
+  }
+
+  .gym-dashboard-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-dashboard-compact-list article,
+  .gym-dashboard-appointment-list article,
+  .gym-dashboard-alert-list article {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .gym-dashboard-compact-list article > div:last-child,
+  .gym-dashboard-appointment-list article > span,
+  .gym-dashboard-alert-list article > div:last-child {
+    grid-column: 2;
+    justify-items: start;
+  }
+
+  .gym-dashboard-customization__footer {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gym-dashboard-customization__footer > span {
+    display: none;
+  }
+
+  .gym-dashboard-customization__footer > button:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gym-dashboard-page *,
+  .gym-dashboard-page *::before,
+  .gym-dashboard-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

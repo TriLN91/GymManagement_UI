@@ -12,6 +12,7 @@ interface AuthState {
 
   hydrate: () => void;
   setSession: (user: AuthUser) => void;
+  updateUser: (updates: Pick<AuthUser, 'fullName' | 'email' | 'avatarUrl'>) => void;
   clear: () => void;
   hasRole: (role: Role | ReadonlyArray<Role>) => boolean;
 }
@@ -28,9 +29,11 @@ export const useAuthStore = create<AuthState>()(
 
         hydrate: () => {
           tokenManager.hydrate();
+          const isAuthenticated = tokenManager.getAccess() !== null;
           set({
             isHydrated: true,
-            isAuthenticated: tokenManager.getAccess() !== null,
+            isAuthenticated,
+            user: isAuthenticated ? get().user : null,
           });
         },
 
@@ -38,6 +41,11 @@ export const useAuthStore = create<AuthState>()(
           sessionStorage.setItem(STORAGE_KEYS.tenantId, user.tenantId);
           set({ user, isAuthenticated: true });
         },
+
+        updateUser: (updates) =>
+          set((state) => ({
+            user: state.user ? { ...state.user, ...updates } : null,
+          })),
 
         clear: () => {
           tokenManager.clear();

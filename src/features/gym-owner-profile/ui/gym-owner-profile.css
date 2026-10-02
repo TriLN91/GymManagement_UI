@@ -1,0 +1,412 @@
+.gym-profile-page {
+  display: grid;
+  gap: 20px;
+}
+
+.gym-profile-summary {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid hsl(var(--border));
+  background: var(--energy-lime-faint);
+  padding: 22px 24px;
+}
+
+.gym-profile-summary__mark {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 50%;
+  background: var(--energy-lime-soft);
+  color: var(--brand-strong);
+}
+
+.gym-profile-summary span {
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gym-profile-summary h1 {
+  margin: 3px 0 5px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.25;
+}
+
+.gym-profile-summary p {
+  max-width: 70ch;
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.gym-profile-summary dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(110px, auto));
+  gap: 24px;
+  margin: 0;
+}
+
+.gym-profile-summary dl > div {
+  display: grid;
+  gap: 4px;
+}
+
+.gym-profile-summary dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+
+.gym-profile-summary dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gym-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.gym-profile-section-head {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 14px 20px;
+}
+
+.gym-profile-section-head > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: hsl(var(--primary));
+}
+
+.gym-profile-section-head h1,
+.gym-profile-section-head h2 {
+  margin: 0;
+  color: hsl(var(--foreground));
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.gym-profile-detail-list {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+}
+
+.gym-profile-detail-list > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.4fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.gym-profile-detail-list.is-roomy {
+  gap: 18px;
+}
+
+.gym-profile-detail-list dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+}
+
+.gym-profile-detail-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.gym-profile-branch-preview {
+  display: grid;
+  gap: 10px;
+}
+
+.gym-profile-branch-preview article {
+  display: grid;
+  gap: 7px;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 12px;
+}
+
+.gym-profile-branch-preview article:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gym-profile-branch-preview article > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gym-profile-branch-preview article > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+}
+
+.gym-profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gym-profile-chips > span {
+  border: 1px solid hsl(var(--border));
+  background: var(--energy-lime-faint);
+  padding: 4px 8px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.gym-profile-legal-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid hsl(var(--border));
+  padding: 13px;
+  color: hsl(var(--primary));
+}
+
+.gym-profile-legal-summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.gym-profile-legal-summary span {
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+}
+
+.gym-profile-notice {
+  margin: 12px 0 0;
+  border-left: 3px solid hsl(var(--primary));
+  background: var(--energy-lime-faint);
+  padding: 10px 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.gym-profile-toolbar,
+.gym-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gym-profile-actions {
+  justify-content: flex-end;
+}
+
+.gym-profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gym-profile-field {
+  display: grid;
+  gap: 7px;
+}
+
+.gym-profile-field.is-wide {
+  grid-column: 1 / -1;
+}
+
+.gym-profile-field label,
+.gym-branch-facilities legend {
+  color: hsl(var(--foreground));
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.gym-branches-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.34fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.gym-branch-list-panel {
+  position: sticky;
+  top: 84px;
+}
+
+.gym-branch-list {
+  display: grid;
+  gap: 8px;
+}
+
+.gym-branch-list > button {
+  display: grid;
+  width: 100%;
+  gap: 6px;
+  border: 1px solid hsl(var(--border));
+  background: white;
+  padding: 12px;
+  color: hsl(var(--foreground));
+  text-align: left;
+  cursor: pointer;
+}
+
+.gym-branch-list > button.is-selected {
+  border-color: hsl(var(--primary) / 0.4);
+  background: var(--energy-lime-soft);
+}
+
+.gym-branch-list > button > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gym-branch-list small {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-branch-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.gym-branch-detail {
+  display: grid;
+  gap: 24px;
+}
+
+.gym-branch-amenities {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 18px;
+  font-size: 12px;
+}
+
+.gym-branch-form-dialog {
+  max-height: min(90vh, 780px);
+  max-width: 760px;
+  overflow-y: auto;
+}
+
+.gym-branch-facilities {
+  grid-column: 1 / -1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.gym-branch-facilities > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.gym-branch-facilities label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid hsl(var(--border));
+  padding: 9px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .gym-profile-summary {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .gym-profile-summary__mark {
+    width: 56px;
+    height: 56px;
+  }
+
+  .gym-profile-summary dl {
+    grid-column: 1 / -1;
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 14px;
+  }
+
+  .gym-profile-grid,
+  .gym-branches-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-branch-list-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .gym-profile-summary {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .gym-profile-summary dl,
+  .gym-profile-form,
+  .gym-branch-facilities > div {
+    grid-template-columns: 1fr;
+  }
+
+  .gym-profile-detail-list > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .gym-profile-section-head,
+  .gym-branch-detail-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gym-branch-detail-actions {
+    justify-content: stretch;
+  }
+
+  .gym-branch-detail-actions > button {
+    flex: 1 1 auto;
+  }
+
+  .gym-profile-actions > button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gym-profile-page *,
+  .gym-profile-page *::before,
+  .gym-profile-page *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

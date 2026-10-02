@@ -4,26 +4,44 @@
 
 @layer base {
   :root {
+    /* Canonical product typography. Feature CSS should consume these roles. */
+    --font-ui:
+      'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Be Vietnam Pro', system-ui, sans-serif;
+    --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+
+    /* Canonical authenticated-product palette discovered from Member and Trainer. */
+    --brand: 117.143 29.577% 27.843%;
+    --brand-strong: #173917;
+    --brand-secondary: #1c6a5b;
+    --canvas: 71 52% 96%;
+    --surface: #ffffff;
+    --ink: 72 100% 6%;
+    --text-muted: 100 7% 41%;
+    --outline: 80 16% 82%;
+    --mint: #a7f0dd;
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: var(--ink);
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    /* FR-DSG-01 brand: green */
-    --primary: 142 71% 45%;
+    --primary: var(--brand);
     --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --muted-foreground: var(--text-muted);
+    --accent: var(--canvas);
+    --accent-foreground: var(--brand);
+    --energy-lime: #e5f796;
+    --energy-lime-soft: color-mix(in srgb, var(--energy-lime) 28%, white);
+    --energy-lime-faint: color-mix(in srgb, var(--energy-lime) 14%, white);
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142 71% 45%;
+    --border: var(--outline);
+    --input: var(--outline);
+    --ring: var(--brand);
     --radius: 0.5rem;
   }
 
@@ -34,7 +52,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 142 71% 45%;
+    --primary: var(--brand);
     --primary-foreground: 0 0% 100%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -46,7 +64,33 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 142 71% 45%;
+    --ring: var(--brand);
+    --energy-lime-soft: color-mix(in srgb, var(--energy-lime) 18%, hsl(240 10% 3.9%));
+    --energy-lime-faint: color-mix(in srgb, var(--energy-lime) 9%, hsl(240 10% 3.9%));
+  }
+}
+
+@layer components {
+  .energy-dialog-header {
+    margin: -1.5rem -1.5rem 0.5rem;
+    padding: 1rem 3rem 1rem 1.5rem;
+    border-bottom: 1px solid color-mix(in srgb, #9cac54 42%, white);
+    background: var(--energy-lime-soft);
+  }
+
+  .portal-attention-card {
+    border-color: color-mix(in srgb, #9cac54 62%, white);
+    background: var(--energy-lime-soft);
+  }
+
+  .portal-empty-state::before {
+    content: '';
+    display: block;
+    width: 2.75rem;
+    height: 0.375rem;
+    margin: 0 auto 1rem;
+    border-radius: 999px;
+    background: var(--energy-lime);
   }
 }
 
@@ -56,14 +100,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family:
-      'Inter',
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      'Segoe UI',
-      Roboto,
-      sans-serif;
+    font-family: var(--font-ui);
+    font-optical-sizing: auto;
     font-feature-settings:
       'rlig' 1,
       'calt' 1;

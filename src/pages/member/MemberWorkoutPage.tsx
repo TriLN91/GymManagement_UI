@@ -1,5 +1,5 @@
-import { ComingSoonPage } from '@/pages/ComingSoonPage';
+import { WorkoutPlans } from '@/features/workout-plans';
 
 export function MemberWorkoutPage() {
-  return <ComingSoonPage />;
+  return <WorkoutPlans />;
 }

@@ -19,7 +19,11 @@ export function EmptyState({ icon: Icon, title, description, action, className }
         className,
       )}
     >
-      {Icon ? <Icon className="h-10 w-10 text-muted-foreground" aria-hidden /> : null}
+      {Icon ? (
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-energy text-forest">
+          <Icon className="h-6 w-6" aria-hidden />
+        </span>
+      ) : null}
       <h3 className="text-base font-semibold">{title}</h3>
       {description ? <p className="max-w-sm text-sm text-muted-foreground">{description}</p> : null}
       {action ? <div className="mt-2">{action}</div> : null}

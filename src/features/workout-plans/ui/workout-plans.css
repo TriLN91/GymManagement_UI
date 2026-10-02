@@ -1,0 +1,941 @@
+.workout-plans,
+.workout-state,
+.workout-skeleton {
+  --wp-primary: #1d441d;
+  --wp-primary-strong: #173917;
+  --wp-brand: #345c32;
+  --wp-secondary: #1c6a5b;
+  --wp-mint: #a7f0dd;
+  --wp-highlight: var(--energy-lime-soft);
+  --wp-surface-low: var(--energy-lime);
+  --wp-surface-high: color-mix(in srgb, var(--energy-lime) 68%, white);
+  --wp-page: #f8faef;
+  --wp-surface: #ffffff;
+  --wp-ink: #181e00;
+  --wp-muted: #5e675c;
+  --wp-outline: #b7bf9a;
+  --wp-error: #9f1c16;
+  min-height: 100%;
+  color: var(--wp-ink);
+  background: var(--wp-page);
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.workout-plans {
+  padding: 20px clamp(16px, 3vw, 48px) 0;
+}
+
+.workout-system-row {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--wp-outline);
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.workout-system-row > div,
+.workout-featured__topline > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.workout-system-row strong {
+  color: var(--wp-primary);
+}
+
+.workout-system-row__separator {
+  color: var(--wp-outline);
+}
+
+.workout-live-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--wp-secondary);
+}
+
+.workout-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--wp-secondary);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workout-filters {
+  display: flex;
+  max-width: 620px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--wp-outline);
+  background: var(--wp-surface);
+}
+
+.workout-filters button {
+  min-height: 34px;
+  border: 1px solid var(--wp-outline);
+  border-radius: 999px;
+  padding: 7px 14px;
+  color: var(--wp-primary);
+  background: transparent;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.workout-filters button:hover {
+  border-color: var(--wp-primary);
+  background: color-mix(in srgb, var(--wp-mint) 35%, white);
+}
+
+.workout-filters button.is-active {
+  border-color: var(--wp-primary);
+  color: var(--wp-primary);
+  background: var(--energy-lime);
+}
+
+.workout-featured {
+  overflow: hidden;
+  border: 1px solid var(--wp-outline);
+  background: var(--wp-surface);
+}
+
+.workout-featured__topline {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--wp-outline);
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.workout-featured__topline strong {
+  color: var(--wp-primary);
+  font-weight: 700;
+}
+
+.workout-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.workout-status--active {
+  color: var(--wp-primary);
+  background: var(--wp-mint);
+}
+
+.workout-status--completed {
+  color: var(--wp-primary);
+  background: var(--energy-lime);
+}
+
+.workout-status--ready {
+  border: 1px solid var(--wp-outline);
+  color: var(--wp-primary);
+  background: var(--wp-page);
+}
+
+.workout-featured__grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 4fr) minmax(0, 8fr);
+}
+
+.workout-featured__media {
+  position: relative;
+  min-height: 365px;
+  overflow: hidden;
+  border-right: 1px solid var(--wp-outline);
+  background: var(--wp-brand);
+}
+
+.workout-featured__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.workout-featured__media-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(29, 68, 29, 0.18), transparent 50%),
+    linear-gradient(0deg, rgba(23, 57, 23, 0.56), transparent 48%);
+  mix-blend-mode: multiply;
+}
+
+.workout-featured__preview {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  padding: 7px 9px;
+  color: var(--wp-primary);
+  background: rgba(255, 255, 255, 0.9);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.workout-featured__target {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.workout-featured__target span,
+.workout-featured__target strong {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.workout-featured__target span {
+  color: var(--wp-muted);
+}
+
+.workout-featured__target strong {
+  color: var(--wp-primary);
+}
+
+.workout-featured__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  padding: clamp(22px, 3vw, 40px);
+}
+
+.workout-featured__copy {
+  display: grid;
+  gap: 12px;
+}
+
+.workout-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.workout-tags span {
+  padding: 5px 8px;
+  color: var(--wp-primary);
+  background: var(--wp-surface-high);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workout-tags span:last-child {
+  color: var(--wp-secondary);
+  background: transparent;
+}
+
+.workout-featured h2 {
+  max-width: 760px;
+  margin: 0;
+  color: var(--wp-primary);
+  font-family: var(--font-display);
+  font-size: clamp(25px, 2.5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.workout-featured__copy > p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--wp-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.workout-featured__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  border-top: 1px solid var(--wp-outline);
+  border-bottom: 1px solid var(--wp-outline);
+}
+
+.workout-featured__metrics > div {
+  padding: 15px 12px 14px 0;
+}
+
+.workout-featured__metrics dt {
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workout-featured__metrics dd {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 3px 0 0;
+  color: var(--wp-primary);
+  font-family: 'IBM Plex Mono', sans-serif;
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.workout-featured__metrics dd small {
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.workout-featured__metrics dd.workout-featured__tier {
+  color: var(--wp-secondary);
+}
+
+.workout-featured__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.workout-featured__progress {
+  width: min(100%, 520px);
+}
+
+.workout-featured__progress > div:first-child,
+.workout-card-progress__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+  color: var(--wp-primary);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workout-featured__progress strong {
+  color: var(--wp-secondary);
+}
+
+.workout-progress {
+  height: 6px;
+  padding: 1px;
+  border: 1px solid var(--wp-outline);
+  background: var(--wp-highlight);
+}
+
+.workout-progress--large {
+  height: 10px;
+}
+
+.workout-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--energy-lime);
+}
+
+.workout-locked-action {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 5px;
+  justify-items: end;
+}
+
+.workout-action {
+  display: inline-flex;
+  min-width: 210px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #8b9580;
+  border-radius: 999px;
+  padding: 10px 18px;
+  color: #687061;
+  background: #e7eadf;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  cursor: not-allowed;
+}
+
+.workout-locked-note {
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.workout-archive {
+  padding: 34px 0 42px;
+}
+
+.workout-archive > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wp-outline);
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.workout-archive > header > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--wp-primary);
+}
+
+.workout-archive h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  text-transform: none;
+}
+
+.workout-archive > header > div > span {
+  color: var(--wp-secondary);
+}
+
+.workout-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-left: 1px solid var(--wp-outline);
+}
+
+.workout-plan-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+  border-right: 1px solid var(--wp-outline);
+  border-bottom: 1px solid var(--wp-outline);
+  padding: clamp(18px, 2.2vw, 28px);
+  background: var(--wp-surface);
+}
+
+.workout-plan-card__meta {
+  display: flex;
+  min-height: 30px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--wp-outline);
+}
+
+.workout-plan-card__meta > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+
+.workout-code {
+  padding: 5px 8px;
+  color: var(--wp-primary);
+  background: var(--wp-surface-high);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.workout-plan-card__level {
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workout-plan-card__copy {
+  display: grid;
+  min-height: 122px;
+  align-content: start;
+  gap: 6px;
+}
+
+.workout-plan-card__category {
+  color: var(--wp-secondary);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.workout-plan-card h3 {
+  margin: 0;
+  color: var(--wp-primary);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 27px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.14;
+}
+
+.workout-plan-card__copy p {
+  margin: 0;
+  color: var(--wp-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.workout-plan-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--wp-outline);
+  border-bottom: 1px solid var(--wp-outline);
+}
+
+.workout-plan-card__metrics > div {
+  min-width: 0;
+  padding: 11px 8px 11px 0;
+}
+
+.workout-plan-card__metrics dt {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--wp-muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workout-plan-card__metrics dd {
+  overflow: hidden;
+  margin: 5px 0 0;
+  color: var(--wp-primary);
+  font-family: 'IBM Plex Mono', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workout-plan-card__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.workout-card-progress {
+  min-width: 150px;
+  flex: 1;
+}
+
+.workout-card-progress__label {
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+
+.workout-card-progress__label strong {
+  color: var(--wp-secondary);
+}
+
+.workout-card-action {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--wp-outline);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #687061;
+  background: #eef0e8;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: not-allowed;
+}
+
+.workout-filter-empty,
+.workout-state {
+  display: grid;
+  min-height: 320px;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  border: 1px solid var(--wp-outline);
+  padding: 32px;
+  color: var(--wp-primary);
+  text-align: center;
+}
+
+.workout-filter-empty {
+  margin-top: 16px;
+  min-height: 220px;
+  background: var(--wp-surface);
+}
+
+.workout-filter-empty h3,
+.workout-state h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 25px;
+}
+
+.workout-filter-empty p,
+.workout-state p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--wp-muted);
+  font-size: 13px;
+}
+
+.workout-state {
+  min-height: calc(100vh - 64px);
+  border: 0;
+}
+
+.workout-state[role='alert'] {
+  color: var(--wp-error);
+}
+
+.workout-state button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid var(--wp-primary);
+  border-radius: 999px;
+  padding: 9px 16px;
+  color: var(--wp-highlight);
+  background: var(--wp-primary);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.workout-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 calc(clamp(16px, 3vw, 48px) * -1);
+  padding: 15px clamp(16px, 3vw, 48px);
+  border-top: 1px solid var(--wp-outline);
+  color: var(--wp-muted);
+  background: var(--wp-highlight);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.workout-skeleton {
+  display: grid;
+  gap: 22px;
+  padding: 30px;
+}
+
+.workout-skeleton > div,
+.workout-skeleton__grid > div {
+  background: linear-gradient(
+    90deg,
+    rgba(183, 191, 154, 0.22),
+    rgba(255, 255, 255, 0.85),
+    rgba(183, 191, 154, 0.22)
+  );
+  background-size: 220% 100%;
+  animation: workout-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.workout-skeleton__heading {
+  width: min(460px, 72%);
+  height: 84px;
+}
+
+.workout-skeleton__featured {
+  height: 410px;
+}
+
+.workout-skeleton__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+}
+
+.workout-skeleton__grid > div {
+  height: 300px;
+}
+
+@keyframes workout-skeleton-pulse {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+@media (max-width: 1180px) {
+  .workout-filters {
+    max-width: none;
+    justify-content: flex-start;
+  }
+
+  .workout-featured__grid {
+    grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .workout-featured__metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .workout-plans {
+    padding-top: 12px;
+  }
+
+  .workout-system-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px 0;
+  }
+
+  .workout-system-row__separator,
+  .workout-system-row > div > span:last-child {
+    display: none;
+  }
+
+  .workout-filters {
+    width: calc(100vw - 32px);
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .workout-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .workout-filters button {
+    flex: 0 0 auto;
+  }
+
+  .workout-featured__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-featured__media {
+    min-height: 250px;
+    border-right: 0;
+    border-bottom: 1px solid var(--wp-outline);
+  }
+
+  .workout-plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-plan-card__copy {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .workout-featured__topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .workout-featured__media {
+    min-height: 210px;
+  }
+
+  .workout-featured__target {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .workout-featured__content {
+    gap: 20px;
+    padding: 18px 16px;
+  }
+
+  .workout-featured__metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .workout-featured__metrics > div {
+    padding-right: 4px;
+  }
+
+  .workout-featured__metrics dd {
+    font-size: 28px;
+  }
+
+  .workout-featured__metrics dd small {
+    font-size: 11px;
+  }
+
+  .workout-featured__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .workout-locked-action {
+    justify-items: stretch;
+  }
+
+  .workout-action {
+    width: 100%;
+  }
+
+  .workout-locked-note {
+    text-align: center;
+  }
+
+  .workout-archive > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .workout-archive h2 {
+    font-size: 22px;
+  }
+
+  .workout-plan-card {
+    padding: 16px;
+  }
+
+  .workout-plan-card__meta {
+    align-items: flex-start;
+  }
+
+  .workout-plan-card__metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .workout-plan-card__apparatus {
+    display: none;
+  }
+
+  .workout-plan-card__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .workout-card-action {
+    width: 100%;
+  }
+
+  .workout-footnote {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .workout-skeleton {
+    padding: 18px;
+  }
+
+  .workout-skeleton__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workout-skeleton > div,
+  .workout-skeleton__grid > div {
+    animation: none;
+  }
+}
+
+.workout-action[href] {
+  border-color: var(--wp-primary);
+  color: var(--wp-highlight);
+  background: var(--wp-primary);
+  cursor: pointer;
+}
+
+.workout-action[href]:hover {
+  background: #244d29;
+}

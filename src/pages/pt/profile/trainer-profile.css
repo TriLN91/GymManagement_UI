@@ -1,0 +1,640 @@
+.trainer-profile-page {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 12px 0 60px;
+  color: #153e2f;
+  font-family: var(--font-ui);
+}
+
+.trainer-profile-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.trainer-profile-tools.is-between {
+  justify-content: space-between;
+}
+.trainer-profile-primary,
+.trainer-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid #153e2f;
+  font-size: 12px;
+  font-weight: 800;
+}
+.trainer-profile-primary {
+  background: #153e2f;
+  color: #fff;
+}
+.trainer-back-link {
+  min-height: 34px;
+  margin: 0;
+  padding: 6px 10px;
+  border-color: rgba(21, 62, 47, 0.18);
+  color: #315c49;
+}
+
+.trainer-profile-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 22px;
+  padding: 28px;
+  background: #153e2f;
+  color: #fff;
+}
+.trainer-profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--energy-lime);
+  color: #153e2f;
+  font-size: 13px;
+  font-weight: 850;
+}
+.trainer-profile-avatar.is-large {
+  width: 84px;
+  height: 84px;
+  font-size: 22px;
+}
+.trainer-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.trainer-profile-hero > div > span {
+  color: var(--energy-lime);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.trainer-profile-hero h2 {
+  margin: 6px 0 2px;
+  font-size: 28px;
+}
+.trainer-profile-hero p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
+}
+.trainer-profile-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 82px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+.trainer-profile-complete strong {
+  font-size: 25px;
+}
+.trainer-profile-complete span {
+  color: rgba(255, 255, 255, 0.58) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.04em !important;
+}
+
+.trainer-profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  border-top: 0;
+  background: #fff;
+}
+.trainer-profile-metrics article {
+  padding: 17px 20px;
+  border-left: 1px solid rgba(21, 62, 47, 0.09);
+}
+.trainer-profile-metrics article:first-child {
+  border-left: 0;
+}
+.trainer-profile-metrics span,
+.trainer-profile-metrics strong {
+  display: block;
+}
+.trainer-profile-metrics span {
+  margin-bottom: 5px;
+  color: rgba(21, 62, 47, 0.48);
+  font-size: 9px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.trainer-profile-metrics strong {
+  font-size: 15px;
+}
+.trainer-profile-metrics small {
+  color: rgba(21, 62, 47, 0.5);
+  font-size: 10px;
+}
+
+.trainer-profile-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 0.75fr;
+  gap: 18px;
+  margin-top: 20px;
+}
+.trainer-profile-grid > aside {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.trainer-profile-panel {
+  padding: 24px;
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  background: #fff;
+}
+.trainer-profile-panel h2 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.trainer-profile-panel.is-about h2:not(:first-child) {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(21, 62, 47, 0.09);
+}
+.trainer-profile-panel p,
+.trainer-profile-panel blockquote {
+  margin: 0;
+  color: rgba(21, 62, 47, 0.68);
+  font-size: 13px;
+  line-height: 1.68;
+}
+.trainer-profile-panel blockquote {
+  padding-left: 15px;
+  border-left: 2px solid #a8c75c;
+  font-style: normal;
+}
+.trainer-specialty-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.trainer-specialty-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--energy-lime-soft);
+  font-size: 10px;
+  font-weight: 750;
+}
+.trainer-profile-panel dl {
+  margin: 0;
+}
+.trainer-profile-panel dl > div {
+  padding: 12px 0;
+  border-top: 1px solid rgba(21, 62, 47, 0.08);
+}
+.trainer-profile-panel dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(21, 62, 47, 0.5);
+  font-size: 10px;
+}
+.trainer-profile-panel dd {
+  margin: 5px 0 0 22px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.trainer-gym-card {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  min-height: 180px;
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  background: #fff;
+}
+.trainer-gym-mark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--trainer-gym-accent);
+  color: #fff;
+}
+.trainer-gym-mark > span {
+  position: absolute;
+  bottom: 12px;
+  font-size: 22px;
+  font-weight: 900;
+  opacity: 0.16;
+}
+.trainer-gym-mark::after {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 1px;
+  transform: rotate(-45deg);
+  background: rgba(255, 255, 255, 0.24);
+}
+.trainer-gym-card > div:last-child {
+  padding: 18px;
+}
+.trainer-gym-card > div > span {
+  color: #4d765f;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.trainer-gym-card h2 {
+  margin: 7px 0 5px;
+  font-size: 16px;
+}
+.trainer-gym-card p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: rgba(21, 62, 47, 0.54);
+  font-size: 10px;
+}
+.trainer-gym-card em {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 22px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+.trainer-gym-card:hover {
+  border-color: #88a934;
+}
+
+.trainer-edit-layout {
+  display: grid;
+  grid-template-columns: 245px 1fr;
+  gap: 20px;
+}
+.trainer-avatar-editor,
+.trainer-edit-form {
+  padding: 24px;
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  background: #fff;
+}
+.trainer-avatar-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.trainer-avatar-editor > strong {
+  font-size: 12px;
+}
+.trainer-avatar-editor > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #153e2f;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.trainer-avatar-editor > label input {
+  display: none;
+}
+.trainer-avatar-editor > small {
+  color: rgba(21, 62, 47, 0.48);
+  font-size: 9px;
+  line-height: 1.5;
+}
+.trainer-gym-lock {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #f1f5e6;
+  text-align: left;
+}
+.trainer-gym-lock svg {
+  flex: 0 0 auto;
+}
+.trainer-gym-lock span {
+  font-size: 10px;
+  line-height: 1.45;
+}
+.trainer-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+.trainer-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 17px;
+}
+.trainer-profile-field > span {
+  font-size: 10px;
+  font-weight: 800;
+}
+.trainer-profile-field input,
+.trainer-profile-field textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid rgba(21, 62, 47, 0.18);
+  background: #fbfcf8;
+  color: #153e2f;
+  font: inherit;
+  font-size: 12px;
+  outline: 0;
+}
+.trainer-profile-field textarea {
+  min-height: 92px;
+  padding-top: 11px;
+  resize: vertical;
+}
+.trainer-profile-field textarea.is-large {
+  min-height: 125px;
+}
+.trainer-profile-field input:focus,
+.trainer-profile-field textarea:focus {
+  border-color: #5d7e6e;
+  box-shadow: 0 0 0 3px rgba(168, 198, 58, 0.18);
+}
+.trainer-unit-input {
+  position: relative;
+}
+.trainer-unit-input input {
+  padding-right: 55px;
+}
+.trainer-unit-input span {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(21, 62, 47, 0.45);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.trainer-specialty-editor {
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(21, 62, 47, 0.09);
+}
+.trainer-specialty-editor h2 {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+.trainer-specialty-editor h2 small {
+  margin-left: 7px;
+  color: rgba(21, 62, 47, 0.42);
+  font-size: 9px;
+  font-weight: 600;
+}
+.trainer-specialty-editor > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.trainer-specialty-editor button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 35px;
+  padding: 7px 11px;
+  border: 1px solid rgba(21, 62, 47, 0.16);
+  background: #fff;
+  color: #315c49;
+  font-size: 10px;
+  font-weight: 750;
+}
+.trainer-specialty-editor button.is-selected {
+  border-color: #a8c75c;
+  background: var(--energy-lime);
+  color: #153e2f;
+}
+.trainer-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(21, 62, 47, 0.09);
+}
+.trainer-edit-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 41px;
+  padding: 9px 17px;
+  border: 1px solid #153e2f;
+  background: #fff;
+  color: #153e2f;
+  font-size: 10px;
+  font-weight: 800;
+}
+.trainer-edit-actions button.is-primary {
+  background: #153e2f;
+  color: #fff;
+}
+
+.trainer-readonly-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  background: var(--energy-lime-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+.trainer-gym-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) 1.2fr;
+  min-height: 330px;
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  background: #fff;
+}
+.trainer-gym-hero__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--trainer-gym-accent);
+  color: #fff;
+}
+.trainer-gym-hero__art > span {
+  position: absolute;
+  left: 24px;
+  bottom: 14px;
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.11;
+}
+.trainer-gym-hero__art i {
+  position: absolute;
+  width: 130%;
+  height: 1px;
+  transform: rotate(-28deg);
+  background: rgba(255, 255, 255, 0.25);
+}
+.trainer-gym-hero > div:last-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+}
+.trainer-verified {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 9px;
+  background: var(--energy-lime);
+  color: #315c49;
+  font-size: 9px;
+  font-weight: 850;
+}
+.trainer-gym-hero h1 {
+  margin: 15px 0 8px;
+  font-size: clamp(29px, 4vw, 45px);
+  letter-spacing: -0.035em;
+}
+.trainer-gym-hero p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: rgba(21, 62, 47, 0.57);
+  font-size: 12px;
+}
+.trainer-gym-hero > div:last-child > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(21, 62, 47, 0.1);
+}
+.trainer-gym-hero > div:last-child > div strong {
+  font-size: 10px;
+}
+.trainer-gym-hero > div:last-child > div em {
+  padding: 5px 8px;
+  background: var(--energy-lime);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 850;
+}
+.trainer-gym-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  border-top: 0;
+  background: #fff;
+}
+.trainer-gym-stats article {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 2px 7px;
+  padding: 18px;
+  border-left: 1px solid rgba(21, 62, 47, 0.09);
+}
+.trainer-gym-stats article:first-child {
+  border-left: 0;
+}
+.trainer-gym-stats svg {
+  grid-row: 1 / 3;
+}
+.trainer-gym-stats span {
+  color: rgba(21, 62, 47, 0.46);
+  font-size: 9px;
+}
+.trainer-gym-stats strong {
+  font-size: 11px;
+}
+.trainer-gym-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+.trainer-gym-content section {
+  padding: 24px;
+  border: 1px solid rgba(21, 62, 47, 0.13);
+  background: #fff;
+}
+.trainer-gym-content h2 {
+  margin: 0 0 13px;
+  font-size: 15px;
+}
+.trainer-gym-content p {
+  margin: 0;
+  color: rgba(21, 62, 47, 0.65);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.trainer-facility-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.trainer-facility-list span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px;
+  background: #f3f7e9;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .trainer-profile-grid,
+  .trainer-edit-layout,
+  .trainer-gym-hero {
+    grid-template-columns: 1fr;
+  }
+  .trainer-gym-hero__art {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 680px) {
+  .trainer-profile-hero {
+    grid-template-columns: auto 1fr;
+    padding: 22px;
+  }
+  .trainer-profile-complete {
+    grid-column: 1 / -1;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 0;
+  }
+  .trainer-profile-metrics,
+  .trainer-field-grid,
+  .trainer-gym-stats,
+  .trainer-gym-content {
+    grid-template-columns: 1fr;
+  }
+  .trainer-profile-metrics article,
+  .trainer-gym-stats article {
+    border-top: 1px solid rgba(21, 62, 47, 0.09);
+    border-left: 0;
+  }
+  .trainer-facility-list {
+    grid-template-columns: 1fr;
+  }
+}

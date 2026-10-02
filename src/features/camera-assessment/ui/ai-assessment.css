@@ -1,0 +1,177 @@
+.ai-assessment {
+  min-height: calc(100vh - 64px);
+  color: #142313;
+  background: #f5f7f2;
+}
+.ai-assessment__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d9e0d4;
+  padding: 16px clamp(24px, 4vw, 54px);
+  background: #fff;
+}
+.ai-assessment__header button,
+.ai-assessment__resume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  color: #244a28;
+  background: transparent;
+  font-weight: 700;
+}
+.ai-assessment__main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px clamp(24px, 4vw, 54px) 72px;
+}
+.ai-assessment__exercise-context {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #4d7250;
+}
+.ai-assessment__exercise-context svg {
+  color: #42724a;
+}
+.ai-assessment__exercise-context strong {
+  font-size: 18px;
+}
+.ai-assessment__workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 65fr) minmax(290px, 35fr);
+  margin-top: 0;
+  border: 1px solid #d7ded2;
+  border-radius: 20px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(29, 58, 31, 0.08);
+}
+.ai-assessment__preview {
+  display: grid;
+  min-height: 480px;
+  place-items: center;
+  background: #102617;
+}
+.ai-assessment__preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.ai-assessment__preview > div {
+  display: grid;
+  max-width: 340px;
+  place-items: center;
+  gap: 18px;
+  padding: 30px;
+  color: #c9d9c2;
+  text-align: center;
+  line-height: 1.5;
+}
+.ai-assessment__preview svg {
+  color: #bdf38c;
+}
+.ai-assessment__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px;
+}
+.ai-assessment__upload,
+.ai-assessment__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 11px;
+  padding: 13px 16px;
+  font-weight: 800;
+}
+.ai-assessment__upload {
+  border: 1px solid #315d37;
+  color: #244a28;
+  background: var(--energy-lime-soft);
+  cursor: pointer;
+}
+.ai-assessment__upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.ai-assessment__controls > span {
+  color: #6a7468;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.ai-assessment__controls dl {
+  display: grid;
+  gap: 11px;
+  margin: 10px 0;
+  border-top: 1px solid #e1e6de;
+  padding-top: 18px;
+}
+.ai-assessment__controls dl div {
+  display: grid;
+  gap: 4px;
+}
+.ai-assessment__controls dt {
+  color: #6a7468;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.ai-assessment__controls dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+.ai-assessment__submit {
+  margin-top: auto;
+  border: 1px solid #173d1c;
+  color: #fff;
+  background: #173d1c;
+}
+.ai-assessment__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.ai-assessment__pending {
+  display: grid;
+  gap: 6px;
+  border-left: 3px solid #78a94e;
+  padding: 11px 12px;
+  background: #f3faed;
+}
+.ai-assessment__pending span {
+  color: #5d6c59;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.ai-assessment__resume {
+  margin-top: 24px;
+  border: 1px solid #cfd8cb;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .ai-assessment__workspace {
+    grid-template-columns: 1fr;
+  }
+  .ai-assessment__preview {
+    min-height: 380px;
+  }
+}
+@media (max-width: 650px) {
+  .ai-assessment__main {
+    padding-top: 32px;
+  }
+  .ai-assessment__preview {
+    min-height: 280px;
+  }
+  .ai-assessment__header span {
+    display: none;
+  }
+}
