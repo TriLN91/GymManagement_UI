@@ -31,10 +31,7 @@ export function GymOwnerSettlementsPage() {
 
   const exportSettlements = () => {
     if (gymOwnerSettlementMockResource.state !== 'loaded') return;
-    downloadCsv(
-      'gym-settlements.csv',
-      createSettlementsCsv(gymOwnerSettlementMockResource.data),
-    );
+    downloadCsv('gym-settlements.csv', createSettlementsCsv(gymOwnerSettlementMockResource.data));
   };
 
   return (

@@ -1,4 +1,11 @@
 .gym-owner-onboarding {
+  --color-primary: hsl(var(--brand));
+  --color-card: var(--surface);
+  --color-border: hsl(var(--outline));
+  --color-muted-foreground: hsl(var(--text-muted));
+  --color-foreground: hsl(var(--ink));
+  --color-accent: var(--energy-lime);
+  --color-destructive: hsl(var(--destructive));
   --onboarding-border: var(--color-border, #dce6dc);
   --onboarding-muted: var(--color-muted-foreground, #607064);
   color: var(--color-foreground, #122219);

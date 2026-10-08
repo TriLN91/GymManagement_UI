@@ -8,7 +8,7 @@ test.describe('Coaching vertical slice', () => {
     await page.reload();
     await page.getByLabel(/email/i).fill('member@demo.gym');
     await page.getByLabel(/password/i).fill('Password1!');
-    await page.getByRole('button', { name: /sign in/i }).click();
+    await page.getByRole('button', { name: /đăng nhập/i }).click();
     await expect(page).toHaveURL(/\/app$/);
   });
 

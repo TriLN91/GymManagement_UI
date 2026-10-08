@@ -1,17 +1,19 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import type { AuthUser, Role } from '@/entities/user';
+import type { AuthUser, EmailOtpChallenge, Role } from '@/entities/user';
 import { tokenManager } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/shared/config/constants';
 
 interface AuthState {
   user: AuthUser | null;
+  pendingOtpChallenge: EmailOtpChallenge | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
 
   hydrate: () => void;
   setSession: (user: AuthUser) => void;
+  setPendingOtpChallenge: (challenge: EmailOtpChallenge | null) => void;
   updateUser: (updates: Pick<AuthUser, 'fullName' | 'email' | 'avatarUrl'>) => void;
   clear: () => void;
   hasRole: (role: Role | ReadonlyArray<Role>) => boolean;
@@ -24,6 +26,7 @@ export const useAuthStore = create<AuthState>()(
     persist(
       (set, get) => ({
         user: null,
+        pendingOtpChallenge: null,
         isAuthenticated: false,
         isHydrated: false,
 
@@ -39,8 +42,10 @@ export const useAuthStore = create<AuthState>()(
 
         setSession: (user) => {
           sessionStorage.setItem(STORAGE_KEYS.tenantId, user.tenantId);
-          set({ user, isAuthenticated: true });
+          set({ user, pendingOtpChallenge: null, isAuthenticated: true });
         },
+
+        setPendingOtpChallenge: (pendingOtpChallenge) => set({ pendingOtpChallenge }),
 
         updateUser: (updates) =>
           set((state) => ({
@@ -50,7 +55,7 @@ export const useAuthStore = create<AuthState>()(
         clear: () => {
           tokenManager.clear();
           sessionStorage.removeItem(STORAGE_KEYS.tenantId);
-          set({ user: null, isAuthenticated: false });
+          set({ user: null, pendingOtpChallenge: null, isAuthenticated: false });
         },
 
         hasRole: (role) => {

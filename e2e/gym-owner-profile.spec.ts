@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+
 const approvedOnboarding = {
   brand: {
     name: 'Fit Central',
@@ -41,6 +43,7 @@ async function loginAndSeedApprovedProfile(page: Page) {
   await page.getByLabel(/email/i).fill('admin@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
+  await completeGymOwnerOtp(page);
 
   await page.evaluate((state) => {
     window.localStorage.setItem('gmc.gymOwnerOnboarding', JSON.stringify({ state, version: 1 }));

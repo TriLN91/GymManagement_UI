@@ -1,0 +1,349 @@
+.gym-account-page {
+  display: grid;
+  gap: 18px;
+}
+
+.gym-account-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gym-account-state {
+  display: grid;
+  min-height: 240px;
+  place-content: center;
+  gap: 12px;
+  border: 1px solid hsl(var(--border));
+  background: white;
+  padding: 22px;
+}
+
+.gym-account-state.is-error {
+  justify-items: center;
+  color: hsl(var(--destructive));
+}
+
+.gym-account-empty {
+  border-radius: 0;
+  background: white;
+}
+
+.gym-notification-list {
+  display: grid;
+  border: 1px solid hsl(var(--border));
+  background: white;
+}
+
+.gym-notification-list > a,
+.gym-notification-list > button {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+  background: white;
+  padding: 15px 17px;
+  color: hsl(var(--foreground));
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.gym-notification-list > :first-child {
+  border-top: 0;
+}
+
+.gym-notification-list > .is-unread {
+  border-left: 3px solid #9cac54;
+  background: var(--energy-lime-faint);
+}
+
+.gym-notification-list > a:hover,
+.gym-notification-list > button:hover {
+  background: hsl(var(--canvas));
+}
+
+.gym-notification-list > a:focus-visible,
+.gym-notification-list > button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid hsl(var(--brand));
+  outline-offset: 2px;
+}
+
+.gym-notification-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid hsl(var(--border));
+  border-radius: 50%;
+  color: hsl(var(--brand));
+}
+
+.is-unread .gym-notification-icon {
+  border-color: color-mix(in srgb, #9cac54 55%, white);
+  background: var(--energy-lime);
+}
+
+.gym-notification-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.gym-notification-copy > span:nth-child(2) {
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.gym-notification-copy time {
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-data);
+  font-size: 9px;
+}
+
+.gym-notification-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gym-notification-meta strong {
+  color: hsl(var(--brand));
+  font-family: var(--font-display);
+  font-size: 13px;
+}
+
+.gym-security-verification {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1.4fr) minmax(220px, 0.7fr) auto;
+  align-items: center;
+  gap: 18px;
+  border-color: color-mix(in srgb, #9cac54 55%, white);
+  background: var(--energy-lime-faint);
+  padding: 20px;
+}
+
+.gym-security-verification__icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: hsl(var(--brand));
+  color: white;
+}
+
+.gym-security-verification > div:nth-child(2) {
+  display: grid;
+  gap: 5px;
+}
+
+.gym-security-verification > div:nth-child(2) > span,
+.gym-security-verification dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gym-security-verification strong {
+  color: hsl(var(--brand));
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.gym-security-verification p {
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.gym-security-verification dl,
+.gym-security-verification dd {
+  margin: 0;
+}
+
+.gym-security-verification dl > div {
+  display: grid;
+  gap: 6px;
+}
+
+.gym-security-verification dd {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gym-activity-panel {
+  background: white;
+}
+
+.gym-activity-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 18px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.gym-activity-panel__header > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.gym-activity-panel__header h2 {
+  margin: 0;
+  color: hsl(var(--brand));
+  font-family: var(--font-display);
+  font-size: 15px;
+}
+
+.gym-activity-panel__header > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.gym-activity-table-shell {
+  border: 0;
+}
+
+.gym-activity-table time {
+  white-space: nowrap;
+  font-family: var(--font-data);
+  font-size: 10px;
+}
+
+.gym-activity-table td:nth-child(2) strong {
+  color: hsl(var(--brand));
+  font-size: 12px;
+}
+
+.gym-activity-table td:nth-child(3) {
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .gym-security-verification {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+  }
+
+  .gym-security-verification dl {
+    grid-column: 2 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .gym-notification-list > a,
+  .gym-notification-list > button {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  .gym-notification-list > a > svg,
+  .gym-notification-list > button > svg {
+    display: none;
+  }
+
+  .gym-notification-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .gym-notification-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .gym-security-verification {
+    grid-template-columns: 44px minmax(0, 1fr);
+    padding: 16px;
+  }
+
+  .gym-security-verification__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .gym-security-verification > .inline-flex {
+    grid-column: 1 / -1;
+  }
+
+  .gym-activity-panel__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gym-activity-table,
+  .gym-activity-table tbody,
+  .gym-activity-table tr,
+  .gym-activity-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .gym-activity-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
+
+  .gym-activity-table tbody {
+    display: grid;
+  }
+
+  .gym-activity-table tr {
+    display: grid;
+    gap: 7px;
+    padding: 12px;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .gym-activity-table tr:first-child {
+    border-top: 0;
+  }
+
+  .gym-activity-table td {
+    display: grid;
+    grid-template-columns: minmax(105px, 0.75fr) minmax(0, 1.25fr);
+    gap: 10px;
+    border: 0;
+    padding: 0;
+    text-align: right;
+  }
+
+  .gym-activity-table td::before {
+    content: attr(data-label);
+    color: hsl(var(--muted-foreground));
+    font-size: 9px;
+    font-weight: 800;
+    text-align: left;
+    text-transform: uppercase;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gym-account-page *,
+  .gym-account-page *::before,
+  .gym-account-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

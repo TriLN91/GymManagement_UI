@@ -20,7 +20,7 @@ export function TrainerExerciseArtwork({
 }) {
   return (
     <span
-      className={`trainer-exercise-artwork trainer-exercise-artwork--${exercise.id}${compact ? ' is-compact' : ''}`}
+      className={`trainer-exercise-artwork trainer-exercise-artwork--${exercise.id}${compact ? 'is-compact' : ''}`}
     >
       {exercise.imageUrl ? (
         <img

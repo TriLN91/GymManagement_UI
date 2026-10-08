@@ -8,6 +8,8 @@ export const ENDPOINTS = {
     logout: '/auth/logout',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
+    verifyEmailOtp: '/auth/email-otp/verify',
+    resendEmailOtp: '/auth/email-otp/resend',
   },
   coaching: {
     plan: '/coaching/plans/current',

@@ -5,16 +5,16 @@ test.describe('i18n language switcher', () => {
     await page.goto('/login');
     await page.evaluate(() => window.localStorage.clear());
     await page.evaluate(() => window.sessionStorage.clear());
+    await page.evaluate(() => window.localStorage.setItem('gmc.locale', 'en'));
     await page.reload();
 
     await page.getByLabel(/email/i).fill('member@demo.gym');
     await page.getByLabel(/password/i).fill('Password1!');
-    await page.getByRole('button', { name: /sign in/i }).click();
+    await page.getByRole('button', { name: /đăng nhập/i }).click();
     await expect(page).toHaveURL(/\/app$/);
 
-    // Default is "Member Portal" (English). Click the language toggle.
-    await page.getByRole('button', { name: /switch language/i }).click();
-    // After language switch, the page title in the header should be Vietnamese.
-    await expect(page.locator('header').getByText(/cổng thành viên/i)).toBeVisible();
+    await expect(page.locator('.member-topbar').getByText('Member workspace')).toBeVisible();
+    await page.getByRole('button', { name: 'Tiếng Việt' }).click();
+    await expect(page.locator('.member-topbar').getByText('Không gian thành viên')).toBeVisible();
   });
 });

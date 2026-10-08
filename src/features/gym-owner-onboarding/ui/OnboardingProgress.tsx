@@ -16,6 +16,7 @@ export function OnboardingProgress({ copy }: OnboardingProgressProps) {
   const brand = useGymOwnerOnboardingStore((state) => state.brand);
   const branches = useGymOwnerOnboardingStore((state) => state.branches);
   const license = useGymOwnerOnboardingStore((state) => state.license);
+  const status = useGymOwnerOnboardingStore((state) => state.status);
   const profileComplete = Boolean(
     brand.name &&
     brand.description &&
@@ -45,7 +46,7 @@ export function OnboardingProgress({ copy }: OnboardingProgressProps) {
     {
       label: copy.steps.review,
       to: ROUTES.admin.onboardingReview,
-      complete: false,
+      complete: status === 'submitted' || status === 'under_review' || status === 'approved',
     },
   ];
 

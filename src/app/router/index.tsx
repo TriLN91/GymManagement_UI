@@ -10,6 +10,7 @@ import { RoleGuard } from './guards/RoleGuard';
 import { TenantGuard } from './guards/TenantGuard';
 
 import { GymOwnerLayout } from '@/pages/admin/components/GymOwnerLayout';
+import { EmailOtpVerificationPage } from '@/pages/auth/EmailOtpVerificationPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
@@ -258,6 +259,21 @@ const GymOwnerSettlementsPage = lazy(() =>
     default: m.GymOwnerSettlementsPage,
   })),
 );
+const GymOwnerAnalyticsPage = lazy(() =>
+  import('@/features/gym-owner-analytics').then((m) => ({
+    default: m.GymOwnerAnalyticsPage,
+  })),
+);
+const GymOwnerNotificationsPage = lazy(() =>
+  import('@/features/gym-owner-account').then((m) => ({
+    default: m.GymOwnerNotificationsPage,
+  })),
+);
+const GymOwnerAccountSecurityPage = lazy(() =>
+  import('@/features/gym-owner-account').then((m) => ({
+    default: m.GymOwnerAccountSecurityPage,
+  })),
+);
 const GymOwnerOnboardingEntryPage = lazy(() =>
   import('@/features/gym-owner-onboarding').then((m) => ({
     default: m.GymOwnerOnboardingEntryPage,
@@ -321,6 +337,7 @@ const router = createBrowserRouter([
   { path: ROUTES.public.register, element: <RegisterPage /> },
   { path: ROUTES.public.forgotPassword, element: <ForgotPasswordPage /> },
   { path: ROUTES.public.resetPassword, element: <ResetPasswordPage /> },
+  { path: ROUTES.public.verifyEmailOtp, element: <EmailOtpVerificationPage /> },
   { path: ROUTES.public.forbidden, element: <ForbiddenPage /> },
   { path: '/404', element: <NotFoundPage /> },
   { path: '*', element: <NotFoundPage /> },
@@ -495,6 +512,18 @@ const router = createBrowserRouter([
                       {
                         path: ROUTES.admin.settlements,
                         element: <GymOwnerSettlementsPage />,
+                      },
+                      {
+                        path: ROUTES.admin.analytics,
+                        element: <GymOwnerAnalyticsPage />,
+                      },
+                      {
+                        path: ROUTES.admin.notifications,
+                        element: <GymOwnerNotificationsPage />,
+                      },
+                      {
+                        path: ROUTES.admin.accountSecurity,
+                        element: <GymOwnerAccountSecurityPage />,
                       },
                     ],
                   },

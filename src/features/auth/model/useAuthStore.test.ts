@@ -47,4 +47,25 @@ describe('useAuthStore', () => {
     expect(state.isAuthenticated).toBe(false);
     expect(sessionStorage.getItem('gmc.tenantId')).toBeNull();
   });
+
+  it('keeps an OTP challenge in runtime state without authenticating or persisting it', () => {
+    useAuthStore.getState().setPendingOtpChallenge({
+      challengeId: 'challenge-runtime-only',
+      maskedEmail: 'ad***@demo.gym',
+      requiredFor: 'gym_admin_session',
+      policy: {
+        codeLength: 6,
+        expiresAt: '2026-10-05T10:10:00+07:00',
+        resendAvailableAt: '2026-10-05T10:01:00+07:00',
+        attemptsRemaining: 5,
+      },
+    });
+
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.user).toBeNull();
+    expect(state.pendingOtpChallenge?.challengeId).toBe('challenge-runtime-only');
+    expect(localStorage.getItem('app:auth')).not.toContain('challenge-runtime-only');
+    expect(sessionStorage.getItem('gmc.accessToken')).toBeNull();
+  });
 });

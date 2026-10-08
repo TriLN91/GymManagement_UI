@@ -8,6 +8,7 @@ export const ROUTES = Object.freeze({
     register: '/register',
     forgotPassword: '/forgot-password',
     resetPassword: '/reset-password',
+    verifyEmailOtp: '/verify-email-otp',
     forbidden: '/403',
     notFound: '/404',
   }),
@@ -99,6 +100,9 @@ export const ROUTES = Object.freeze({
     orderDetail: '/admin/orders/:orderId',
     orderDetailPath: (orderId: string) => `/admin/orders/${orderId}`,
     settlements: '/admin/settlements',
+    analytics: '/admin/analytics',
+    notifications: '/admin/notifications',
+    accountSecurity: '/admin/account-security',
   }),
   superadmin: Object.freeze({
     root: '/superadmin',

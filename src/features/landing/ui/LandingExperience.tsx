@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { LandingAudience } from '../model/types';
 import { useLandingScroll } from '../model/useLandingScroll';
 
-
 import { HeroExperience } from './HeroExperience';
 import { LandingFooter } from './LandingFooter';
 import { LandingHeader } from './LandingHeader';

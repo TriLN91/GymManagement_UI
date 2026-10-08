@@ -44,40 +44,64 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout>
-      <div className="w-full flex flex-col items-center">
+      <div className="flex w-full flex-col items-center">
         <div className="mb-8 flex flex-col items-center">
-          <div className="font-syne text-4xl font-bold text-forest flex items-center mb-4">
-            FIT<span className="text-sm align-top relative -top-2">®</span>
+          <div className="mb-4 flex items-center font-syne text-4xl font-bold text-forest">
+            FIT<span className="relative -top-2 align-top text-sm">®</span>
           </div>
-          <h1 className="font-syne text-4xl font-bold text-forest mb-2">Khôi Phục.</h1>
-          <p className="text-forest/70 text-sm font-medium">Nhập email đăng ký của bạn để nhận mã xác minh OTP bảo mật.</p>
+          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">Khôi Phục.</h1>
+          <p className="text-sm font-medium text-forest/70">
+            Nhập email đăng ký của bạn để nhận mã xác minh OTP bảo mật.
+          </p>
         </div>
 
         {submitted ? (
-          <div className="w-full text-center p-6 border border-mint bg-mint/5 rounded-xl">
-            <p className="text-forest font-bold mb-2">Email Đã Được Gửi</p>
+          <div className="bg-mint/5 w-full rounded-xl border border-mint p-6 text-center">
+            <p className="mb-2 font-bold text-forest">Email Đã Được Gửi</p>
             <p className="text-sm text-forest/70">{t('auth:forgot.success')}</p>
-            <Link to={ROUTES.public.login} className="text-xs text-forest/60 hover:text-forest transition-colors font-medium mt-6 block">
-               &larr; Quay lại Đăng nhập
+            <Link
+              to={ROUTES.public.login}
+              className="mt-6 block text-xs font-medium text-forest/60 transition-colors hover:text-forest"
+            >
+              &larr; Quay lại Đăng nhập
             </Link>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-bold text-forest uppercase tracking-wider">Email tài khoản</Label>
-              <Input id="email" type="email" autoComplete="email" {...register('email')} className="bg-transparent border-forest/20 focus-visible:ring-forest text-forest h-12" placeholder="email@gmail.com" />
+              <Label
+                htmlFor="email"
+                className="text-xs font-bold uppercase tracking-wider text-forest"
+              >
+                Email tài khoản
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                {...register('email')}
+                className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
+                placeholder="email@gmail.com"
+              />
               {errors.email ? (
-                <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>
+                <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
               ) : null}
             </div>
 
-            <Button type="submit" className="w-full bg-mint text-forest hover:bg-mint/90 rounded-full font-bold h-12 mt-6" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="hover:bg-mint/90 mt-6 h-12 w-full rounded-full bg-mint font-bold text-forest"
+              disabled={isSubmitting}
+            >
               Gửi mã xác nhận &rarr;
             </Button>
 
-            <div className="pt-6 w-full text-center">
-              <Link to={ROUTES.public.login} className="text-xs text-forest/60 hover:text-forest transition-colors font-medium">
-                 &larr; Quay lại Đăng nhập
+            <div className="w-full pt-6 text-center">
+              <Link
+                to={ROUTES.public.login}
+                className="text-xs font-medium text-forest/60 transition-colors hover:text-forest"
+              >
+                &larr; Quay lại Đăng nhập
               </Link>
             </div>
           </form>

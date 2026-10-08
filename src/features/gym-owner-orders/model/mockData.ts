@@ -1,8 +1,4 @@
-import type {
-  CommerceDataState,
-  GymOwnerOrderRecord,
-  SettlementPeriodRecord,
-} from './types';
+import type { CommerceDataState, GymOwnerOrderRecord, SettlementPeriodRecord } from './types';
 
 export const gymOwnerOrderMockResource: CommerceDataState<GymOwnerOrderRecord[]> = {
   state: 'loaded',
