@@ -51,94 +51,142 @@ export function RegisterPage() {
 
   return (
     <AuthLayout>
-      <div className="w-full flex flex-col items-center">
+      <div className="flex w-full flex-col items-center">
         <div className="mb-8 flex flex-col items-center">
-          <div className="font-syne text-4xl font-bold text-forest flex items-center mb-4">
-            FIT<span className="text-sm align-top relative -top-2">®</span>
+          <div className="mb-4 flex items-center font-syne text-4xl font-bold text-forest">
+            FIT<span className="relative -top-2 align-top text-sm">®</span>
           </div>
-          <h1 className="font-syne text-4xl font-bold text-forest mb-2">Bắt Đầu.</h1>
-          <p className="text-forest/70 text-sm font-medium">Chọn vai trò của bạn trong hệ sinh thái FIT®.</p>
+          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">Bắt Đầu.</h1>
+          <p className="text-sm font-medium text-forest/70">
+            Chọn vai trò của bạn trong hệ sinh thái FIT®.
+          </p>
         </div>
 
-        <div className="w-full flex flex-col gap-3 mb-8">
-          <button 
+        <div className="mb-8 flex w-full flex-col gap-3">
+          <button
             onClick={() => setRole('member')}
-            className={`flex items-center justify-between p-4 border rounded-xl transition-colors ${role === 'member' ? 'border-mint bg-mint/5' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'member' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
-              <span className="font-bold text-forest text-sm">Người tập (Member)</span>
-              <span className="text-xs text-forest/60">Tập luyện với AI, theo dõi chỉ số cơ thể và nhận tư vấn dinh dưỡng.</span>
+              <span className="text-sm font-bold text-forest">Người tập (Member)</span>
+              <span className="text-xs text-forest/60">
+                Tập luyện với AI, theo dõi chỉ số cơ thể và nhận tư vấn dinh dưỡng.
+              </span>
             </div>
-            <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${role === 'member' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}>
-              {role === 'member' && <div className="w-2 h-2 rounded-full bg-forest"></div>}
+            <div
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'member' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+            >
+              {role === 'member' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
             </div>
           </button>
 
-          <button 
+          <button
             onClick={() => setRole('pt')}
-            className={`flex items-center justify-between p-4 border rounded-xl transition-colors ${role === 'pt' ? 'border-mint bg-mint/5' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'pt' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
-              <span className="font-bold text-forest text-sm">Huấn Luyện Viên (Trainer)</span>
-              <span className="text-xs text-forest/60">Quản lý học viên, xây dựng giáo án, theo dõi tiến độ tập luyện của học viên.</span>
+              <span className="text-sm font-bold text-forest">Huấn Luyện Viên (Trainer)</span>
+              <span className="text-xs text-forest/60">
+                Quản lý học viên, xây dựng giáo án, theo dõi tiến độ tập luyện của học viên.
+              </span>
             </div>
-            <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${role === 'pt' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}>
-              {role === 'pt' && <div className="w-2 h-2 rounded-full bg-forest"></div>}
+            <div
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'pt' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+            >
+              {role === 'pt' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
             </div>
           </button>
 
-          <button 
+          <button
             onClick={() => setRole('gym_admin')}
-            className={`flex items-center justify-between p-4 border rounded-xl transition-colors ${role === 'gym_admin' ? 'border-mint bg-mint/5' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'gym_admin' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
-              <span className="font-bold text-forest text-sm">Chủ Phòng (Gym Admin)</span>
-              <span className="text-xs text-forest/60">Quản lý doanh thu, nhân sự, thiết bị và các chiến dịch marketing.</span>
+              <span className="text-sm font-bold text-forest">Chủ Phòng (Gym Admin)</span>
+              <span className="text-xs text-forest/60">
+                Quản lý doanh thu, nhân sự, thiết bị và các chiến dịch marketing.
+              </span>
             </div>
-            <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${role === 'gym_admin' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}>
-              {role === 'gym_admin' && <div className="w-2 h-2 rounded-full bg-forest"></div>}
+            <div
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'gym_admin' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+            >
+              {role === 'gym_admin' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
             </div>
           </button>
         </div>
 
         <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-bold text-forest uppercase tracking-wider">Email đăng ký</Label>
-            <Input id="email" type="email" autoComplete="email" {...registerField('email')} className="bg-transparent border-forest/20 focus-visible:ring-forest text-forest h-12" placeholder="email@gmail.com" />
+            <Label
+              htmlFor="email"
+              className="text-xs font-bold uppercase tracking-wider text-forest"
+            >
+              Email đăng ký
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              {...registerField('email')}
+              className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
+              placeholder="email@gmail.com"
+            />
             {errors.email ? (
-              <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>
+              <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
             ) : null}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-xs font-bold text-forest uppercase tracking-wider">Mật khẩu khởi tạo</Label>
+            <Label
+              htmlFor="password"
+              className="text-xs font-bold uppercase tracking-wider text-forest"
+            >
+              Mật khẩu khởi tạo
+            </Label>
             <Input
               id="password"
               type="password"
               autoComplete="new-password"
               {...registerField('password')}
-              className="bg-transparent border-forest/20 focus-visible:ring-forest text-forest h-12"
+              className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
               placeholder="Tối thiểu 8 ký tự"
             />
             {errors.password ? (
-              <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>
+              <p className="text-xs font-medium text-red-500">{errors.password.message}</p>
             ) : null}
           </div>
 
           {errors.root ? (
-            <p className="text-xs text-red-500 font-medium text-center mt-2" role="alert">
+            <p className="mt-2 text-center text-xs font-medium text-red-500" role="alert">
               {errors.root.message}
             </p>
           ) : null}
 
-          <Button type="submit" className="w-full bg-mint text-forest hover:bg-mint/90 rounded-full font-bold h-12 mt-6" disabled={register.isPending}>
+          <Button
+            type="submit"
+            className="hover:bg-mint/90 mt-6 h-12 w-full rounded-full bg-mint font-bold text-forest"
+            disabled={register.isPending}
+          >
             Tiếp tục tạo tài khoản &rarr;
           </Button>
-          
-          <div className="pt-6 w-full text-center">
-            <p className="text-[10px] text-forest/60 font-medium mb-6">Bằng việc đăng ký, bạn đồng ý với <Link to="#" className="underline hover:text-forest">Điều khoản Dịch vụ</Link> và <Link to="#" className="underline hover:text-forest">Chính sách Bảo mật</Link> của FIT®.</p>
-            <Link to={ROUTES.public.login} className="text-xs text-forest/60 hover:text-forest transition-colors font-medium">
-               Đã có tài khoản? <span className="font-bold text-forest">Đăng nhập</span>
+
+          <div className="w-full pt-6 text-center">
+            <p className="mb-6 text-[10px] font-medium text-forest/60">
+              Bằng việc đăng ký, bạn đồng ý với{' '}
+              <Link to="#" className="underline hover:text-forest">
+                Điều khoản Dịch vụ
+              </Link>{' '}
+              và{' '}
+              <Link to="#" className="underline hover:text-forest">
+                Chính sách Bảo mật
+              </Link>{' '}
+              của FIT®.
+            </p>
+            <Link
+              to={ROUTES.public.login}
+              className="text-xs font-medium text-forest/60 transition-colors hover:text-forest"
+            >
+              Đã có tài khoản? <span className="font-bold text-forest">Đăng nhập</span>
             </Link>
           </div>
         </form>

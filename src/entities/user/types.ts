@@ -24,6 +24,31 @@ export interface AuthSession {
   tokens: AuthTokens;
 }
 
+export interface EmailOtpPolicy {
+  codeLength: number;
+  expiresAt: string;
+  resendAvailableAt: string;
+  attemptsRemaining: number;
+}
+
+export interface EmailOtpChallenge {
+  challengeId: string;
+  maskedEmail: string;
+  policy: EmailOtpPolicy;
+  requiredFor: 'gym_admin_session';
+}
+
+export type LoginResponse = AuthSession | EmailOtpChallenge;
+
+export interface VerifyEmailOtpPayload {
+  challengeId: string;
+  code: string;
+}
+
+export interface ResendEmailOtpPayload {
+  challengeId: string;
+}
+
 export interface LoginPayload {
   email: string;
   password: string;

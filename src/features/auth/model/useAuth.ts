@@ -10,12 +10,36 @@ import { QUERY_KEYS } from '@/shared/config/constants';
 
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);
+  const setPendingOtpChallenge = useAuthStore((s) => s.setPendingOtpChallenge);
   return useMutation({
     mutationFn: (payload: LoginPayload) => authApi.login(payload),
+    onSuccess: (response) => {
+      if ('challengeId' in response) {
+        setPendingOtpChallenge(response);
+        return;
+      }
+      tokenManager.setTokens(response.tokens.accessToken, response.tokens.refreshToken);
+      setSession(response.user);
+    },
+  });
+}
+
+export function useVerifyEmailOtp() {
+  const setSession = useAuthStore((s) => s.setSession);
+  return useMutation({
+    mutationFn: authApi.verifyEmailOtp,
     onSuccess: (session: AuthSession) => {
       tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
       setSession(session.user);
     },
+  });
+}
+
+export function useResendEmailOtp() {
+  const setPendingOtpChallenge = useAuthStore((s) => s.setPendingOtpChallenge);
+  return useMutation({
+    mutationFn: authApi.resendEmailOtp,
+    onSuccess: setPendingOtpChallenge,
   });
 }
 

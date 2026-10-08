@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+
 const completeApplication = {
   brand: {
     name: 'Fit Central',
@@ -40,6 +42,7 @@ async function loginAsGymOwner(page: Page) {
   await page.getByLabel(/email/i).fill('admin@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
+  await completeGymOwnerOtp(page);
   await expect(page).toHaveURL(/\/admin\/onboarding$/);
   if ((await page.locator('html').getAttribute('lang'))?.startsWith('vi')) {
     await page.getByRole('button', { name: /english/i }).click();
@@ -90,6 +93,10 @@ test.describe('Gym Owner onboarding and approval', () => {
     await expect(page).toHaveURL(/\/admin\/onboarding\/status$/);
     await expect(page.getByText('Application submitted')).toBeVisible();
     await expect(page.getByText('Submitted', { exact: true })).toBeVisible();
+
+    await page.goto('/admin/onboarding');
+    const reviewStep = page.locator('.owner-progress li').filter({ hasText: 'Review & submit' });
+    await expect(reviewStep.getByText('Complete', { exact: true })).toBeVisible();
   });
 
   test('shows rejection reason, allows edit, then resubmits under review', async ({ page }) => {

@@ -2,11 +2,21 @@ import { http, HttpResponse } from 'msw';
 
 import { sampleCoachingPlan } from './coaching';
 
-import type { AuthSession, AuthUser } from '@/entities/user';
+import type { AuthSession, AuthUser, EmailOtpChallenge } from '@/entities/user';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
 // FR-IAM-02: 4 roles, one demo account each.
 const DEMO_PASSWORD = 'Password1!';
+const MOCK_OTP_LENGTH = 6;
+const MOCK_OTP_EXPIRY_MS = 10 * 60_000;
+const MOCK_OTP_RESEND_MS = 30_000;
+const MOCK_OTP_ATTEMPTS = 5;
+
+interface MockOtpChallengeRecord extends EmailOtpChallenge {
+  email: string;
+}
+
+const otpChallenges = new Map<string, MockOtpChallengeRecord>();
 
 const users: Record<string, AuthUser> = {
   member: {
@@ -50,6 +60,35 @@ function buildSession(user: AuthUser): AuthSession {
   };
 }
 
+function maskEmail(email: string) {
+  const [local = '', domain = ''] = email.split('@');
+  const visible = local.slice(0, 2);
+  return `${visible}${'*'.repeat(Math.max(local.length - visible.length, 3))}@${domain}`;
+}
+
+function createOtpChallenge(email: string): EmailOtpChallenge {
+  const now = Date.now();
+  const challenge: MockOtpChallengeRecord = {
+    challengeId: crypto.randomUUID(),
+    email,
+    maskedEmail: maskEmail(email),
+    requiredFor: 'gym_admin_session',
+    policy: {
+      codeLength: MOCK_OTP_LENGTH,
+      expiresAt: new Date(now + MOCK_OTP_EXPIRY_MS).toISOString(),
+      resendAvailableAt: new Date(now + MOCK_OTP_RESEND_MS).toISOString(),
+      attemptsRemaining: MOCK_OTP_ATTEMPTS,
+    },
+  };
+  otpChallenges.set(challenge.challengeId, challenge);
+  return {
+    challengeId: challenge.challengeId,
+    maskedEmail: challenge.maskedEmail,
+    requiredFor: challenge.requiredFor,
+    policy: challenge.policy,
+  };
+}
+
 // Wildcard patterns so MSW intercepts regardless of baseURL (cross-origin dev server).
 const path = (p: string) => `*${p}`;
 
@@ -63,7 +102,65 @@ export const handlers = [
     }
     const user = Object.values(users).find((u) => u.email === email);
     if (!user) return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    if (user.roles.includes('gym_admin')) {
+      return HttpResponse.json({ data: createOtpChallenge(user.email) });
+    }
     return HttpResponse.json({ data: buildSession(user) });
+  }),
+
+  http.post(path(ENDPOINTS.auth.verifyEmailOtp), async ({ request }) => {
+    const body = (await request.json()) as { challengeId?: string; code?: string };
+    const challenge = body.challengeId ? otpChallenges.get(body.challengeId) : undefined;
+    if (!challenge) {
+      return HttpResponse.json(
+        { message: 'Verification challenge is unavailable', code: 'OTP_CHALLENGE_NOT_FOUND' },
+        { status: 400 },
+      );
+    }
+    if (Date.now() >= Date.parse(challenge.policy.expiresAt)) {
+      otpChallenges.delete(challenge.challengeId);
+      return HttpResponse.json(
+        { message: 'Verification code expired', code: 'OTP_EXPIRED' },
+        { status: 400 },
+      );
+    }
+    const isValidShape = new RegExp(`^\\d{${challenge.policy.codeLength}}$`).test(body.code ?? '');
+    if (!isValidShape || body.code === '0'.repeat(challenge.policy.codeLength)) {
+      challenge.policy.attemptsRemaining = Math.max(0, challenge.policy.attemptsRemaining - 1);
+      return HttpResponse.json(
+        {
+          message: 'Invalid verification code',
+          code: 'OTP_INVALID',
+          fieldErrors: { code: ['Invalid verification code'] },
+        },
+        { status: 400 },
+      );
+    }
+    const user = Object.values(users).find((candidate) => candidate.email === challenge.email);
+    otpChallenges.delete(challenge.challengeId);
+    if (!user) {
+      return HttpResponse.json({ message: 'Account unavailable' }, { status: 401 });
+    }
+    return HttpResponse.json({ data: buildSession(user) });
+  }),
+
+  http.post(path(ENDPOINTS.auth.resendEmailOtp), async ({ request }) => {
+    const body = (await request.json()) as { challengeId?: string };
+    const challenge = body.challengeId ? otpChallenges.get(body.challengeId) : undefined;
+    if (!challenge) {
+      return HttpResponse.json(
+        { message: 'Verification challenge is unavailable', code: 'OTP_CHALLENGE_NOT_FOUND' },
+        { status: 400 },
+      );
+    }
+    if (Date.now() < Date.parse(challenge.policy.resendAvailableAt)) {
+      return HttpResponse.json(
+        { message: 'Verification code cannot be resent yet', code: 'OTP_RESEND_UNAVAILABLE' },
+        { status: 400 },
+      );
+    }
+    otpChallenges.delete(challenge.challengeId);
+    return HttpResponse.json({ data: createOtpChallenge(challenge.email) });
   }),
 
   http.post(path(ENDPOINTS.auth.register), async ({ request }) => {

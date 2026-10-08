@@ -21,6 +21,7 @@ export function formatPeriod(start: string, end: string, locale: string) {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+    timeZone: 'UTC',
   });
   return `${formatter.format(new Date(start))} – ${formatter.format(new Date(end))}`;
 }

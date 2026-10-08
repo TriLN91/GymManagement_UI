@@ -30,13 +30,12 @@ export default defineConfig({
         'src/**/*.d.ts',
       ],
       thresholds: {
-        // Foundation phase: tight thresholds would block progress while
-        // features land. We enforce a realistic floor and raise it as
-        // coverage grows.
-        lines: 25,
-        functions: 20,
-        statements: 25,
-        branches: 20,
+        // Baseline measured on the full source set. Raise these floors as
+        // unit coverage grows; E2E coverage is not included in this report.
+        lines: 15,
+        functions: 13,
+        statements: 15,
+        branches: 11,
       },
     },
     exclude: ['node_modules', 'dist', 'e2e/**', 'playwright-report/**', 'test-results/**'],

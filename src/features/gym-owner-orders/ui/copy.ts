@@ -119,5 +119,4 @@ export const gymOwnerOrdersCopy = {
   },
 } as const;
 
-export type GymOwnerOrdersCopy =
-  (typeof gymOwnerOrdersCopy)[keyof typeof gymOwnerOrdersCopy];
+export type GymOwnerOrdersCopy = (typeof gymOwnerOrdersCopy)[keyof typeof gymOwnerOrdersCopy];

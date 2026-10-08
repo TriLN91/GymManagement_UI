@@ -9,7 +9,7 @@ export function MemberDashboardPage() {
         {/* Left: Active Routine */}
         <div className="relative overflow-hidden rounded-xl border border-forest/20 bg-[var(--energy-lime-soft)] p-6 lg:col-span-2">
           {/* Subtle bg glow */}
-          <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/4 rounded-full bg-mint/5 blur-3xl"></div>
+          <div className="bg-mint/5 pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/4 rounded-full blur-3xl"></div>
 
           <div className="mb-6 flex items-center gap-2">
             <Map className="h-4 w-4 text-forest/40" />
@@ -117,7 +117,7 @@ export function MemberDashboardPage() {
             <h3 className="font-syne text-xl font-bold leading-none text-forest">
               THIẾT LẬP HỒ SƠ
             </h3>
-            <div className="rounded-sm bg-mint/20 px-2 py-1 text-right text-[10px] font-bold uppercase tracking-widest text-forest">
+            <div className="bg-mint/20 rounded-sm px-2 py-1 text-right text-[10px] font-bold uppercase tracking-widest text-forest">
               Tiến độ: 2 / 4 <br />
               hoàn tất
             </div>

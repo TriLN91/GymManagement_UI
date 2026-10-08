@@ -34,7 +34,7 @@
 
 .gym-orders-table,
 .gym-settlement-table {
-  min-width: 1180px;
+  min-width: 1080px;
 }
 
 .gym-orders-table th.is-money,
@@ -48,7 +48,7 @@
 
 .gym-orders-table td.is-money,
 .gym-settlement-table td.is-money {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-data);
   font-size: 11px;
   font-weight: 600;
 }
@@ -156,7 +156,7 @@
 .gym-order-request-panel h2 {
   margin: 0;
   color: hsl(var(--forest));
-  font-family: 'Sora', 'Be Vietnam Pro', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(16px, 2vw, 22px);
   font-weight: 700;
 }
@@ -225,7 +225,7 @@
 .gym-financial-grid dd {
   margin: 0;
   color: hsl(var(--forest));
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-data);
   font-size: clamp(13px, 1.5vw, 17px);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -352,8 +352,19 @@
 
   .gym-orders-table tr,
   .gym-settlement-table tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     border: 1px solid hsl(var(--border));
     background: white;
+  }
+
+  .gym-orders-table td:nth-child(1),
+  .gym-orders-table td:nth-child(2),
+  .gym-orders-table td:nth-child(8),
+  .gym-orders-table td:nth-child(9),
+  .gym-settlement-table td:nth-child(1),
+  .gym-settlement-table td:nth-child(8) {
+    grid-column: 1 / -1;
   }
 
   .gym-orders-table td,
@@ -380,7 +391,7 @@
     content: attr(data-label);
     padding-top: 3px;
     color: hsl(var(--muted-foreground));
-    font-family: 'Be Vietnam Pro', sans-serif;
+    font-family: var(--font-ui);
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.04em;

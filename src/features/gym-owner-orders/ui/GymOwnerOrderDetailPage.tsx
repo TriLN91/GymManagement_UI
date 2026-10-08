@@ -5,10 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { gymOwnerOrderMockResource } from '../model/mockData';
-import type {
-  RefundDisputeRequestDraft,
-  SubmittedRefundDisputeRequest,
-} from '../model/types';
+import type { RefundDisputeRequestDraft, SubmittedRefundDisputeRequest } from '../model/types';
 
 import { gymOwnerOrdersCopy } from './copy';
 import { FinancialBreakdown } from './FinancialBreakdown';
@@ -30,8 +27,9 @@ export function GymOwnerOrderDetailPage() {
   const copy = gymOwnerOrdersCopy[isVi ? 'vi' : 'en'];
   const locale = isVi ? 'vi-VN' : 'en-US';
   const [requestOpen, setRequestOpen] = useState(false);
-  const [submittedRequest, setSubmittedRequest] =
-    useState<SubmittedRefundDisputeRequest | null>(null);
+  const [submittedRequest, setSubmittedRequest] = useState<SubmittedRefundDisputeRequest | null>(
+    null,
+  );
 
   const order =
     gymOwnerOrderMockResource.state === 'loaded'

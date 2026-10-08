@@ -1,13 +1,16 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  Bell,
   Building2,
   ChevronDown,
   Circle,
   ClipboardCheck,
   FileCheck2,
-  Languages,
+  KeyRound,
   Landmark,
+  Languages,
   LayoutDashboard,
+  LineChart,
   Loader2,
   LogOut,
   Menu,
@@ -18,7 +21,7 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -44,6 +47,9 @@ interface OwnerNavGroup {
     | 'packages'
     | 'customers'
     | 'orders'
+    | 'analytics'
+    | 'notifications'
+    | 'security'
     | 'onboarding';
   label: string;
   icon: LucideIcon;
@@ -154,6 +160,42 @@ export function GymOwnerLayout() {
           },
         ],
       });
+      groups.push({
+        id: 'analytics',
+        label: isVi ? 'Phân tích' : 'Analytics',
+        icon: LineChart,
+        items: [
+          {
+            label: isVi ? 'Hiệu quả vận hành' : 'Operational analytics',
+            to: ROUTES.admin.analytics,
+            icon: LineChart,
+          },
+        ],
+      });
+      groups.push({
+        id: 'notifications',
+        label: isVi ? 'Thông báo' : 'Notifications',
+        icon: Bell,
+        items: [
+          {
+            label: isVi ? 'Thông báo trong hệ thống' : 'In-system notifications',
+            to: ROUTES.admin.notifications,
+            icon: Bell,
+          },
+        ],
+      });
+      groups.push({
+        id: 'security',
+        label: isVi ? 'Tài khoản & bảo mật' : 'Account & security',
+        icon: KeyRound,
+        items: [
+          {
+            label: isVi ? 'Xác minh & hoạt động' : 'Verification & activity',
+            to: ROUTES.admin.accountSecurity,
+            icon: ShieldCheck,
+          },
+        ],
+      });
     }
     groups.push({
       id: 'onboarding',
@@ -197,6 +239,18 @@ export function GymOwnerLayout() {
     () => new Set([initialGroup]),
   );
 
+  useEffect(() => {
+    const activeGroup = navGroups.find((group) =>
+      group.items.some((item) => matchesRoute(item.to, location.pathname)),
+    )?.id;
+    if (!activeGroup) return;
+
+    setExpandedGroups((current) => {
+      if (current.has(activeGroup)) return current;
+      return new Set([...current, activeGroup]);
+    });
+  }, [location.pathname, navGroups]);
+
   const userName = user?.fullName || (isVi ? 'Chủ phòng gym' : 'Gym Owner');
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'G';
   const ownerLabel = isVi ? 'Chủ phòng gym' : 'Gym Owner';
@@ -220,7 +274,12 @@ export function GymOwnerLayout() {
     void i18n.changeLanguage(isVi ? 'en' : 'vi');
   };
 
-  const mobileItems = navGroups.flatMap((group) => group.items).slice(0, 4);
+  const mobileItems = navGroups
+    .flatMap((group) => {
+      const [item] = group.items;
+      return item ? [item] : [];
+    })
+    .slice(0, 4);
 
   return (
     <div className="member-shell owner-shell">
@@ -306,7 +365,10 @@ export function GymOwnerLayout() {
                           item.to === ROUTES.admin.packages ||
                           item.to === ROUTES.admin.customers ||
                           item.to === ROUTES.admin.orders ||
-                          item.to === ROUTES.admin.settlements
+                          item.to === ROUTES.admin.settlements ||
+                          item.to === ROUTES.admin.analytics ||
+                          item.to === ROUTES.admin.notifications ||
+                          item.to === ROUTES.admin.accountSecurity
                         }
                         onClick={() => setIsMenuOpen(false)}
                         className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
@@ -388,7 +450,10 @@ export function GymOwnerLayout() {
                 item.to === ROUTES.admin.packages ||
                 item.to === ROUTES.admin.customers ||
                 item.to === ROUTES.admin.orders ||
-                item.to === ROUTES.admin.settlements
+                item.to === ROUTES.admin.settlements ||
+                item.to === ROUTES.admin.analytics ||
+                item.to === ROUTES.admin.notifications ||
+                item.to === ROUTES.admin.accountSecurity
               }
               className={({ isActive }) => cn(isActive && 'is-active')}
             >

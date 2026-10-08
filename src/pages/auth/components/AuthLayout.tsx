@@ -9,15 +9,18 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F3F6F2] relative overflow-hidden font-sans">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#F3F6F2] font-sans">
       {/* Background Graphic Elements */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-mint/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-mint/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
-      
+      <div className="bg-mint/5 pointer-events-none absolute right-0 top-0 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full blur-3xl"></div>
+      <div className="bg-mint/10 pointer-events-none absolute bottom-0 left-0 h-[600px] w-[600px] -translate-x-1/4 translate-y-1/3 rounded-full blur-3xl"></div>
+
       {/* Header */}
-      <header className="relative z-10 w-full px-6 md:px-12 py-8 flex justify-between items-center text-forest">
-        <Link to={ROUTES.public.landing} className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider hover:text-mint transition-colors">
-          <ChevronLeft className="w-4 h-4" /> Quay lại trang chủ
+      <header className="relative z-10 flex w-full items-center justify-between px-6 py-8 text-forest md:px-12">
+        <Link
+          to={ROUTES.public.landing}
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors hover:text-mint"
+        >
+          <ChevronLeft className="h-4 w-4" /> Quay lại trang chủ
         </Link>
         <div className="text-xs font-bold uppercase tracking-widest text-forest/50">
           FIT CORP // HYER V1.0
@@ -25,37 +28,45 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-4 py-12">
-        <div className="w-full max-w-[420px] flex flex-col items-center">
-          {children}
-        </div>
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-12">
+        <div className="flex w-full max-w-[420px] flex-col items-center">{children}</div>
       </main>
 
       {/* Graphic Widget Bottom Left */}
-      <div className="hidden lg:block absolute bottom-12 left-12 bg-white/50 backdrop-blur-sm border border-forest/10 p-4 rounded-xl shadow-sm z-10 w-64">
-        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-forest/50 mb-3 border-b border-forest/10 pb-2">
+      <div className="absolute bottom-12 left-12 z-10 hidden w-64 rounded-xl border border-forest/10 bg-white/50 p-4 shadow-sm backdrop-blur-sm lg:block">
+        <div className="mb-3 flex items-center justify-between border-b border-forest/10 pb-2 text-[10px] font-bold uppercase tracking-wider text-forest/50">
           <span>AI KINEMATICS // DELTA</span>
-          <span className="bg-mint text-forest px-1.5 py-0.5 rounded-sm">ACTIVE</span>
+          <span className="rounded-sm bg-mint px-1.5 py-0.5 text-forest">ACTIVE</span>
         </div>
-        <div className="relative h-24 w-full flex items-center justify-center border border-dashed border-forest/20 rounded bg-white/80">
-          <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 rounded-full bg-forest"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-1.5 h-1.5 rounded-full bg-mint"></div>
-          <div className="absolute top-1/2 right-1/2 w-1.5 h-1.5 rounded-full bg-forest"></div>
-          <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            <line x1="25%" y1="25%" x2="50%" y2="50%" stroke="#345C32" strokeWidth="1" strokeDasharray="2 2" />
+        <div className="relative flex h-24 w-full items-center justify-center rounded border border-dashed border-forest/20 bg-white/80">
+          <div className="absolute left-1/4 top-1/4 h-1.5 w-1.5 rounded-full bg-forest"></div>
+          <div className="absolute bottom-1/4 right-1/4 h-1.5 w-1.5 rounded-full bg-mint"></div>
+          <div className="absolute right-1/2 top-1/2 h-1.5 w-1.5 rounded-full bg-forest"></div>
+          <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
+            <line
+              x1="25%"
+              y1="25%"
+              x2="50%"
+              y2="50%"
+              stroke="#345C32"
+              strokeWidth="1"
+              strokeDasharray="2 2"
+            />
             <line x1="50%" y1="50%" x2="75%" y2="75%" stroke="#A7F0DD" strokeWidth="1" />
           </svg>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-forest/40 gap-4">
-        <div>
-          FIT® AI FITNESS PLATFORM | HYER SOLUTIONS • PRO TECH ARCHITECTURE
-        </div>
+      <footer className="relative z-10 flex w-full flex-col items-center justify-between gap-4 px-6 py-8 text-[10px] font-bold uppercase tracking-widest text-forest/40 md:flex-row md:px-12">
+        <div>FIT® AI FITNESS PLATFORM | HYER SOLUTIONS • PRO TECH ARCHITECTURE</div>
         <div className="flex gap-4">
-          <Link to="#" className="hover:text-forest transition-colors">Tiêu chuẩn compliance</Link>
-          <Link to="#" className="hover:text-forest transition-colors">Bảo mật sinh trắc học</Link>
+          <Link to="#" className="transition-colors hover:text-forest">
+            Tiêu chuẩn compliance
+          </Link>
+          <Link to="#" className="transition-colors hover:text-forest">
+            Bảo mật sinh trắc học
+          </Link>
           <span>© 2026 FIT®</span>
         </div>
       </footer>
