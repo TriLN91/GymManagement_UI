@@ -21,11 +21,11 @@ import { toast } from 'sonner';
 import {
   calculateProfileReadiness,
   toggleExclusiveValue,
+  useProfileSetupStore,
+  useSyncFitnessProfile,
   type MemberFitnessProfile,
   type TernaryAnswer,
-} from './profileSetupModel';
-import { useProfileSetupStore } from './useProfileSetupStore';
-
+} from '@/features/member-fitness';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 
@@ -49,6 +49,7 @@ function getCopy(isVi: boolean) {
         saveReview: 'Lưu hồ sơ & về Dashboard',
         required: 'Hãy hoàn thành các trường bắt buộc trước khi tiếp tục.',
         savedDone: 'Hồ sơ tập luyện đã được lưu.',
+        syncFailed: 'Chưa đồng bộ được hồ sơ lên máy chủ. Hồ sơ vẫn được lưu trên thiết bị này.',
         optional: 'Không bắt buộc',
         chooseMany: 'Có thể chọn nhiều',
         steps: [
@@ -168,6 +169,7 @@ function getCopy(isVi: boolean) {
         saveReview: 'Save profile & return to Dashboard',
         required: 'Complete the required fields before continuing.',
         savedDone: 'Your fitness profile has been saved.',
+        syncFailed: 'Could not sync your profile to the server. It is still saved on this device.',
         optional: 'Optional',
         chooseMany: 'Select multiple',
         steps: [
@@ -458,6 +460,7 @@ export function ProfileSetupPage() {
   const setProfile = useProfileSetupStore((state) => state.setProfile);
   const setStep = useProfileSetupStore((state) => state.setCurrentStep);
   const completeProfile = useProfileSetupStore((state) => state.completeProfile);
+  const syncProfile = useSyncFitnessProfile();
   const readiness = useMemo(() => calculateProfileReadiness(profile), [profile]);
   const setSection = <K extends keyof MemberFitnessProfile>(
     section: K,
@@ -643,6 +646,9 @@ export function ProfileSetupPage() {
                 className="is-primary"
                 onClick={() => {
                   completeProfile();
+                  // Best effort: the local copy is the source of truth for the wizard; a failed
+                  // sync is reported by the global mutation error toast and retried on next save.
+                  syncProfile.mutate(profile, { onError: () => toast.error(copy.syncFailed) });
                   toast.success(copy.savedDone);
                   void navigate(
                     readiness.level === 'medical_review'

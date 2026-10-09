@@ -10,8 +10,15 @@ export const ENDPOINTS = {
     forgotPassword: '/identity/forgot-password',
     resetPassword: '/identity/reset-password',
   },
-  // Mock-only until the backend exposes a FE-shaped coaching API (AI work is deferred).
+  // `me.*` are CF01 member endpoints (backend CoachingController); the rest is mock-only
+  // until the backend exposes a FE-shaped coaching API (AI work is deferred).
   coaching: {
+    me: {
+      goal: '/coaching/me/goal',
+      trainingProfile: '/coaching/me/training-profile',
+      nutritionProfile: '/coaching/me/nutrition-profile',
+      bodyCheckins: '/coaching/me/body-checkins',
+    },
     plan: '/coaching/plans/current',
     planHistory: (memberId: string) => `/coaching/plans/history/${memberId}`,
     checkin: '/coaching/checkins',

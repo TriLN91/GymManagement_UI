@@ -28,12 +28,11 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { completedAssessments, trainerAppointments } from './memberProfileData';
-import { calculateProfileReadiness } from './profileSetupModel';
 import { useMemberProfileStore } from './useMemberProfileStore';
-import { useProfileSetupStore } from './useProfileSetupStore';
 
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
+import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 

@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
+import { fitnessHandlers } from './fitness';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
@@ -10,6 +11,7 @@ const path = (p: string) => `*${p}`;
 
 export const handlers = [
   ...authHandlers,
+  ...fitnessHandlers,
 
   http.get(path(ENDPOINTS.coaching.plan), () => HttpResponse.json({ data: sampleCoachingPlan })),
 
