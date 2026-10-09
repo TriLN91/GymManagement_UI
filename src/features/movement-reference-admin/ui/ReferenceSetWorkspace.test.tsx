@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ReferenceSetProfileDto } from '../api/types';
@@ -69,6 +69,9 @@ describe('ReferenceSetWorkspace parts', () => {
     expect(screen.getByText('Processed')).toBeInTheDocument();
     expect(screen.getByText('Ambiguous')).toBeInTheDocument();
     expect(screen.getByText('Needs review')).toBeInTheDocument();
+    expect(
+      screen.getByText('Needs evidence review because the decision is ambiguous.'),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Borderline outlier/)).toBeInTheDocument();
   });
 
@@ -84,11 +87,34 @@ describe('ReferenceSetWorkspace parts', () => {
     const { rerender } = render(
       <ProfileCard profile={profile('REVIEW_REQUIRED')} referenceSetId="set-1" />,
     );
+    expect(screen.queryByRole('button', { name: 'Activate' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    const confirmDialog = screen.getByRole('dialog');
+    expect(confirmDialog).toHaveTextContent('Confirm profile v2?');
+    fireEvent.click(within(confirmDialog).getByRole('button', { name: 'Confirm' }));
     await waitFor(() => expect(confirmMutation).toHaveBeenCalledWith('profile-1'));
     rerender(<ProfileCard profile={profile('CONFIRMED')} referenceSetId="set-1" />);
+    expect(screen.queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Activate' }));
+    const activateDialog = screen.getByRole('dialog');
+    expect(activateDialog).toHaveTextContent('makes v2 the live SIDE reference');
+    fireEvent.click(within(activateDialog).getByRole('button', { name: 'Activate' }));
     await waitFor(() => expect(activateMutation).toHaveBeenCalledWith('profile-1'));
+  });
+
+  it('marks active profiles as live without exposing lifecycle actions', () => {
+    render(<ProfileCard profile={profile('ACTIVE')} referenceSetId="set-1" />);
+    expect(screen.getByText('Live reference')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Activate' })).not.toBeInTheDocument();
+  });
+
+  it('provides an actionable source empty state', () => {
+    const onUpload = vi.fn();
+    render(<SourceVideos sources={[]} onUpload={onUpload} />);
+    expect(screen.getByText('Upload the first GOOD reference video')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Upload the first GOOD reference video' }));
+    expect(onUpload).toHaveBeenCalledOnce();
   });
 
   it('shows a useful lifecycle conflict and backend code', () => {

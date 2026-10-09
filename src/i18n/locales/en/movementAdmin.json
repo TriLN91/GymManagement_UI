@@ -6,7 +6,7 @@
     "description": "Manage canonical exercise reference sets, review source evidence and activate versioned profiles.",
     "filterTitle": "Find reference sets",
     "allExercises": "All exercises",
-    "emptyTitle": "No reference sets found",
+    "emptyTitle": "No reference sets yet",
     "emptyDescription": "Create a SQUAT reference set to begin adding GOOD source videos.",
     "activeCount_one": "{{count}} active profile",
     "activeCount_other": "{{count}} active profiles"
@@ -72,7 +72,13 @@
     "profileVersion": "Profile v{{version}}",
     "profileQuality": "Quality summary",
     "historyTitle": "Profile version history",
-    "historyDescription": "Activating a newer version keeps earlier versions available for audit."
+    "historyDescription": "Activating a newer version keeps earlier versions available for audit.",
+    "unknownView": "pending view",
+    "qualitySummary": "Quality",
+    "profileTechnicalQuality": "Inspect full quality evidence",
+    "live": "Live reference",
+    "notActive": "Not active",
+    "noActiveForView": "No active profile for {{view}} yet"
   },
   "upload": {
     "title": "Upload GOOD reference source",
@@ -80,9 +86,82 @@
     "file": "MP4 video",
     "submit": "Upload and process",
     "processing": "Uploading and processing…",
+    "first": "Upload the first GOOD reference video",
+    "another": "Upload another GOOD reference video",
     "invalidType": "Select an MP4 video.",
     "empty": "The selected video is empty.",
     "tooLarge": "The video exceeds the 500 MB backend limit."
+  },
+  "workflow": {
+    "title": "What to do next",
+    "live": "Reference profile is live",
+    "stages": {
+      "referenceSet": "Reference Set",
+      "uploadSources": "Upload Sources",
+      "reviewSources": "Review Sources",
+      "reviewProfile": "Review Profile",
+      "confirm": "Confirm",
+      "activate": "Activate"
+    },
+    "next": {
+      "UPLOAD_SOURCE": {
+        "title": "Upload a GOOD reference video",
+        "description": "The pattern is fixed by this reference set. The backend detects the view automatically.",
+        "action": "Choose video"
+      },
+      "PROCESSING": {
+        "title": "Source processing is in progress",
+        "description": "Processing is synchronous. Keep this workspace open and inspect the result when the request completes.",
+        "action": "View sources"
+      },
+      "INSPECT_FAILURE": {
+        "title": "Inspect the processing failure",
+        "description": "Review the failure detail, then upload a replacement GOOD reference video.",
+        "action": "Inspect failure"
+      },
+      "REVIEW_SOURCES": {
+        "title": "Review source eligibility",
+        "description": "Inspect decisions and evidence. Upload another source if no eligible aggregate profile was generated.",
+        "action": "Review sources"
+      },
+      "CONFIRM_PROFILE": {
+        "title": "Review and confirm the aggregate profile",
+        "description": "Check source decisions, profile quality and warnings before confirming the version.",
+        "action": "Review profile"
+      },
+      "ACTIVATE_PROFILE": {
+        "title": "Activate the confirmed profile",
+        "description": "Activation makes this version the live reference for its detected view.",
+        "action": "Review activation"
+      },
+      "LIVE": {
+        "title": "Reference profile is live",
+        "description": "An active version is available while historical versions remain inspectable.",
+        "action": ""
+      }
+    }
+  },
+  "summary": {
+    "sourceBreakdown": "{{accepted}} accepted · {{review}} need review",
+    "views": "Views",
+    "groupedByView": "Profiles are kept separate by view",
+    "activeViews": "Active: {{views}}",
+    "noActive": "No active profile yet"
+  },
+  "sourceDescription": {
+    "processing": "The video is being processed before it can enter a reference group.",
+    "failed": "Processing failed. Inspect the diagnostic detail and upload a replacement video.",
+    "accepted": "Processed successfully and accepted into the {{view}} reference group.",
+    "excluded": "Processed successfully but excluded from reference aggregation.",
+    "review": "Needs evidence review because the decision is ambiguous.",
+    "downWeight": "Eligible for the {{view}} group with reduced aggregation weight.",
+    "processed": "Processed successfully. Review the evidence before continuing."
+  },
+  "profileAction": {
+    "confirmTitle": "Confirm profile v{{version}}?",
+    "confirmDescription": "Confirm that the {{view}} aggregate profile has been reviewed. It will become eligible for activation.",
+    "activateTitle": "Activate profile v{{version}}?",
+    "activateDescription": "This makes v{{version}} the live {{view}} reference. Any currently active version for the same exercise and view becomes historical, not deleted."
   },
   "status": {
     "processing": "Processing",
@@ -111,6 +190,7 @@
     "setCreated": "Reference set created.",
     "exerciseCreated": "Exercise added to the global catalog.",
     "sourceUploaded": "Source processed and reference profiles refreshed.",
+    "sourceUploadFailed": "The source could not be processed. Inspect the failure and try another video.",
     "profileConfirmed": "Profile confirmed.",
     "profileActivated": "Profile activated. Historical versions were preserved."
   }

@@ -28,7 +28,9 @@ test('SuperAdmin reviews, confirms and activates a movement reference profile', 
   await expect(page.getByText('Needs review')).toBeVisible();
 
   await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
   await expect(page.getByRole('button', { name: 'Activate' })).toBeVisible();
   await page.getByRole('button', { name: 'Activate' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Activate' }).click();
   await expect(page.getByText('Active').first()).toBeVisible();
 });

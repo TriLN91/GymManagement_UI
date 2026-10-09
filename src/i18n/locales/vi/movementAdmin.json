@@ -6,7 +6,7 @@
     "description": "Quản lý bộ tham chiếu chuẩn, xem xét bằng chứng nguồn và kích hoạt hồ sơ theo phiên bản.",
     "filterTitle": "Tìm bộ tham chiếu",
     "allExercises": "Tất cả bài tập",
-    "emptyTitle": "Không tìm thấy bộ tham chiếu",
+    "emptyTitle": "Chưa có bộ tham chiếu",
     "emptyDescription": "Tạo bộ tham chiếu SQUAT để bắt đầu thêm video nguồn GOOD.",
     "activeCount_one": "{{count}} hồ sơ đang hoạt động",
     "activeCount_other": "{{count}} hồ sơ đang hoạt động"
@@ -72,7 +72,13 @@
     "profileVersion": "Hồ sơ v{{version}}",
     "profileQuality": "Tóm tắt chất lượng",
     "historyTitle": "Lịch sử phiên bản hồ sơ",
-    "historyDescription": "Kích hoạt phiên bản mới vẫn giữ các phiên bản trước để kiểm tra."
+    "historyDescription": "Kích hoạt phiên bản mới vẫn giữ các phiên bản trước để kiểm tra.",
+    "unknownView": "góc quay đang chờ",
+    "qualitySummary": "Chất lượng",
+    "profileTechnicalQuality": "Xem toàn bộ bằng chứng chất lượng",
+    "live": "Tham chiếu đang dùng",
+    "notActive": "Chưa hoạt động",
+    "noActiveForView": "Chưa có hồ sơ hoạt động cho góc {{view}}"
   },
   "upload": {
     "title": "Tải lên nguồn tham chiếu GOOD",
@@ -80,9 +86,82 @@
     "file": "Video MP4",
     "submit": "Tải lên và xử lý",
     "processing": "Đang tải lên và xử lý…",
+    "first": "Tải video tham chiếu GOOD đầu tiên",
+    "another": "Tải thêm video tham chiếu GOOD",
     "invalidType": "Hãy chọn video MP4.",
     "empty": "Video đã chọn không có dữ liệu.",
     "tooLarge": "Video vượt quá giới hạn 500 MB của backend."
+  },
+  "workflow": {
+    "title": "Việc cần làm tiếp theo",
+    "live": "Hồ sơ tham chiếu đang hoạt động",
+    "stages": {
+      "referenceSet": "Bộ tham chiếu",
+      "uploadSources": "Tải nguồn",
+      "reviewSources": "Xem nguồn",
+      "reviewProfile": "Xem hồ sơ",
+      "confirm": "Xác nhận",
+      "activate": "Kích hoạt"
+    },
+    "next": {
+      "UPLOAD_SOURCE": {
+        "title": "Tải video tham chiếu GOOD",
+        "description": "Mẫu chuyển động do bộ tham chiếu quy định. Backend tự động phát hiện góc quay.",
+        "action": "Chọn video"
+      },
+      "PROCESSING": {
+        "title": "Nguồn đang được xử lý",
+        "description": "Xử lý diễn ra đồng bộ. Giữ trang này mở và xem kết quả khi yêu cầu hoàn tất.",
+        "action": "Xem nguồn"
+      },
+      "INSPECT_FAILURE": {
+        "title": "Kiểm tra lỗi xử lý",
+        "description": "Xem chi tiết lỗi rồi tải lên video tham chiếu GOOD thay thế.",
+        "action": "Xem lỗi"
+      },
+      "REVIEW_SOURCES": {
+        "title": "Xem tính hợp lệ của nguồn",
+        "description": "Kiểm tra quyết định và bằng chứng. Tải thêm nguồn nếu chưa tạo được hồ sơ tổng hợp phù hợp.",
+        "action": "Xem nguồn"
+      },
+      "CONFIRM_PROFILE": {
+        "title": "Xem và xác nhận hồ sơ tổng hợp",
+        "description": "Kiểm tra quyết định nguồn, chất lượng và cảnh báo trước khi xác nhận phiên bản.",
+        "action": "Xem hồ sơ"
+      },
+      "ACTIVATE_PROFILE": {
+        "title": "Kích hoạt hồ sơ đã xác nhận",
+        "description": "Kích hoạt sẽ đặt phiên bản này làm tham chiếu đang dùng cho góc quay đã phát hiện.",
+        "action": "Xem kích hoạt"
+      },
+      "LIVE": {
+        "title": "Hồ sơ tham chiếu đang hoạt động",
+        "description": "Đã có phiên bản đang dùng và các phiên bản lịch sử vẫn có thể kiểm tra.",
+        "action": ""
+      }
+    }
+  },
+  "summary": {
+    "sourceBreakdown": "{{accepted}} được chấp nhận · {{review}} cần xem xét",
+    "views": "Góc quay",
+    "groupedByView": "Hồ sơ được tách riêng theo góc quay",
+    "activeViews": "Đang dùng: {{views}}",
+    "noActive": "Chưa có hồ sơ đang hoạt động"
+  },
+  "sourceDescription": {
+    "processing": "Video đang được xử lý trước khi có thể vào nhóm tham chiếu.",
+    "failed": "Xử lý thất bại. Xem chẩn đoán và tải lên video thay thế.",
+    "accepted": "Đã xử lý thành công và chấp nhận vào nhóm tham chiếu {{view}}.",
+    "excluded": "Đã xử lý thành công nhưng bị loại khỏi quá trình tổng hợp tham chiếu.",
+    "review": "Cần xem bằng chứng vì quyết định chưa rõ ràng.",
+    "downWeight": "Đủ điều kiện vào nhóm {{view}} với trọng số tổng hợp giảm.",
+    "processed": "Đã xử lý thành công. Hãy xem bằng chứng trước khi tiếp tục."
+  },
+  "profileAction": {
+    "confirmTitle": "Xác nhận hồ sơ v{{version}}?",
+    "confirmDescription": "Xác nhận hồ sơ tổng hợp {{view}} đã được xem xét. Hồ sơ sẽ đủ điều kiện kích hoạt.",
+    "activateTitle": "Kích hoạt hồ sơ v{{version}}?",
+    "activateDescription": "Phiên bản v{{version}} sẽ trở thành tham chiếu {{view}} đang dùng. Phiên bản đang hoạt động trước đó của cùng bài tập và góc quay sẽ trở thành lịch sử, không bị xóa."
   },
   "status": {
     "processing": "Đang xử lý",
@@ -111,6 +190,7 @@
     "setCreated": "Đã tạo bộ tham chiếu.",
     "exerciseCreated": "Đã thêm bài tập vào danh mục toàn cục.",
     "sourceUploaded": "Đã xử lý nguồn và làm mới hồ sơ tham chiếu.",
+    "sourceUploadFailed": "Không thể xử lý nguồn. Hãy xem lỗi và thử video khác.",
     "profileConfirmed": "Đã xác nhận hồ sơ.",
     "profileActivated": "Đã kích hoạt hồ sơ và giữ lại các phiên bản lịch sử."
   }
