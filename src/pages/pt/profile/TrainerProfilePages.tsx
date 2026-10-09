@@ -19,10 +19,9 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { useTrainerProfileStore } from './useTrainerProfileStore';
-
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { getGym } from '@/features/marketplace/model/marketplaceData';
+import { useTrainerProfileStore } from '@/features/trainer-profile';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 

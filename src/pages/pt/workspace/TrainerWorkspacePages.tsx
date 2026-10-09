@@ -31,6 +31,13 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TrainerExerciseArtwork, TrainerExercisePreviewDialog } from './TrainerExerciseMedia';
+
+import {
+  isMuscleRelated,
+  MUSCLES,
+  type MuscleId,
+} from '@/features/member-workout-builder/model/muscleMapData';
+import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
 import {
   getTrainerExercise,
   getTrainerMember,
@@ -42,14 +49,7 @@ import {
   type TrainerExercise,
   type TrainerPlanExercise,
   type TrainerWeekday,
-} from './useTrainerWorkspaceStore';
-
-import {
-  isMuscleRelated,
-  MUSCLES,
-  type MuscleId,
-} from '@/features/member-workout-builder/model/muscleMapData';
-import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
+} from '@/features/trainer-workspace';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 

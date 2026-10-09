@@ -1,8 +1,7 @@
 import { Dumbbell, Film, Play } from 'lucide-react';
 
-import { getExerciseGoal } from './trainerExerciseModel';
-import type { TrainerExercise } from './useTrainerWorkspaceStore';
-
+import type { TrainerExercise } from '@/features/trainer-workspace';
+import { getExerciseGoal } from '@/features/trainer-workspace';
 import {
   Dialog,
   DialogContent,

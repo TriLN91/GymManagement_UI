@@ -15,20 +15,18 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TrainerExerciseArtwork, TrainerExercisePreviewDialog } from './TrainerExerciseMedia';
+
 import {
   EMPTY_TRAINER_EXERCISE_FILTERS,
   filterTrainerExercises,
   getExerciseGoal,
   toggleTrainerExerciseFilter,
-  type TrainerExerciseFilterKey,
-  type TrainerExerciseFilters,
-} from './trainerExerciseModel';
-import {
   trainerExercises,
   useTrainerWorkspaceStore,
   type TrainerExercise,
-} from './useTrainerWorkspaceStore';
-
+  type TrainerExerciseFilterKey,
+  type TrainerExerciseFilters,
+} from '@/features/trainer-workspace';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
