@@ -5,7 +5,7 @@ import { ENDPOINTS } from '@/shared/api/endpoints';
 // Mirrors the backend contract (ResponseDto<AuthResponseDto>) so the FE behaves the same with MSW on or off.
 // Backend role names; the FE maps them in features/auth/api/mappers.ts.
 const DEMO_PASSWORD = 'Password1!';
-const MIN_PASSWORD_LENGTH = 12;
+const MIN_PASSWORD_LENGTH = 6;
 
 interface MockAccount {
   userId: string;

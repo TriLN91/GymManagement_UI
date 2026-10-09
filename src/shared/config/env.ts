@@ -10,7 +10,6 @@ export const envSchema = z.object({
   VITE_API_BASE_URL: z.string().url().default('http://localhost:5167/api'),
   VITE_API_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
   VITE_OAUTH_GOOGLE_CLIENT_ID: z.string().optional(),
-  VITE_OAUTH_APPLE_CLIENT_ID: z.string().optional(),
   VITE_ENABLE_MSW: booleanFlag.optional(),
 });
 

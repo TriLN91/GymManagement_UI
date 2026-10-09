@@ -56,7 +56,7 @@ export function ForgotPasswordPage() {
         </div>
 
         {submitted ? (
-          <div className="bg-mint/5 w-full rounded-xl border border-mint p-6 text-center">
+          <div className="w-full rounded-xl border border-forest/30 bg-forest/5 p-6 text-center">
             <p className="mb-2 font-bold text-forest">Email Đã Được Gửi</p>
             <p className="text-sm text-forest/70">{t('auth:forgot.success')}</p>
             <Link
@@ -90,7 +90,7 @@ export function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="hover:bg-mint/90 mt-6 h-12 w-full rounded-full bg-mint font-bold text-forest"
+              className="mt-6 h-12 w-full rounded-full bg-forest font-bold text-white hover:bg-forest/90"
               disabled={isSubmitting}
             >
               Gửi mã xác nhận &rarr;

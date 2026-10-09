@@ -14,11 +14,20 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-const schema = z.object({
-  email: z.string().email('invalid'),
-  // Backend policy (RegisterRequestDto): 12-128 characters.
-  password: z.string().min(12, 'min12').max(128, 'max128'),
-});
+const schema = z
+  .object({
+    email: z.string().email('Email không hợp lệ.'),
+    // Backend policy (RegisterRequestDto): 6-128 characters.
+    password: z
+      .string()
+      .min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
+      .max(128, 'Mật khẩu tối đa 128 ký tự.'),
+    confirmPassword: z.string().min(1, 'Vui lòng nhập lại mật khẩu.'),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Mật khẩu nhập lại không khớp.',
+  });
 type FormValues = z.infer<typeof schema>;
 
 export function RegisterPage() {
@@ -34,7 +43,7 @@ export function RegisterPage() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', confirmPassword: '' },
   });
 
   useEffect(() => {
@@ -44,7 +53,11 @@ export function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       // Mocking fullName as it's required by backend but not in the new design
-      await register.mutateAsync({ ...values, fullName: 'New User' });
+      await register.mutateAsync({
+        email: values.email,
+        password: values.password,
+        fullName: 'New User',
+      });
       void navigate(ROUTES.member.root, { replace: true });
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -76,7 +89,7 @@ export function RegisterPage() {
         <div className="mb-8 flex w-full flex-col gap-3">
           <button
             onClick={() => setRole('member')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'member' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'member' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
               <span className="text-sm font-bold text-forest">Người tập (Member)</span>
@@ -85,15 +98,15 @@ export function RegisterPage() {
               </span>
             </div>
             <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'member' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'member' ? 'border-forest bg-forest' : 'border-forest/30'}`}
             >
-              {role === 'member' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
+              {role === 'member' && <div className="h-2 w-2 rounded-full bg-white"></div>}
             </div>
           </button>
 
           <button
             onClick={() => setRole('pt')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'pt' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'pt' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
               <span className="text-sm font-bold text-forest">Huấn Luyện Viên (Trainer)</span>
@@ -102,15 +115,15 @@ export function RegisterPage() {
               </span>
             </div>
             <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'pt' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'pt' ? 'border-forest bg-forest' : 'border-forest/30'}`}
             >
-              {role === 'pt' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
+              {role === 'pt' && <div className="h-2 w-2 rounded-full bg-white"></div>}
             </div>
           </button>
 
           <button
             onClick={() => setRole('gym_admin')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'gym_admin' ? 'bg-mint/5 border-mint' : 'border-forest/20 hover:border-forest/40'}`}
+            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'gym_admin' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
           >
             <div className="flex flex-col text-left">
               <span className="text-sm font-bold text-forest">Chủ Phòng (Gym Admin)</span>
@@ -119,9 +132,9 @@ export function RegisterPage() {
               </span>
             </div>
             <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'gym_admin' ? 'border-mint bg-mint text-forest' : 'border-forest/30'}`}
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'gym_admin' ? 'border-forest bg-forest' : 'border-forest/30'}`}
             >
-              {role === 'gym_admin' && <div className="h-2 w-2 rounded-full bg-forest"></div>}
+              {role === 'gym_admin' && <div className="h-2 w-2 rounded-full bg-white"></div>}
             </div>
           </button>
         </div>
@@ -160,10 +173,30 @@ export function RegisterPage() {
               autoComplete="new-password"
               {...registerField('password')}
               className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-              placeholder="Tối thiểu 12 ký tự"
+              placeholder="Tối thiểu 6 ký tự"
             />
             {errors.password ? (
               <p className="text-xs font-medium text-red-500">{errors.password.message}</p>
+            ) : null}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-xs font-bold uppercase tracking-wider text-forest"
+            >
+              Nhập lại mật khẩu
+            </Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              {...registerField('confirmPassword')}
+              className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
+              placeholder="Nhập lại mật khẩu"
+            />
+            {errors.confirmPassword ? (
+              <p className="text-xs font-medium text-red-500">{errors.confirmPassword.message}</p>
             ) : null}
           </div>
 
@@ -175,7 +208,7 @@ export function RegisterPage() {
 
           <Button
             type="submit"
-            className="hover:bg-mint/90 mt-6 h-12 w-full rounded-full bg-mint font-bold text-forest"
+            className="mt-6 h-12 w-full rounded-full bg-forest font-bold text-white hover:bg-forest/90"
             disabled={register.isPending}
           >
             Tiếp tục tạo tài khoản &rarr;

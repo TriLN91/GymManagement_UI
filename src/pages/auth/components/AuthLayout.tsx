@@ -18,7 +18,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       <header className="relative z-10 flex w-full items-center justify-between px-6 py-8 text-forest md:px-12">
         <Link
           to={ROUTES.public.landing}
-          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors hover:text-mint"
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors hover:text-forest/70"
         >
           <ChevronLeft className="h-4 w-4" /> Quay lại trang chủ
         </Link>
