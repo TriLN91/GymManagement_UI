@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+import { waitForGymOwnerPortal } from './helpers/gymOwnerAuth';
 
 const completeApplication = {
   brand: {
@@ -42,7 +42,7 @@ async function loginAsGymOwner(page: Page) {
   await page.getByLabel(/email/i).fill('admin@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
-  await completeGymOwnerOtp(page);
+  await waitForGymOwnerPortal(page);
   await expect(page).toHaveURL(/\/admin\/onboarding$/);
   if ((await page.locator('html').getAttribute('lang'))?.startsWith('vi')) {
     await page.getByRole('button', { name: /english/i }).click();

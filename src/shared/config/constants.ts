@@ -8,7 +8,6 @@ export const ROUTES = Object.freeze({
     register: '/register',
     forgotPassword: '/forgot-password',
     resetPassword: '/reset-password',
-    verifyEmailOtp: '/verify-email-otp',
     forbidden: '/403',
     notFound: '/404',
   }),

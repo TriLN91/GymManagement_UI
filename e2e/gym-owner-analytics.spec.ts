@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+import { waitForGymOwnerPortal } from './helpers/gymOwnerAuth';
 
 const approvedOnboarding = {
   brand: {
@@ -43,7 +43,7 @@ async function loginApprovedGymOwner(page: Page) {
   await page.getByLabel(/email/i).fill('admin@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
-  await completeGymOwnerOtp(page);
+  await waitForGymOwnerPortal(page);
   await page.evaluate((state) => {
     window.localStorage.setItem('gmc.gymOwnerOnboarding', JSON.stringify({ state, version: 1 }));
   }, approvedOnboarding);
@@ -64,19 +64,33 @@ test.describe('Gym Owner analytics', () => {
     await loginApprovedGymOwner(page);
 
     const main = page.getByRole('main');
-    await expect(main.getByLabel('Operational analytics').getByText('Gym service sales')).toBeVisible();
-    await expect(main.getByLabel('Operational analytics').getByText('PT Package views')).toBeVisible();
-    await expect(main.getByLabel('Operational analytics').getByText('Successful purchases')).toBeVisible();
-    await expect(main.getByLabel('Operational analytics').getByText('New assignments')).toBeVisible();
+    await expect(
+      main.getByLabel('Operational analytics').getByText('Gym service sales'),
+    ).toBeVisible();
+    await expect(
+      main.getByLabel('Operational analytics').getByText('PT Package views'),
+    ).toBeVisible();
+    await expect(
+      main.getByLabel('Operational analytics').getByText('Successful purchases'),
+    ).toBeVisible();
+    await expect(
+      main.getByLabel('Operational analytics').getByText('New assignments'),
+    ).toBeVisible();
     await expect(main.getByText('Completed PT appointments').first()).toBeVisible();
-    await expect(main.getByText('All KPIs and comparison values are supplied by the backend.')).toBeVisible();
+    await expect(
+      main.getByText('All KPIs and comparison values are supplied by the backend.'),
+    ).toBeVisible();
     await expect(main.getByRole('img', { name: /Current period:/ }).first()).toBeVisible();
     await expect(main.getByRole('table', { name: 'Trainer activity' })).toBeVisible();
-    await expect(main.getByText(/health|body measurement|form assessment|trainer ranking/i)).toHaveCount(0);
+    await expect(
+      main.getByText(/health|body measurement|form assessment|trainer ranking/i),
+    ).toHaveCount(0);
     expect(consoleErrors).toEqual([]);
   });
 
-  test('validates and applies custom date ranges without fabricating unavailable data', async ({ page }) => {
+  test('validates and applies custom date ranges without fabricating unavailable data', async ({
+    page,
+  }) => {
     await loginApprovedGymOwner(page);
     const customRangeButton = page.getByRole('button', { name: 'Custom', exact: true });
     await expect(customRangeButton).toBeVisible();
@@ -86,12 +100,16 @@ test.describe('Gym Owner analytics', () => {
     await page.getByLabel('Start date').fill('2026-09-16');
     await page.getByLabel('End date').fill('2026-09-15');
     await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.getByRole('alert')).toHaveText('The start date cannot be after the end date.');
+    await expect(page.getByRole('alert')).toHaveText(
+      'The start date cannot be after the end date.',
+    );
 
     await page.getByLabel('Start date').fill('2026-08-01');
     await page.getByLabel('End date').fill('2026-08-15');
     await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.getByText('No analytics data is available for this date range.')).toBeVisible();
+    await expect(
+      page.getByText('No analytics data is available for this date range.'),
+    ).toBeVisible();
 
     await page.getByLabel('Start date').fill('2026-09-01');
     await page.getByLabel('End date').fill('2026-09-15');
@@ -105,7 +123,9 @@ test.describe('Gym Owner analytics', () => {
 
     await expect(page.getByText('Some data was not supplied by the backend')).toBeVisible();
     await expect(page.getByText('Not supplied by backend')).toBeVisible();
-    await expect(page.getByLabel('Operational analytics').getByText('Gym service sales')).toBeVisible();
+    await expect(
+      page.getByLabel('Operational analytics').getByText('Gym service sales'),
+    ).toBeVisible();
   });
 
   test('has no horizontal overflow at a narrow viewport', async ({ page }) => {

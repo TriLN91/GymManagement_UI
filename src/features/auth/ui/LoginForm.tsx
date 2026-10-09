@@ -2,13 +2,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+import { resolveLoginDestination } from '../model/loginDestination';
 import { useLogin } from '../model/useAuth';
 
 import { AuthError, ValidationError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -20,16 +22,10 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const portalForRole = (roles: ReadonlyArray<string>): string => {
-  if (roles.includes('super_admin')) return ROUTES.superadmin.root;
-  if (roles.includes('gym_admin')) return ROUTES.admin.root;
-  if (roles.includes('pt')) return ROUTES.pt.root;
-  return ROUTES.member.root;
-};
-
 export function LoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const login = useLogin();
 
   const {
@@ -49,12 +45,9 @@ export function LoginForm() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      const response = await login.mutateAsync(values);
-      if ('challengeId' in response) {
-        void navigate(ROUTES.public.verifyEmailOtp, { replace: true });
-        return;
-      }
-      void navigate(portalForRole(response.user.roles), { replace: true });
+      const session = await login.mutateAsync(values);
+      const returnTo = (location.state as { returnTo?: unknown } | null)?.returnTo;
+      void navigate(resolveLoginDestination(session.user.roles, returnTo), { replace: true });
     } catch (error) {
       if (error instanceof ValidationError) {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {
@@ -139,12 +132,15 @@ export function LoginForm() {
             >
               {t('auth:login.password')}
             </Label>
-            <Link
-              to={ROUTES.public.forgotPassword}
-              className="text-xs text-forest/60 transition-colors hover:text-forest"
-            >
-              {t('auth:login.forgotPassword')}
-            </Link>
+            {/* The backend has no password-reset endpoint yet; only the mock API serves it. */}
+            {env.VITE_ENABLE_MSW ? (
+              <Link
+                to={ROUTES.public.forgotPassword}
+                className="text-xs text-forest/60 transition-colors hover:text-forest"
+              >
+                {t('auth:login.forgotPassword')}
+              </Link>
+            ) : null}
           </div>
           <Input
             id="password"
@@ -182,7 +178,7 @@ export function LoginForm() {
           </Link>
         </div>
 
-        {import.meta.env.DEV ? (
+        {import.meta.env.DEV && env.VITE_ENABLE_MSW ? (
           <div className="mt-8 rounded-xl border border-dashed border-forest/20 bg-white/50 p-4 text-xs text-forest/60">
             <p className="mb-2 font-bold uppercase tracking-wider text-forest">
               {t('auth:login.devHint')}

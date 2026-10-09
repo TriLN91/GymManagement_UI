@@ -12,6 +12,8 @@ import '@/styles/globals.css';
 async function bootstrap() {
   tokenManager.hydrate();
   useAuthStore.getState().hydrate();
+  // Refresh failed or token revoked: sign out locally so AuthGuard sends the user to /login.
+  tokenManager.onSessionExpired(() => useAuthStore.getState().clear());
 
   if (env.VITE_ENABLE_MSW) {
     const { worker } = await import('@/mocks/browser');

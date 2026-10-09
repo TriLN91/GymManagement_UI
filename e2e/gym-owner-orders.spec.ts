@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+import { waitForGymOwnerPortal } from './helpers/gymOwnerAuth';
 
 const approvedOnboarding = {
   brand: {
@@ -43,7 +43,7 @@ async function loginApprovedGymOwner(page: Page) {
   await page.getByLabel(/email/i).fill('admin@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
-  await completeGymOwnerOtp(page);
+  await waitForGymOwnerPortal(page);
   await expect(page).toHaveURL(/\/admin/);
   await page.evaluate((state) => {
     window.localStorage.setItem('gmc.gymOwnerOnboarding', JSON.stringify({ state, version: 1 }));
@@ -86,7 +86,9 @@ test.describe('Gym Owner orders and settlement', () => {
     await page.getByRole('button', { name: 'Submit refund / dispute request' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('button', { name: 'Send to Platform' }).click();
-    await expect(dialog.getByRole('alert')).toHaveText('Provide a reason or supporting information.');
+    await expect(dialog.getByRole('alert')).toHaveText(
+      'Provide a reason or supporting information.',
+    );
     await dialog.getByLabel('Request type').selectOption('dispute');
     await dialog
       .getByLabel('Reason / supporting information')
@@ -95,7 +97,9 @@ test.describe('Gym Owner orders and settlement', () => {
 
     await expect(page.getByText('Awaiting Platform review')).toBeVisible();
     await expect(page.getByText('Dispute · Submitted request')).toBeVisible();
-    await expect(page.getByRole('button', { name: /approve|execute refund|reject/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /approve|execute refund|reject/i })).toHaveCount(
+      0,
+    );
   });
 
   test('keeps order and settlement CSV downloads separate', async ({ page }) => {

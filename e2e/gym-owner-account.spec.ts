@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+import { waitForGymOwnerPortal } from './helpers/gymOwnerAuth';
 
 const approvedOnboarding = {
   brand: {
@@ -47,39 +47,32 @@ async function startGymOwnerLogin(page: Page) {
 
 async function loginApprovedGymOwner(page: Page) {
   await startGymOwnerLogin(page);
-  await completeGymOwnerOtp(page);
+  await waitForGymOwnerPortal(page);
   await page.evaluate((state) => {
     window.localStorage.setItem('gmc.gymOwnerOnboarding', JSON.stringify({ state, version: 1 }));
   }, approvedOnboarding);
 }
 
 test.describe('Gym Owner notifications and account security', () => {
-  test('requires email OTP before creating the Gym Owner session', async ({ page }) => {
+  test('signs the Gym Owner in directly and keeps tokens out of localStorage', async ({ page }) => {
     await startGymOwnerLogin(page);
-    await expect(page).toHaveURL(/\/verify-email-otp$/);
-    expect(await page.evaluate(() => window.sessionStorage.getItem('gmc.accessToken'))).toBeNull();
-    expect(await page.evaluate(() => window.localStorage.getItem('gmc.accessToken'))).toBeNull();
-
-    const digits = page.locator('input[aria-label^="Digit"]');
-    await expect(digits).toHaveCount(6);
-    for (let index = 0; index < 6; index += 1) await digits.nth(index).fill('0');
-    await page.getByRole('button', { name: 'Verify and continue' }).click();
-    await expect(page.getByRole('alert')).toHaveText(/invalid/i);
-    expect(await page.evaluate(() => window.sessionStorage.getItem('gmc.accessToken'))).toBeNull();
-
-    for (const [index, digit] of [...'654321'].entries()) await digits.nth(index).fill(digit);
-    await page.getByRole('button', { name: 'Verify and continue' }).click();
     await expect(page).toHaveURL(/\/admin\/onboarding$/);
-    expect(await page.evaluate(() => window.sessionStorage.getItem('gmc.accessToken'))).not.toBeNull();
+    expect(
+      await page.evaluate(() => window.sessionStorage.getItem('gmc.accessToken')),
+    ).not.toBeNull();
     expect(await page.evaluate(() => window.localStorage.getItem('gmc.accessToken'))).toBeNull();
   });
 
-  test('marks notifications read and navigates only to an approved internal route', async ({ page }) => {
+  test('marks notifications read and navigates only to an approved internal route', async ({
+    page,
+  }) => {
     await loginApprovedGymOwner(page);
     await page.goto('/admin/notifications');
 
     await expect(page.getByText('Unread: 2')).toBeVisible();
-    const orderNotification = page.getByRole('link', { name: /Open related content: New purchase confirmed/ });
+    const orderNotification = page.getByRole('link', {
+      name: /Open related content: New purchase confirmed/,
+    });
     await expect(orderNotification).toHaveAttribute('href', '/admin/orders/FIT-2026-1048');
     await orderNotification.click();
     await expect(page).toHaveURL(/\/admin\/orders\/FIT-2026-1048$/);
@@ -91,10 +84,14 @@ test.describe('Gym Owner notifications and account security', () => {
     await page.goto('/admin/notifications');
     await expect(page.getByText('Unread: 1')).toBeVisible();
     await expect(page.getByRole('link', { name: /platform service announcement/i })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /Mark as read: Platform service announcement/ })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /Mark as read: Platform service announcement/ }),
+    ).toBeVisible();
   });
 
-  test('shows mandatory OTP status and a privacy-limited important activity log', async ({ page }) => {
+  test('shows mandatory OTP status and a privacy-limited important activity log', async ({
+    page,
+  }) => {
     await loginApprovedGymOwner(page);
     await page.goto('/admin/account-security');
 
@@ -102,7 +99,9 @@ test.describe('Gym Owner notifications and account security', () => {
     await expect(page.getByText(/ad\*+@demo\.gym/)).toBeVisible();
     await expect(page.getByRole('table', { name: 'Important activity' })).toBeVisible();
     await expect(page.getByText('Email OTP sign-in completed')).toBeVisible();
-    await expect(page.getByText(/IP address|device fingerprint|location|OTP code|access token/i)).toHaveCount(0);
+    await expect(
+      page.getByText(/IP address|device fingerprint|location|OTP code|access token/i),
+    ).toHaveCount(0);
   });
 
   test('keeps notification and activity layouts within a 390px viewport', async ({ page }) => {

@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { AuthLayout } from './components/AuthLayout';
 
 import { useRegister } from '@/features/auth/model/useAuth';
+import { ValidationError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
@@ -15,7 +16,8 @@ import { Label } from '@/shared/ui/label';
 
 const schema = z.object({
   email: z.string().email('invalid'),
-  password: z.string().min(8, 'min8'),
+  // Backend policy (RegisterRequestDto): 12-128 characters.
+  password: z.string().min(12, 'min12').max(128, 'max128'),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -44,7 +46,16 @@ export function RegisterPage() {
       // Mocking fullName as it's required by backend but not in the new design
       await register.mutateAsync({ ...values, fullName: 'New User' });
       void navigate(ROUTES.member.root, { replace: true });
-    } catch {
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        for (const [field, messages] of Object.entries(error.fieldErrors)) {
+          if ((field === 'email' || field === 'password') && messages[0]) {
+            setError(field, { message: messages[0] });
+          }
+        }
+        if (error.message) setError('root', { message: error.message });
+        return;
+      }
       setError('root', { message: t('auth:errors.somethingWentWrong') });
     }
   });
@@ -149,7 +160,7 @@ export function RegisterPage() {
               autoComplete="new-password"
               {...registerField('password')}
               className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-              placeholder="Tối thiểu 8 ký tự"
+              placeholder="Tối thiểu 12 ký tự"
             />
             {errors.password ? (
               <p className="text-xs font-medium text-red-500">{errors.password.message}</p>
