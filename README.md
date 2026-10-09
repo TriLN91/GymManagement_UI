@@ -27,11 +27,12 @@ npm run dev                  # http://localhost:5173
 
 See `.env.example`. All variables are validated in `src/shared/config/env.ts`.
 
-| Variable              | Default                                     | Notes                                                     |
-| --------------------- | ------------------------------------------- | --------------------------------------------------------- |
-| `VITE_API_BASE_URL`   | `http://localhost:5167/api`                 | Backend base URL (`AI_SEP_FA26_BE`, route prefix `/api`). |
-| `VITE_ENABLE_MSW`     | `true` in dev, `false` in production builds | Must be exactly `true` or `false`.                        |
-| `VITE_DEFAULT_LOCALE` | `en`                                        | `en` or `vi`.                                             |
+| Variable              | Default                                     | Notes                                                                            |
+| --------------------- | ------------------------------------------- | -------------------------------------------------------------------------------- |
+| `VITE_API_BASE_URL`   | `http://localhost:5167/api`                 | Backend base URL (`AI_SEP_FA26_BE`, route prefix `/api`).                        |
+| `VITE_API_TIMEOUT_MS` | `330000`                                    | Allows the synchronous movement processor to use its 300-second backend timeout. |
+| `VITE_ENABLE_MSW`     | `true` in dev, `false` in production builds | Must be exactly `true` or `false`.                                               |
+| `VITE_DEFAULT_LOCALE` | `en`                                        | `en` or `vi`.                                                                    |
 
 ## Mock API vs real backend
 

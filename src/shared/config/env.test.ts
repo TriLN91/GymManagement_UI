@@ -7,6 +7,10 @@ describe('parseEnv', () => {
     expect(parseEnv({ VITE_API_TIMEOUT_MS: '5000' }, false).VITE_API_TIMEOUT_MS).toBe(5000);
   });
 
+  it('allows the synchronous movement processor to use its backend timeout by default', () => {
+    expect(parseEnv({}, false).VITE_API_TIMEOUT_MS).toBe(330_000);
+  });
+
   it('rejects an invalid API base URL', () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     expect(() => parseEnv({ VITE_API_BASE_URL: 'not-a-url' }, false)).toThrow();
