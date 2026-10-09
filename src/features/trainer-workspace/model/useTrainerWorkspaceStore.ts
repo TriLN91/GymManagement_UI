@@ -86,6 +86,38 @@ export interface TrainerAppointment {
   notes: string;
 }
 
+export interface TrainerWorkoutHistoryEntry {
+  id: string;
+  date: string;
+  exerciseCount: number;
+  completedCount: number;
+  durationMinutes: number;
+  loadKg: number;
+  status: 'completed';
+}
+
+// Demo data until the BE exposes a workout history endpoint.
+export const trainerWorkoutHistory: TrainerWorkoutHistoryEntry[] = [
+  {
+    id: 'history-1',
+    date: '2026-09-22',
+    exerciseCount: 4,
+    completedCount: 4,
+    durationMinutes: 52,
+    loadKg: 12840,
+    status: 'completed',
+  },
+  {
+    id: 'history-2',
+    date: '2026-09-18',
+    exerciseCount: 3,
+    completedCount: 3,
+    durationMinutes: 46,
+    loadKg: 11920,
+    status: 'completed',
+  },
+];
+
 export const trainerMembers: TrainerMember[] = [
   {
     id: 'alex',

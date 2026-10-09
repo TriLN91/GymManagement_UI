@@ -10,7 +10,7 @@ async function openAsMember(page: Page) {
       tenantId: 'fit-e2e',
       locale: 'en',
     };
-    window.localStorage.clear();
+    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
     window.localStorage.setItem('app:auth', JSON.stringify({ state: { user }, version: 1 }));
     window.localStorage.setItem('gmc.locale', 'en');
     window.sessionStorage.setItem('gmc.accessToken', 'e2e-token');

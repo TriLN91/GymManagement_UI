@@ -1,12 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 export function MovementVisual() {
+  const { t } = useTranslation('landing');
   return (
-    <div
-      className="fit-movement-visual"
-      role="img"
-      aria-label="Minh họa phân tích tư thế squat với điểm khớp và đường đo chuyển động"
-    >
+    <div className="fit-movement-visual" role="img" aria-label={t('movement.aria')}>
       <div className="fit-visual-top fit-label">
-        <span>PHÂN TÍCH VIDEO</span>
+        <span>{t('movement.top')}</span>
         <span>01 / SQUAT</span>
       </div>
       <svg viewBox="0 0 640 500" aria-hidden="true">
@@ -63,19 +62,19 @@ export function MovementVisual() {
         ))}
         <g fill="currentColor" fontFamily="monospace" fontSize="10" letterSpacing="1">
           <text x="79" y="240">
-            ĐIỂM KHỚP
+            {t('movement.joints')}
           </text>
           <text x="438" y="315">
-            BIÊN ĐỘ
+            {t('movement.range')}
           </text>
           <text x="105" y="125">
-            TƯ THẾ
+            {t('movement.posture')}
           </text>
         </g>
       </svg>
       <div className="fit-visual-bottom fit-label">
-        <span>VIDEO → PHÂN TÍCH → PHẢN HỒI</span>
-        <span>HÌNH MINH HỌA</span>
+        <span>{t('movement.bottom')}</span>
+        <span>{t('movement.illustration')}</span>
       </div>
     </div>
   );

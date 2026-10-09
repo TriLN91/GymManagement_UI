@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
 
+// The landing copy is asserted in its default language, Vietnamese.
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test('desktop audience toggle works with keyboard and links to registration', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
@@ -31,4 +34,19 @@ test('mobile renders the same landing without horizontal scroll', async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
+});
+
+test('language switcher translates the whole landing page and the choice persists', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Có định hướng.');
+  await page.getByRole('button', { name: 'Chuyển ngôn ngữ' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('With direction.');
+  await expect(page.getByRole('button', { name: 'Gym owners', exact: true }).first()).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('With direction.');
+  await page.goto('/login');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign In.');
 });

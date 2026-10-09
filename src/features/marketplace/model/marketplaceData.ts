@@ -1,3 +1,6 @@
+export const GYM_CITIES = ['ho-chi-minh', 'ha-noi', 'da-nang'] as const;
+export type GymCity = (typeof GYM_CITIES)[number];
+
 export interface LocalizedText {
   en: string;
   vi: string;
@@ -21,7 +24,7 @@ export interface GymOffer {
 export interface MarketplaceGym {
   id: string;
   name: string;
-  city: 'ho-chi-minh' | 'ha-noi' | 'da-nang';
+  city: GymCity;
   area: LocalizedText;
   type: 'boutique' | 'strength' | 'full-service';
   address: LocalizedText;

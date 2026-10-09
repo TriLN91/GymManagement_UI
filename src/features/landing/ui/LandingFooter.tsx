@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import type { LandingAudience } from '../model/types';
@@ -9,6 +10,7 @@ export function LandingFooter({
 }: {
   onAudienceChange: (audience: LandingAudience) => void;
 }) {
+  const { t } = useTranslation('landing');
   return (
     <footer className="fit-footer">
       <div className="fit-footer-top">
@@ -16,22 +18,22 @@ export function LandingFooter({
           <span className="fit-wordmark">
             FIT<sup>®</sup>
           </span>
-          <p>Tập luyện là vận động. AI mang đến sự chính xác.</p>
+          <p>{t('footer.tagline')}</p>
         </div>
-        <nav aria-label="Liên kết cuối trang">
+        <nav aria-label={t('footer.nav')}>
           <button type="button" onClick={() => onAudienceChange('member')}>
-            Người tập
+            {t('member')}
           </button>
           <button type="button" onClick={() => onAudienceChange('gym_owner')}>
-            Chủ phòng tập
+            {t('owner')}
           </button>
-          <Link to={ROUTES.public.login}>Đăng nhập</Link>
-          <Link to={ROUTES.public.register}>Đăng ký</Link>
+          <Link to={ROUTES.public.login}>{t('login')}</Link>
+          <Link to={ROUTES.public.register}>{t('footer.register')}</Link>
         </nav>
       </div>
       <div className="fit-footer-bottom fit-label">
         <span>© {new Date().getFullYear()} FIT®</span>
-        <span>CHUYỂN ĐỘNG. DỮ LIỆU. TIẾN BỘ.</span>
+        <span>{t('footer.motto')}</span>
       </div>
     </footer>
   );

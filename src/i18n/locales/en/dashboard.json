@@ -1,0 +1,91 @@
+{
+  "plan": {
+    "generated": "AI PLAN GENERATED // 12 WEEKS HYPERTROPHY",
+    "phase": "Phase: HYPERTROPHY CYCLE T1",
+    "title": "Upper Body Hypertrophy & Lat Stability",
+    "exercises": "EXERCISES",
+    "minutes": "EST. MINUTES",
+    "kcal": "EST. KCAL",
+    "cards": [
+      {
+        "target": "Target: Chest & Triceps",
+        "name": "Barbell Bench Press",
+        "a": "4 SETS",
+        "b": "8-10 REPS"
+      },
+      {
+        "target": "Target: Lats & Biceps",
+        "name": "Lat Pulldown Wide Grip",
+        "a": "3 SETS",
+        "b": "10-12 REPS"
+      },
+      {
+        "target": "Target: Core & Grip",
+        "name": "Dead Hang Isometric",
+        "a": "3 SETS",
+        "b": "45 SECS"
+      },
+      {
+        "target": "Target: Cardio & Back",
+        "name": "Ergometer Row Sprint",
+        "a": "INTERVALS",
+        "b": "HIT"
+      }
+    ],
+    "rpe": "Expected warm-up difficulty based on your last session RPE:",
+    "start": "Start workout"
+  },
+  "setup": {
+    "title": "PROFILE SETUP",
+    "progress": "Progress: 2 / 4",
+    "done": "completed",
+    "lead": "Complete your body parameters so the AI-Pose algorithm can calculate risk more accurately.",
+    "goalLabel": "TRAINING GOAL",
+    "goal": "Build muscle & maximize body mass",
+    "bodyLabel": "BODY METRICS",
+    "body": "58.0 kg (Target: 62.0 kg)",
+    "completed": "Completed",
+    "medicalLabel": "INJURY / MEDICAL HISTORY",
+    "notUpdated": "Not updated",
+    "missing": "! Missing information",
+    "accuracy": "AI ASSESSMENT ACCURACY",
+    "accuracyHintBefore": "Add more information so AI Pose reduces",
+    "accuracyHintStrong": "40% of peripheral interpolation error",
+    "finish": "COMPLETE PROFILE"
+  },
+  "actions": {
+    "one": {
+      "tag": "QUICK ACTION // 01",
+      "title": "START\nTODAY'S SESSION",
+      "body": "Load your plan straight into the rep counter. Rest timing and form-error handling are automatic.",
+      "cta": "Start now →"
+    },
+    "two": {
+      "tag": "COMPUTER VISION // 02",
+      "title": "SCORE YOUR FORM\nWITH AI VIDEO",
+      "body": "Record a draft video to detect skeleton errors. Compare 3D Pose-Net rep ratios against the trainer's standard.",
+      "cta": "Record form video ↑"
+    }
+  },
+  "chart": {
+    "tag": "BIOMETRIC TRACKING // LAST 7 DAYS OVERVIEW",
+    "title": "Biometric cycle, week 14",
+    "aiAnalysis": "AI Analysis (Premium)",
+    "nextPlan": "Next week's plan",
+    "volume": "VOLUME LOAD (KG) / DAY",
+    "peak": "PEAK:",
+    "peakValue": "18,250 KG",
+    "days": ["MON", "TUE", "WED", "THU", "TODAY"],
+    "cycle": "THIS WEEK'S TRAINING CYCLE",
+    "onTrack": "ON TRACK",
+    "cycleNote": "Complete 2 more sessions to reach your hypertrophy index.",
+    "newVolume": "NEW TOTAL VOLUME",
+    "perWeek": "+1.5 KG/WEEK",
+    "newVolumeNote": "Total volume compared with 3 weeks ago.",
+    "formScore": "AI FORM-NET TECHNIQUE SCORE",
+    "veryGood": "VERY GOOD",
+    "formNote": "Back straightness at the average angle reaches 94.7%.",
+    "footnote": "* The daily / weekly analysis hides data it has not learned yet; figures may change after your next draft learning session.",
+    "integrity": "DATA INTEGRITY: SQL RAW"
+  }
+}

@@ -1,7 +1,8 @@
 import { Dumbbell, Film, Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import type { TrainerExercise } from '@/features/trainer-workspace';
-import { getExerciseGoal } from '@/features/trainer-workspace';
+import { getExerciseGoal, useTrainerText } from '@/features/trainer-workspace';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ export function TrainerExerciseArtwork({
   exercise: TrainerExercise;
   compact?: boolean;
 }) {
+  const tr = useTrainerText();
   return (
     <span
       className={`trainer-exercise-artwork trainer-exercise-artwork--${exercise.id}${compact ? 'is-compact' : ''}`}
@@ -34,7 +36,7 @@ export function TrainerExerciseArtwork({
       ) : null}
       <span className="trainer-exercise-artwork__fallback" hidden={Boolean(exercise.imageUrl)}>
         <Dumbbell aria-hidden="true" />
-        {!compact && <small>{exercise.muscle}</small>}
+        {!compact && <small>{tr(exercise.muscle)}</small>}
       </span>
       <span className="trainer-exercise-artwork__play" aria-hidden="true">
         <Play fill="currentColor" />
@@ -47,13 +49,13 @@ export function TrainerExercisePreviewDialog({
   exercise,
   open,
   onOpenChange,
-  lang,
 }: {
   exercise: TrainerExercise | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  lang: 'vi' | 'en';
 }) {
+  const { t } = useTranslation();
+  const tr = useTrainerText();
   if (!exercise) return null;
   const muscles = [exercise.muscle, ...(exercise.secondaryMuscles ?? [])];
 
@@ -79,29 +81,21 @@ export function TrainerExercisePreviewDialog({
               onTimeUpdate={(event) => {
                 if (event.currentTarget.currentTime >= 5) event.currentTarget.currentTime = 0;
               }}
-              aria-label={
-                lang === 'vi'
-                  ? `Video hướng dẫn ${exercise.name}`
-                  : `${exercise.name} demonstration video`
-              }
+              aria-label={t('trainer:trainerExerciseMedia.nameDemonstrationVideo', {
+                name: exercise.name,
+              })}
             />
           ) : (
             <div className="trainer-exercise-preview-dialog__fallback">
               <Film aria-hidden="true" />
-              <strong>
-                {lang === 'vi' ? 'Chưa có video hướng dẫn' : 'Preview video unavailable'}
-              </strong>
-              <span>
-                {lang === 'vi'
-                  ? 'Dữ liệu bài tập hiện chưa cung cấp video 16:9.'
-                  : 'The current exercise data does not include a 16:9 preview video.'}
-              </span>
+              <strong>{t('trainer:trainerExerciseMedia.previewVideoUnavailable')}</strong>
+              <span>{t('trainer:trainerExerciseMedia.theCurrentExerciseData')}</span>
             </div>
           )}
         </div>
         <div className="trainer-exercise-preview-dialog__meta">
           {muscles.slice(0, 3).map((muscle) => (
-            <span key={muscle}>{muscle}</span>
+            <span key={muscle}>{tr(muscle)}</span>
           ))}
         </div>
         {exercise.description ? <p>{exercise.description}</p> : null}

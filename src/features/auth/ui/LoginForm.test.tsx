@@ -22,7 +22,7 @@ describe('LoginForm', () => {
   it('renders email and password fields', () => {
     renderLoginForm();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/mật khẩu|password/i)).toBeInTheDocument();
   });
 
   it('renders a submit button', () => {

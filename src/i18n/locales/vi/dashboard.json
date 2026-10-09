@@ -1,0 +1,91 @@
+{
+  "plan": {
+    "generated": "AI TẠO GIÁO ÁN // 12 TUẦN TĂNG CƠ",
+    "phase": "Giai đoạn: CHU KỲ TĂNG CƠ T1",
+    "title": "Tăng cơ thân trên & ổn định cơ xô",
+    "exercises": "BÀI TẬP",
+    "minutes": "PHÚT DỰ KIẾN",
+    "kcal": "KCAL DỰ KIẾN",
+    "cards": [
+      {
+        "target": "Mục tiêu: Ngực & Tay sau",
+        "name": "Đẩy ngực với thanh tạ",
+        "a": "4 HIỆP",
+        "b": "8-10 LẦN"
+      },
+      {
+        "target": "Mục tiêu: Xô & Tay trước",
+        "name": "Kéo xô cáp, tay rộng",
+        "a": "3 HIỆP",
+        "b": "10-12 LẦN"
+      },
+      {
+        "target": "Mục tiêu: Cơ lõi & Lực nắm",
+        "name": "Treo xà đẳng trường",
+        "a": "3 HIỆP",
+        "b": "45 GIÂY"
+      },
+      {
+        "target": "Mục tiêu: Tim mạch & Lưng",
+        "name": "Chèo máy nước rút",
+        "a": "QUÃNG",
+        "b": "HIT"
+      }
+    ],
+    "rpe": "Độ khó khởi động dự kiến dựa trên RPE phiên gần nhất:",
+    "start": "Bắt đầu buổi tập"
+  },
+  "setup": {
+    "title": "THIẾT LẬP HỒ SƠ",
+    "progress": "Tiến độ: 2 / 4",
+    "done": "hoàn tất",
+    "lead": "Cập nhật đầy đủ tham số thể trạng để thuật toán AI-Pose tính toán rủi ro chuẩn xác hơn.",
+    "goalLabel": "MỤC TIÊU HUẤN LUYỆN",
+    "goal": "Tăng cơ & tối đa mức cơ thể",
+    "bodyLabel": "CHỈ SỐ CƠ THỂ",
+    "body": "58.0 kg (Mục tiêu: 62.0 kg)",
+    "completed": "Đã hoàn thành",
+    "medicalLabel": "LỊCH SỬ CHẤN THƯƠNG / Y TẾ",
+    "notUpdated": "Chưa cập nhật",
+    "missing": "! Thiếu thông tin",
+    "accuracy": "ĐỘ CHÍNH XÁC AI ĐÁNH GIÁ",
+    "accuracyHintBefore": "Thêm thông tin để AI Pose giảm",
+    "accuracyHintStrong": "40% sai số nội suy ngoại biên",
+    "finish": "HOÀN TẤT HỒ SƠ"
+  },
+  "actions": {
+    "one": {
+      "tag": "HÀNH ĐỘNG NHANH // 01",
+      "title": "KÍCH HOẠT\nPHIÊN TẬP HÔM NAY",
+      "body": "Nạp giáo án trực tiếp vào giao diện đếm nhịp. Thời gian nghỉ và quản lý lỗi form tự động.",
+      "cta": "Bắt đầu ngay →"
+    },
+    "two": {
+      "tag": "THỊ GIÁC MÁY TÍNH // 02",
+      "title": "CHẤM DÁNG\nAI BẰNG VIDEO",
+      "body": "Quay 1 video nháp xương phát hiện lỗi. So tỷ lệ rep 3D Pose-Net với tiêu chuẩn của HLV.",
+      "cta": "Quay video form ↑"
+    }
+  },
+  "chart": {
+    "tag": "THEO DÕI SINH TRẮC // TỔNG QUAN 7 NGÀY QUA",
+    "title": "Chu kỳ sinh trắc tuần 14",
+    "aiAnalysis": "Phân tích AI (Premium)",
+    "nextPlan": "Kế hoạch tuần tới",
+    "volume": "KHỐI LƯỢNG TẠ (KG) / NGÀY",
+    "peak": "MỨC ĐỈNH:",
+    "peakValue": "18,250 KG",
+    "days": ["T2", "T3", "T4", "T5", "HÔM NAY"],
+    "cycle": "CHU KỲ TẬP TUẦN NÀY",
+    "onTrack": "ĐÚNG TIẾN ĐỘ",
+    "cycleNote": "Còn hoàn thành 2 phiên nữa để đạt chỉ số tăng cơ.",
+    "newVolume": "TỔNG KHỐI LƯỢNG MỚI",
+    "perWeek": "+1.5 KG/TUẦN",
+    "newVolumeNote": "Tổng khối lượng so với 3 tuần trước.",
+    "formScore": "ĐIỂM KỸ THUẬT AI FORM-NET",
+    "veryGood": "RẤT TỐT",
+    "formNote": "Độ thẳng của lưng ở góc trung bình đạt 94.7%.",
+    "footnote": "* Hệ thống phân tích ngày / tuần ẩn dữ liệu chưa học, thông số có thể thay đổi sau phiên học nháp lần mới của bạn.",
+    "integrity": "TOÀN VẸN DỮ LIỆU: SQL RAW"
+  }
+}

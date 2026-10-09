@@ -1,6 +1,8 @@
 // All path strings, storage keys, and query keys are frozen. Importing these is the only way
 // to reference a route, a persisted key, or a TanStack query key — no inline literals.
 
+export const BRAND_MARK = 'Fit®';
+
 export const ROUTES = Object.freeze({
   public: Object.freeze({
     landing: '/',
@@ -29,6 +31,7 @@ export const ROUTES = Object.freeze({
     workoutCompletionPath: (sessionId: string) => '/app/workout/complete/' + sessionId,
     workoutHistory: '/app/workout/history',
     achievements: '/app/workout/achievements',
+    nutrition: '/app/nutrition',
     progress: '/app/progress',
     marketplace: '/app/marketplace',
     marketplaceGym: '/app/marketplace/gyms/:gymId',
@@ -62,6 +65,8 @@ export const ROUTES = Object.freeze({
     memberDetail: '/pt/members/:memberId',
     memberDetailPath: (memberId: string) => `/pt/members/${memberId}`,
     appointments: '/pt/appointments',
+    plans: '/pt/appointments',
+    workoutBuilder: '/pt/workout-builder',
     exerciseLibrary: '/pt/workout-builder/library',
     planBuilder: '/pt/workout-builder/plan',
     memberWorkout: '/pt/workout-builder/member-workout',
@@ -127,3 +132,21 @@ export const QUERY_KEYS = Object.freeze({
 });
 
 export type RouteTree = typeof ROUTES;
+
+export type Language = 'vi' | 'en';
+
+export const LOCALE_TAGS = Object.freeze({
+  vi: 'vi-VN',
+  en: 'en-US',
+} as const satisfies Record<Language, string>);
+
+export const FACILITY_IDS = [
+  'free-weights',
+  'cardio',
+  'functional',
+  'locker-shower',
+  'parking',
+  'sauna',
+  'recovery',
+  'body-assessment',
+] as const;

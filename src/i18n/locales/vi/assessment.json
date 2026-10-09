@@ -1,0 +1,19 @@
+{
+  "aIAssessment": {
+    "copy": {
+      "upload": "Chọn video bài tập",
+      "replace": "Chọn video khác",
+      "empty": "Chọn video quay toàn thân và nhìn rõ khớp vận động.",
+      "formats": "Hỗ trợ video MP4, MOV hoặc WebM trên thiết bị.",
+      "file": "Tệp đã chọn",
+      "size": "Dung lượng",
+      "queue": "Gửi video để đánh giá",
+      "queued": "Video đã được đưa vào hàng chờ.",
+      "pendingTitle": "Video đã sẵn sàng",
+      "pendingBody": "Điểm và nhận xét sẽ xuất hiện khi dịch vụ phân tích động tác được kết nối.",
+      "resume": "Quay lại buổi tập",
+      "schedule": "Về lịch tập",
+      "noExercise": "Chưa chọn bài tập"
+    }
+  }
+}

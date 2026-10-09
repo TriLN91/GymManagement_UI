@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { LandingAudience } from '../model/types';
 
@@ -9,18 +10,15 @@ import { OwnerSections } from './OwnerSections';
 import './landing.css';
 
 export function LandingExperience() {
+  const { t } = useTranslation('landing');
   const [audience, setAudience] = useState<LandingAudience>('member');
   useEffect(() => {
     const title = document.title;
-    const language = document.documentElement.lang;
-    document.documentElement.lang = 'vi';
-    document.title =
-      audience === 'member' ? 'Fit® — Tập luyện có định hướng' : 'Fit® — Dành cho chủ phòng tập';
+    document.title = audience === 'member' ? t('titleMember') : t('titleOwner');
     return () => {
       document.title = title;
-      document.documentElement.lang = language;
     };
-  }, [audience]);
+  }, [audience, t]);
   function changeAudience(next: LandingAudience) {
     setAudience(next);
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -28,7 +26,7 @@ export function LandingExperience() {
   return (
     <div className="fit-landing">
       <a className="fit-skip" href="#fit-main">
-        Đến nội dung chính
+        {t('skip')}
       </a>
       <LandingHeader audience={audience} onAudienceChange={changeAudience} />
       <main id="fit-main" tabIndex={-1} key={audience}>

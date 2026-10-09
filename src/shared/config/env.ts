@@ -6,7 +6,7 @@ const booleanFlag = z.enum(['true', 'false']).transform((value) => value === 'tr
 
 export const envSchema = z.object({
   VITE_APP_NAME: z.string().default('AI Fitness Coaching'),
-  VITE_DEFAULT_LOCALE: z.enum(['en', 'vi']).default('en'),
+  VITE_DEFAULT_LOCALE: z.enum(['en', 'vi']).default('vi'),
   VITE_API_BASE_URL: z.string().url().default('http://localhost:5167/api'),
   VITE_API_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
   VITE_OAUTH_GOOGLE_CLIENT_ID: z.string().optional(),

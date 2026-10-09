@@ -14,27 +14,28 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
+// Messages are i18n keys; they are translated where they are rendered.
 const schema = z
   .object({
-    email: z.string().email('Email không hợp lệ.'),
+    email: z.string().email('auth:register.errors.email'),
     // Backend policy (RegisterRequestDto): 6-128 characters.
-    password: z
-      .string()
-      .min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
-      .max(128, 'Mật khẩu tối đa 128 ký tự.'),
-    confirmPassword: z.string().min(1, 'Vui lòng nhập lại mật khẩu.'),
+    password: z.string().min(6, 'auth:register.errors.min').max(128, 'auth:register.errors.max'),
+    confirmPassword: z.string().min(1, 'auth:register.errors.confirmRequired'),
   })
   .refine((values) => values.password === values.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Mật khẩu nhập lại không khớp.',
+    message: 'auth:register.errors.mismatch',
   });
 type FormValues = z.infer<typeof schema>;
+
+type Role = 'member' | 'pt' | 'gym_admin';
+const ROLES: Role[] = ['member', 'pt', 'gym_admin'];
 
 export function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const register = useRegister();
-  const [role, setRole] = useState<'member' | 'pt' | 'gym_admin'>('member');
+  const [role, setRole] = useState<Role>('member');
 
   const {
     register: registerField,
@@ -52,7 +53,7 @@ export function RegisterPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      // Mocking fullName as it's required by backend but not in the new design
+      // The design collects no name yet, but the backend requires one.
       await register.mutateAsync({
         email: values.email,
         password: values.password,
@@ -80,63 +81,40 @@ export function RegisterPage() {
           <div className="mb-4 flex items-center font-syne text-4xl font-bold text-forest">
             FIT<span className="relative -top-2 align-top text-sm">®</span>
           </div>
-          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">Bắt Đầu.</h1>
-          <p className="text-sm font-medium text-forest/70">
-            Chọn vai trò của bạn trong hệ sinh thái FIT®.
-          </p>
+          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">
+            {t('auth:register.heading')}
+          </h1>
+          <p className="text-sm font-medium text-forest/70">{t('auth:register.subtitle')}</p>
         </div>
 
-        <div className="mb-8 flex w-full flex-col gap-3">
-          <button
-            onClick={() => setRole('member')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'member' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-bold text-forest">Người tập (Member)</span>
-              <span className="text-xs text-forest/60">
-                Tập luyện với AI, theo dõi chỉ số cơ thể và nhận tư vấn dinh dưỡng.
-              </span>
-            </div>
-            <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'member' ? 'border-forest bg-forest' : 'border-forest/30'}`}
-            >
-              {role === 'member' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setRole('pt')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'pt' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-bold text-forest">Huấn Luyện Viên (Trainer)</span>
-              <span className="text-xs text-forest/60">
-                Quản lý học viên, xây dựng giáo án, theo dõi tiến độ tập luyện của học viên.
-              </span>
-            </div>
-            <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'pt' ? 'border-forest bg-forest' : 'border-forest/30'}`}
-            >
-              {role === 'pt' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setRole('gym_admin')}
-            className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${role === 'gym_admin' ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-bold text-forest">Chủ Phòng (Gym Admin)</span>
-              <span className="text-xs text-forest/60">
-                Quản lý doanh thu, nhân sự, thiết bị và các chiến dịch marketing.
-              </span>
-            </div>
-            <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${role === 'gym_admin' ? 'border-forest bg-forest' : 'border-forest/30'}`}
-            >
-              {role === 'gym_admin' && <div className="h-2 w-2 rounded-full bg-white"></div>}
-            </div>
-          </button>
+        <div className="mb-8 flex w-full flex-col gap-3" role="radiogroup">
+          {ROLES.map((item) => {
+            const selected = role === item;
+            return (
+              <button
+                key={item}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setRole(item)}
+                className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${selected ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'}`}
+              >
+                <div className="flex flex-col text-left">
+                  <span className="text-sm font-bold text-forest">
+                    {t(`auth:register.roles.${item}.name`)}
+                  </span>
+                  <span className="text-xs text-forest/60">
+                    {t(`auth:register.roles.${item}.desc`)}
+                  </span>
+                </div>
+                <div
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${selected ? 'border-forest bg-forest' : 'border-forest/30'}`}
+                >
+                  {selected && <div className="h-2 w-2 rounded-full bg-white"></div>}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
@@ -145,7 +123,7 @@ export function RegisterPage() {
               htmlFor="email"
               className="text-xs font-bold uppercase tracking-wider text-forest"
             >
-              Email đăng ký
+              {t('auth:register.email')}
             </Label>
             <Input
               id="email"
@@ -153,10 +131,10 @@ export function RegisterPage() {
               autoComplete="email"
               {...registerField('email')}
               className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-              placeholder="email@gmail.com"
+              placeholder={t('auth:login.emailPlaceholder')}
             />
             {errors.email ? (
-              <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
+              <p className="text-xs font-medium text-red-500">{t(errors.email.message ?? '')}</p>
             ) : null}
           </div>
 
@@ -165,7 +143,7 @@ export function RegisterPage() {
               htmlFor="password"
               className="text-xs font-bold uppercase tracking-wider text-forest"
             >
-              Mật khẩu khởi tạo
+              {t('auth:register.password')}
             </Label>
             <Input
               id="password"
@@ -173,10 +151,10 @@ export function RegisterPage() {
               autoComplete="new-password"
               {...registerField('password')}
               className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-              placeholder="Tối thiểu 6 ký tự"
+              placeholder={t('auth:register.passwordPlaceholder')}
             />
             {errors.password ? (
-              <p className="text-xs font-medium text-red-500">{errors.password.message}</p>
+              <p className="text-xs font-medium text-red-500">{t(errors.password.message ?? '')}</p>
             ) : null}
           </div>
 
@@ -185,7 +163,7 @@ export function RegisterPage() {
               htmlFor="confirmPassword"
               className="text-xs font-bold uppercase tracking-wider text-forest"
             >
-              Nhập lại mật khẩu
+              {t('auth:register.confirmPassword')}
             </Label>
             <Input
               id="confirmPassword"
@@ -193,10 +171,12 @@ export function RegisterPage() {
               autoComplete="new-password"
               {...registerField('confirmPassword')}
               className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-              placeholder="Nhập lại mật khẩu"
+              placeholder={t('auth:register.confirmPlaceholder')}
             />
             {errors.confirmPassword ? (
-              <p className="text-xs font-medium text-red-500">{errors.confirmPassword.message}</p>
+              <p className="text-xs font-medium text-red-500">
+                {t(errors.confirmPassword.message ?? '')}
+              </p>
             ) : null}
           </div>
 
@@ -211,26 +191,27 @@ export function RegisterPage() {
             className="mt-6 h-12 w-full rounded-full bg-forest font-bold text-white hover:bg-forest/90"
             disabled={register.isPending}
           >
-            Tiếp tục tạo tài khoản &rarr;
+            {t('auth:register.submit')}
           </Button>
 
           <div className="w-full pt-6 text-center">
             <p className="mb-6 text-[10px] font-medium text-forest/60">
-              Bằng việc đăng ký, bạn đồng ý với{' '}
+              {t('auth:register.termsBefore')}{' '}
               <Link to="#" className="underline hover:text-forest">
-                Điều khoản Dịch vụ
+                {t('auth:register.terms')}
               </Link>{' '}
-              và{' '}
+              {t('auth:register.and')}{' '}
               <Link to="#" className="underline hover:text-forest">
-                Chính sách Bảo mật
+                {t('auth:register.privacy')}
               </Link>{' '}
-              của FIT®.
+              {t('auth:register.termsAfter')}
             </p>
             <Link
               to={ROUTES.public.login}
               className="text-xs font-medium text-forest/60 transition-colors hover:text-forest"
             >
-              Đã có tài khoản? <span className="font-bold text-forest">Đăng nhập</span>
+              {t('auth:register.haveAccount')}{' '}
+              <span className="font-bold text-forest">{t('auth:register.signIn')}</span>
             </Link>
           </div>
         </form>

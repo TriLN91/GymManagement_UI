@@ -1,0 +1,30 @@
+{
+  "achievementTower": {
+    "achievementsPage": {
+      "title": "Thành tích",
+      "back": "Về lịch tập",
+      "tower": "Tháp chinh phục",
+      "floor": "Tầng",
+      "next": "Mốc tiếp theo",
+      "streak": "Chuỗi ngày hiện tại",
+      "weekly": "Mục tiêu tuần",
+      "shield": "Tiến độ được bảo vệ",
+      "shieldBody": "Tầng đã mở luôn được giữ lại. Ngày nghỉ có kế hoạch không xóa thành tích; người tập quay lại từ tầng gần nhất thay vì bị đưa về đầu.",
+      "unlocked": "Đã mở",
+      "sessions": "Tổng buổi tập",
+      "volume": "Tổng tải",
+      "highestLoad": "Mức tạ cao nhất",
+      "first": "Bước chân đầu tiên",
+      "week": "Nhịp tuần ổn định",
+      "sevenDays": "Ngọn lửa 7 ngày",
+      "month": "Một tháng bền bỉ",
+      "season": "Ba tháng liên tục",
+      "pr": "Thợ săn kỷ lục",
+      "year": "Kỷ luật năm",
+      "summit": "Đỉnh tháp",
+      "start": "Khởi đầu",
+      "consistency": "Duy trì",
+      "mastery": "Chinh phục"
+    }
+  }
+}

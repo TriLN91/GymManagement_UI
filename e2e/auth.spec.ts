@@ -3,12 +3,12 @@ import { expect, test, type Page } from '@playwright/test';
 async function loginAsMember(page: Page) {
   await page.goto('/login');
   // Wipe any persisted auth from prior tests.
-  await page.evaluate(() => window.localStorage.clear());
+  await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
   await page.evaluate(() => window.sessionStorage.clear());
   await page.reload();
   await page.getByLabel(/email/i).fill('member@demo.gym');
-  await page.getByLabel(/password/i).fill('Password1!');
-  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await page.getByLabel(/mật khẩu|password/i).fill('Password1!');
+  await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
   await expect(page).toHaveURL(/\/app$/);
 }
 

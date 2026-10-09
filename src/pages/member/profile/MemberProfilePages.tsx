@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   Activity,
   ArrowLeft,
@@ -34,207 +35,120 @@ import { useAssessmentStore } from '@/features/camera-assessment/model/useAssess
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { useMemberProfileStore } from '@/features/member-profile';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 
 import './member-profile.css';
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        eyebrow: 'FIT® / HỒ SƠ MEMBER',
-        profile: 'Hồ sơ cá nhân',
-        profileBody: 'Thông tin tài khoản, thể chất và mức sẵn sàng tập luyện của bạn.',
-        edit: 'Chỉnh sửa hồ sơ',
-        setupHealth: 'Cập nhật hồ sơ sức khỏe',
-        personalInfo: 'Thông tin cá nhân',
-        fitnessInfo: 'Thông tin tập luyện',
-        fullName: 'Họ và tên',
-        email: 'Email',
-        phone: 'Số điện thoại',
-        address: 'Địa chỉ',
-        height: 'Chiều cao',
-        weight: 'Cân nặng',
-        goal: 'Mục tiêu chính',
-        experience: 'Kinh nghiệm',
-        available: 'Lịch có thể tập',
-        noData: 'Chưa thiết lập',
-        completeness: 'Hồ sơ hoàn thiện',
-        ready: 'Có thể tạo plan',
-        incomplete: 'Cần hoàn thành Profile Setup',
-        ptReview: 'Cần PT xem lại',
-        medicalReview: 'Cần xác minh sức khỏe',
-        assessments: 'Lịch sử AI Assessment',
-        appointments: 'Lịch hẹn PT',
-        wearables: 'Thiết bị kết nối',
-        notifications: 'Thông báo',
-        view: 'Xem chi tiết',
-        editTitle: 'Chỉnh sửa thông tin cá nhân',
-        editBody: 'Thông tin liên hệ được quản lý riêng với hồ sơ sức khỏe và vận động.',
-        avatar: 'Ảnh đại diện',
-        uploadAvatar: 'Tải ảnh mới',
-        avatarLimit: 'Ảnh JPG, PNG hoặc WebP, tối đa 2 MB.',
-        invalidAvatar: 'Vui lòng chọn ảnh JPG, PNG hoặc WebP dưới 2 MB.',
-        save: 'Lưu thay đổi',
-        cancel: 'Hủy bỏ',
-        saved: 'Đã cập nhật hồ sơ cá nhân.',
-        physicalManaged: 'Chỉ số cơ thể và sức khỏe được chỉnh sửa trong Profile Setup.',
-        security: 'Tài khoản & bảo mật',
-        securityBody: 'Quản lý mật khẩu, cảnh báo đăng nhập và thời lượng phiên.',
-        accountInfo: 'Thông tin tài khoản',
-        accountId: 'Mã tài khoản',
-        role: 'Vai trò',
-        changePassword: 'Đổi mật khẩu',
-        currentPassword: 'Mật khẩu hiện tại',
-        newPassword: 'Mật khẩu mới',
-        confirmPassword: 'Xác nhận mật khẩu mới',
-        updatePassword: 'Cập nhật mật khẩu',
-        passwordMismatch: 'Mật khẩu xác nhận không khớp.',
-        passwordLength: 'Mật khẩu mới phải có ít nhất 8 ký tự.',
-        passwordUpdated: 'Mật khẩu đã được cập nhật trong bản mô phỏng.',
-        preferences: 'Cài đặt bảo mật',
-        twoFactor: 'Xác thực hai bước',
-        loginAlerts: 'Cảnh báo đăng nhập mới',
-        sessionTimeout: 'Tự động khóa phiên sau',
-        minutes: 'phút',
-        currentSession: 'Phiên hiện tại',
-        currentDevice: 'Trình duyệt hiện tại',
-        activeNow: 'Đang hoạt động',
-        assessmentBody: 'Theo dõi video đang xử lý và xem lại kết quả phân tích động tác.',
-        all: 'Tất cả',
-        completed: 'Đã có kết quả',
-        pending: 'Đang xử lý',
-        score: 'Điểm kỹ thuật',
-        submitted: 'Ngày gửi',
-        findings: 'Điểm cần điều chỉnh',
-        backHistory: 'Về lịch sử đánh giá',
-        pendingBody: 'Video đang chờ dịch vụ phân tích. Kết quả sẽ xuất hiện tại đây.',
-        severity: { low: 'Nhẹ', medium: 'Trung bình', high: 'Ưu tiên cao' },
-        appointmentBody: 'Lịch do PT tạo. Member chỉ xem thông tin và trao đổi trực tiếp với PT.',
-        upcoming: 'Sắp tới',
-        confirmed: 'Đã xác nhận',
-        waiting: 'Chờ xác nhận',
-        duration: 'Thời lượng',
-        appointmentTypes: {
-          in_person: 'Tập trực tiếp',
-          video_checkin: 'Video check-in',
-          body_assessment: 'Đánh giá cơ thể',
-        },
-        readOnly: 'Lịch hẹn do PT quản lý',
-        wearableBody: 'Kết nối nguồn dữ liệu vận động để đồng bộ bước chân, nhịp tim và buổi tập.',
-        connected: 'Đã kết nối',
-        disconnected: 'Chưa kết nối',
-        connect: 'Kết nối',
-        disconnect: 'Ngắt kết nối',
-        sync: 'Đồng bộ ngay',
-        synced: 'Đã đồng bộ thiết bị.',
-        lastSync: 'Lần đồng bộ gần nhất',
-        never: 'Chưa từng đồng bộ',
-        notificationBody: 'Workout, AI Assessment, lịch PT và thanh toán được tập trung tại đây.',
-        unread: 'Chưa đọc',
-        markAll: 'Đánh dấu tất cả đã đọc',
-        empty: 'Không có dữ liệu phù hợp.',
-      }
-    : {
-        eyebrow: 'FIT® / MEMBER PROFILE',
-        profile: 'Personal profile',
-        profileBody: 'Your account, physical profile and training readiness in one place.',
-        edit: 'Edit profile',
-        setupHealth: 'Update health profile',
-        personalInfo: 'Personal information',
-        fitnessInfo: 'Fitness information',
-        fullName: 'Full name',
-        email: 'Email',
-        phone: 'Phone',
-        address: 'Address',
-        height: 'Height',
-        weight: 'Weight',
-        goal: 'Primary goal',
-        experience: 'Experience',
-        available: 'Available schedule',
-        noData: 'Not provided',
-        completeness: 'Profile complete',
-        ready: 'Ready for plan creation',
-        incomplete: 'Profile Setup is incomplete',
-        ptReview: 'Trainer review needed',
-        medicalReview: 'Health verification needed',
-        assessments: 'AI Assessment history',
-        appointments: 'PT appointments',
-        wearables: 'Connected devices',
-        notifications: 'Notifications',
-        view: 'View details',
-        editTitle: 'Edit personal information',
-        editBody: 'Contact information is managed separately from health and movement data.',
-        avatar: 'Profile photo',
-        uploadAvatar: 'Upload new photo',
-        avatarLimit: 'JPG, PNG or WebP, up to 2 MB.',
-        invalidAvatar: 'Choose a JPG, PNG or WebP image under 2 MB.',
-        save: 'Save changes',
-        cancel: 'Cancel',
-        saved: 'Personal profile updated.',
-        physicalManaged: 'Body metrics and health data are edited in Profile Setup.',
-        security: 'Account & security',
-        securityBody: 'Manage password, login alerts and session duration.',
-        accountInfo: 'Account information',
-        accountId: 'Account ID',
-        role: 'Role',
-        changePassword: 'Change password',
-        currentPassword: 'Current password',
-        newPassword: 'New password',
-        confirmPassword: 'Confirm new password',
-        updatePassword: 'Update password',
-        passwordMismatch: 'Password confirmation does not match.',
-        passwordLength: 'The new password must contain at least 8 characters.',
-        passwordUpdated: 'Password updated in the local simulation.',
-        preferences: 'Security settings',
-        twoFactor: 'Two-step verification',
-        loginAlerts: 'New-login alerts',
-        sessionTimeout: 'Automatically lock session after',
-        minutes: 'minutes',
-        currentSession: 'Current session',
-        currentDevice: 'Current browser',
-        activeNow: 'Active now',
-        assessmentBody: 'Track processing videos and review movement-analysis results.',
-        all: 'All',
-        completed: 'Completed',
-        pending: 'Processing',
-        score: 'Form score',
-        submitted: 'Submitted',
-        findings: 'Movement findings',
-        backHistory: 'Back to assessment history',
-        pendingBody: 'The video is waiting for analysis. Results will appear here.',
-        severity: { low: 'Low', medium: 'Medium', high: 'High priority' },
-        appointmentBody:
-          'Appointments are created by your Trainer. Members can view and coordinate directly.',
-        upcoming: 'Upcoming',
-        confirmed: 'Confirmed',
-        waiting: 'Pending',
-        duration: 'Duration',
-        appointmentTypes: {
-          in_person: 'In-person training',
-          video_checkin: 'Video check-in',
-          body_assessment: 'Body assessment',
-        },
-        readOnly: 'Appointments are managed by your Trainer',
-        wearableBody: 'Connect activity sources to sync steps, heart rate and workouts.',
-        connected: 'Connected',
-        disconnected: 'Not connected',
-        connect: 'Connect',
-        disconnect: 'Disconnect',
-        sync: 'Sync now',
-        synced: 'Device synchronized.',
-        lastSync: 'Last synchronized',
-        never: 'Never synchronized',
-        notificationBody: 'Workout, AI Assessment, appointments and payments appear here.',
-        unread: 'Unread',
-        markAll: 'Mark all as read',
-        empty: 'No matching data.',
-      };
+function getCopy(t: TFunction) {
+  return {
+    eyebrow: t('memberProfile:memberProfilePages.copy.eyebrow'),
+    profile: t('memberProfile:memberProfilePages.copy.profile'),
+    profileBody: t('memberProfile:memberProfilePages.copy.profileBody'),
+    edit: t('memberProfile:memberProfilePages.copy.edit'),
+    setupHealth: t('memberProfile:memberProfilePages.copy.setupHealth'),
+    personalInfo: t('memberProfile:memberProfilePages.copy.personalInfo'),
+    fitnessInfo: t('memberProfile:memberProfilePages.copy.fitnessInfo'),
+    fullName: t('memberProfile:memberProfilePages.copy.fullName'),
+    email: t('memberProfile:memberProfilePages.copy.email'),
+    phone: t('memberProfile:memberProfilePages.copy.phone'),
+    address: t('memberProfile:memberProfilePages.copy.address'),
+    height: t('memberProfile:memberProfilePages.copy.height'),
+    weight: t('memberProfile:memberProfilePages.copy.weight'),
+    goal: t('memberProfile:memberProfilePages.copy.goal'),
+    experience: t('memberProfile:memberProfilePages.copy.experience'),
+    available: t('memberProfile:memberProfilePages.copy.available'),
+    noData: t('memberProfile:memberProfilePages.copy.noData'),
+    completeness: t('memberProfile:memberProfilePages.copy.completeness'),
+    ready: t('memberProfile:memberProfilePages.copy.ready'),
+    incomplete: t('memberProfile:memberProfilePages.copy.incomplete'),
+    ptReview: t('memberProfile:memberProfilePages.copy.ptReview'),
+    medicalReview: t('memberProfile:memberProfilePages.copy.medicalReview'),
+    assessments: t('memberProfile:memberProfilePages.copy.assessments'),
+    appointments: t('memberProfile:memberProfilePages.copy.appointments'),
+    wearables: t('memberProfile:memberProfilePages.copy.wearables'),
+    notifications: t('memberProfile:memberProfilePages.copy.notifications'),
+    view: t('memberProfile:memberProfilePages.copy.view'),
+    editTitle: t('memberProfile:memberProfilePages.copy.editTitle'),
+    editBody: t('memberProfile:memberProfilePages.copy.editBody'),
+    avatar: t('memberProfile:memberProfilePages.copy.avatar'),
+    uploadAvatar: t('memberProfile:memberProfilePages.copy.uploadAvatar'),
+    avatarLimit: t('memberProfile:memberProfilePages.copy.avatarLimit'),
+    invalidAvatar: t('memberProfile:memberProfilePages.copy.invalidAvatar'),
+    save: t('memberProfile:memberProfilePages.copy.save'),
+    cancel: t('memberProfile:memberProfilePages.copy.cancel'),
+    saved: t('memberProfile:memberProfilePages.copy.saved'),
+    physicalManaged: t('memberProfile:memberProfilePages.copy.physicalManaged'),
+    security: t('memberProfile:memberProfilePages.copy.security'),
+    securityBody: t('memberProfile:memberProfilePages.copy.securityBody'),
+    accountInfo: t('memberProfile:memberProfilePages.copy.accountInfo'),
+    accountId: t('memberProfile:memberProfilePages.copy.accountId'),
+    role: t('memberProfile:memberProfilePages.copy.role'),
+    changePassword: t('memberProfile:memberProfilePages.copy.changePassword'),
+    currentPassword: t('memberProfile:memberProfilePages.copy.currentPassword'),
+    newPassword: t('memberProfile:memberProfilePages.copy.newPassword'),
+    confirmPassword: t('memberProfile:memberProfilePages.copy.confirmPassword'),
+    updatePassword: t('memberProfile:memberProfilePages.copy.updatePassword'),
+    passwordMismatch: t('memberProfile:memberProfilePages.copy.passwordMismatch'),
+    passwordLength: t('memberProfile:memberProfilePages.copy.passwordLength'),
+    passwordUpdated: t('memberProfile:memberProfilePages.copy.passwordUpdated'),
+    preferences: t('memberProfile:memberProfilePages.copy.preferences'),
+    twoFactor: t('memberProfile:memberProfilePages.copy.twoFactor'),
+    loginAlerts: t('memberProfile:memberProfilePages.copy.loginAlerts'),
+    sessionTimeout: t('memberProfile:memberProfilePages.copy.sessionTimeout'),
+    minutes: t('memberProfile:memberProfilePages.copy.minutes'),
+    currentSession: t('memberProfile:memberProfilePages.copy.currentSession'),
+    currentDevice: t('memberProfile:memberProfilePages.copy.currentDevice'),
+    activeNow: t('memberProfile:memberProfilePages.copy.activeNow'),
+    assessmentBody: t('memberProfile:memberProfilePages.copy.assessmentBody'),
+    all: t('memberProfile:memberProfilePages.copy.all'),
+    completed: t('memberProfile:memberProfilePages.copy.completed'),
+    pending: t('memberProfile:memberProfilePages.copy.pending'),
+    score: t('memberProfile:memberProfilePages.copy.score'),
+    submitted: t('memberProfile:memberProfilePages.copy.submitted'),
+    findings: t('memberProfile:memberProfilePages.copy.findings'),
+    backHistory: t('memberProfile:memberProfilePages.copy.backHistory'),
+    pendingBody: t('memberProfile:memberProfilePages.copy.pendingBody'),
+    severity: {
+      low: t('memberProfile:memberProfilePages.copy.severity.low'),
+      medium: t('memberProfile:memberProfilePages.copy.severity.medium'),
+      high: t('memberProfile:memberProfilePages.copy.severity.high'),
+    },
+    appointmentBody: t('memberProfile:memberProfilePages.copy.appointmentBody'),
+    upcoming: t('memberProfile:memberProfilePages.copy.upcoming'),
+    confirmed: t('memberProfile:memberProfilePages.copy.confirmed'),
+    waiting: t('memberProfile:memberProfilePages.copy.waiting'),
+    duration: t('memberProfile:memberProfilePages.copy.duration'),
+    appointmentTypes: {
+      in_person: t('memberProfile:memberProfilePages.copy.appointmentTypes.in_person'),
+      video_checkin: t('memberProfile:memberProfilePages.copy.appointmentTypes.video_checkin'),
+      body_assessment: t('memberProfile:memberProfilePages.copy.appointmentTypes.body_assessment'),
+    },
+    readOnly: t('memberProfile:memberProfilePages.copy.readOnly'),
+    wearableBody: t('memberProfile:memberProfilePages.copy.wearableBody'),
+    connected: t('memberProfile:memberProfilePages.copy.connected'),
+    disconnected: t('memberProfile:memberProfilePages.copy.disconnected'),
+    connect: t('memberProfile:memberProfilePages.copy.connect'),
+    disconnect: t('memberProfile:memberProfilePages.copy.disconnect'),
+    sync: t('memberProfile:memberProfilePages.copy.sync'),
+    synced: t('memberProfile:memberProfilePages.copy.synced'),
+    lastSync: t('memberProfile:memberProfilePages.copy.lastSync'),
+    never: t('memberProfile:memberProfilePages.copy.never'),
+    notificationBody: t('memberProfile:memberProfilePages.copy.notificationBody'),
+    unread: t('memberProfile:memberProfilePages.copy.unread'),
+    markAll: t('memberProfile:memberProfilePages.copy.markAll'),
+    empty: t('memberProfile:memberProfilePages.copy.empty'),
+    roleMember: t('memberProfile:memberProfilePages.copy.roleMember'),
+    file: t('memberProfile:memberProfilePages.copy.file'),
+    trainerBadge: t('memberProfile:memberProfilePages.copy.trainerBadge'),
+    togglePassword: t('memberProfile:memberProfilePages.copy.togglePassword'),
+  };
 }
 
 function useProfileCopy() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  return { isVi, copy: getCopy(isVi) };
+  const { t } = useTranslation();
+  const { language, locale } = useLocale();
+  return { language, locale, copy: getCopy(t) };
 }
 
 function ProfileActions({ children }: { children: ReactNode }) {
@@ -267,8 +181,8 @@ function Avatar({
   );
 }
 
-function formatDate(value: string, isVi: boolean, withTime = false) {
-  return new Intl.DateTimeFormat(isVi ? 'vi-VN' : 'en-US', {
+function formatDate(value: string, locale: string, withTime = false) {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
     ...(withTime ? { timeStyle: 'short' as const } : {}),
   }).format(new Date(value));
@@ -284,7 +198,8 @@ const goalNames: Record<string, { en: string; vi: string }> = {
 };
 
 export function PersonalProfilePage() {
-  const { copy, isVi } = useProfileCopy();
+  const { t } = useTranslation();
+  const { copy, language } = useProfileCopy();
   const user = useAuthStore((state) => state.user);
   const contact = useMemberProfileStore((state) => state.contact);
   const notifications = useMemberProfileStore((state) => state.notifications);
@@ -310,12 +225,12 @@ export function PersonalProfilePage() {
   const fitnessInfo = [
     [copy.height, fitness.identity.heightCm ? `${fitness.identity.heightCm} cm` : copy.noData],
     [copy.weight, fitness.identity.weightKg ? `${fitness.identity.weightKg} kg` : copy.noData],
-    [copy.goal, goalNames[fitness.goals.primary]?.[isVi ? 'vi' : 'en'] ?? copy.noData],
+    [copy.goal, goalNames[fitness.goals.primary]?.[language] ?? copy.noData],
     [copy.experience, fitness.training.experience || copy.noData],
     [
       copy.available,
       fitness.training.availableDays.length
-        ? `${fitness.training.availableDays.length} ${isVi ? 'ngày/tuần' : 'days/week'}`
+        ? `${fitness.training.availableDays.length} ${t('memberProfile:memberProfilePages.daysWeek')}`
         : copy.noData,
     ],
   ];
@@ -330,7 +245,7 @@ export function PersonalProfilePage() {
       <section className="profile-identity-hero">
         <Avatar name={name} source={contact.avatarDataUrl ?? user?.avatarUrl} large />
         <div>
-          <span>MEMBER // TIER 1</span>
+          <span>{t('memberProfile:memberProfilePages.mEMBERTIER1')}</span>
           <h2>{name}</h2>
           <p>{user?.email}</p>
         </div>
@@ -349,16 +264,10 @@ export function PersonalProfilePage() {
         <strong>{readinessLabel}</strong>
         <span>
           {readiness.completeness < 100
-            ? isVi
-              ? 'Hoàn thành thông tin sức khỏe để AI và PT có đủ dữ liệu.'
-              : 'Complete the health profile so AI and your Trainer have enough data.'
+            ? t('memberProfile:memberProfilePages.completeTheHealthProfile')
             : readiness.level === 'ready'
-              ? isVi
-                ? 'Dữ liệu sẵn sàng cho AI và PT.'
-                : 'Data is ready for AI and your Trainer.'
-              : isVi
-                ? 'Hãy kiểm tra trạng thái trước khi tăng cường độ.'
-                : 'Review the status before increasing intensity.'}
+              ? t('memberProfile:memberProfilePages.dataIsReadyFor')
+              : t('memberProfile:memberProfilePages.reviewTheStatusBefore')}
         </span>
         <Link to={ROUTES.member.profileSetup}>{copy.setupHealth}</Link>
       </section>
@@ -566,7 +475,8 @@ function ProfileField({ label, children }: { label: string; children: ReactNode 
 }
 
 export function AccountSecurityPage() {
-  const { copy, isVi } = useProfileCopy();
+  const { t } = useTranslation();
+  const { copy, locale } = useProfileCopy();
   const user = useAuthStore((state) => state.user);
   const security = useMemberProfileStore((state) => state.security);
   const updateSecurity = useMemberProfileStore((state) => state.updateSecurity);
@@ -602,7 +512,7 @@ export function AccountSecurityPage() {
             </div>
             <div>
               <dt>{copy.role}</dt>
-              <dd>Member</dd>
+              <dd>{copy.roleMember}</dd>
             </div>
           </dl>
         </section>
@@ -627,7 +537,11 @@ export function AccountSecurityPage() {
                   onChange={(e) => setPasswords({ ...passwords, [key]: e.target.value })}
                 />
                 {key === 'next' && (
-                  <button type="button" aria-label="toggle password" onClick={() => setShow(!show)}>
+                  <button
+                    type="button"
+                    aria-label={copy.togglePassword}
+                    onClick={() => setShow(!show)}
+                  >
                     {show ? <EyeOff size={17} /> : <Eye size={17} />}
                   </button>
                 )}
@@ -686,8 +600,8 @@ export function AccountSecurityPage() {
           <em>{copy.activeNow}</em>
           {security.lastPasswordChangedAt && (
             <small>
-              {isVi ? 'Đổi mật khẩu: ' : 'Password changed: '}
-              {formatDate(security.lastPasswordChangedAt, isVi)}
+              {t('memberProfile:memberProfilePages.passwordChanged')}
+              {formatDate(security.lastPasswordChangedAt, locale)}
             </small>
           )}
         </section>
@@ -720,7 +634,7 @@ function ToggleSetting({
 }
 
 export function AssessmentHistoryPage() {
-  const { copy, isVi } = useProfileCopy();
+  const { copy, language, locale } = useProfileCopy();
   const pending = useAssessmentStore((state) => state.assessments);
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
   const records = useMemo(
@@ -728,11 +642,11 @@ export function AssessmentHistoryPage() {
       [
         ...completedAssessments.map((record) => ({
           ...record,
-          name: record.exerciseName[isVi ? 'vi' : 'en'],
+          name: record.exerciseName[language],
         })),
         ...pending.map((record) => ({ ...record, name: record.exerciseId.replaceAll('-', ' ') })),
       ].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-    [pending, isVi],
+    [pending, language],
   );
   const visible = records.filter((record) => filter === 'all' || record.status === filter);
   return (
@@ -762,7 +676,7 @@ export function AssessmentHistoryPage() {
               </span>
               <div>
                 <strong>{record.name}</strong>
-                <small>{formatDate(record.createdAt, isVi, true)}</small>
+                <small>{formatDate(record.createdAt, locale, true)}</small>
               </div>
               {record.status === 'completed' ? (
                 <>
@@ -793,7 +707,7 @@ export function AssessmentHistoryPage() {
 
 export function AssessmentDetailPage() {
   const { assessmentId = '' } = useParams();
-  const { copy, isVi } = useProfileCopy();
+  const { copy, language, locale } = useProfileCopy();
   const pending = useAssessmentStore((state) =>
     state.assessments.find((item) => item.id === assessmentId),
   );
@@ -813,10 +727,10 @@ export function AssessmentDetailPage() {
           <dl>
             <div>
               <dt>{copy.submitted}</dt>
-              <dd>{formatDate(pending.createdAt, isVi, true)}</dd>
+              <dd>{formatDate(pending.createdAt, locale, true)}</dd>
             </div>
             <div>
-              <dt>File</dt>
+              <dt>{copy.file}</dt>
               <dd>{pending.fileName}</dd>
             </div>
           </dl>
@@ -843,8 +757,8 @@ export function AssessmentDetailPage() {
                     <span className={`is-${finding.severity}`}>
                       {copy.severity[finding.severity]}
                     </span>
-                    <h3>{finding.title[isVi ? 'vi' : 'en']}</h3>
-                    <p>{finding.feedback[isVi ? 'vi' : 'en']}</p>
+                    <h3>{finding.title[language]}</h3>
+                    <p>{finding.feedback[language]}</p>
                   </div>
                 </article>
               ))}
@@ -857,7 +771,7 @@ export function AssessmentDetailPage() {
 }
 
 export function PTAppointmentsPage() {
-  const { copy, isVi } = useProfileCopy();
+  const { copy, language, locale } = useProfileCopy();
   const [selected, setSelected] = useState(trainerAppointments[0]?.id ?? '');
   const appointment = trainerAppointments.find((item) => item.id === selected);
   return (
@@ -881,15 +795,15 @@ export function PTAppointmentsPage() {
               <time>
                 <strong>{new Date(item.startsAt).getDate()}</strong>
                 <span>
-                  {new Intl.DateTimeFormat(isVi ? 'vi-VN' : 'en-US', { month: 'short' }).format(
-                    new Date(item.startsAt),
-                  )}
+                  {new Intl.DateTimeFormat(locale, {
+                    month: 'short',
+                  }).format(new Date(item.startsAt))}
                 </span>
               </time>
               <div>
                 <strong>{copy.appointmentTypes[item.type]}</strong>
                 <span>{item.trainerName}</span>
-                <small>{formatDate(item.startsAt, isVi, true)}</small>
+                <small>{formatDate(item.startsAt, locale, true)}</small>
               </div>
               <em className={`is-${item.status}`}>
                 {item.status === 'confirmed' ? copy.confirmed : copy.waiting}
@@ -900,16 +814,16 @@ export function PTAppointmentsPage() {
         {appointment && (
           <aside className="appointment-detail">
             <Avatar name={appointment.trainerName} />
-            <span>TRAINER</span>
+            <span>{copy.trainerBadge}</span>
             <h2>{appointment.trainerName}</h2>
-            <p>{appointment.note[isVi ? 'vi' : 'en']}</p>
+            <p>{appointment.note[language]}</p>
             <dl>
               <div>
                 <dt>
                   <CalendarDays size={16} />
                   {copy.appointments}
                 </dt>
-                <dd>{formatDate(appointment.startsAt, isVi, true)}</dd>
+                <dd>{formatDate(appointment.startsAt, locale, true)}</dd>
               </div>
               <div>
                 <dt>
@@ -923,7 +837,7 @@ export function PTAppointmentsPage() {
                   <MapPin size={16} />
                   Location
                 </dt>
-                <dd>{appointment.location[isVi ? 'vi' : 'en']}</dd>
+                <dd>{appointment.location[language]}</dd>
               </div>
             </dl>
           </aside>
@@ -941,7 +855,7 @@ const wearableMeta = {
 };
 
 export function WearableConnectionsPage() {
-  const { copy, isVi } = useProfileCopy();
+  const { copy, locale } = useProfileCopy();
   const wearables = useMemberProfileStore((state) => state.wearables);
   const toggle = useMemberProfileStore((state) => state.toggleWearable);
   const sync = useMemberProfileStore((state) => state.syncWearable);
@@ -962,7 +876,7 @@ export function WearableConnectionsPage() {
               </div>
               <p>
                 {copy.lastSync}:{' '}
-                {device.lastSyncedAt ? formatDate(device.lastSyncedAt, isVi, true) : copy.never}
+                {device.lastSyncedAt ? formatDate(device.lastSyncedAt, locale, true) : copy.never}
               </p>
               <div>
                 {device.connected && (
@@ -994,7 +908,7 @@ export function WearableConnectionsPage() {
 }
 
 export function MemberNotificationsPage() {
-  const { copy, isVi } = useProfileCopy();
+  const { copy, language, locale } = useProfileCopy();
   const notifications = useMemberProfileStore((state) => state.notifications);
   const markRead = useMemberProfileStore((state) => state.markNotificationRead);
   const markAll = useMemberProfileStore((state) => state.markAllNotificationsRead);
@@ -1045,9 +959,9 @@ export function MemberNotificationsPage() {
                 )}
               </span>
               <div>
-                <strong>{item.title[isVi ? 'vi' : 'en']}</strong>
-                <p>{item.body[isVi ? 'vi' : 'en']}</p>
-                <small>{formatDate(item.createdAt, isVi, true)}</small>
+                <strong>{item.title[language]}</strong>
+                <p>{item.body[language]}</p>
+                <small>{formatDate(item.createdAt, locale, true)}</small>
               </div>
               <ChevronRight size={17} />
             </Link>

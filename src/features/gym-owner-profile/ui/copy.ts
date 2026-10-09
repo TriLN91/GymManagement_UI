@@ -98,14 +98,3 @@ export const gymProfileCopy = {
 } as const;
 
 export type GymProfileCopy = (typeof gymProfileCopy)[keyof typeof gymProfileCopy];
-
-export const FACILITY_IDS = [
-  'free-weights',
-  'cardio',
-  'functional',
-  'locker-shower',
-  'parking',
-  'sauna',
-  'recovery',
-  'body-assessment',
-] as const;
