@@ -32,10 +32,10 @@ export default defineConfig({
       thresholds: {
         // Baseline measured on the full source set. Raise these floors as
         // unit coverage grows; E2E coverage is not included in this report.
-        lines: 15,
-        functions: 13,
-        statements: 15,
-        branches: 11,
+        lines: 17,
+        functions: 14,
+        statements: 17,
+        branches: 13,
       },
     },
     exclude: ['node_modules', 'dist', 'e2e/**', 'playwright-report/**', 'test-results/**'],
