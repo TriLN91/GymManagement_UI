@@ -10,7 +10,7 @@ const profile = (patch: Partial<MemberFitnessProfile>): MemberFitnessProfile => 
 });
 
 describe('toGoalInput', () => {
-  it('returns null until a primary goal is chosen', () => {
+  it('returns null until a goal is chosen', () => {
     expect(toGoalInput(EMPTY_PROFILE)).toBeNull();
   });
 
@@ -18,17 +18,15 @@ describe('toGoalInput', () => {
     const goal = toGoalInput(
       profile({
         goals: {
-          primary: 'fat_loss',
-          secondary: ['mobility'],
+          selected: ['fat_loss', 'mobility'],
           targetWeightKg: 0,
           targetDate: '2026-12-31',
-          focusAreas: ['core'],
         },
       }),
     );
     expect(goal).toEqual({
       goalType: 'WeightLoss',
-      description: 'mobility, core',
+      description: 'fat_loss, mobility',
       targetWeightKg: null,
       targetDate: '2026-12-31',
     });
@@ -50,11 +48,11 @@ describe('toTrainingInput', () => {
     expect(toTrainingInput(profile({ training: { ...training, availableDays: [] } }))).toBeNull();
   });
 
-  it('maps schedule and flags limitations from pain', () => {
+  it('maps schedule and flags limitations from an injury', () => {
     const input = toTrainingInput(
       profile({
         training,
-        movement: { ...EMPTY_PROFILE.movement, currentPain: 'yes', painAreas: ['knee'] },
+        movement: { upperBodyInjury: 'no', lowerBodyInjury: 'yes' },
       }),
     );
     expect(input).toEqual({
@@ -63,16 +61,15 @@ describe('toTrainingInput', () => {
       sessionDurationMinutes: 45,
       equipmentAccess: 'dumbbell, home',
       hasLimitations: true,
-      limitationNotes: 'knee',
+      limitationNotes: 'Lower body injury; Prefer upper body training while lower body recovers',
     });
   });
 
-  it('does not flag limitations when there is no pain or condition', () => {
+  it('does not flag limitations when there is no pain', () => {
     const input = toTrainingInput(
       profile({
         training,
-        movement: { ...EMPTY_PROFILE.movement, currentPain: 'no' },
-        health: { ...EMPTY_PROFILE.health, conditions: ['none'] },
+        movement: { upperBodyInjury: 'no', lowerBodyInjury: 'no' },
       }),
     );
     expect(input?.hasLimitations).toBe(false);
@@ -91,8 +88,31 @@ describe('toNutritionInput', () => {
       toNutritionInput(
         profile({ identity: { ...base, sexAtBirth: 'female', dateOfBirth: '1995-05-01' } }),
       ),
-    ).toEqual({ dateOfBirth: '1995-05-01', sexForEquation: 'Female', activityBaseline: null });
+    ).toEqual({
+      dateOfBirth: '1995-05-01',
+      sexForEquation: 'Female',
+      activityBaseline: null,
+      palTotal: null,
+      palSource: null,
+    });
     expect(toNutritionInput(profile({ identity: { ...base, sexAtBirth: 'intersex' } }))).toBeNull();
+  });
+});
+
+describe('toNutritionInput PAL', () => {
+  it('sends the total PAL of the chosen activity level', () => {
+    const input = toNutritionInput(
+      profile({
+        identity: {
+          ...EMPTY_PROFILE.identity,
+          sexAtBirth: 'male',
+          dateOfBirth: '1995-05-01',
+          activityLevel: 'light',
+        },
+      }),
+    );
+    expect(input).toMatchObject({ activityBaseline: 'light', palTotal: 1.55 });
+    expect(input?.palSource).toContain('FAO');
   });
 });
 

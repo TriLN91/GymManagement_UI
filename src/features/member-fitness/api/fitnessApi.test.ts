@@ -6,7 +6,7 @@ import { fitnessApi, syncProfileToBackend } from './fitnessApi';
 
 const filled = {
   ...EMPTY_PROFILE,
-  goals: { ...EMPTY_PROFILE.goals, primary: 'strength' as const },
+  goals: { ...EMPTY_PROFILE.goals, selected: ['strength' as const] },
   identity: { ...EMPTY_PROFILE.identity, weightKg: 80 },
 };
 

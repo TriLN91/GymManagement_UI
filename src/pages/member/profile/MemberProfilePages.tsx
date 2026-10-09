@@ -63,7 +63,6 @@ function getCopy(t: TFunction) {
     ready: t('memberProfile:memberProfilePages.copy.ready'),
     incomplete: t('memberProfile:memberProfilePages.copy.incomplete'),
     ptReview: t('memberProfile:memberProfilePages.copy.ptReview'),
-    medicalReview: t('memberProfile:memberProfilePages.copy.medicalReview'),
     assessments: t('memberProfile:memberProfilePages.copy.assessments'),
     appointments: t('memberProfile:memberProfilePages.copy.appointments'),
     wearables: t('memberProfile:memberProfilePages.copy.wearables'),
@@ -192,9 +191,9 @@ const goalNames: Record<string, { en: string; vi: string }> = {
   muscle_gain: { en: 'Build muscle', vi: 'Tăng cơ' },
   fat_loss: { en: 'Lose fat', vi: 'Giảm mỡ' },
   strength: { en: 'Build strength', vi: 'Tăng sức mạnh' },
-  endurance: { en: 'Improve endurance', vi: 'Tăng sức bền' },
+  cardio_endurance: { en: 'Improve cardio endurance', vi: 'Tăng sức bền tim mạch' },
+  muscular_endurance: { en: 'Improve muscular endurance', vi: 'Tăng sức bền cơ bắp' },
   mobility: { en: 'Improve mobility', vi: 'Cải thiện vận động' },
-  general: { en: 'General fitness', vi: 'Sức khỏe tổng thể' },
 };
 
 export function PersonalProfilePage() {
@@ -213,9 +212,7 @@ export function PersonalProfilePage() {
       ? copy.incomplete
       : readiness.level === 'ready'
         ? copy.ready
-        : readiness.level === 'pt_review'
-          ? copy.ptReview
-          : copy.medicalReview;
+        : copy.ptReview;
   const info = [
     [copy.fullName, name],
     [copy.email, user?.email ?? copy.noData],
@@ -225,7 +222,11 @@ export function PersonalProfilePage() {
   const fitnessInfo = [
     [copy.height, fitness.identity.heightCm ? `${fitness.identity.heightCm} cm` : copy.noData],
     [copy.weight, fitness.identity.weightKg ? `${fitness.identity.weightKg} kg` : copy.noData],
-    [copy.goal, goalNames[fitness.goals.primary]?.[language] ?? copy.noData],
+    [
+      copy.goal,
+      fitness.goals.selected.map((goal) => goalNames[goal]?.[language] ?? goal).join(', ') ||
+        copy.noData,
+    ],
     [copy.experience, fitness.training.experience || copy.noData],
     [
       copy.available,

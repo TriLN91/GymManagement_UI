@@ -1,57 +1,33 @@
 {
   "plan": {
-    "generated": "AI TẠO GIÁO ÁN // 12 TUẦN TĂNG CƠ",
-    "phase": "Giai đoạn: CHU KỲ TĂNG CƠ T1",
-    "title": "Tăng cơ thân trên & ổn định cơ xô",
-    "exercises": "BÀI TẬP",
-    "minutes": "PHÚT DỰ KIẾN",
-    "kcal": "KCAL DỰ KIẾN",
-    "cards": [
-      {
-        "target": "Mục tiêu: Ngực & Tay sau",
-        "name": "Đẩy ngực với thanh tạ",
-        "a": "4 HIỆP",
-        "b": "8-10 LẦN"
-      },
-      {
-        "target": "Mục tiêu: Xô & Tay trước",
-        "name": "Kéo xô cáp, tay rộng",
-        "a": "3 HIỆP",
-        "b": "10-12 LẦN"
-      },
-      {
-        "target": "Mục tiêu: Cơ lõi & Lực nắm",
-        "name": "Treo xà đẳng trường",
-        "a": "3 HIỆP",
-        "b": "45 GIÂY"
-      },
-      {
-        "target": "Mục tiêu: Tim mạch & Lưng",
-        "name": "Chèo máy nước rút",
-        "a": "QUÃNG",
-        "b": "HIT"
-      }
-    ],
-    "rpe": "Độ khó khởi động dự kiến dựa trên RPE phiên gần nhất:",
+    "title": "Kế hoạch tập luyện của bạn",
+    "open": "Xem kế hoạch AI",
     "start": "Bắt đầu buổi tập"
   },
-  "setup": {
-    "title": "THIẾT LẬP HỒ SƠ",
-    "progress": "Tiến độ: 2 / 4",
-    "done": "hoàn tất",
-    "lead": "Cập nhật đầy đủ tham số thể trạng để thuật toán AI-Pose tính toán rủi ro chuẩn xác hơn.",
+  "profile": {
+    "title": "HỒ SƠ CỦA BẠN",
+    "complete": "hoàn tất",
     "goalLabel": "MỤC TIÊU HUẤN LUYỆN",
-    "goal": "Tăng cơ & tối đa mức cơ thể",
     "bodyLabel": "CHỈ SỐ CƠ THỂ",
-    "body": "58.0 kg (Mục tiêu: 62.0 kg)",
-    "completed": "Đã hoàn thành",
-    "medicalLabel": "LỊCH SỬ CHẤN THƯƠNG / Y TẾ",
-    "notUpdated": "Chưa cập nhật",
-    "missing": "! Thiếu thông tin",
-    "accuracy": "ĐỘ CHÍNH XÁC AI ĐÁNH GIÁ",
-    "accuracyHintBefore": "Thêm thông tin để AI Pose giảm",
-    "accuracyHintStrong": "40% sai số nội suy ngoại biên",
-    "finish": "HOÀN TẤT HỒ SƠ"
+    "healthLabel": "SÀNG LỌC SỨC KHỎE",
+    "notSet": "Chưa cập nhật",
+    "target": "Mục tiêu",
+    "bmi": "BMI",
+    "goals": {
+      "muscle_gain": "Tăng cơ",
+      "fat_loss": "Giảm mỡ",
+      "strength": "Tăng sức mạnh",
+      "mobility": "Cải thiện vận động",
+      "cardio_endurance": "Tăng sức bền tim mạch",
+      "muscular_endurance": "Tăng sức bền cơ bắp"
+    },
+    "readiness": {
+      "ready": "Sẵn sàng tập luyện",
+      "pt_review": "Cần PT xem xét"
+    },
+    "completeness": "ĐỘ ĐẦY ĐỦ HỒ SƠ",
+    "edit": "CHỈNH SỬA HỒ SƠ",
+    "energyLabel": "CALO DUY TRÌ MỖI NGÀY (ƯỚC TÍNH)"
   },
   "actions": {
     "one": {
@@ -67,25 +43,14 @@
       "cta": "Quay video form ↑"
     }
   },
-  "chart": {
-    "tag": "THEO DÕI SINH TRẮC // TỔNG QUAN 7 NGÀY QUA",
-    "title": "Chu kỳ sinh trắc tuần 14",
-    "aiAnalysis": "Phân tích AI (Premium)",
-    "nextPlan": "Kế hoạch tuần tới",
+  "progress": {
+    "tag": "THEO DÕI TẬP LUYỆN // 7 NGÀY QUA",
+    "title": "Khối lượng tập tuần này",
     "volume": "KHỐI LƯỢNG TẠ (KG) / NGÀY",
-    "peak": "MỨC ĐỈNH:",
-    "peakValue": "18,250 KG",
-    "days": ["T2", "T3", "T4", "T5", "HÔM NAY"],
-    "cycle": "CHU KỲ TẬP TUẦN NÀY",
-    "onTrack": "ĐÚNG TIẾN ĐỘ",
-    "cycleNote": "Còn hoàn thành 2 phiên nữa để đạt chỉ số tăng cơ.",
-    "newVolume": "TỔNG KHỐI LƯỢNG MỚI",
-    "perWeek": "+1.5 KG/TUẦN",
-    "newVolumeNote": "Tổng khối lượng so với 3 tuần trước.",
-    "formScore": "ĐIỂM KỸ THUẬT AI FORM-NET",
-    "veryGood": "RẤT TỐT",
-    "formNote": "Độ thẳng của lưng ở góc trung bình đạt 94.7%.",
-    "footnote": "* Hệ thống phân tích ngày / tuần ẩn dữ liệu chưa học, thông số có thể thay đổi sau phiên học nháp lần mới của bạn.",
-    "integrity": "TOÀN VẸN DỮ LIỆU: SQL RAW"
+    "sessions": "PHIÊN ĐÃ HOÀN THÀNH",
+    "totalVolume": "TỔNG KHỐI LƯỢNG",
+    "kg": "KG",
+    "empty": "Chưa có phiên tập nào trong 7 ngày qua. Hoàn thành một buổi tập để xem biểu đồ.",
+    "history": "Xem lịch sử tập"
   }
 }

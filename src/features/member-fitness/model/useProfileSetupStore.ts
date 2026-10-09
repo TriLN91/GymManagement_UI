@@ -26,6 +26,6 @@ export const useProfileSetupStore = create<ProfileSetupState>()(
           profile: { ...state.profile, updatedAt: new Date().toISOString() },
         })),
     }),
-    { name: 'fit:member-fitness-profile:v2', version: 2 },
+    { name: 'fit:member-fitness-profile:v8', version: 8 },
   ),
 );

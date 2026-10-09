@@ -155,11 +155,14 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
+  /* Labels can wrap to different line counts; keep the inputs on one baseline. */
+  align-items: end;
 }
 .profile-form-grid.is-three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .profile-form-grid > .profile-block {
+  align-self: start;
   margin: 0;
 }
 
@@ -178,6 +181,7 @@
 }
 .profile-field small,
 .profile-block h3 small {
+  white-space: nowrap;
   margin-left: 5px;
   color: rgba(21, 62, 47, 0.42);
   font-size: 10px;
@@ -593,4 +597,104 @@
   .profile-form-actions button {
     flex: 1;
   }
+}
+
+.profile-health-notice {
+  display: flex;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--energy-lime, #c8e86a);
+  border-radius: 12px;
+  background: var(--energy-lime-soft, #f1f8d8);
+  color: #1c3a1c;
+}
+
+.profile-health-notice > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.profile-health-notice p {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.profile-health-notice ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+}
+
+.profile-health-notice small {
+  opacity: 0.7;
+}
+
+.profile-energy {
+  margin-top: 8px;
+  padding: 20px;
+  border: 1px solid rgba(23, 57, 23, 0.15);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.profile-energy header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.profile-energy dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 12px;
+}
+
+.profile-energy dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.profile-energy dd {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.profile-energy dd small {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.profile-energy .is-total span {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.profile-energy p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+@media (max-width: 640px) {
+  .profile-energy dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-health-notice.is-rest {
+  border-color: #e0a1a1;
+  background: #fdeeee;
+  color: #6b1f1f;
+  font-weight: 700;
 }

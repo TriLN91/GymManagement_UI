@@ -9,25 +9,21 @@
       "completeness": "Complete",
       "next": "Continue",
       "previous": "Back",
-      "save": "Save profile & view Workout Plans",
-      "saveReview": "Save profile & return to Dashboard",
+      "save": "Save profile & go to Dashboard",
       "required": "Complete the required fields before continuing.",
       "savedDone": "Your fitness profile has been saved.",
       "syncFailed": "Could not sync your profile to the server. It is still saved on this device.",
       "optional": "Optional",
       "chooseMany": "Select multiple",
       "steps": {
-        "0": {
+        "0": ["Health", "Important notice"],
+        "1": {
           "0": "Body metrics",
           "1": "Baseline data"
         },
-        "1": {
+        "2": {
           "0": "Goals",
           "1": "Desired outcomes"
-        },
-        "2": {
-          "0": "Health",
-          "1": "Safety screening"
         },
         "3": {
           "0": "Movement",
@@ -55,10 +51,7 @@
           "0": "Training goals",
           "1": "AI and your Trainer prioritize the primary goal when goals conflict."
         },
-        "health": {
-          "0": "Pre-activity screening",
-          "1": "Choose “Unsure” whenever you are not certain."
-        },
+        "health": ["Health notice", "Please read this before you start training."],
         "movement": {
           "0": "Pain, injury and limitations",
           "1": "This information helps replace unsuitable exercises."
@@ -85,28 +78,8 @@
         "preferNot": "Prefer not to answer",
         "height": "Height",
         "weight": "Weight",
-        "waist": "Waist",
-        "bodyFat": "Body fat",
-        "heartRate": "Resting heart rate",
-        "source": "Measurement source",
-        "self": "Self reported",
-        "scale": "Smart scale",
-        "scan": "Gym body scan",
-        "primaryGoal": "Primary goal",
         "targetWeight": "Target weight",
         "targetDate": "Target date",
-        "secondaryGoals": "Secondary goals",
-        "focusAreas": "Priority areas",
-        "conditions": "Known health conditions",
-        "details": "Condition details or monitoring instructions",
-        "medications": "Current medications",
-        "allergies": "Relevant allergies",
-        "surgeries": "Previous surgery or major treatment",
-        "currentPain": "Do you currently have pain or swelling that affects movement?",
-        "painAreas": "Pain / injury areas",
-        "painLevel": "Current pain level",
-        "injuryDetails": "Describe the injury and when it occurred",
-        "restrictions": "Movements a clinician or Trainer told you to avoid",
         "experience": "Training experience",
         "activityLevel": "Daily activity level",
         "cardioDays": "Cardio days per week",
@@ -122,7 +95,12 @@
         "stress": "Current stress level",
         "work": "Work pattern",
         "smoking": "Do you smoke or use nicotine?",
-        "alcohol": "Alcoholic drinks per week"
+        "alcohol": "Alcoholic drinks per week",
+        "goals": "Goals",
+        "upperInjury": "Do you have an injury in your upper body?",
+        "lowerInjury": "Do you have an injury in your lower body?",
+        "upperBody": "Upper body",
+        "lowerBody": "Lower body"
       },
       "yes": "Yes",
       "no": "No",
@@ -147,53 +125,38 @@
         "pt_review": {
           "0": "Trainer review needed",
           "1": "A Trainer should review the recorded condition before the plan is finalized."
-        },
-        "medical_review": {
-          "0": "Verification needed before plan creation",
-          "1": "Automatic high-intensity plan creation is held until appropriate verification is available."
         }
       },
-      "readinessEyebrow": "READINESS"
+      "readinessEyebrow": "READINESS",
+      "healthNotice": {
+        "lead": "If you have any of the following, please train only on the advice of a medical professional or a qualified expert:",
+        "items": [
+          "Heart disease or high blood pressure",
+          "Dizziness, fainting or chest pain during exercise",
+          "A doctor has told you to limit physical activity",
+          "Diabetes",
+          "Asthma or other respiratory conditions",
+          "Bone or joint conditions, osteoporosis",
+          "Pregnancy or postpartum",
+          "Any other chronic condition or ongoing treatment"
+        ],
+        "footer": "Information in this app does not replace medical advice."
+      },
+      "injuryAdvice": {
+        "train_lower": "You have an upper-body injury: focus on lower-body training (legs, glutes) so your upper body can rest and recover.",
+        "train_upper": "You have a lower-body injury: focus on upper-body training (chest, back, shoulders, arms) so your lower body can rest and recover.",
+        "rest": "You are injured in both your upper and lower body. Please take a break from training and come back once you have recovered. If needed, ask a medical professional before you start again."
+      },
+      "units": {
+        "days": "days",
+        "min": "min",
+        "hours": "hours"
+      }
     },
     "buildMuscle": "Build muscle",
     "loseFat": "Lose fat",
     "buildStrength": "Build strength",
-    "improveEndurance": "Improve endurance",
     "improveMobility": "Improve mobility",
-    "generalFitness": "General fitness",
-    "fullBody": "Full body",
-    "chest": "Chest",
-    "back": "Back",
-    "shoulders": "Shoulders",
-    "arms": "Arms",
-    "glutes": "Glutes",
-    "legs": "Legs",
-    "neck": "Neck",
-    "shoulder": "Shoulder",
-    "elbow": "Elbow",
-    "wrist": "Wrist",
-    "upperBack": "Upper back",
-    "lowerBack": "Lower back",
-    "hip": "Hip",
-    "knee": "Knee",
-    "ankle": "Ankle",
-    "inThePastSix": "In the past six months, have you had heart disease, stroke, or chest pain during daily activity or exercise?",
-    "haveYouBeenDiagnosed": "Have you been diagnosed with or treated for high blood pressure?",
-    "doYouExperienceDizziness": "Do you experience dizziness, lightheadedness or loss of consciousness during activity?",
-    "doYouExperienceShortness": "Do you experience shortness of breath at rest?",
-    "haveYouHadA": "Have you had a recent concussion?",
-    "hasAHealthcareProfessional": "Has a healthcare professional told you to avoid or modify physical activity?",
-    "cardiovascular": "Cardiovascular",
-    "hypertension": "Hypertension",
-    "diabetes": "Diabetes",
-    "asthmaRespiratory": "Asthma / respiratory",
-    "arthritis": "Arthritis",
-    "osteoporosis": "Osteoporosis",
-    "neurological": "Neurological",
-    "kidneyDisease": "Kidney disease",
-    "cancer": "Cancer",
-    "pregnancyPostpartum": "Pregnancy / postpartum",
-    "other": "Other",
     "bodyweight": "Bodyweight",
     "dumbbells": "Dumbbells",
     "barbell": "Barbell",
@@ -223,7 +186,20 @@
     "shiftWork": "Shift work",
     "itemsRecorded": "items recorded",
     "daysWeek": "days/week",
-    "aIReceivesOnlyStructured": "AI receives only structured data needed for plan recommendations. A Trainer can view this profile only when assigned and permitted."
+    "aIReceivesOnlyStructured": "AI receives only structured data needed for plan recommendations. A Trainer can view this profile only when assigned and permitted.",
+    "improveCardioEndurance": "Improve cardio endurance",
+    "improveMuscularEndurance": "Improve muscular endurance",
+    "energy": {
+      "title": "Daily energy estimate",
+      "ree": "Resting energy (BMR)",
+      "pal": "Activity factor (PAL)",
+      "tdee": "Maintenance calories (TDEE)",
+      "range": "About {{low}} – {{high}} kcal/day",
+      "disclaimer": "This is an estimate from the Mifflin-St Jeor equation times an activity factor (FAO/WHO/UNU), not an exact measurement for you. Workout calories are already part of the activity factor, so they are not added again. It will be calibrated against your weight trend over time.",
+      "missing_input": "Enter your date of birth, sex, height, weight and activity level to see your calorie estimate.",
+      "under_age": "The calorie estimate currently applies to people aged 18 and over.",
+      "sex_unsupported": "The equation needs Male or Female, so an automatic calorie estimate is not available."
+    }
   },
   "memberProfilePages": {
     "copy": {
@@ -248,7 +224,6 @@
       "ready": "Ready for plan creation",
       "incomplete": "Profile Setup is incomplete",
       "ptReview": "Trainer review needed",
-      "medicalReview": "Health verification needed",
       "assessments": "AI Assessment history",
       "appointments": "PT appointments",
       "wearables": "Connected devices",

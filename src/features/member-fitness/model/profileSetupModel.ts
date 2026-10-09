@@ -1,5 +1,16 @@
+export type YesNoAnswer = 'yes' | 'no' | '';
 export type TernaryAnswer = 'yes' | 'no' | 'unsure' | '';
-export type ProfileRiskLevel = 'ready' | 'pt_review' | 'medical_review';
+export type ProfileRiskLevel = 'ready' | 'pt_review';
+
+export const FITNESS_GOAL_IDS = [
+  'muscle_gain',
+  'fat_loss',
+  'strength',
+  'cardio_endurance',
+  'muscular_endurance',
+  'mobility',
+] as const;
+export type FitnessGoalId = (typeof FITNESS_GOAL_IDS)[number];
 
 export interface MemberFitnessProfile {
   identity: {
@@ -13,39 +24,19 @@ export interface MemberFitnessProfile {
     systolicBp: number | null;
     diastolicBp: number | null;
     measurementSource: 'self_reported' | 'smart_scale' | 'gym_scan' | '';
+    activityLevel: 'sedentary' | 'light' | 'moderate' | 'high' | '';
   };
   goals: {
-    primary: 'muscle_gain' | 'fat_loss' | 'strength' | 'endurance' | 'mobility' | 'general' | '';
-    secondary: string[];
+    selected: FitnessGoalId[];
     targetWeightKg: number | null;
     targetDate: string;
-    focusAreas: string[];
-  };
-  health: {
-    screening: {
-      heartOrChestSymptoms: TernaryAnswer;
-      highBloodPressure: TernaryAnswer;
-      dizzinessOrFainting: TernaryAnswer;
-      breathlessAtRest: TernaryAnswer;
-      recentConcussion: TernaryAnswer;
-      providerRestriction: TernaryAnswer;
-    };
-    conditions: string[];
-    conditionDetails: string;
-    medications: string;
-    allergies: string;
-    surgeries: string;
   };
   movement: {
-    currentPain: TernaryAnswer;
-    painAreas: string[];
-    painLevel: number;
-    injuryDetails: string;
-    movementRestrictions: string;
+    upperBodyInjury: YesNoAnswer;
+    lowerBodyInjury: YesNoAnswer;
   };
   training: {
     experience: 'beginner' | 'intermediate' | 'advanced' | '';
-    activityLevel: 'sedentary' | 'light' | 'moderate' | 'high' | '';
     cardioDays: number | null;
     cardioMinutes: number | null;
     strengthDays: number | null;
@@ -90,39 +81,19 @@ export const EMPTY_PROFILE: MemberFitnessProfile = {
     systolicBp: null,
     diastolicBp: null,
     measurementSource: '',
+    activityLevel: '',
   },
   goals: {
-    primary: '',
-    secondary: [],
+    selected: [],
     targetWeightKg: null,
     targetDate: '',
-    focusAreas: [],
-  },
-  health: {
-    screening: {
-      heartOrChestSymptoms: '',
-      highBloodPressure: '',
-      dizzinessOrFainting: '',
-      breathlessAtRest: '',
-      recentConcussion: '',
-      providerRestriction: '',
-    },
-    conditions: [],
-    conditionDetails: '',
-    medications: '',
-    allergies: '',
-    surgeries: '',
   },
   movement: {
-    currentPain: '',
-    painAreas: [],
-    painLevel: 0,
-    injuryDetails: '',
-    movementRestrictions: '',
+    upperBodyInjury: '',
+    lowerBodyInjury: '',
   },
   training: {
     experience: '',
-    activityLevel: '',
     cardioDays: null,
     cardioMinutes: null,
     strengthDays: null,
@@ -148,40 +119,13 @@ export const EMPTY_PROFILE: MemberFitnessProfile = {
   updatedAt: null,
 };
 
-const criticalScreeningKeys: Array<keyof MemberFitnessProfile['health']['screening']> = [
-  'heartOrChestSymptoms',
-  'highBloodPressure',
-  'dizzinessOrFainting',
-  'breathlessAtRest',
-  'providerRestriction',
-];
-
 export function calculateProfileReadiness(profile: MemberFitnessProfile): ProfileReadiness {
-  const { identity, goals, health, movement, training, recovery, consent } = profile;
+  const { identity, goals, movement, training, recovery, consent } = profile;
   const reasons: string[] = [];
-  const screeningValues = Object.values(health.screening);
-  const hasCriticalAnswer = criticalScreeningKeys.some(
-    (key) => health.screening[key] === 'yes' || health.screening[key] === 'unsure',
-  );
-  const measuredHighBp = (identity.systolicBp ?? 0) >= 160 || (identity.diastolicBp ?? 0) >= 90;
-
   let level: ProfileRiskLevel = 'ready';
-  if (hasCriticalAnswer || measuredHighBp) {
-    level = 'medical_review';
-    if (hasCriticalAnswer) reasons.push('screening_flag');
-    if (measuredHighBp) reasons.push('blood_pressure');
-  } else if (
-    health.screening.recentConcussion === 'yes' ||
-    health.screening.recentConcussion === 'unsure' ||
-    health.conditions.some((condition) => condition !== 'none') ||
-    movement.currentPain === 'yes' ||
-    movement.currentPain === 'unsure'
-  ) {
+  if (movement.upperBodyInjury === 'yes' || movement.lowerBodyInjury === 'yes') {
     level = 'pt_review';
-    if (health.screening.recentConcussion !== 'no') reasons.push('recent_concussion');
-    if (health.conditions.some((condition) => condition !== 'none')) reasons.push('condition');
-    if (movement.currentPain === 'yes' || movement.currentPain === 'unsure')
-      reasons.push('pain_or_injury');
+    reasons.push('injury');
   }
 
   const requiredChecks = [
@@ -189,13 +133,11 @@ export function calculateProfileReadiness(profile: MemberFitnessProfile): Profil
     Boolean(identity.sexAtBirth),
     Boolean(identity.heightCm),
     Boolean(identity.weightKg),
-    Boolean(identity.measurementSource),
-    Boolean(goals.primary),
-    health.conditions.length > 0,
-    screeningValues.every(Boolean),
-    Boolean(movement.currentPain),
+    goals.selected.length > 0,
+    Boolean(movement.upperBodyInjury),
+    Boolean(movement.lowerBodyInjury),
     Boolean(training.experience),
-    Boolean(training.activityLevel),
+    Boolean(identity.activityLevel),
     training.availableDays.length > 0,
     Boolean(training.sessionMinutes),
     training.environments.length > 0,
@@ -223,4 +165,19 @@ export function toggleExclusiveValue(values: string[], value: string, exclusive 
   return withoutExclusive.includes(value)
     ? withoutExclusive.filter((item) => item !== value)
     : [...withoutExclusive, value];
+}
+
+export type InjuryAdvice = 'none' | 'train_lower' | 'train_upper' | 'rest';
+
+/**
+ * What to do with the training split given the injuries. Returns null until both questions are
+ * answered. One injured half: train the other half while it recovers. Both: rest.
+ */
+export function getInjuryAdvice(movement: MemberFitnessProfile['movement']): InjuryAdvice | null {
+  const { upperBodyInjury: upper, lowerBodyInjury: lower } = movement;
+  if (!upper || !lower) return null;
+  if (upper === 'yes' && lower === 'yes') return 'rest';
+  if (upper === 'yes') return 'train_lower';
+  if (lower === 'yes') return 'train_upper';
+  return 'none';
 }

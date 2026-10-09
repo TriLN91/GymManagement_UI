@@ -25,6 +25,8 @@ export interface NutritionInput {
   dateOfBirth: string | null;
   sexForEquation: 'Male' | 'Female' | null;
   activityBaseline: string | null;
+  palTotal: number | null;
+  palSource: string | null;
 }
 
 export interface BodyInput {

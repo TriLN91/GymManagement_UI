@@ -59,7 +59,7 @@ export function RegisterPage() {
         password: values.password,
         fullName: 'New User',
       });
-      void navigate(ROUTES.member.root, { replace: true });
+      void navigate(ROUTES.member.profileSetup, { replace: true });
     } catch (error) {
       if (error instanceof ValidationError) {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {

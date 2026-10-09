@@ -9,25 +9,21 @@
       "completeness": "Hoàn thiện",
       "next": "Tiếp tục",
       "previous": "Quay lại",
-      "save": "Lưu hồ sơ & xem Workout Plans",
-      "saveReview": "Lưu hồ sơ & về Dashboard",
+      "save": "Lưu hồ sơ & về Dashboard",
       "required": "Hãy hoàn thành các trường bắt buộc trước khi tiếp tục.",
       "savedDone": "Hồ sơ tập luyện đã được lưu.",
       "syncFailed": "Chưa đồng bộ được hồ sơ lên máy chủ. Hồ sơ vẫn được lưu trên thiết bị này.",
       "optional": "Không bắt buộc",
       "chooseMany": "Có thể chọn nhiều",
       "steps": {
-        "0": {
+        "0": ["Sức khỏe", "Lưu ý quan trọng"],
+        "1": {
           "0": "Chỉ số cơ thể",
           "1": "Dữ liệu nền"
         },
-        "1": {
+        "2": {
           "0": "Mục tiêu",
           "1": "Kết quả mong muốn"
-        },
-        "2": {
-          "0": "Sức khỏe",
-          "1": "Sàng lọc an toàn"
         },
         "3": {
           "0": "Vận động",
@@ -55,10 +51,7 @@
           "0": "Mục tiêu tập luyện",
           "1": "AI/PT sẽ ưu tiên mục tiêu chính khi có xung đột."
         },
-        "health": {
-          "0": "Sàng lọc trước vận động",
-          "1": "Nếu không chắc, hãy chọn “Không rõ”."
-        },
+        "health": ["Lưu ý về sức khỏe", "Hãy đọc trước khi bắt đầu tập luyện."],
         "movement": {
           "0": "Đau, chấn thương và giới hạn",
           "1": "Thông tin này giúp thay thế động tác không phù hợp."
@@ -85,28 +78,8 @@
         "preferNot": "Không muốn trả lời",
         "height": "Chiều cao",
         "weight": "Cân nặng",
-        "waist": "Vòng eo",
-        "bodyFat": "Tỷ lệ mỡ",
-        "heartRate": "Nhịp tim lúc nghỉ",
-        "source": "Nguồn số đo",
-        "self": "Tự nhập",
-        "scale": "Cân thông minh",
-        "scan": "Body scan tại Gym",
-        "primaryGoal": "Mục tiêu chính",
         "targetWeight": "Cân nặng mục tiêu",
         "targetDate": "Thời hạn mong muốn",
-        "secondaryGoals": "Mục tiêu bổ sung",
-        "focusAreas": "Khu vực muốn ưu tiên",
-        "conditions": "Tình trạng sức khỏe đã biết",
-        "details": "Chi tiết bệnh nền hoặc chỉ định theo dõi",
-        "medications": "Thuốc đang sử dụng",
-        "allergies": "Dị ứng cần lưu ý",
-        "surgeries": "Phẫu thuật hoặc điều trị lớn trước đây",
-        "currentPain": "Bạn hiện có đau hoặc sưng ảnh hưởng đến vận động?",
-        "painAreas": "Vị trí đau / chấn thương",
-        "painLevel": "Mức đau hiện tại",
-        "injuryDetails": "Mô tả chấn thương và thời điểm xảy ra",
-        "restrictions": "Giới hạn hoặc động tác bác sĩ/PT yêu cầu tránh",
         "experience": "Kinh nghiệm tập luyện",
         "activityLevel": "Mức vận động hằng ngày",
         "cardioDays": "Số ngày cardio mỗi tuần",
@@ -122,7 +95,12 @@
         "stress": "Mức căng thẳng hiện tại",
         "work": "Đặc điểm công việc",
         "smoking": "Bạn có hút thuốc hoặc nicotine?",
-        "alcohol": "Số đơn vị đồ uống có cồn mỗi tuần"
+        "alcohol": "Số đơn vị đồ uống có cồn mỗi tuần",
+        "goals": "Mục tiêu",
+        "upperInjury": "Bạn có chấn thương ở phần thân trên không?",
+        "lowerInjury": "Bạn có chấn thương ở phần thân dưới không?",
+        "upperBody": "Thân trên",
+        "lowerBody": "Thân dưới"
       },
       "yes": "Có",
       "no": "Không",
@@ -147,53 +125,38 @@
         "pt_review": {
           "0": "Cần PT xem lại",
           "1": "Plan chỉ nên hoàn tất sau khi PT xem tình trạng được ghi nhận."
-        },
-        "medical_review": {
-          "0": "Cần xác minh trước khi tạo plan",
-          "1": "Tạm giữ việc tự động tạo plan cường độ cao cho đến khi có xác minh phù hợp."
         }
       },
-      "readinessEyebrow": "ĐỘ SẴN SÀNG"
+      "readinessEyebrow": "ĐỘ SẴN SÀNG",
+      "healthNotice": {
+        "lead": "Nếu bạn có vấn đề về một trong những tình trạng sau, hãy tập luyện theo chỉ định của chuyên gia y tế hoặc người có chuyên môn:",
+        "items": [
+          "Tim mạch, huyết áp cao",
+          "Từng chóng mặt, ngất hoặc đau tức ngực khi vận động",
+          "Bác sĩ từng dặn hạn chế vận động",
+          "Tiểu đường",
+          "Hen hoặc bệnh hô hấp",
+          "Bệnh xương khớp, loãng xương",
+          "Đang mang thai hoặc sau sinh",
+          "Bệnh mạn tính hoặc đang điều trị khác"
+        ],
+        "footer": "Thông tin trong ứng dụng không thay thế tư vấn y tế."
+      },
+      "injuryAdvice": {
+        "train_lower": "Bạn đang chấn thương thân trên: hãy ưu tiên tập thân dưới (chân, mông) để thân trên được nghỉ ngơi và hồi phục.",
+        "train_upper": "Bạn đang chấn thương thân dưới: hãy ưu tiên tập thân trên (ngực, lưng, vai, tay) để thân dưới được nghỉ ngơi và hồi phục.",
+        "rest": "Bạn đang chấn thương cả thân trên và thân dưới. Hãy tạm nghỉ tập luyện, chờ đến khi hết chấn thương rồi quay lại nhé. Nếu cần, hãy hỏi chuyên gia y tế trước khi tập lại."
+      },
+      "units": {
+        "days": "ngày",
+        "min": "phút",
+        "hours": "giờ"
+      }
     },
     "buildMuscle": "Tăng cơ",
     "loseFat": "Giảm mỡ",
     "buildStrength": "Tăng sức mạnh",
-    "improveEndurance": "Tăng sức bền",
     "improveMobility": "Cải thiện vận động",
-    "generalFitness": "Sức khỏe tổng thể",
-    "fullBody": "Toàn thân",
-    "chest": "Ngực",
-    "back": "Lưng",
-    "shoulders": "Vai",
-    "arms": "Tay",
-    "glutes": "Mông",
-    "legs": "Chân",
-    "neck": "Cổ",
-    "shoulder": "Vai",
-    "elbow": "Khuỷu tay",
-    "wrist": "Cổ tay",
-    "upperBack": "Lưng trên",
-    "lowerBack": "Lưng dưới",
-    "hip": "Hông",
-    "knee": "Đầu gối",
-    "ankle": "Cổ chân",
-    "inThePastSix": "Trong 6 tháng qua, bạn có bệnh tim/đột quỵ hoặc đau, tức ngực khi sinh hoạt hay vận động?",
-    "haveYouBeenDiagnosed": "Bạn được chẩn đoán hoặc điều trị huyết áp cao?",
-    "doYouExperienceDizziness": "Bạn có chóng mặt, choáng hoặc từng mất ý thức khi vận động?",
-    "doYouExperienceShortness": "Bạn có khó thở ngay cả khi nghỉ?",
-    "haveYouHadA": "Bạn có bị chấn động não gần đây?",
-    "hasAHealthcareProfessional": "Bác sĩ từng yêu cầu bạn tránh hoặc điều chỉnh vận động?",
-    "cardiovascular": "Tim mạch",
-    "hypertension": "Cao huyết áp",
-    "diabetes": "Tiểu đường",
-    "asthmaRespiratory": "Hen / hô hấp",
-    "arthritis": "Viêm khớp",
-    "osteoporosis": "Loãng xương",
-    "neurological": "Thần kinh",
-    "kidneyDisease": "Thận",
-    "cancer": "Ung thư",
-    "pregnancyPostpartum": "Mang thai / sau sinh",
-    "other": "Khác",
     "bodyweight": "Trọng lượng cơ thể",
     "dumbbells": "Tạ đơn",
     "barbell": "Thanh đòn",
@@ -223,7 +186,20 @@
     "shiftWork": "Làm việc theo ca",
     "itemsRecorded": "mục cần lưu ý",
     "daysWeek": "ngày/tuần",
-    "aIReceivesOnlyStructured": "AI chỉ nhận dữ liệu có cấu trúc cần thiết để đề xuất plan. PT chỉ xem được hồ sơ khi bạn cho phép và được phân công."
+    "aIReceivesOnlyStructured": "AI chỉ nhận dữ liệu có cấu trúc cần thiết để đề xuất plan. PT chỉ xem được hồ sơ khi bạn cho phép và được phân công.",
+    "improveCardioEndurance": "Tăng sức bền tim mạch",
+    "improveMuscularEndurance": "Tăng sức bền cơ bắp",
+    "energy": {
+      "title": "Ước tính năng lượng hằng ngày",
+      "ree": "Năng lượng nghỉ (BMR)",
+      "pal": "Hệ số vận động (PAL)",
+      "tdee": "Calo duy trì (TDEE)",
+      "range": "Khoảng {{low}} – {{high}} kcal/ngày",
+      "disclaimer": "Đây là ước tính từ công thức Mifflin-St Jeor nhân hệ số vận động (FAO/WHO/UNU), không phải số đo chính xác của riêng bạn. Calo buổi tập đã nằm trong hệ số vận động nên không cộng thêm. Kết quả sẽ được hiệu chỉnh dần theo xu hướng cân nặng.",
+      "missing_input": "Nhập ngày sinh, giới tính, chiều cao, cân nặng và mức vận động để xem ước tính calo.",
+      "under_age": "Ước tính calo hiện chỉ áp dụng cho người từ 18 tuổi trở lên.",
+      "sex_unsupported": "Công thức cần giới tính Nam hoặc Nữ nên chưa thể ước tính calo tự động."
+    }
   },
   "memberProfilePages": {
     "copy": {
@@ -248,7 +224,6 @@
       "ready": "Có thể tạo plan",
       "incomplete": "Cần hoàn thành Profile Setup",
       "ptReview": "Cần PT xem lại",
-      "medicalReview": "Cần xác minh sức khỏe",
       "assessments": "Lịch sử AI Assessment",
       "appointments": "Lịch hẹn PT",
       "wearables": "Thiết bị kết nối",

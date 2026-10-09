@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateProfileReadiness,
   EMPTY_PROFILE,
+  getInjuryAdvice,
   toggleExclusiveValue,
   type MemberFitnessProfile,
 } from './profileSetupModel';
@@ -17,25 +18,13 @@ function completeProfile(): MemberFitnessProfile {
       heightCm: 165,
       weightKg: 60,
       measurementSource: 'self_reported',
+      activityLevel: 'moderate',
     },
-    goals: { ...EMPTY_PROFILE.goals, primary: 'strength' },
-    health: {
-      ...EMPTY_PROFILE.health,
-      conditions: ['none'],
-      screening: {
-        heartOrChestSymptoms: 'no',
-        highBloodPressure: 'no',
-        dizzinessOrFainting: 'no',
-        breathlessAtRest: 'no',
-        recentConcussion: 'no',
-        providerRestriction: 'no',
-      },
-    },
-    movement: { ...EMPTY_PROFILE.movement, currentPain: 'no' },
+    goals: { ...EMPTY_PROFILE.goals, selected: ['strength'] },
+    movement: { upperBodyInjury: 'no', lowerBodyInjury: 'no' },
     training: {
       ...EMPTY_PROFILE.training,
       experience: 'intermediate',
-      activityLevel: 'moderate',
       availableDays: ['monday', 'thursday'],
       sessionMinutes: 60,
       environments: ['gym'],
@@ -64,40 +53,43 @@ describe('member fitness profile readiness', () => {
     expect(result.bmi).toBeCloseTo(22.04, 1);
   });
 
-  it('requires medical review for chest symptoms or measured high blood pressure', () => {
-    const profile = completeProfile();
-    profile.health.screening.heartOrChestSymptoms = 'yes';
-    profile.identity.systolicBp = 165;
+  it('routes an injury in either half of the body to PT review', () => {
+    for (const patch of [
+      { upperBodyInjury: 'yes' as const },
+      { lowerBodyInjury: 'yes' as const },
+    ]) {
+      const profile = completeProfile();
+      profile.movement = { ...profile.movement, ...patch };
 
-    expect(calculateProfileReadiness(profile)).toMatchObject({
-      level: 'medical_review',
-      reasons: ['screening_flag', 'blood_pressure'],
-    });
-  });
-
-  it('routes current pain and chronic conditions to PT review', () => {
-    const profile = completeProfile();
-    profile.health.conditions = ['diabetes'];
-    profile.movement.currentPain = 'yes';
-
-    expect(calculateProfileReadiness(profile)).toMatchObject({
-      level: 'pt_review',
-      reasons: ['condition', 'pain_or_injury'],
-    });
-  });
-
-  it('treats uncertainty about movement-limiting pain as needing PT review', () => {
-    const profile = completeProfile();
-    profile.movement.currentPain = 'unsure';
-
-    expect(calculateProfileReadiness(profile)).toMatchObject({
-      level: 'pt_review',
-      reasons: ['pain_or_injury'],
-    });
+      expect(calculateProfileReadiness(profile)).toMatchObject({
+        level: 'pt_review',
+        reasons: ['injury'],
+      });
+    }
   });
 
   it('keeps the none option exclusive in multi-select fields', () => {
     expect(toggleExclusiveValue(['asthma'], 'none')).toEqual(['none']);
     expect(toggleExclusiveValue(['none'], 'diabetes')).toEqual(['diabetes']);
+  });
+});
+
+describe('getInjuryAdvice', () => {
+  const advice = (upperBodyInjury: 'yes' | 'no' | '', lowerBodyInjury: 'yes' | 'no' | '') =>
+    getInjuryAdvice({ upperBodyInjury, lowerBodyInjury });
+
+  it('waits until both questions are answered', () => {
+    expect(advice('', '')).toBeNull();
+    expect(advice('yes', '')).toBeNull();
+  });
+
+  it('trains the healthy half while the injured half rests', () => {
+    expect(advice('yes', 'no')).toBe('train_lower');
+    expect(advice('no', 'yes')).toBe('train_upper');
+  });
+
+  it('asks for rest when both halves are injured and has no advice when neither is', () => {
+    expect(advice('yes', 'yes')).toBe('rest');
+    expect(advice('no', 'no')).toBe('none');
   });
 });

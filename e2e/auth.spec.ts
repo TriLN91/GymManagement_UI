@@ -3,7 +3,10 @@ import { expect, test, type Page } from '@playwright/test';
 async function loginAsMember(page: Page) {
   await page.goto('/login');
   // Wipe any persisted auth from prior tests.
-  await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.localStorage.setItem('gmc.locale', 'en');
+  });
   await page.evaluate(() => window.sessionStorage.clear());
   await page.reload();
   await page.getByLabel(/email/i).fill('member@demo.gym');
@@ -21,6 +24,13 @@ test.describe('Auth flow', () => {
   test('member can sign in with mock credentials and lands on /app', async ({ page }) => {
     await loginAsMember(page);
     await expect(page.locator('.member-topbar').getByText('Member workspace')).toBeVisible();
+  });
+
+  test('member without a fitness profile is sent to profile setup before the dashboard', async ({
+    page,
+  }) => {
+    await loginAsMember(page);
+    await expect(page).toHaveURL(/\/app\/profile\/setup$/);
   });
 
   test('member visiting /admin lands on /403', async ({ page }) => {
