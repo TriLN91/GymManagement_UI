@@ -12,12 +12,21 @@ export function LandingButton({
   to: string;
   outline?: boolean;
 }) {
+  const className = `fit-button ${outline ? 'fit-button--outline' : ''}`;
+  // In-page anchors ("#section") are plain links; routes go through the router.
   return (
-    <Button asChild className={`fit-button ${outline ? 'fit-button--outline' : ''}`}>
-      <Link to={to}>
-        {children}
-        <ArrowUpRight size={17} aria-hidden="true" />
-      </Link>
+    <Button asChild className={className}>
+      {to.startsWith('#') ? (
+        <a href={to}>
+          {children}
+          <ArrowUpRight size={17} aria-hidden="true" />
+        </a>
+      ) : (
+        <Link to={to}>
+          {children}
+          <ArrowUpRight size={17} aria-hidden="true" />
+        </Link>
+      )}
     </Button>
   );
 }
