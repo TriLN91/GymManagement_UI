@@ -34,7 +34,8 @@
     "settings": "Settings",
     "tenants": "Tenants",
     "platformAnalytics": "Platform Analytics",
-    "featureFlags": "Feature Flags"
+    "featureFlags": "Feature Flags",
+    "movementAssessment": "Movement Assessment"
   },
   "dashboards": {
     "member": "Welcome to your member portal.",

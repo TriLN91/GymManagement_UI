@@ -32,7 +32,7 @@ const accounts: Record<string, MockAccount> = {
     userId: 'u-super',
     email: 'super@demo.gym',
     fullName: 'Sam Super',
-    roles: ['PlatformAdmin'],
+    roles: ['SuperAdmin'],
   },
 };
 

@@ -10,6 +10,7 @@ describe('mapRoles', () => {
     expect(mapRoles(['PT'])).toEqual(['pt']);
     expect(mapRoles(['GymAdmin'])).toEqual(['gym_admin']);
     expect(mapRoles(['PlatformAdmin'])).toEqual(['super_admin']);
+    expect(mapRoles(['SuperAdmin'])).toEqual(['super_admin']);
   });
 
   it('drops unknown roles and removes duplicates', () => {

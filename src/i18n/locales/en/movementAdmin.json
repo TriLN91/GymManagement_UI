@@ -1,0 +1,117 @@
+{
+  "eyebrow": "Platform governance",
+  "loading": "Loading movement references",
+  "list": {
+    "title": "Movement Assessment",
+    "description": "Manage canonical exercise reference sets, review source evidence and activate versioned profiles.",
+    "filterTitle": "Find reference sets",
+    "allExercises": "All exercises",
+    "emptyTitle": "No reference sets found",
+    "emptyDescription": "Create a SQUAT reference set to begin adding GOOD source videos.",
+    "activeCount_one": "{{count}} active profile",
+    "activeCount_other": "{{count}} active profiles"
+  },
+  "fields": {
+    "exercise": "Exercise",
+    "pattern": "Pattern",
+    "sources": "Sources",
+    "profiles": "Profiles",
+    "status": "Status",
+    "active": "Active profiles",
+    "actions": "Actions",
+    "name": "Name",
+    "muscleGroup": "Muscle group",
+    "equipment": "Equipment",
+    "acceptedReps": "Accepted reps",
+    "rejectedReps": "Rejected reps",
+    "acceptedVideos": "Accepted videos",
+    "viewConfidence": "View confidence",
+    "reason": "Decision reason",
+    "version": "Version",
+    "view": "View"
+  },
+  "actions": {
+    "open": "Open",
+    "createSet": "Create reference set",
+    "createExercise": "Add exercise",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating…",
+    "back": "Back to reference sets",
+    "confirm": "Confirm",
+    "confirming": "Confirming…",
+    "activate": "Activate",
+    "activating": "Activating…"
+  },
+  "createSet": {
+    "title": "Create reference set",
+    "description": "The current processor supports the SQUAT pattern. Camera view is detected from each source video.",
+    "selectExercise": "Select an exercise"
+  },
+  "createExercise": {
+    "title": "Add catalog exercise",
+    "description": "Create a global active exercise when the catalog has no suitable entry."
+  },
+  "workspace": {
+    "eyebrow": "Reference set workspace",
+    "pattern": "Canonical {{pattern}} reference lifecycle",
+    "sourcesTitle": "Source videos",
+    "sourcesDescription": "Processing state and review decisions are shown separately.",
+    "noSources": "No source videos",
+    "noSourcesDescription": "Upload a GOOD MP4 reference video to generate the first profile.",
+    "detectedView": "Detected view: {{view}}",
+    "viewPending": "View detection pending",
+    "technicalEvidence": "Inspect technical evidence",
+    "dataQuality": "Data quality",
+    "deterministicEvidence": "Deterministic evidence",
+    "fallbackEvidence": "TypeSafe fallback and governance",
+    "profilesTitle": "Aggregate reference profiles",
+    "profilesDescription": "Profiles remain separated by detected view and retain their version history.",
+    "noProfiles": "No aggregate profile yet",
+    "noProfilesDescription": "A profile is generated synchronously after a compatible source is processed.",
+    "profileVersion": "Profile v{{version}}",
+    "profileQuality": "Quality summary",
+    "historyTitle": "Profile version history",
+    "historyDescription": "Activating a newer version keeps earlier versions available for audit."
+  },
+  "upload": {
+    "title": "Upload GOOD reference source",
+    "description": "Upload one MP4 at a time. Processing is synchronous and the detected camera view is assigned automatically.",
+    "file": "MP4 video",
+    "submit": "Upload and process",
+    "processing": "Uploading and processing…",
+    "invalidType": "Select an MP4 video.",
+    "empty": "The selected video is empty.",
+    "tooLarge": "The video exceeds the 500 MB backend limit."
+  },
+  "status": {
+    "processing": "Processing",
+    "processed": "Processed",
+    "reviewRequired": "Review required",
+    "confirmed": "Confirmed",
+    "active": "Active",
+    "failed": "Processing failed",
+    "accepted": "Accepted",
+    "rejected": "Excluded",
+    "ambiguous": "Ambiguous",
+    "needsReview": "Needs review",
+    "keep": "Keep",
+    "downWeight": "Down-weight",
+    "exclude": "Exclude",
+    "unknown": "Unknown"
+  },
+  "errors": {
+    "invalid": "The request or upload is invalid.",
+    "forbidden": "Your account cannot manage platform reference data.",
+    "notFound": "The exercise or reference set no longer exists.",
+    "conflict": "This lifecycle action is not allowed in the current state.",
+    "generic": "Movement reference data could not be loaded."
+  },
+  "messages": {
+    "setCreated": "Reference set created.",
+    "exerciseCreated": "Exercise added to the global catalog.",
+    "sourceUploaded": "Source processed and reference profiles refreshed.",
+    "profileConfirmed": "Profile confirmed.",
+    "profileActivated": "Profile activated. Historical versions were preserved."
+  }
+}

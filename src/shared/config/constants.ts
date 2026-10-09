@@ -109,6 +109,10 @@ export const ROUTES = Object.freeze({
     root: '/superadmin',
     tenants: '/superadmin/tenants',
     analytics: '/superadmin/analytics',
+    movementAssessment: '/superadmin/movement-assessment',
+    movementReferenceSet: '/superadmin/movement-assessment/reference-sets/:referenceSetId',
+    movementReferenceSetPath: (referenceSetId: string) =>
+      `/superadmin/movement-assessment/reference-sets/${referenceSetId}`,
   }),
 });
 
@@ -129,6 +133,11 @@ export const QUERY_KEYS = Object.freeze({
   currentPlan: () => ['coaching', 'plan', 'current'] as const,
   coachingHistory: (memberId: string) => ['coaching', 'plan', 'history', memberId] as const,
   checkIns: (memberId: string) => ['coaching', 'checkins', memberId] as const,
+  exercises: () => ['exercises'] as const,
+  referenceSets: (exerciseId?: string) =>
+    ['movement-reference-sets', { exerciseId: exerciseId ?? null }] as const,
+  referenceSet: (referenceSetId: string) =>
+    ['movement-reference-sets', 'detail', referenceSetId] as const,
 });
 
 export type RouteTree = typeof ROUTES;
