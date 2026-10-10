@@ -111,7 +111,7 @@ const navGroups: ReadonlyArray<TrainerNavGroup> = [
 ];
 
 const mobileNav: ReadonlyArray<{
-  id: TrainerNavGroup['id'];
+  id: 'dashboard' | 'members' | 'plans' | 'appointments' | 'profile';
   labelKey: string;
   icon: LucideIcon;
   to: string;
@@ -129,10 +129,16 @@ const mobileNav: ReadonlyArray<{
     to: ROUTES.pt.members,
   },
   {
-    id: 'workout',
-    labelKey: 'trainerShell.workoutBuilder',
+    id: 'plans',
+    labelKey: 'trainerShell.buildPlan',
     icon: Dumbbell,
     to: ROUTES.pt.planBuilder,
+  },
+  {
+    id: 'appointments',
+    labelKey: 'trainerShell.appointments',
+    icon: CalendarDays,
+    to: ROUTES.pt.appointments,
   },
   {
     id: 'profile',
@@ -141,6 +147,15 @@ const mobileNav: ReadonlyArray<{
     to: ROUTES.pt.profile,
   },
 ];
+
+function matchesTrainerMobileNav(id: (typeof mobileNav)[number]['id'], pathname: string) {
+  if (id === 'dashboard') return pathname === ROUTES.pt.root || pathname === ROUTES.pt.memberData;
+  if (id === 'members')
+    return pathname === ROUTES.pt.members || pathname.startsWith(`${ROUTES.pt.members}/`);
+  if (id === 'plans') return pathname.startsWith(ROUTES.pt.workoutBuilder);
+  if (id === 'appointments') return pathname === ROUTES.pt.appointments;
+  return pathname.startsWith(ROUTES.pt.profile);
+}
 
 function matchesTrainerRoute(item: TrainerNavItem, pathname: string) {
   if (item.activePaths?.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
@@ -331,12 +346,12 @@ export function TrainerLayout() {
       <nav className="member-bottom-nav" aria-label={t('trainerShell.workspace')}>
         {mobileNav.map((item) => {
           const Icon = item.icon;
-          const group = navGroups.find((candidate) => candidate.id === item.id);
-          const active = group?.items.some((child) =>
-            matchesTrainerRoute(child, location.pathname),
-          );
           return (
-            <NavLink key={item.id} to={item.to} className={cn(active && 'is-active')}>
+            <NavLink
+              key={item.id}
+              to={item.to}
+              className={cn(matchesTrainerMobileNav(item.id, location.pathname) && 'is-active')}
+            >
               <Icon aria-hidden="true" size={19} strokeWidth={1.8} />
               <span>{t(item.labelKey)}</span>
             </NavLink>
