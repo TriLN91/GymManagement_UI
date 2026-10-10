@@ -19,6 +19,7 @@ const ROLE_MAP: Readonly<Record<string, Role>> = {
   gymadmin: 'gym_admin',
   gymowner: 'gym_admin',
   platformadmin: 'super_admin',
+  superadmin: 'super_admin',
 };
 
 export function mapRoles(backendRoles: ReadonlyArray<string>): Role[] {

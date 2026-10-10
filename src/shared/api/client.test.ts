@@ -1,7 +1,16 @@
 import axios from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { extractFieldErrors, tokenManager } from './client';
+import { extractFieldErrors, tokenManager, unwrapApiResponse } from './client';
+
+describe('unwrapApiResponse', () => {
+  it('supports both established envelopes and raw backend DTOs', () => {
+    expect(unwrapApiResponse({ isSuccess: true, message: 'ok', data: { id: '1' } })).toEqual({
+      id: '1',
+    });
+    expect(unwrapApiResponse({ id: '2', name: 'Squat' })).toEqual({ id: '2', name: 'Squat' });
+  });
+});
 
 describe('extractFieldErrors', () => {
   it('prefers explicit fieldErrors from the response body', () => {

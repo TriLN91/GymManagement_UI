@@ -138,7 +138,6 @@ export const tokenManager = new TokenManager();
 const instance: AxiosInstance = axios.create({
   baseURL: env.VITE_API_BASE_URL,
   timeout: env.VITE_API_TIMEOUT_MS,
-  headers: { 'Content-Type': 'application/json' },
 });
 
 instance.interceptors.request.use((config) => {
@@ -197,15 +196,25 @@ instance.interceptors.response.use(
   },
 );
 
-function unwrap<T>(response: AxiosResponse<ApiEnvelope<T>>): T {
-  return response.data.data;
+export function unwrapApiResponse<T>(body: ApiEnvelope<T> | T): T {
+  if (body && typeof body === 'object' && 'data' in body) {
+    const keys = Object.keys(body);
+    if ('isSuccess' in body || 'message' in body || 'errorCode' in body || keys.length === 1) {
+      return body.data;
+    }
+  }
+  return body as T;
+}
+
+function unwrap<T>(response: AxiosResponse<ApiEnvelope<T> | T>): T {
+  return unwrapApiResponse(response.data);
 }
 
 export async function apiGet<T>(
   url: string,
   config?: Parameters<AxiosInstance['get']>[1],
 ): Promise<T> {
-  const res = await instance.get<ApiEnvelope<T>>(url, config);
+  const res = await instance.get<ApiEnvelope<T> | T>(url, config);
   return unwrap(res);
 }
 
@@ -214,7 +223,7 @@ export async function apiPost<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['post']>[2],
 ): Promise<T> {
-  const res = await instance.post<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -223,7 +232,7 @@ export async function apiPut<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['put']>[2],
 ): Promise<T> {
-  const res = await instance.put<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -232,7 +241,7 @@ export async function apiPatch<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['patch']>[2],
 ): Promise<T> {
-  const res = await instance.patch<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -240,7 +249,13 @@ export async function apiDelete<T>(
   url: string,
   config?: Parameters<AxiosInstance['delete']>[1],
 ): Promise<T> {
-  const res = await instance.delete<ApiEnvelope<T>>(url, config);
+  const res = await instance.delete<ApiEnvelope<T> | T>(url, config);
+  return unwrap(res);
+}
+
+export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+  // Do not set Content-Type: the browser must add the multipart boundary.
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
   return unwrap(res);
 }
 

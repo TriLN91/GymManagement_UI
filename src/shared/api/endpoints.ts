@@ -25,6 +25,20 @@ export const ENDPOINTS = {
     feedback: '/coaching/feedback',
     history: '/coaching/plans/history',
   },
+  exercises: {
+    list: '/workout/exercises',
+    detail: (exerciseId: string) => `/workout/exercises/${exerciseId}`,
+    create: '/admin/movement-references/exercises',
+  },
+  referenceSets: {
+    list: '/admin/reference-sets',
+    detail: (referenceSetId: string) => `/admin/reference-sets/${referenceSetId}`,
+    sources: (referenceSetId: string) => `/admin/reference-sets/${referenceSetId}/sources`,
+    confirm: (referenceSetId: string, profileId: string) =>
+      `/admin/reference-sets/${referenceSetId}/profiles/${profileId}/confirm`,
+    activate: (referenceSetId: string, profileId: string) =>
+      `/admin/reference-sets/${referenceSetId}/profiles/${profileId}/activate`,
+  },
 } as const;
 
 export type EndpointGroup = keyof typeof ENDPOINTS;

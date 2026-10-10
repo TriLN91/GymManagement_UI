@@ -323,10 +323,25 @@ const SuperAdminAnalyticsPage = lazy(() =>
     default: m.SuperAdminAnalyticsPage,
   })),
 );
+const MovementAssessmentPage = lazy(() =>
+  import('@/pages/superadmin/MovementAssessmentPage').then((m) => ({
+    default: m.MovementAssessmentPage,
+  })),
+);
+const MovementReferenceSetPage = lazy(() =>
+  import('@/pages/superadmin/MovementReferenceSetPage').then((m) => ({
+    default: m.MovementReferenceSetPage,
+  })),
+);
 
 const superAdminNav: ReadonlyArray<NavItem> = [
   { to: ROUTES.superadmin.root, labelKey: 'nav.dashboard' },
   { to: ROUTES.superadmin.tenants, labelKey: 'nav.tenants' },
+  {
+    to: ROUTES.superadmin.movementAssessment,
+    labelKey: 'nav.movementAssessment',
+    activePaths: [ROUTES.superadmin.movementAssessment],
+  },
 ];
 
 const router = createBrowserRouter([
@@ -534,6 +549,14 @@ const router = createBrowserRouter([
               { path: ROUTES.superadmin.root, element: <SuperAdminDashboardPage /> },
               { path: ROUTES.superadmin.tenants, element: <SuperAdminTenantsPage /> },
               { path: ROUTES.superadmin.analytics, element: <SuperAdminAnalyticsPage /> },
+              {
+                path: ROUTES.superadmin.movementAssessment,
+                element: <MovementAssessmentPage />,
+              },
+              {
+                path: ROUTES.superadmin.movementReferenceSet,
+                element: <MovementReferenceSetPage />,
+              },
             ],
           },
         ],

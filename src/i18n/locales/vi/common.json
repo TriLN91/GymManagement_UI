@@ -34,7 +34,8 @@
     "settings": "Cài đặt",
     "tenants": "Doanh nghiệp",
     "platformAnalytics": "Phân tích nền tảng",
-    "featureFlags": "Cờ tính năng"
+    "featureFlags": "Cờ tính năng",
+    "movementAssessment": "Đánh giá chuyển động"
   },
   "dashboards": {
     "member": "Chào mừng đến cổng thành viên của bạn.",
