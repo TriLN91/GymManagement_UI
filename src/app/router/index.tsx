@@ -380,37 +380,55 @@ const PlatformListingDetailPage = lazy(() =>
   })),
 );
 const PlatformCampaignsPage = lazy(() =>
-  import('@/features/platform-admin-operations').then((m) => ({ default: m.PlatformCampaignsPage })),
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignsPage,
+  })),
 );
 const PlatformCampaignFormPage = lazy(() =>
-  import('@/features/platform-admin-operations').then((m) => ({ default: m.PlatformCampaignFormPage })),
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignFormPage,
+  })),
 );
 const PlatformCampaignDetailPage = lazy(() =>
-  import('@/features/platform-admin-operations').then((m) => ({ default: m.PlatformCampaignDetailPage })),
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignDetailPage,
+  })),
 );
 const PlatformNotificationsPage = lazy(() =>
-  import('@/features/platform-admin-operations').then((m) => ({ default: m.PlatformNotificationsPage })),
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformNotificationsPage,
+  })),
 );
 const PlatformCommercialConfigPage = lazy(() =>
-  import('@/features/platform-admin-commercial').then((m) => ({ default: m.PlatformCommercialConfigPage })),
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformCommercialConfigPage,
+  })),
 );
 const PlatformOrdersPage = lazy(() =>
   import('@/features/platform-admin-commercial').then((m) => ({ default: m.PlatformOrdersPage })),
 );
 const PlatformOrderDetailPage = lazy(() =>
-  import('@/features/platform-admin-commercial').then((m) => ({ default: m.PlatformOrderDetailPage })),
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformOrderDetailPage,
+  })),
 );
 const PlatformSettlementsPage = lazy(() =>
-  import('@/features/platform-admin-commercial').then((m) => ({ default: m.PlatformSettlementsPage })),
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformSettlementsPage,
+  })),
 );
 const PlatformDisputesPage = lazy(() =>
   import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformDisputesPage })),
 );
 const PlatformDisputeDetailPage = lazy(() =>
-  import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformDisputeDetailPage })),
+  import('@/features/platform-admin-governance').then((m) => ({
+    default: m.PlatformDisputeDetailPage,
+  })),
 );
 const PlatformAnalyticsPage = lazy(() =>
-  import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformAnalyticsPage })),
+  import('@/features/platform-admin-governance').then((m) => ({
+    default: m.PlatformAnalyticsPage,
+  })),
 );
 const PlatformAuditPage = lazy(() =>
   import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformAuditPage })),
@@ -630,13 +648,25 @@ const router = createBrowserRouter([
                 element: <MovementReferenceSetPage />,
               },
               { path: ROUTES.superadmin.gymApplications, element: <PlatformGymApplicationsPage /> },
-              { path: ROUTES.superadmin.gymApplicationDetail, element: <PlatformGymApplicationDetailPage /> },
+              {
+                path: ROUTES.superadmin.gymApplicationDetail,
+                element: <PlatformGymApplicationDetailPage />,
+              },
               { path: ROUTES.superadmin.activeGyms, element: <PlatformGymsPage /> },
               { path: ROUTES.superadmin.activeGymDetail, element: <PlatformGymDetailPage /> },
               { path: ROUTES.superadmin.legalChanges, element: <PlatformLegalChangesPage /> },
-              { path: ROUTES.superadmin.legalChangeDetail, element: <PlatformLegalChangeDetailPage /> },
-              { path: ROUTES.superadmin.trainerApplications, element: <PlatformTrainerApplicationsPage /> },
-              { path: ROUTES.superadmin.trainerApplicationDetail, element: <PlatformTrainerApplicationDetailPage /> },
+              {
+                path: ROUTES.superadmin.legalChangeDetail,
+                element: <PlatformLegalChangeDetailPage />,
+              },
+              {
+                path: ROUTES.superadmin.trainerApplications,
+                element: <PlatformTrainerApplicationsPage />,
+              },
+              {
+                path: ROUTES.superadmin.trainerApplicationDetail,
+                element: <PlatformTrainerApplicationDetailPage />,
+              },
               { path: ROUTES.superadmin.accounts, element: <PlatformAccountsPage /> },
               { path: ROUTES.superadmin.listings, element: <PlatformListingsPage /> },
               { path: ROUTES.superadmin.listingDetail, element: <PlatformListingDetailPage /> },

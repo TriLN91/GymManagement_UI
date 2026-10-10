@@ -1366,9 +1366,30 @@ const emptyAppointment = (): TrainerAppointment => ({
   notes: '',
 });
 
+const appointmentMobileCopy = {
+  en: {
+    type: 'Type',
+    time: 'Time',
+    duration: 'Duration',
+    notes: 'Notes',
+    edit: 'Edit appointment',
+    minutes: 'min',
+  },
+  vi: {
+    type: 'Loại lịch',
+    time: 'Thời gian',
+    duration: 'Thời lượng',
+    notes: 'Ghi chú',
+    edit: 'Chỉnh sửa lịch hẹn',
+    minutes: 'phút',
+  },
+} as const;
+
 export function TrainerAppointmentsPage() {
   const { t } = useTranslation();
   const tr = useTrainerText();
+  const { language: lang } = useLocale();
+  const mobileCopy = appointmentMobileCopy[lang];
   const appointments = useTrainerWorkspaceStore((state) => state.appointments);
   const saveAppointment = useTrainerWorkspaceStore((state) => state.saveAppointment);
   const [editing, setEditing] = useState<TrainerAppointment | null>(null);
@@ -1390,7 +1411,7 @@ export function TrainerAppointmentsPage() {
           {tr('Create appointment')}
         </button>
       </div>
-      <section className="trainer-table-panel">
+      <section className="trainer-table-panel trainer-appointments-table" aria-label="Appointments">
         <table>
           <thead>
             <tr>
@@ -1431,6 +1452,50 @@ export function TrainerAppointmentsPage() {
             ))}
           </tbody>
         </table>
+      </section>
+      <section className="trainer-appointment-mobile-list" aria-label="Appointments">
+        {appointments.map((appointment) => (
+          <article key={appointment.id}>
+            <header>
+              <div>
+                <span>{getTrainerMember(appointment.memberId)?.name}</span>
+                <small>{appointment.type}</small>
+              </div>
+              <StatusBadge status={appointment.status} />
+            </header>
+            <dl>
+              <div>
+                <dt>{mobileCopy.time}</dt>
+                <dd>
+                  <time dateTime={`${appointment.date}T${appointment.time}`}>
+                    {appointment.date} · {appointment.time}
+                  </time>
+                </dd>
+              </div>
+              <div>
+                <dt>{mobileCopy.duration}</dt>
+                <dd>
+                  {appointment.duration} {mobileCopy.minutes}
+                </dd>
+              </div>
+            </dl>
+            {appointment.notes ? (
+              <p>
+                <span>{mobileCopy.notes}</span>
+                {appointment.notes}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              className="trainer-appointment-mobile-edit"
+              onClick={() => setEditing(appointment)}
+              aria-label={mobileCopy.edit}
+            >
+              <Pencil size={14} />
+              {mobileCopy.edit}
+            </button>
+          </article>
+        ))}
       </section>
       {editing && (
         <div className="trainer-modal-backdrop" role="presentation">
