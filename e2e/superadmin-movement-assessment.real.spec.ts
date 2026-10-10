@@ -33,8 +33,8 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
 
   await page.reload();
   await expect(page).toHaveURL(/\/superadmin$/);
-  await page.getByRole('link', { name: 'Movement Assessment' }).click();
-  await expect(page.getByRole('heading', { name: 'Movement Assessment' })).toBeVisible();
+  await page.getByRole('link', { name: 'Exercise references' }).click();
+  await expect(page.getByRole('heading', { name: 'Exercise Reference Library' })).toBeVisible();
 
   const exerciseName = `Real Browser Goblet Squat ${Date.now()}`;
   await page.getByRole('button', { name: 'Add exercise' }).click();
@@ -46,19 +46,18 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
       response.url().endsWith('/api/admin/movement-references/exercises') &&
       response.request().method() === 'POST',
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
-  const exerciseResponse = await exerciseResponsePromise;
-  expect(exerciseResponse.ok()).toBe(true);
-  const exercise = (await exerciseResponse.json()) as { id: string };
-
-  await page.locator('header').getByRole('button', { name: 'Create reference set' }).click();
-  await expect(page.getByRole('dialog').locator('input[disabled]')).toHaveValue('SQUAT');
   const setResponsePromise = page.waitForResponse(
     (response) =>
       response.url().endsWith('/api/admin/reference-sets') &&
       response.request().method() === 'POST',
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Save and start reference preparation' })
+    .click();
+  const exerciseResponse = await exerciseResponsePromise;
+  expect(exerciseResponse.ok()).toBe(true);
+  const exercise = (await exerciseResponse.json()) as { id: string };
   const setResponse = await setResponsePromise;
   expect(setResponse.ok()).toBe(true);
   const referenceSet = (await setResponse.json()) as { id: string };
@@ -85,7 +84,7 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
   );
   const uploadStartedAt = Date.now();
   await uploadButton.click();
-  await expect(page.getByRole('button', { name: 'Uploading and processing…' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Analyzing video…' })).toBeDisabled();
   const uploadResponse = await uploadResponsePromise;
   const uploadDurationMs = Date.now() - uploadStartedAt;
   expect(uploadResponse.ok()).toBe(true);
@@ -102,36 +101,36 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
   const source = processedSet.sources.at(-1)!;
   const profile = processedSet.profiles.at(-1)!;
 
-  await expect(page.getByText('Detected view: OBLIQUE_SIDE')).toBeVisible();
-  await expect(page.getByText('Accepted', { exact: true })).toBeVisible();
-  await expect(page.getByText('Keep', { exact: true })).toBeVisible();
-  await expect(page.getByText('Review and confirm the aggregate profile')).toBeVisible();
-  await page.getByText('Inspect technical evidence').click();
-  await expect(page.getByText('Data quality', { exact: true })).toBeVisible();
-  await expect(page.getByText('Deterministic evidence', { exact: true })).toBeVisible();
-  await expect(page.getByText('TypeSafe fallback and governance')).toHaveCount(0);
+  await expect(page.getByText('OBLIQUE_SIDE').first()).toBeVisible();
+  await expect(page.getByText('Usable', { exact: true })).toBeVisible();
+  await expect(page.getByText('Ready to approve')).toBeVisible();
+  await page.getByText('Review evidence and quality').click();
+  await expect(page.getByText('Technical audit details')).toBeVisible();
+  await expect(page.getByText('TypeSafe decision')).toHaveCount(0);
   await expect(page.getByText(/normalizedTrajectory/)).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByRole('button', { name: 'Approve this reference version' }).click();
   const confirmResponsePromise = page.waitForResponse((response) =>
     response.url().endsWith(`/profiles/${profile.id}/confirm`),
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Approve this reference version' })
+    .click();
   expect((await confirmResponsePromise).ok()).toBe(true);
-  await expect(page.getByText('Activate the confirmed profile')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Confirm' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Publish as live' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Approve this reference version' })).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Activate' }).click();
+  await page.getByRole('button', { name: 'Publish as live' }).click();
   const activateResponsePromise = page.waitForResponse((response) =>
     response.url().endsWith(`/profiles/${profile.id}/activate`),
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Activate' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Publish as live' }).click();
   expect((await activateResponsePromise).ok()).toBe(true);
-  await expect(page.getByText('Live reference')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Reference profile is live' })).toBeVisible();
+  await expect(page.getByText('Live for assessments').first()).toBeVisible();
 
   await page.reload();
-  await expect(page.getByText('Live reference')).toBeVisible();
+  await expect(page.getByText('Live for assessments').first()).toBeVisible();
 
   await page.getByLabel('MP4 video').setInputFiles(videoPath!);
   const secondUploadResponsePromise = page.waitForResponse(
@@ -151,21 +150,24 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
   );
   expect(newerProfile.version).toBeGreaterThan(profile.version);
 
-  await page.getByRole('button', { name: 'Confirm' }).click();
+  await page.getByRole('button', { name: 'Approve this reference version' }).click();
   const secondConfirmResponsePromise = page.waitForResponse((response) =>
     response.url().endsWith(`/profiles/${newerProfile.id}/confirm`),
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Approve this reference version' })
+    .click();
   expect((await secondConfirmResponsePromise).ok()).toBe(true);
-  await page.getByRole('button', { name: 'Activate' }).click();
+  await page.getByRole('button', { name: 'Publish as live' }).click();
   const secondActivateResponsePromise = page.waitForResponse((response) =>
     response.url().endsWith(`/profiles/${newerProfile.id}/activate`),
   );
-  await page.getByRole('dialog').getByRole('button', { name: 'Activate' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Publish as live' }).click();
   expect((await secondActivateResponsePromise).ok()).toBe(true);
 
+  await expect(page.getByText(`OBLIQUE_SIDE · v${newerProfile.version}`)).toBeVisible();
   const history = page.getByRole('table');
-  await expect(history.getByRole('row', { name: /v2.*Active/i })).toBeVisible();
   await expect(history.getByRole('row', { name: /v1.*Confirmed/i })).toBeVisible();
   expect([...apiOrigins]).toEqual(['http://localhost:8080']);
 

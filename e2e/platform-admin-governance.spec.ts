@@ -26,5 +26,5 @@ test('Platform Admin M5 dispute, analytics and audit routes work', async ({ page
   await page.getByRole('button', { name: '7d' }).click();
   await expect(page.getByText('Successful orders')).toBeVisible();
   await page.goto('/superadmin/audit');
-  await expect(page.getByText('Audit & activity')).toBeVisible();
+  await expect(page.getByRole('banner').getByText('Audit & activity')).toBeVisible();
 });

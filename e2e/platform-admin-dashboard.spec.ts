@@ -22,7 +22,7 @@ test.describe('Platform Admin M1', () => {
       if (message.type() === 'error') runtimeErrors.push(message.text());
     });
     await loginPlatformAdmin(page);
-    await expect(page.locator('.member-topbar').getByText('Platform workspace')).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Platform workspace' })).toBeVisible();
     await expect(page.getByText('Sample data')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Pending approvals' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Moderation queue' })).toBeVisible();

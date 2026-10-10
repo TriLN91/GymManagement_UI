@@ -15,22 +15,26 @@ test('SuperAdmin reviews, confirms and activates a movement reference profile', 
   await page.getByRole('button', { name: /sign in/i }).click();
   await expect(page).toHaveURL(/\/superadmin$/);
 
-  await page.getByRole('link', { name: 'Movement Assessment' }).click();
-  await expect(page.getByRole('heading', { name: 'Movement Assessment' })).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'Back Squat' })).toBeVisible();
+  await page.getByRole('button', { name: 'Assessment standards' }).click();
+  await page.getByRole('link', { name: 'Exercise references' }).click();
+  await expect(page.getByRole('heading', { name: 'Exercise Reference Library' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: /Back Squat/ })).toBeVisible();
 
   await page
     .getByRole('row', { name: /Back Squat/ })
-    .getByRole('button', { name: 'Open' })
+    .getByRole('button', { name: 'Continue preparation' })
     .click();
   await expect(page.getByRole('heading', { name: 'Back Squat' })).toBeVisible();
-  await expect(page.getByText('back-squat-good-side.mp4')).toBeVisible();
-  await expect(page.getByText('Needs review')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'back-squat-good-side.mp4' })).toBeVisible();
+  await expect(page.getByText('Needs review').first()).toBeVisible();
 
-  await page.getByRole('button', { name: 'Confirm' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
-  await expect(page.getByRole('button', { name: 'Activate' })).toBeVisible();
-  await page.getByRole('button', { name: 'Activate' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Activate' }).click();
-  await expect(page.getByText('Active').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Approve this reference version' }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Approve this reference version' })
+    .click();
+  await expect(page.getByRole('button', { name: 'Publish as live' })).toBeVisible();
+  await page.getByRole('button', { name: 'Publish as live' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Publish as live' }).click();
+  await expect(page.getByText('Live for assessments').first()).toBeVisible();
 });
