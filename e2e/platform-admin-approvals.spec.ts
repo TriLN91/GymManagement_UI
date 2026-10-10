@@ -10,7 +10,7 @@ async function loginPlatformAdmin(page: Page) {
   await page.reload();
   await page.getByLabel(/email/i).fill('super@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
-  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
   await expect(page).toHaveURL(/\/superadmin$/);
 }
 
@@ -49,7 +49,9 @@ test.describe('Platform Admin M2', () => {
   test('suspends an account from minimum operational information only', async ({ page }) => {
     await loginPlatformAdmin(page);
     await page.goto('/superadmin/accounts');
-    await expect(page.getByText('Only the minimum operational account information is available here.')).toBeVisible();
+    await expect(
+      page.getByText('Only the minimum operational account information is available here.'),
+    ).toBeVisible();
     const row = page.locator('tr').filter({ hasText: 'Anh Tran' });
     await row.getByRole('button', { name: 'Suspend' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Suspend' }).click();

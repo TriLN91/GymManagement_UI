@@ -31,5 +31,9 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: {
+      ...process.env,
+      VITE_ENABLE_MSW: 'true',
+    },
   },
 });
