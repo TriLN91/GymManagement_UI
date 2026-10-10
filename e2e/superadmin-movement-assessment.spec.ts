@@ -15,6 +15,7 @@ test('SuperAdmin reviews, confirms and activates a movement reference profile', 
   await page.getByRole('button', { name: /sign in/i }).click();
   await expect(page).toHaveURL(/\/superadmin$/);
 
+  await page.getByRole('button', { name: 'Assessment standards' }).click();
   await page.getByRole('link', { name: 'Exercise references' }).click();
   await expect(page.getByRole('heading', { name: 'Exercise Reference Library' })).toBeVisible();
   await expect(page.getByRole('cell', { name: /Back Squat/ })).toBeVisible();
@@ -24,8 +25,8 @@ test('SuperAdmin reviews, confirms and activates a movement reference profile', 
     .getByRole('button', { name: 'Continue preparation' })
     .click();
   await expect(page.getByRole('heading', { name: 'Back Squat' })).toBeVisible();
-  await expect(page.getByText('back-squat-good-side.mp4')).toBeVisible();
-  await expect(page.getByText('Needs review')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'back-squat-good-side.mp4' })).toBeVisible();
+  await expect(page.getByText('Needs review').first()).toBeVisible();
 
   await page.getByRole('button', { name: 'Approve this reference version' }).click();
   await page
