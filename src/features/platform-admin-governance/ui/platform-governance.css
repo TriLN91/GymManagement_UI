@@ -1,0 +1,111 @@
+.platform-governance-page {
+  display: grid;
+  gap: 18px;
+}
+.platform-governance-toolbar,
+.platform-range,
+.platform-message-form,
+.platform-dispute-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.platform-governance-toolbar {
+  justify-content: space-between;
+}
+.platform-governance-table,
+.platform-governance-card {
+  background: #fff;
+}
+.platform-governance-card {
+  border: 1px solid hsl(var(--border));
+  padding: 18px;
+}
+.platform-governance-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: hsl(var(--forest));
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+.platform-governance-card p {
+  font-size: 12px;
+}
+.platform-governance-financial,
+.platform-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.platform-governance-financial div,
+.platform-analytics-grid article {
+  display: grid;
+  gap: 10px;
+  border: 1px solid hsl(var(--border));
+  padding: 13px;
+}
+.platform-governance-financial dt,
+.platform-analytics-grid span {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.platform-governance-financial dd,
+.platform-analytics-grid strong {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: var(--font-data);
+  font-size: 15px;
+}
+.platform-analytics-grid small {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+.platform-governance-notice {
+  margin: 0;
+  border-left: 3px solid hsl(var(--forest));
+  background: hsl(var(--muted) / 0.45);
+  padding: 10px 12px;
+  font-size: 11px;
+}
+.platform-custom-range {
+  display: flex;
+  gap: 10px;
+}
+.platform-message-form {
+  align-items: flex-end;
+}
+.platform-message-form > span {
+  flex: 1;
+}
+@media (max-width: 760px) {
+  .platform-governance-financial,
+  .platform-analytics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .platform-governance-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .platform-range {
+    flex-wrap: wrap;
+  }
+  .platform-custom-range,
+  .platform-message-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .platform-message-form .inline-flex {
+    width: 100%;
+  }
+}
+@media (max-width: 460px) {
+  .platform-governance-financial,
+  .platform-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}

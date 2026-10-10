@@ -1,0 +1,262 @@
+.platform-commercial-page {
+  display: grid;
+  gap: 18px;
+}
+.platform-commercial-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+}
+.platform-commercial-card {
+  border: 1px solid hsl(var(--border));
+  background: #fff;
+  padding: 22px;
+}
+.platform-commercial-heading {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.platform-commercial-heading h2 {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+.platform-commercial-heading p,
+.platform-commercial-notice {
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  line-height: 1.55;
+}
+.platform-commercial-notice {
+  border-left: 3px solid hsl(var(--forest));
+  background: hsl(var(--muted) / 0.45);
+  padding: 10px 12px;
+}
+.platform-commercial-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 14px;
+  align-items: end;
+}
+.platform-commercial-form > div {
+  display: grid;
+  gap: 7px;
+}
+.platform-commercial-form.is-pricing {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+}
+.platform-commercial-card h3 {
+  margin: 24px 0 10px;
+  color: hsl(var(--forest));
+  font-size: 13px;
+}
+.platform-commission-history {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.platform-commission-history li {
+  display: grid;
+  gap: 5px;
+  border: 1px solid hsl(var(--border));
+  padding: 13px;
+}
+.platform-commission-history strong {
+  font-family: var(--font-data);
+  font-size: 16px;
+}
+.platform-commission-history span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+.platform-commercial-error {
+  margin: 12px 0 0;
+  color: hsl(var(--destructive));
+  font-size: 11px;
+}
+.platform-financial-breakdown {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.platform-financial-breakdown > div {
+  display: grid;
+  gap: 13px;
+  min-height: 90px;
+  padding: 14px;
+  border: 1px solid hsl(var(--border));
+}
+.platform-financial-breakdown dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.platform-financial-breakdown dd {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.platform-financial-breakdown .is-plus {
+  background: hsl(var(--mint) / 0.18);
+}
+.platform-financial-breakdown .is-net,
+.platform-commercial-table td.is-net {
+  background: var(--energy-lime-faint);
+  font-weight: 800;
+}
+.platform-commercial-table-shell {
+  overflow: auto;
+  background: #fff;
+}
+.platform-commercial-table {
+  min-width: 1050px;
+}
+.platform-commercial-table thead {
+  background: var(--energy-lime-faint);
+}
+.platform-commercial-table td > strong,
+.platform-commercial-table td > span {
+  display: block;
+}
+.platform-commercial-table td > span {
+  margin-top: 4px;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+.platform-commercial-table .is-money {
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-data);
+  font-size: 11px;
+}
+.platform-commercial-table .is-discount {
+  color: hsl(var(--muted-foreground));
+}
+.platform-commercial-table .is-plus {
+  background: hsl(var(--mint) / 0.18);
+}
+@media (max-width: 860px) {
+  .platform-commercial-form,
+  .platform-commercial-form.is-pricing {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .platform-commercial-form .inline-flex {
+    grid-column: 1/-1;
+  }
+  .platform-financial-breakdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .platform-financial-breakdown .is-net {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 620px) {
+  .platform-commercial-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .platform-commercial-toolbar .inline-flex {
+    width: 100%;
+  }
+  .platform-commercial-card {
+    padding: 16px;
+  }
+  .platform-commercial-form,
+  .platform-commercial-form.is-pricing,
+  .platform-commission-history,
+  .platform-financial-breakdown {
+    grid-template-columns: 1fr;
+  }
+  .platform-commercial-form .inline-flex {
+    grid-column: auto;
+  }
+  .platform-financial-breakdown .is-net {
+    grid-column: auto;
+  }
+  .platform-commercial-table-shell {
+    border: 0;
+    background: transparent;
+  }
+  .platform-commercial-table,
+  .platform-commercial-table tbody,
+  .platform-commercial-table tr,
+  .platform-commercial-table td {
+    display: block;
+    width: 100% !important;
+    min-width: 0;
+  }
+  .platform-commercial-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
+  .platform-commercial-table tbody {
+    display: grid;
+    gap: 14px;
+  }
+  .platform-commercial-table tr {
+    border: 1px solid hsl(var(--border));
+    background: #fff;
+  }
+  .platform-commercial-table td,
+  .platform-commercial-table .is-money {
+    display: grid;
+    grid-template-columns: 125px minmax(0, 1fr);
+    gap: 12px;
+    border-top: 1px solid hsl(var(--border));
+    padding: 12px;
+    text-align: left;
+  }
+  .platform-commercial-table td:first-child {
+    border-top: 0;
+    background: var(--energy-lime-faint);
+  }
+  .platform-commercial-table td::before {
+    content: attr(data-label);
+    color: hsl(var(--muted-foreground));
+    font-family: var(--font-ui);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .platform-commercial-table .is-plus,
+  .platform-commercial-table .is-net {
+    background: #fff;
+  }
+}
+@media (max-width: 430px) {
+  .platform-commercial-table td,
+  .platform-commercial-table .is-money {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .platform-commercial-page *,
+  .platform-commercial-page *::before,
+  .platform-commercial-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

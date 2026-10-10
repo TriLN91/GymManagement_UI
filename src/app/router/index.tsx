@@ -1,8 +1,6 @@
 import { lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { PortalLayout, type NavItem } from '../providers/PortalLayout';
-
 import { AuthGuard } from './guards/AuthGuard';
 import { GymOwnerApprovalGuard } from './guards/GymOwnerApprovalGuard';
 import { GymOwnerEditableGuard } from './guards/GymOwnerEditableGuard';
@@ -19,6 +17,7 @@ import { ForbiddenPage } from '@/pages/ForbiddenPage';
 import { MemberLayout } from '@/pages/member/components/MemberLayout';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { TrainerLayout } from '@/pages/pt/components/TrainerLayout';
+import { PlatformAdminLayout } from '@/pages/superadmin/PlatformAdminLayout';
 import { ROUTES } from '@/shared/config/constants';
 
 const LandingPage = lazy(() =>
@@ -325,11 +324,107 @@ const SuperAdminAnalyticsPage = lazy(() =>
     default: m.SuperAdminAnalyticsPage,
   })),
 );
-
-const superAdminNav: ReadonlyArray<NavItem> = [
-  { to: ROUTES.superadmin.root, labelKey: 'nav.dashboard' },
-  { to: ROUTES.superadmin.tenants, labelKey: 'nav.tenants' },
-];
+const PlatformGymApplicationsPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalQueuePage kind="gym_application" />,
+  })),
+);
+const PlatformLegalChangesPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalQueuePage kind="legal_change" />,
+  })),
+);
+const PlatformTrainerApplicationsPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalQueuePage kind="trainer_application" />,
+  })),
+);
+const PlatformGymApplicationDetailPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalDetailPage kind="gym_application" />,
+  })),
+);
+const PlatformGymsPage = lazy(() =>
+  import('@/features/platform-admin-gyms').then((m) => ({ default: m.PlatformGymsPage })),
+);
+const PlatformGymDetailPage = lazy(() =>
+  import('@/features/platform-admin-gyms').then((m) => ({ default: m.PlatformGymDetailPage })),
+);
+const PlatformLegalChangeDetailPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalDetailPage kind="legal_change" />,
+  })),
+);
+const PlatformTrainerApplicationDetailPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({
+    default: () => <m.PlatformApprovalDetailPage kind="trainer_application" />,
+  })),
+);
+const PlatformAccountsPage = lazy(() =>
+  import('@/features/platform-admin-approvals').then((m) => ({ default: m.PlatformAccountsPage })),
+);
+const PlatformListingsPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({ default: m.PlatformListingsPage })),
+);
+const PlatformListingDetailPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformListingDetailPage,
+  })),
+);
+const PlatformCampaignsPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignsPage,
+  })),
+);
+const PlatformCampaignFormPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignFormPage,
+  })),
+);
+const PlatformCampaignDetailPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformCampaignDetailPage,
+  })),
+);
+const PlatformNotificationsPage = lazy(() =>
+  import('@/features/platform-admin-operations').then((m) => ({
+    default: m.PlatformNotificationsPage,
+  })),
+);
+const PlatformCommercialConfigPage = lazy(() =>
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformCommercialConfigPage,
+  })),
+);
+const PlatformOrdersPage = lazy(() =>
+  import('@/features/platform-admin-commercial').then((m) => ({ default: m.PlatformOrdersPage })),
+);
+const PlatformOrderDetailPage = lazy(() =>
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformOrderDetailPage,
+  })),
+);
+const PlatformSettlementsPage = lazy(() =>
+  import('@/features/platform-admin-commercial').then((m) => ({
+    default: m.PlatformSettlementsPage,
+  })),
+);
+const PlatformDisputesPage = lazy(() =>
+  import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformDisputesPage })),
+);
+const PlatformDisputeDetailPage = lazy(() =>
+  import('@/features/platform-admin-governance').then((m) => ({
+    default: m.PlatformDisputeDetailPage,
+  })),
+);
+const PlatformAnalyticsPage = lazy(() =>
+  import('@/features/platform-admin-governance').then((m) => ({
+    default: m.PlatformAnalyticsPage,
+  })),
+);
+const PlatformAuditPage = lazy(() =>
+  import('@/features/platform-admin-governance').then((m) => ({ default: m.PlatformAuditPage })),
+);
 
 const router = createBrowserRouter([
   { path: ROUTES.public.landing, element: <LandingPage /> },
@@ -535,11 +630,65 @@ const router = createBrowserRouter([
             element: <RoleGuard allow="super_admin" />,
             children: [
               {
-                element: <PortalLayout titleKey="portals.superadmin" nav={superAdminNav} />,
+                element: <PlatformAdminLayout />,
                 children: [
                   { path: ROUTES.superadmin.root, element: <SuperAdminDashboardPage /> },
                   { path: ROUTES.superadmin.tenants, element: <SuperAdminTenantsPage /> },
                   { path: ROUTES.superadmin.analytics, element: <SuperAdminAnalyticsPage /> },
+                  {
+                    path: ROUTES.superadmin.gymApplications,
+                    element: <PlatformGymApplicationsPage />,
+                  },
+                  {
+                    path: ROUTES.superadmin.gymApplicationDetail,
+                    element: <PlatformGymApplicationDetailPage />,
+                  },
+                  { path: ROUTES.superadmin.activeGyms, element: <PlatformGymsPage /> },
+                  { path: ROUTES.superadmin.activeGymDetail, element: <PlatformGymDetailPage /> },
+                  { path: ROUTES.superadmin.legalChanges, element: <PlatformLegalChangesPage /> },
+                  {
+                    path: ROUTES.superadmin.legalChangeDetail,
+                    element: <PlatformLegalChangeDetailPage />,
+                  },
+                  {
+                    path: ROUTES.superadmin.trainerApplications,
+                    element: <PlatformTrainerApplicationsPage />,
+                  },
+                  {
+                    path: ROUTES.superadmin.trainerApplicationDetail,
+                    element: <PlatformTrainerApplicationDetailPage />,
+                  },
+                  { path: ROUTES.superadmin.accounts, element: <PlatformAccountsPage /> },
+                  { path: ROUTES.superadmin.listings, element: <PlatformListingsPage /> },
+                  {
+                    path: ROUTES.superadmin.listingDetail,
+                    element: <PlatformListingDetailPage />,
+                  },
+                  { path: ROUTES.superadmin.campaigns, element: <PlatformCampaignsPage /> },
+                  { path: ROUTES.superadmin.campaignCreate, element: <PlatformCampaignFormPage /> },
+                  {
+                    path: ROUTES.superadmin.campaignEdit,
+                    element: <PlatformCampaignFormPage />,
+                  },
+                  {
+                    path: ROUTES.superadmin.campaignDetail,
+                    element: <PlatformCampaignDetailPage />,
+                  },
+                  { path: ROUTES.superadmin.notifications, element: <PlatformNotificationsPage /> },
+                  {
+                    path: ROUTES.superadmin.commercial,
+                    element: <PlatformCommercialConfigPage />,
+                  },
+                  { path: ROUTES.superadmin.orders, element: <PlatformOrdersPage /> },
+                  {
+                    path: ROUTES.superadmin.orderDetail,
+                    element: <PlatformOrderDetailPage />,
+                  },
+                  { path: ROUTES.superadmin.settlements, element: <PlatformSettlementsPage /> },
+                  { path: ROUTES.superadmin.disputes, element: <PlatformDisputesPage /> },
+                  { path: ROUTES.superadmin.disputeDetail, element: <PlatformDisputeDetailPage /> },
+                  { path: ROUTES.superadmin.platformAnalytics, element: <PlatformAnalyticsPage /> },
+                  { path: ROUTES.superadmin.audit, element: <PlatformAuditPage /> },
                 ],
               },
             ],

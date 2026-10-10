@@ -1,0 +1,105 @@
+import type { AnalyticsAggregate, DisputeCase } from './types';
+export const initialDisputes: ReadonlyArray<DisputeCase> = [
+  {
+    id: 'DSP-3001',
+    orderId: 'FIT-2026-1048',
+    gym: 'Pulse Collective',
+    reason: 'Service delivery clarification',
+    status: 'submitted',
+    submittedAt: '2026-10-06T08:00:00.000Z',
+    evidence: [
+      { id: 'e1', name: 'Purchase confirmation.pdf', submittedAt: '2026-10-06T08:00:00.000Z' },
+    ],
+    timeline: [{ id: 'd1', at: '2026-10-06T08:00:00.000Z', label: 'Submitted' }],
+    messages: [
+      {
+        id: 'm1',
+        at: '2026-10-06T08:00:00.000Z',
+        author: 'Pulse Collective',
+        body: 'We have supplied the order context for review.',
+      },
+    ],
+    financial: {
+      currency: 'VND',
+      gymServicePriceVnd: 1_800_000,
+      discountVnd: 200_000,
+      aiPlusVnd: 249_000,
+      commissionVnd: 180_000,
+      netReceivedVnd: 1_420_000,
+      source: 'backend',
+    },
+  },
+  {
+    id: 'DSP-3002',
+    orderId: 'FIT-2026-1043',
+    gym: 'Northstar Fitness',
+    reason: 'Refund request review',
+    status: 'under_review',
+    submittedAt: '2026-10-04T09:00:00.000Z',
+    evidence: [
+      { id: 'e2', name: 'Service attendance.pdf', submittedAt: '2026-10-04T09:00:00.000Z' },
+    ],
+    timeline: [
+      { id: 'd2', at: '2026-10-04T09:00:00.000Z', label: 'Submitted' },
+      { id: 'd3', at: '2026-10-05T02:00:00.000Z', label: 'Under review' },
+    ],
+    messages: [],
+    financial: {
+      currency: 'VND',
+      gymServicePriceVnd: 750_000,
+      discountVnd: 50_000,
+      aiPlusVnd: 149_000,
+      commissionVnd: 75_000,
+      netReceivedVnd: 625_000,
+      source: 'backend',
+    },
+  },
+];
+export type AnalyticsRange = '7' | '30' | '90' | 'custom';
+
+export const analyticsByRange: Readonly<Record<AnalyticsRange, AnalyticsAggregate>> = {
+  '7': {
+    range: '7 days',
+    gmvVnd: 12_400_000,
+    gymServiceSalesVnd: 10_800_000,
+    commissionVnd: 1_080_000,
+    plusRevenueVnd: 1_600_000,
+    successfulOrders: 18,
+    comparisonLabel: 'vs previous 7 days',
+    comparisonPercent: 8,
+    source: 'backend',
+  },
+  '30': {
+    range: '30 days',
+    gmvVnd: 48_600_000,
+    gymServiceSalesVnd: 42_100_000,
+    commissionVnd: 4_210_000,
+    plusRevenueVnd: 6_500_000,
+    successfulOrders: 72,
+    comparisonLabel: 'vs previous 30 days',
+    comparisonPercent: 12,
+    source: 'backend',
+  },
+  '90': {
+    range: '90 days',
+    gmvVnd: 131_400_000,
+    gymServiceSalesVnd: 114_000_000,
+    commissionVnd: 11_400_000,
+    plusRevenueVnd: 17_400_000,
+    successfulOrders: 204,
+    comparisonLabel: 'vs previous 90 days',
+    comparisonPercent: 5,
+    source: 'backend',
+  },
+  custom: {
+    range: 'Custom range',
+    gmvVnd: 48_600_000,
+    gymServiceSalesVnd: 42_100_000,
+    commissionVnd: 4_210_000,
+    plusRevenueVnd: 6_500_000,
+    successfulOrders: 72,
+    comparisonLabel: 'backend comparison',
+    comparisonPercent: 12,
+    source: 'backend',
+  },
+};
