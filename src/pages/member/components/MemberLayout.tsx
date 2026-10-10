@@ -99,31 +99,59 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
 ];
 
 const mobileNav: ReadonlyArray<{
+  id: 'dashboard' | 'workout' | 'assessment' | 'marketplace' | 'profile';
   labelKey: string;
   icon: LucideIcon;
-  to?: string;
+  to: string;
 }> = [
   {
+    id: 'dashboard',
     labelKey: 'memberShell.dashboardGroup',
     icon: Grid2X2,
     to: ROUTES.member.root,
   },
   {
+    id: 'workout',
     labelKey: 'memberShell.workoutGroup',
     icon: Dumbbell,
     to: ROUTES.member.workout,
   },
   {
-    labelKey: 'memberShell.marketplaceGroup',
+    id: 'assessment',
+    labelKey: 'memberShell.aiAssessment',
+    icon: Bot,
+    to: ROUTES.member.aiAssessment,
+  },
+  {
+    id: 'marketplace',
+    labelKey: 'memberShell.findGyms',
     icon: Store,
     to: ROUTES.member.marketplace,
   },
   {
+    id: 'profile',
     labelKey: 'memberShell.profileGroup',
     icon: UserRound,
     to: ROUTES.member.profile,
   },
 ];
+
+function matchesMemberMobileNav(id: (typeof mobileNav)[number]['id'], pathname: string) {
+  if (id === 'dashboard') return pathname === ROUTES.member.root;
+  if (id === 'assessment') {
+    return (
+      pathname === ROUTES.member.aiAssessment ||
+      pathname.startsWith(`${ROUTES.member.aiAssessment}/`)
+    );
+  }
+  if (id === 'workout') {
+    return (
+      pathname.startsWith(ROUTES.member.workout) && !pathname.startsWith(ROUTES.member.aiAssessment)
+    );
+  }
+  if (id === 'marketplace') return pathname.startsWith(ROUTES.member.marketplace);
+  return pathname.startsWith(ROUTES.member.profile);
+}
 
 function matchesMemberNavRoute(itemTo: string, pathname: string) {
   const exactRoutes: string[] = [
@@ -347,22 +375,11 @@ export function MemberLayout() {
       <nav className="member-bottom-nav" aria-label={t('memberShell.workspace')}>
         {mobileNav.map((item) => {
           const Icon = item.icon;
-
-          if (!item.to) {
-            return (
-              <button type="button" key={item.labelKey} disabled>
-                <Icon aria-hidden="true" size={19} strokeWidth={1.8} />
-                <span>{t(item.labelKey)}</span>
-              </button>
-            );
-          }
-
           return (
             <NavLink
-              key={item.to}
+              key={item.id}
               to={item.to}
-              end={item.to === ROUTES.member.root}
-              className={({ isActive }) => cn(isActive && 'is-active')}
+              className={cn(matchesMemberMobileNav(item.id, location.pathname) && 'is-active')}
             >
               <Icon aria-hidden="true" size={19} strokeWidth={1.8} />
               <span>{t(item.labelKey)}</span>
