@@ -2,12 +2,14 @@
   "eyebrow": "Platform governance",
   "loading": "Loading movement references",
   "list": {
-    "title": "Movement Assessment",
-    "description": "Manage canonical exercise reference sets, review source evidence and activate versioned profiles.",
+    "title": "Exercise Reference Library",
+    "description": "Prepare trusted movement references and see which exercise views are ready for member assessments.",
+    "searchLabel": "Find an exercise",
+    "searchPlaceholder": "Search by exercise, muscle group, or equipment",
     "filterTitle": "Find reference sets",
     "allExercises": "All exercises",
-    "emptyTitle": "No reference sets yet",
-    "emptyDescription": "Create a SQUAT reference set to begin adding GOOD source videos.",
+    "emptyTitle": "No exercises found",
+    "emptyDescription": "Add an exercise to start preparing trusted reference footage.",
     "activeCount_one": "{{count}} active profile",
     "activeCount_other": "{{count}} active profiles"
   },
@@ -28,7 +30,12 @@
     "viewConfidence": "View confidence",
     "reason": "Decision reason",
     "version": "Version",
-    "view": "View"
+    "view": "View",
+    "readiness": "Operational readiness",
+    "liveViews": "Live views",
+    "candidateViews": "Views with candidates",
+    "nextAction": "Next action",
+    "contributingFootage": "Contributing footage"
   },
   "actions": {
     "open": "Open",
@@ -41,7 +48,18 @@
     "confirm": "Confirm",
     "confirming": "Confirming…",
     "activate": "Activate",
-    "activating": "Activating…"
+    "activating": "Activating…",
+    "addExercise": "Add exercise",
+    "saveAndStart": "Save and start reference preparation",
+    "startPreparation": "Start preparation",
+    "continuePreparation": "Continue preparation",
+    "reviewUpdate": "Review update",
+    "viewLive": "View live reference",
+    "opening": "Opening…",
+    "approveVersion": "Approve this reference version",
+    "approving": "Approving…",
+    "publishLive": "Publish as live",
+    "publishing": "Publishing…"
   },
   "createSet": {
     "title": "Create reference set",
@@ -50,11 +68,55 @@
   },
   "createExercise": {
     "title": "Add catalog exercise",
-    "description": "Create a global active exercise when the catalog has no suitable entry."
+    "description": "Create a global exercise and continue directly into reference preparation."
+  },
+  "breadcrumbs": {
+    "label": "Breadcrumb",
+    "standards": "Assessment standards",
+    "references": "Exercise references"
+  },
+  "presentationState": {
+    "NEEDS_FOOTAGE": "Needs footage",
+    "ANALYZING": "Analyzing",
+    "NEEDS_REVIEW": "Needs review",
+    "READY_TO_APPROVE": "Ready to approve",
+    "APPROVED": "Approved",
+    "LIVE": "Live",
+    "UPDATE_READY": "Update ready",
+    "PROBLEM": "Problem"
+  },
+  "sourceOutcome": {
+    "ANALYZING": "Analyzing",
+    "USABLE": "Usable",
+    "USABLE_REDUCED": "Usable with reduced weight",
+    "NEEDS_REVIEW": "Needs review",
+    "EXCLUDED": "Excluded",
+    "FAILED": "Failed"
+  },
+  "sourceOutcomeDescription": {
+    "ANALYZING": "The system is analyzing this footage.",
+    "USABLE": "Trusted footage is usable for the {{view}} reference.",
+    "USABLE_REDUCED": "Usable for the {{view}} reference with reduced influence.",
+    "NEEDS_REVIEW": "Review the evidence before this footage can contribute.",
+    "EXCLUDED": "This footage does not contribute to a generated reference.",
+    "FAILED": "Processing failed. Upload a replacement video."
   },
   "workspace": {
-    "eyebrow": "Reference set workspace",
-    "pattern": "Canonical {{pattern}} reference lifecycle",
+    "eyebrow": "Reference preparation",
+    "pattern": "{{pattern}} movement standard",
+    "footageTitle": "Reference footage",
+    "footageDescription": "Provide trusted GOOD movement examples. The camera view is detected automatically.",
+    "generatedTitle": "Generated references",
+    "generatedDescription": "Review the current candidate for each view. Older versions remain in history.",
+    "unsupportedFootage": "Excluded or unsupported footage",
+    "footageResult": "{{accepted}} accepted reps · {{rejected}} rejected reps",
+    "evidenceDetails": "Review evidence and quality",
+    "technicalAudit": "Technical audit details",
+    "rawPayload": "Raw payload for debugging",
+    "currentCandidate": "Current candidate",
+    "liveVersion": "Live version",
+    "liveForAssessments": "Live for assessments",
+    "contributingFootage": "Contributing footage",
     "sourcesTitle": "Source videos",
     "sourcesDescription": "Processing state and review decisions are shown separately.",
     "noSources": "No source videos",
@@ -72,7 +134,8 @@
     "profileVersion": "Profile v{{version}}",
     "profileQuality": "Quality summary",
     "historyTitle": "Profile version history",
-    "historyDescription": "Activating a newer version keeps earlier versions available for audit.",
+    "historyDescription": "Older versions are retained for audit. Historical assessments keep their original linked version.",
+    "noHistory": "No historical versions yet.",
     "unknownView": "pending view",
     "qualitySummary": "Quality",
     "profileTechnicalQuality": "Inspect full quality evidence",
@@ -85,12 +148,36 @@
     "description": "Upload one MP4 at a time. Processing is synchronous and the detected camera view is assigned automatically.",
     "file": "MP4 video",
     "submit": "Upload and process",
-    "processing": "Uploading and processing…",
+    "processing": "Analyzing video…",
     "first": "Upload the first GOOD reference video",
     "another": "Upload another GOOD reference video",
     "invalidType": "Select an MP4 video.",
     "empty": "The selected video is empty.",
     "tooLarge": "The video exceeds the 500 MB backend limit."
+  },
+  "processing": {
+    "title": "Preparing reference footage",
+    "description": "Analysis may take several seconds. Keep this page open while the request completes.",
+    "stages": {
+      "uploading": "Uploading video",
+      "normalizing": "Normalizing if needed",
+      "analyzing": "Analyzing movement",
+      "detecting": "Detecting camera view",
+      "building": "Building reference evidence"
+    }
+  },
+  "readiness": {
+    "title": "Analysis readiness",
+    "description": "The system builds a separate reference for each supported camera angle so member videos are evaluated against a matching view.",
+    "matchingView": "Matching camera angle",
+    "usableVideos": "Usable videos",
+    "needsReview": "Needs review",
+    "empty": "Readiness appears after the first supported camera view is detected."
+  },
+  "publish": {
+    "title": "Publish",
+    "description": "Approve a generated version after review, then publish it separately for future Member assessments.",
+    "pending": "No version is live yet. Approve a candidate above before publishing it."
   },
   "workflow": {
     "title": "What to do next",
@@ -146,7 +233,11 @@
     "views": "Views",
     "groupedByView": "Profiles are kept separate by view",
     "activeViews": "Active: {{views}}",
-    "noActive": "No active profile yet"
+    "noActive": "No active profile yet",
+    "usable": "{{count}} usable",
+    "review": "{{count}} need review",
+    "excluded": "{{count}} excluded",
+    "failed": "{{count}} failed"
   },
   "sourceDescription": {
     "processing": "The video is being processed before it can enter a reference group.",
@@ -161,7 +252,12 @@
     "confirmTitle": "Confirm profile v{{version}}?",
     "confirmDescription": "Confirm that the {{view}} aggregate profile has been reviewed. It will become eligible for activation.",
     "activateTitle": "Activate profile v{{version}}?",
-    "activateDescription": "This makes v{{version}} the live {{view}} reference. Any currently active version for the same exercise and view becomes historical, not deleted."
+    "activateDescription": "This makes v{{version}} the live {{view}} reference. Any currently active version for the same exercise and view becomes historical, not deleted.",
+    "approveTitle": "Approve this reference version?",
+    "approveDescription": "I reviewed the footage, analysis, and warnings and accept this generated {{view}} reference version v{{version}}.",
+    "publishTitle": "Publish this version as live?",
+    "publishDescription": "Version v{{version}} will be used for future matching Member assessments in the {{view}} view.",
+    "replacementNotice": "The previous live version becomes historical. Existing assessments keep their original linked version."
   },
   "status": {
     "processing": "Processing",
@@ -191,7 +287,7 @@
     "exerciseCreated": "Exercise added to the global catalog.",
     "sourceUploaded": "Source processed and reference profiles refreshed.",
     "sourceUploadFailed": "The source could not be processed. Inspect the failure and try another video.",
-    "profileConfirmed": "Profile confirmed.",
-    "profileActivated": "Profile activated. Historical versions were preserved."
+    "profileConfirmed": "Reference version approved.",
+    "profileActivated": "Reference published as live. Historical versions were preserved."
   }
 }

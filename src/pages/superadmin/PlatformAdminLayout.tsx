@@ -22,6 +22,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { isNavigationRouteActive } from './navigationRoute';
+
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { platformCopy } from '@/features/platform-admin-dashboard/ui/copy';
@@ -151,10 +153,14 @@ export function PlatformAdminLayout() {
   const [expanded, setExpanded] = useState<ReadonlySet<GroupKey>>(() => new Set(['dashboard']));
   const userName = user?.fullName ?? copy.role;
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'P';
+  const activeItem = groups
+    .flatMap((group) => group.items)
+    .filter((item) => isNavigationRouteActive(location.pathname, item.to))
+    .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
 
   useEffect(() => {
     const active = groups.find((group) =>
-      group.items.some((item) => item.to === location.pathname),
+      group.items.some((item) => isNavigationRouteActive(location.pathname, item.to)),
     )?.id;
     if (!active) return;
     setExpanded((current) => (current.has(active) ? current : new Set([...current, active])));
@@ -228,7 +234,9 @@ export function PlatformAdminLayout() {
           {groups.map((group) => {
             const Icon = group.icon;
             const isExpanded = expanded.has(group.id);
-            const active = group.items.some((item) => item.to === location.pathname);
+            const active = group.items.some((item) =>
+              isNavigationRouteActive(location.pathname, item.to),
+            );
             return (
               <div className="member-nav-group" key={group.id}>
                 <button
@@ -257,7 +265,7 @@ export function PlatformAdminLayout() {
                       <NavLink
                         key={item.label}
                         to={item.to}
-                        end
+                        end={item.to !== ROUTES.superadmin.movementAssessment}
                         onClick={() => setIsMenuOpen(false)}
                         className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
                       >
@@ -301,7 +309,7 @@ export function PlatformAdminLayout() {
           <div className="member-topbar__context">
             <span>Fit®</span>
             <span>/</span>
-            <strong>{copy.workspace}</strong>
+            <strong>{activeItem ? copy[activeItem.label] : copy.workspace}</strong>
           </div>
           <div className="member-topbar__actions">
             <button type="button" onClick={toggleLanguage} className="member-language-button">

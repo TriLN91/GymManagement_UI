@@ -1,5 +1,5 @@
-import { ReferenceSetList } from '@/features/movement-reference-admin';
+import { ExerciseReferenceLibrary } from '@/features/movement-reference-admin';
 
 export function MovementAssessmentPage() {
-  return <ReferenceSetList />;
+  return <ExerciseReferenceLibrary />;
 }

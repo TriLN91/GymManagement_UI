@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ReferenceSetList } from './ReferenceSetList';
+import { ExerciseReferenceLibrary } from './ExerciseReferenceLibrary';
 
 import i18n from '@/i18n';
 
@@ -11,6 +11,7 @@ const hooks = vi.hoisted(() => ({
   referenceSets: vi.fn(),
   createSet: vi.fn(),
   createExercise: vi.fn(),
+  referenceSet: vi.fn(),
 }));
 
 vi.mock('../model/useMovementReferences', () => ({
@@ -18,9 +19,12 @@ vi.mock('../model/useMovementReferences', () => ({
   useReferenceSets: hooks.referenceSets,
   useCreateReferenceSet: hooks.createSet,
   useCreateExercise: hooks.createExercise,
+  useReferenceSet: hooks.referenceSet,
 }));
 
 describe('ReferenceSetList', () => {
+  const createSetMutation = vi.fn();
+
   beforeEach(async () => {
     await i18n.changeLanguage('en');
     hooks.exercises.mockReturnValue({
@@ -43,20 +47,30 @@ describe('ReferenceSetList', () => {
       isLoading: false,
       error: null,
     });
-    hooks.createSet.mockReturnValue({ mutateAsync: vi.fn(), isPending: false, error: null });
+    createSetMutation.mockResolvedValue({ id: 'set-1' });
+    hooks.createSet.mockReturnValue({
+      mutateAsync: createSetMutation,
+      isPending: false,
+      error: null,
+    });
     hooks.createExercise.mockReturnValue({ mutateAsync: vi.fn(), isPending: false, error: null });
+    hooks.referenceSet.mockReturnValue({ data: undefined, isLoading: false, error: null });
   });
 
-  it('renders business-level reference set information and filters by exercise', () => {
+  it('renders the exercise library and auto-opens or creates preparation context', async () => {
     render(
       <MemoryRouter>
-        <ReferenceSetList />
+        <ExerciseReferenceLibrary />
       </MemoryRouter>,
     );
-    expect(screen.getByRole('heading', { name: 'Movement Assessment' })).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: 'Back Squat' })).toBeInTheDocument();
-    expect(screen.getByText('Review required')).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Exercise'), { target: { value: 'exercise-1' } });
-    expect(hooks.referenceSets).toHaveBeenLastCalledWith('exercise-1');
+    expect(screen.getByRole('heading', { name: 'Exercise Reference Library' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: /Back Squat/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Continue preparation/i }));
+    await waitFor(() =>
+      expect(createSetMutation).toHaveBeenCalledWith({
+        exerciseId: 'exercise-1',
+        pattern: 'SQUAT',
+      }),
+    );
   });
 });
