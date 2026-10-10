@@ -1,0 +1,71 @@
+.platform-shell {
+  font-family: var(--font-ui);
+}
+
+.platform-shell .member-sidebar__brand {
+  min-height: 74px;
+}
+
+.platform-shell .member-nav-link.is-unavailable {
+  cursor: not-allowed;
+}
+
+.platform-shell .member-sidebar__footer {
+  min-height: 70px;
+}
+
+.platform-mobile-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dark .platform-shell {
+  --member-primary: #e8f3e5;
+  --member-brand: #a7f0dd;
+  --member-ink: #edf4e9;
+  --member-muted: #afc1ad;
+  --member-outline: #3c503b;
+  --member-surface: #1a2a1a;
+  --brand-strong: #edf4e9;
+  color: var(--member-ink);
+  background: #101d11;
+}
+
+.dark .platform-shell .member-topbar,
+.dark .platform-shell .member-mobile-header,
+.dark .platform-shell .member-language-button {
+  color: var(--member-ink);
+  background: var(--member-surface);
+}
+
+.dark .platform-shell .member-nav-link.is-active {
+  color: #173917;
+}
+
+.dark .platform-shell .member-nav-group__trigger:hover,
+.dark .platform-shell .member-nav-group__trigger.has-active-child,
+.dark .platform-shell .member-nav-link:hover {
+  border-color: #3c503b;
+  color: #edf4e9;
+  background: #263b26;
+}
+
+.dark .platform-shell .member-topbar__actions > button {
+  color: #edf4e9;
+}
+
+.dark .platform-shell .platform-mobile-actions > button {
+  color: #edf4e9;
+}
+
+@media (max-width: 860px) {
+  .platform-shell {
+    padding-bottom: 0;
+  }
+
+  .platform-shell .member-main,
+  .platform-shell .member-content {
+    min-height: calc(100vh - 64px);
+  }
+}

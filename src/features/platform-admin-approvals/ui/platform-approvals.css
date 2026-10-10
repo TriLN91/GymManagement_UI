@@ -1,0 +1,371 @@
+.platform-approvals-page {
+  display: grid;
+  gap: 18px;
+}
+.platform-approvals-toolbar {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+.platform-approval-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.platform-approval-card,
+.platform-detail-card,
+.platform-review-actions {
+  border: 1px solid hsl(var(--border));
+  background: white;
+}
+.platform-approval-card {
+  display: grid;
+  min-height: 205px;
+  gap: 20px;
+  padding: 18px;
+}
+.platform-approval-card__topline,
+.platform-approval-card__footer,
+.platform-detail-heading,
+.platform-review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.platform-approval-card__topline > span {
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.platform-approval-card__identity,
+.platform-account-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+.platform-approval-card__identity > span,
+.platform-account-identity > span {
+  display: grid;
+  width: 46px;
+  height: 54px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, #9cac54 52%, white);
+  background: var(--energy-lime-soft);
+  color: hsl(var(--forest));
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+}
+.platform-approval-card__identity div,
+.platform-account-identity div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+.platform-approval-card__identity strong,
+.platform-account-identity strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.platform-approval-card__identity small,
+.platform-account-identity small {
+  overflow: hidden;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.platform-approval-card__footer {
+  align-items: flex-end;
+}
+.platform-approval-card__footer time {
+  max-width: 165px;
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  line-height: 1.5;
+}
+.platform-approvals-empty {
+  min-height: 260px;
+  border-radius: 0;
+  background: white;
+}
+.platform-detail-card {
+  padding: 22px;
+}
+.platform-detail-heading {
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.platform-detail-heading > div {
+  display: grid;
+  gap: 4px;
+}
+.platform-detail-heading span {
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.platform-detail-heading h2,
+.platform-section-label h2 {
+  margin: 0;
+  color: hsl(var(--forest));
+  font-family: var(--font-display);
+  font-size: clamp(16px, 2vw, 22px);
+}
+.platform-section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  color: hsl(var(--forest));
+}
+.platform-section-label h2 {
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.platform-detail-data {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid hsl(var(--border));
+}
+.platform-detail-data > div {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  padding: 14px;
+  border-left: 1px solid hsl(var(--border));
+}
+.platform-detail-data > div:first-child {
+  border-left: 0;
+}
+.platform-detail-data dt {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.platform-detail-data dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: hsl(var(--foreground));
+  font-size: 12px;
+  font-weight: 700;
+}
+.platform-document-list,
+.platform-history {
+  display: grid;
+  margin: 0;
+  border-top: 1px solid hsl(var(--border));
+}
+.platform-document-list > div,
+.platform-history li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.platform-document-list > div > div,
+.platform-history li > div {
+  display: grid;
+  gap: 4px;
+}
+.platform-document-list strong,
+.platform-history strong {
+  font-size: 12px;
+}
+.platform-document-list span,
+.platform-history span,
+.platform-document-list time,
+.platform-history time {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+.platform-history {
+  padding: 0;
+  list-style: none;
+}
+.platform-history li {
+  padding-left: 14px;
+  border-left: 3px solid var(--energy-lime);
+}
+.platform-review-actions {
+  padding: 16px 18px;
+  border-color: hsl(var(--pebble) / 0.65);
+  background: var(--energy-lime-faint);
+}
+.platform-review-actions p {
+  max-width: 540px;
+  margin: 0;
+  color: hsl(var(--forest) / 0.78);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.platform-review-actions > div {
+  display: flex;
+  gap: 9px;
+}
+.platform-rejection-form {
+  display: grid;
+  gap: 15px;
+}
+.platform-rejection-form > div {
+  display: grid;
+  gap: 7px;
+}
+.platform-rejection-form p {
+  margin: 0;
+  color: hsl(var(--destructive));
+  font-size: 11px;
+}
+.platform-accounts-note {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border-left: 3px solid hsl(var(--forest));
+  background: hsl(var(--muted) / 0.45);
+  padding: 11px 13px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+.platform-accounts-table-shell {
+  overflow: auto;
+  background: white;
+}
+.platform-accounts-table {
+  min-width: 880px;
+}
+.platform-accounts-table thead {
+  background: var(--energy-lime-faint);
+}
+.platform-accounts-table tbody tr:hover {
+  background: color-mix(in srgb, var(--energy-lime-faint) 70%, white);
+}
+@media (max-width: 1000px) {
+  .platform-approval-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .platform-detail-data {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .platform-detail-data > div:nth-child(odd) {
+    border-left: 0;
+  }
+  .platform-detail-data > div:nth-child(n + 3) {
+    border-top: 1px solid hsl(var(--border));
+  }
+}
+@media (max-width: 680px) {
+  .platform-approvals-toolbar,
+  .platform-review-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .platform-approvals-toolbar .inline-flex,
+  .platform-review-actions .inline-flex {
+    width: 100%;
+  }
+  .platform-approval-card-grid,
+  .platform-detail-data {
+    grid-template-columns: 1fr;
+  }
+  .platform-detail-data > div,
+  .platform-detail-data > div:nth-child(odd),
+  .platform-detail-data > div:nth-child(n + 3) {
+    border-top: 1px solid hsl(var(--border));
+    border-left: 0;
+  }
+  .platform-detail-data > div:first-child {
+    border-top: 0;
+  }
+  .platform-detail-card {
+    padding: 16px;
+  }
+  .platform-document-list > div,
+  .platform-history li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .platform-accounts-table-shell {
+    border: 0;
+    background: transparent;
+  }
+  .platform-accounts-table,
+  .platform-accounts-table tbody,
+  .platform-accounts-table tr,
+  .platform-accounts-table td {
+    display: block;
+    width: 100% !important;
+    min-width: 0;
+  }
+  .platform-accounts-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+  }
+  .platform-accounts-table tbody {
+    display: grid;
+    gap: 14px;
+  }
+  .platform-accounts-table tr {
+    border: 1px solid hsl(var(--border));
+    background: white;
+  }
+  .platform-accounts-table td {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    border-top: 1px solid hsl(var(--border));
+    padding: 12px;
+  }
+  .platform-accounts-table td:first-child {
+    border-top: 0;
+    background: var(--energy-lime-faint);
+  }
+  .platform-accounts-table td::before {
+    content: attr(data-label);
+    color: hsl(var(--muted-foreground));
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+@media (max-width: 460px) {
+  .platform-accounts-table td {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .platform-approvals-page *,
+  .platform-approvals-page *::before,
+  .platform-approvals-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
