@@ -7,10 +7,8 @@ import { AuthGuard } from './guards/AuthGuard';
 import { GymOwnerApprovalGuard } from './guards/GymOwnerApprovalGuard';
 import { GymOwnerEditableGuard } from './guards/GymOwnerEditableGuard';
 import { RoleGuard } from './guards/RoleGuard';
-import { TenantGuard } from './guards/TenantGuard';
 
 import { GymOwnerLayout } from '@/pages/admin/components/GymOwnerLayout';
-import { EmailOtpVerificationPage } from '@/pages/auth/EmailOtpVerificationPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
@@ -325,10 +323,25 @@ const SuperAdminAnalyticsPage = lazy(() =>
     default: m.SuperAdminAnalyticsPage,
   })),
 );
+const MovementAssessmentPage = lazy(() =>
+  import('@/pages/superadmin/MovementAssessmentPage').then((m) => ({
+    default: m.MovementAssessmentPage,
+  })),
+);
+const MovementReferenceSetPage = lazy(() =>
+  import('@/pages/superadmin/MovementReferenceSetPage').then((m) => ({
+    default: m.MovementReferenceSetPage,
+  })),
+);
 
 const superAdminNav: ReadonlyArray<NavItem> = [
   { to: ROUTES.superadmin.root, labelKey: 'nav.dashboard' },
   { to: ROUTES.superadmin.tenants, labelKey: 'nav.tenants' },
+  {
+    to: ROUTES.superadmin.movementAssessment,
+    labelKey: 'nav.movementAssessment',
+    activePaths: [ROUTES.superadmin.movementAssessment],
+  },
 ];
 
 const router = createBrowserRouter([
@@ -337,7 +350,6 @@ const router = createBrowserRouter([
   { path: ROUTES.public.register, element: <RegisterPage /> },
   { path: ROUTES.public.forgotPassword, element: <ForgotPasswordPage /> },
   { path: ROUTES.public.resetPassword, element: <ResetPasswordPage /> },
-  { path: ROUTES.public.verifyEmailOtp, element: <EmailOtpVerificationPage /> },
   { path: ROUTES.public.forbidden, element: <ForbiddenPage /> },
   { path: '/404', element: <NotFoundPage /> },
   { path: '*', element: <NotFoundPage /> },
@@ -345,202 +357,205 @@ const router = createBrowserRouter([
     element: <AuthGuard />,
     children: [
       {
-        element: <TenantGuard />,
+        element: <RoleGuard allow="member" />,
         children: [
           {
-            element: <RoleGuard allow="member" />,
+            element: <MemberLayout />,
+            children: [
+              { path: ROUTES.member.root, element: <MemberDashboardPage /> },
+              { path: ROUTES.member.profile, element: <PersonalProfilePage /> },
+              { path: ROUTES.member.profileEdit, element: <EditPersonalProfilePage /> },
+              { path: ROUTES.member.profileSetup, element: <ProfileSetupPage /> },
+              { path: ROUTES.member.profileSecurity, element: <AccountSecurityPage /> },
+              { path: ROUTES.member.profileAssessments, element: <AssessmentHistoryPage /> },
+              { path: ROUTES.member.profileAssessment, element: <AssessmentDetailPage /> },
+              { path: ROUTES.member.profileAppointments, element: <PTAppointmentsPage /> },
+              { path: ROUTES.member.profileWearables, element: <WearableConnectionsPage /> },
+              {
+                path: ROUTES.member.profileNotifications,
+                element: <MemberNotificationsPage />,
+              },
+              { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
+              { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
+              { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
+              { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },
+              { path: ROUTES.member.aiAssessment, element: <AIAssessmentPage /> },
+              { path: ROUTES.member.aiAssessmentExercise, element: <AIAssessmentPage /> },
+              { path: ROUTES.member.workoutDay, element: <TrainingDayDetail /> },
+              { path: ROUTES.member.workoutExecution, element: <WorkoutExecutionEntry /> },
+              { path: ROUTES.member.workoutSession, element: <WorkoutExecution /> },
+              { path: ROUTES.member.progress, element: <WorkoutProgress /> },
+              { path: ROUTES.member.workoutHistory, element: <WorkoutHistory /> },
+              { path: ROUTES.member.achievements, element: <AchievementsPage /> },
+              { path: ROUTES.member.workoutCompletion, element: <WorkoutCompletion /> },
+              { path: ROUTES.member.marketplace, element: <MarketplaceHome /> },
+              { path: ROUTES.member.marketplaceGym, element: <GymDetailPage /> },
+              { path: ROUTES.member.marketplaceOffers, element: <GymOffersPage /> },
+              { path: ROUTES.member.marketplaceTrainers, element: <TrainerDiscoveryPage /> },
+              { path: ROUTES.member.marketplaceTrainer, element: <TrainerDetailPage /> },
+              { path: ROUTES.member.marketplacePackages, element: <PTPackagesPage /> },
+              { path: ROUTES.member.marketplaceCheckout, element: <MarketplaceCheckoutPage /> },
+              {
+                path: ROUTES.member.marketplacePaymentResult,
+                element: <MarketplacePaymentResultPage />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        element: <RoleGuard allow="pt" />,
+        children: [
+          {
+            element: <TrainerLayout />,
+            children: [
+              { path: ROUTES.pt.root, element: <PTDashboardPage /> },
+              { path: ROUTES.pt.memberData, element: <TrainerMemberDataPage /> },
+              { path: ROUTES.pt.profile, element: <TrainerProfilePage /> },
+              { path: ROUTES.pt.profileEdit, element: <EditTrainerProfilePage /> },
+              { path: ROUTES.pt.gymInfo, element: <TrainerGymInformationPage /> },
+              { path: ROUTES.pt.members, element: <PTMembersPage /> },
+              { path: ROUTES.pt.memberDetail, element: <TrainerMemberDetailPage /> },
+              { path: ROUTES.pt.appointments, element: <TrainerAppointmentsPage /> },
+              { path: ROUTES.pt.exerciseLibrary, element: <TrainerExerciseLibraryPage /> },
+              { path: ROUTES.pt.planBuilder, element: <PlanBuilderPage /> },
+              { path: ROUTES.pt.memberWorkout, element: <TrainerMemberWorkoutPage /> },
+              { path: ROUTES.pt.coachingHistory, element: <TrainerCoachingHistoryPage /> },
+              { path: ROUTES.pt.income, element: <TrainerIncomePage /> },
+            ],
+          },
+        ],
+      },
+      {
+        element: <RoleGuard allow="gym_admin" />,
+        children: [
+          {
+            element: <GymOwnerLayout />,
             children: [
               {
-                element: <MemberLayout />,
+                path: ROUTES.admin.onboarding,
+                element: <GymOwnerOnboardingEntryPage />,
+              },
+              {
+                element: <GymOwnerEditableGuard />,
                 children: [
-                  { path: ROUTES.member.root, element: <MemberDashboardPage /> },
-                  { path: ROUTES.member.profile, element: <PersonalProfilePage /> },
-                  { path: ROUTES.member.profileEdit, element: <EditPersonalProfilePage /> },
-                  { path: ROUTES.member.profileSetup, element: <ProfileSetupPage /> },
-                  { path: ROUTES.member.profileSecurity, element: <AccountSecurityPage /> },
-                  { path: ROUTES.member.profileAssessments, element: <AssessmentHistoryPage /> },
-                  { path: ROUTES.member.profileAssessment, element: <AssessmentDetailPage /> },
-                  { path: ROUTES.member.profileAppointments, element: <PTAppointmentsPage /> },
-                  { path: ROUTES.member.profileWearables, element: <WearableConnectionsPage /> },
                   {
-                    path: ROUTES.member.profileNotifications,
-                    element: <MemberNotificationsPage />,
+                    path: ROUTES.admin.onboardingProfile,
+                    element: <GymOwnerBrandBranchPage />,
                   },
-                  { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
-                  { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
-                  { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
-                  { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },
-                  { path: ROUTES.member.aiAssessment, element: <AIAssessmentPage /> },
-                  { path: ROUTES.member.aiAssessmentExercise, element: <AIAssessmentPage /> },
-                  { path: ROUTES.member.workoutDay, element: <TrainingDayDetail /> },
-                  { path: ROUTES.member.workoutExecution, element: <WorkoutExecutionEntry /> },
-                  { path: ROUTES.member.workoutSession, element: <WorkoutExecution /> },
-                  { path: ROUTES.member.progress, element: <WorkoutProgress /> },
-                  { path: ROUTES.member.workoutHistory, element: <WorkoutHistory /> },
-                  { path: ROUTES.member.achievements, element: <AchievementsPage /> },
-                  { path: ROUTES.member.workoutCompletion, element: <WorkoutCompletion /> },
-                  { path: ROUTES.member.marketplace, element: <MarketplaceHome /> },
-                  { path: ROUTES.member.marketplaceGym, element: <GymDetailPage /> },
-                  { path: ROUTES.member.marketplaceOffers, element: <GymOffersPage /> },
-                  { path: ROUTES.member.marketplaceTrainers, element: <TrainerDiscoveryPage /> },
-                  { path: ROUTES.member.marketplaceTrainer, element: <TrainerDetailPage /> },
-                  { path: ROUTES.member.marketplacePackages, element: <PTPackagesPage /> },
-                  { path: ROUTES.member.marketplaceCheckout, element: <MarketplaceCheckoutPage /> },
                   {
-                    path: ROUTES.member.marketplacePaymentResult,
-                    element: <MarketplacePaymentResultPage />,
+                    path: ROUTES.admin.onboardingLicense,
+                    element: <GymOwnerLicensePage />,
+                  },
+                  {
+                    path: ROUTES.admin.onboardingReview,
+                    element: <GymOwnerReviewPage />,
+                  },
+                ],
+              },
+              {
+                path: ROUTES.admin.onboardingStatus,
+                element: <GymOwnerApprovalStatusPage />,
+              },
+              {
+                element: <GymOwnerApprovalGuard />,
+                children: [
+                  { path: ROUTES.admin.root, element: <AdminDashboardPage /> },
+                  {
+                    path: ROUTES.admin.profile,
+                    element: <GymOwnerProfileOverviewPage />,
+                  },
+                  {
+                    path: ROUTES.admin.profileBrand,
+                    element: <GymOwnerBrandProfilePage />,
+                  },
+                  {
+                    path: ROUTES.admin.profileBranches,
+                    element: <GymOwnerBranchesPage />,
+                  },
+                  { path: ROUTES.admin.pts, element: <GymOwnerTrainerListPage /> },
+                  {
+                    path: ROUTES.admin.trainerCreate,
+                    element: <GymOwnerTrainerFormPage mode="create" />,
+                  },
+                  {
+                    path: ROUTES.admin.trainerAssignments,
+                    element: <GymOwnerAssignmentExceptionsPage />,
+                  },
+                  {
+                    path: ROUTES.admin.trainerEdit,
+                    element: <GymOwnerTrainerFormPage mode="edit" />,
+                  },
+                  {
+                    path: ROUTES.admin.trainerDetail,
+                    element: <GymOwnerTrainerDetailPage />,
+                  },
+                  {
+                    path: ROUTES.admin.packages,
+                    element: <GymOwnerPTPackageListPage />,
+                  },
+                  {
+                    path: ROUTES.admin.packageCreate,
+                    element: <GymOwnerPTPackageFormPage mode="create" />,
+                  },
+                  {
+                    path: ROUTES.admin.packageEdit,
+                    element: <GymOwnerPTPackageFormPage mode="edit" />,
+                  },
+                  {
+                    path: ROUTES.admin.packageDetail,
+                    element: <GymOwnerPTPackageDetailPage />,
+                  },
+                  {
+                    path: ROUTES.admin.customers,
+                    element: <GymOwnerCustomersPage />,
+                  },
+                  {
+                    path: ROUTES.admin.orders,
+                    element: <GymOwnerOrdersPage />,
+                  },
+                  {
+                    path: ROUTES.admin.orderDetail,
+                    element: <GymOwnerOrderDetailPage />,
+                  },
+                  {
+                    path: ROUTES.admin.settlements,
+                    element: <GymOwnerSettlementsPage />,
+                  },
+                  {
+                    path: ROUTES.admin.analytics,
+                    element: <GymOwnerAnalyticsPage />,
+                  },
+                  {
+                    path: ROUTES.admin.notifications,
+                    element: <GymOwnerNotificationsPage />,
+                  },
+                  {
+                    path: ROUTES.admin.accountSecurity,
+                    element: <GymOwnerAccountSecurityPage />,
                   },
                 ],
               },
             ],
           },
+        ],
+      },
+      {
+        element: <RoleGuard allow="super_admin" />,
+        children: [
           {
-            element: <RoleGuard allow="pt" />,
+            element: <PortalLayout titleKey="portals.superadmin" nav={superAdminNav} />,
             children: [
+              { path: ROUTES.superadmin.root, element: <SuperAdminDashboardPage /> },
+              { path: ROUTES.superadmin.tenants, element: <SuperAdminTenantsPage /> },
+              { path: ROUTES.superadmin.analytics, element: <SuperAdminAnalyticsPage /> },
               {
-                element: <TrainerLayout />,
-                children: [
-                  { path: ROUTES.pt.root, element: <PTDashboardPage /> },
-                  { path: ROUTES.pt.memberData, element: <TrainerMemberDataPage /> },
-                  { path: ROUTES.pt.profile, element: <TrainerProfilePage /> },
-                  { path: ROUTES.pt.profileEdit, element: <EditTrainerProfilePage /> },
-                  { path: ROUTES.pt.gymInfo, element: <TrainerGymInformationPage /> },
-                  { path: ROUTES.pt.members, element: <PTMembersPage /> },
-                  { path: ROUTES.pt.memberDetail, element: <TrainerMemberDetailPage /> },
-                  { path: ROUTES.pt.appointments, element: <TrainerAppointmentsPage /> },
-                  { path: ROUTES.pt.exerciseLibrary, element: <TrainerExerciseLibraryPage /> },
-                  { path: ROUTES.pt.planBuilder, element: <PlanBuilderPage /> },
-                  { path: ROUTES.pt.memberWorkout, element: <TrainerMemberWorkoutPage /> },
-                  { path: ROUTES.pt.coachingHistory, element: <TrainerCoachingHistoryPage /> },
-                  { path: ROUTES.pt.income, element: <TrainerIncomePage /> },
-                ],
+                path: ROUTES.superadmin.movementAssessment,
+                element: <MovementAssessmentPage />,
               },
-            ],
-          },
-          {
-            element: <RoleGuard allow="gym_admin" />,
-            children: [
               {
-                element: <GymOwnerLayout />,
-                children: [
-                  {
-                    path: ROUTES.admin.onboarding,
-                    element: <GymOwnerOnboardingEntryPage />,
-                  },
-                  {
-                    element: <GymOwnerEditableGuard />,
-                    children: [
-                      {
-                        path: ROUTES.admin.onboardingProfile,
-                        element: <GymOwnerBrandBranchPage />,
-                      },
-                      {
-                        path: ROUTES.admin.onboardingLicense,
-                        element: <GymOwnerLicensePage />,
-                      },
-                      {
-                        path: ROUTES.admin.onboardingReview,
-                        element: <GymOwnerReviewPage />,
-                      },
-                    ],
-                  },
-                  {
-                    path: ROUTES.admin.onboardingStatus,
-                    element: <GymOwnerApprovalStatusPage />,
-                  },
-                  {
-                    element: <GymOwnerApprovalGuard />,
-                    children: [
-                      { path: ROUTES.admin.root, element: <AdminDashboardPage /> },
-                      {
-                        path: ROUTES.admin.profile,
-                        element: <GymOwnerProfileOverviewPage />,
-                      },
-                      {
-                        path: ROUTES.admin.profileBrand,
-                        element: <GymOwnerBrandProfilePage />,
-                      },
-                      {
-                        path: ROUTES.admin.profileBranches,
-                        element: <GymOwnerBranchesPage />,
-                      },
-                      { path: ROUTES.admin.pts, element: <GymOwnerTrainerListPage /> },
-                      {
-                        path: ROUTES.admin.trainerCreate,
-                        element: <GymOwnerTrainerFormPage mode="create" />,
-                      },
-                      {
-                        path: ROUTES.admin.trainerAssignments,
-                        element: <GymOwnerAssignmentExceptionsPage />,
-                      },
-                      {
-                        path: ROUTES.admin.trainerEdit,
-                        element: <GymOwnerTrainerFormPage mode="edit" />,
-                      },
-                      {
-                        path: ROUTES.admin.trainerDetail,
-                        element: <GymOwnerTrainerDetailPage />,
-                      },
-                      {
-                        path: ROUTES.admin.packages,
-                        element: <GymOwnerPTPackageListPage />,
-                      },
-                      {
-                        path: ROUTES.admin.packageCreate,
-                        element: <GymOwnerPTPackageFormPage mode="create" />,
-                      },
-                      {
-                        path: ROUTES.admin.packageEdit,
-                        element: <GymOwnerPTPackageFormPage mode="edit" />,
-                      },
-                      {
-                        path: ROUTES.admin.packageDetail,
-                        element: <GymOwnerPTPackageDetailPage />,
-                      },
-                      {
-                        path: ROUTES.admin.customers,
-                        element: <GymOwnerCustomersPage />,
-                      },
-                      {
-                        path: ROUTES.admin.orders,
-                        element: <GymOwnerOrdersPage />,
-                      },
-                      {
-                        path: ROUTES.admin.orderDetail,
-                        element: <GymOwnerOrderDetailPage />,
-                      },
-                      {
-                        path: ROUTES.admin.settlements,
-                        element: <GymOwnerSettlementsPage />,
-                      },
-                      {
-                        path: ROUTES.admin.analytics,
-                        element: <GymOwnerAnalyticsPage />,
-                      },
-                      {
-                        path: ROUTES.admin.notifications,
-                        element: <GymOwnerNotificationsPage />,
-                      },
-                      {
-                        path: ROUTES.admin.accountSecurity,
-                        element: <GymOwnerAccountSecurityPage />,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            element: <RoleGuard allow="super_admin" />,
-            children: [
-              {
-                element: <PortalLayout titleKey="portals.superadmin" nav={superAdminNav} />,
-                children: [
-                  { path: ROUTES.superadmin.root, element: <SuperAdminDashboardPage /> },
-                  { path: ROUTES.superadmin.tenants, element: <SuperAdminTenantsPage /> },
-                  { path: ROUTES.superadmin.analytics, element: <SuperAdminAnalyticsPage /> },
-                ],
+                path: ROUTES.superadmin.movementReferenceSet,
+                element: <MovementReferenceSetPage />,
               },
             ],
           },

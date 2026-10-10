@@ -16,6 +16,7 @@ import {
   type Weekday,
 } from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 function targetLabel(exercise: WorkoutExercise) {
   if (exercise.trackingType === 'strength')
@@ -35,8 +36,8 @@ function optionalTargetLabel(exercise: BuilderExercise, item: ExerciseCatalogIte
 }
 
 export function TrainingDayDetail() {
-  const { t, i18n } = useTranslation('workout');
-  const isVi = i18n.resolvedLanguage === 'vi';
+  const { language } = useLocale();
+  const { t } = useTranslation('workout');
   const { dayId = '' } = useParams();
   const navigate = useNavigate();
   const day = getWorkoutDay(dayId);
@@ -102,7 +103,7 @@ export function TrainingDayDetail() {
         </div>
       </section>
 
-      <section className="workout-stations" aria-label="Training stations">
+      <section className="workout-stations" aria-label={t('aria.trainingStations')}>
         <header>
           <span>{t('flow.detail.pipeline')}</span>
           <span>{t('flow.detail.targets')}</span>
@@ -130,7 +131,7 @@ export function TrainingDayDetail() {
             <article className="workout-station" key={`${addon.id}-${exercise.uid}`}>
               <span className="workout-station__number">+{String(index + 1).padStart(2, '0')}</span>
               <div className="workout-station__copy">
-                <h2>{item.name[isVi ? 'vi' : 'en']}</h2>
+                <h2>{item.name[language]}</h2>
               </div>
               <div className="workout-station__target">
                 <small>{t('flow.detail.target')}</small>

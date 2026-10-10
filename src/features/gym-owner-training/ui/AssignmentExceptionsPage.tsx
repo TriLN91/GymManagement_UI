@@ -1,6 +1,5 @@
 import { ArrowLeft, CheckCircle2, CircleAlert, UserRoundCheck } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -10,6 +9,7 @@ import { gymOwnerTrainingCopy } from './copy';
 import { OperationalBadge, TrainerAvatar } from './TrainingShared';
 
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import {
@@ -27,9 +27,8 @@ import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/u
 import './gym-owner-training.css';
 
 export function GymOwnerAssignmentExceptionsPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerTrainingCopy[isVi ? 'vi' : 'en'];
+  const { language } = useLocale();
+  const copy = gymOwnerTrainingCopy[language];
   const trainers = useGymOwnerTrainingStore((state) => state.trainers);
   const exceptions = useGymOwnerTrainingStore((state) => state.assignmentExceptions);
   const resolveException = useGymOwnerTrainingStore((state) => state.resolveAssignmentException);

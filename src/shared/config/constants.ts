@@ -1,6 +1,8 @@
 // All path strings, storage keys, and query keys are frozen. Importing these is the only way
 // to reference a route, a persisted key, or a TanStack query key — no inline literals.
 
+export const BRAND_MARK = 'Fit®';
+
 export const ROUTES = Object.freeze({
   public: Object.freeze({
     landing: '/',
@@ -8,7 +10,6 @@ export const ROUTES = Object.freeze({
     register: '/register',
     forgotPassword: '/forgot-password',
     resetPassword: '/reset-password',
-    verifyEmailOtp: '/verify-email-otp',
     forbidden: '/403',
     notFound: '/404',
   }),
@@ -108,6 +109,10 @@ export const ROUTES = Object.freeze({
     root: '/superadmin',
     tenants: '/superadmin/tenants',
     analytics: '/superadmin/analytics',
+    movementAssessment: '/superadmin/movement-assessment',
+    movementReferenceSet: '/superadmin/movement-assessment/reference-sets/:referenceSetId',
+    movementReferenceSetPath: (referenceSetId: string) =>
+      `/superadmin/movement-assessment/reference-sets/${referenceSetId}`,
   }),
 });
 
@@ -128,6 +133,29 @@ export const QUERY_KEYS = Object.freeze({
   currentPlan: () => ['coaching', 'plan', 'current'] as const,
   coachingHistory: (memberId: string) => ['coaching', 'plan', 'history', memberId] as const,
   checkIns: (memberId: string) => ['coaching', 'checkins', memberId] as const,
+  exercises: () => ['exercises'] as const,
+  referenceSets: (exerciseId?: string) =>
+    ['movement-reference-sets', { exerciseId: exerciseId ?? null }] as const,
+  referenceSet: (referenceSetId: string) =>
+    ['movement-reference-sets', 'detail', referenceSetId] as const,
 });
 
 export type RouteTree = typeof ROUTES;
+
+export type Language = 'vi' | 'en';
+
+export const LOCALE_TAGS = Object.freeze({
+  vi: 'vi-VN',
+  en: 'en-US',
+} as const satisfies Record<Language, string>);
+
+export const FACILITY_IDS = [
+  'free-weights',
+  'cardio',
+  'functional',
+  'locker-shower',
+  'parking',
+  'sauna',
+  'recovery',
+  'body-assessment',
+] as const;

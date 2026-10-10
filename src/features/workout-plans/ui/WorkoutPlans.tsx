@@ -25,8 +25,9 @@ interface WorkoutPlansProps {
 }
 
 function WorkoutPlansSkeleton() {
+  const { t } = useTranslation('workout');
   return (
-    <div className="workout-skeleton" aria-label="Loading workout plans" aria-busy="true">
+    <div className="workout-skeleton" aria-label={t('aria.loadingPlans')} aria-busy="true">
       <div className="workout-skeleton__heading" />
       <div className="workout-skeleton__featured" />
       <div className="workout-skeleton__grid">

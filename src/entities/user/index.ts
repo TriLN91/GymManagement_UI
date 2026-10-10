@@ -3,12 +3,7 @@ export type {
   AuthSession,
   AuthTokens,
   AuthUser,
-  EmailOtpChallenge,
-  EmailOtpPolicy,
   LoginPayload,
-  LoginResponse,
   RegisterPayload,
-  ResendEmailOtpPayload,
   Role,
-  VerifyEmailOtpPayload,
 } from './types';

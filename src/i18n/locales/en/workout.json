@@ -228,5 +228,104 @@
       "saturday-hiit": "Sep 26",
       "sunday-rest": "Sep 27"
     }
+  },
+  "workoutHistory": {
+    "sets": "sets",
+    "rounds": "rounds",
+    "workoutHistory": {
+      "title": "Workout history",
+      "back": "Back to schedule",
+      "empty": "No completed workouts yet.",
+      "exercises": "logged exercises",
+      "volume": "Volume",
+      "duration": "Duration",
+      "distance": "Distance",
+      "rounds": "Rounds"
+    }
+  },
+  "workoutProgress": {
+    "copy": {
+      "title": "Workout progress",
+      "back": "Back to schedule",
+      "week": "This week tracking",
+      "completed": "Completed",
+      "planned": "Planned",
+      "rest": "Rest",
+      "data": "Workout data",
+      "chart": "Trend over time",
+      "volume": "Training volume",
+      "duration": "Duration",
+      "distance": "Distance",
+      "rounds": "Rounds",
+      "sessions": "Completed sessions",
+      "empty": "Complete your first workout to see progress data."
+    }
+  },
+  "memberWorkoutBuilder": {
+    "copy": {
+      "library": "Exercise library",
+      "search": "Search exercises",
+      "category": "Target muscle",
+      "all": "All categories",
+      "builder": "Build your workout",
+      "name": "Name your workout",
+      "autosave": "Draft auto-saved on this device",
+      "exercises": "exercises",
+      "sets": "total sets",
+      "targetSets": "Sets",
+      "reorder": "Reorder exercises",
+      "empty": "Add exercises from the library to begin.",
+      "summary": "Workout summary",
+      "estimated": "Est. min",
+      "muscle": "Volume by muscle",
+      "save": "Save workout",
+      "clear": "Clear draft",
+      "saved": "Personal workout saved.",
+      "invalid": "Enter a workout name and add at least one exercise.",
+      "target": "Target",
+      "reps": "Reps",
+      "load": "Load",
+      "rest": "Rest",
+      "duration": "Duration",
+      "distance": "Distance",
+      "rounds": "Rounds",
+      "work": "Work",
+      "remove": "Remove exercise",
+      "liveMuscleMap": "Live muscle map",
+      "clearMuscle": "View all",
+      "days": "Training days",
+      "newPlan": "Create new plan",
+      "optionalAddon": "Add as optional exercises",
+      "savedAddon": "Added to your schedule without affecting main plan progress.",
+      "scheduleMissing": "Choose at least one day per exercise and do not repeat an exercise on the same day.",
+      "chooseDay": "Choose at least one training day",
+      "primary": "Primary exercises",
+      "related": "Related exercises"
+    },
+    "wORKOUTBUILDER": "WORKOUT BUILDER",
+    "male": "Male",
+    "weekdays": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    }
+  },
+  "maleAnatomyMuscleMap": {
+    "expandMuscleMap": "Expand muscle map",
+    "low": "Low",
+    "highVolume": "High volume",
+    "maleMuscleMap": "Male muscle map",
+    "viewLabelFront": "Anterior anatomy muscle map",
+    "viewLabelBack": "Posterior anatomy muscle map",
+    "captionFront": "Front",
+    "captionBack": "Back"
+  },
+  "aria": {
+    "trainingStations": "Training stations",
+    "loadingPlans": "Loading workout plans"
   }
 }

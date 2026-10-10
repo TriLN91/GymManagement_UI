@@ -1,0 +1,46 @@
+{
+  "shell": {
+    "nav": {
+      "dashboard": "Tổng quan",
+      "dashboardOverview": "Bảng điều khiển",
+      "profile": "Hồ sơ phòng gym",
+      "profileOverview": "Tổng quan hồ sơ",
+      "profileBrand": "Thông tin thương hiệu",
+      "profileBranches": "Chi nhánh",
+      "trainers": "Đội ngũ Trainer",
+      "trainerList": "Danh sách Trainer",
+      "assignmentExceptions": "Ngoại lệ phân công",
+      "packages": "Gói PT",
+      "packageManagement": "Quản lý gói PT",
+      "customers": "Khách hàng / Người mua",
+      "customerList": "Danh sách vận hành",
+      "orders": "Đơn hàng & đối soát",
+      "orderList": "Đơn hàng",
+      "settlements": "Kỳ đối soát",
+      "analytics": "Phân tích",
+      "analyticsOps": "Hiệu quả vận hành",
+      "notifications": "Thông báo",
+      "notificationsSystem": "Thông báo trong hệ thống",
+      "security": "Tài khoản & bảo mật",
+      "securityVerification": "Xác minh & hoạt động",
+      "onboarding": "Thiết lập đối tác",
+      "onboardingOverview": "Tổng quan hồ sơ",
+      "onboardingBrand": "Thương hiệu & chi nhánh",
+      "onboardingLicense": "Giấy phép kinh doanh",
+      "onboardingReview": "Xem lại & gửi",
+      "onboardingStatus": "Trạng thái phê duyệt"
+    },
+    "defaultName": "Chủ phòng gym",
+    "role": "Chủ phòng gym",
+    "workspace": "Không gian đối tác",
+    "closeMenu": "Đóng menu",
+    "openMenu": "Mở menu",
+    "switchLanguage": "English"
+  },
+  "gymOwnerApprovalStatus": {
+    "theApplicationIsStill": "Hồ sơ vẫn đang ở dạng bản nháp. Hoàn thành ba bước để gửi xét duyệt."
+  },
+  "pTPackagePages": {
+    "features": "Quyền lợi"
+  }
+}

@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   ArrowDown,
   ArrowUp,
@@ -26,92 +27,51 @@ import {
 
 import { MaleAnatomyMuscleMap } from './MaleAnatomyMuscleMap';
 
+import { useLocale } from '@/shared/hooks/useLocale';
+
 import './member-workout-builder.css';
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        library: 'Thư viện bài tập',
-        search: 'Tìm bài tập',
-        category: 'Nhóm cơ mục tiêu',
-        all: 'Tất cả nhóm cơ',
-        builder: 'Tự tạo lịch tập',
-        name: 'Đặt tên lịch tập',
-        autosave: 'Bản nháp tự lưu trên thiết bị',
-        exercises: 'bài tập',
-        sets: 'tổng hiệp',
-        targetSets: 'Số hiệp',
-        reorder: 'Sắp xếp thứ tự',
-        empty: 'Thêm bài tập từ thư viện để bắt đầu.',
-        summary: 'Tổng quan lịch tập',
-        estimated: 'Phút dự kiến',
-        muscle: 'Khối lượng theo nhóm cơ',
-        save: 'Lưu lịch tập',
-        clear: 'Xóa bản nháp',
-        saved: 'Đã lưu lịch tập cá nhân.',
-        invalid: 'Hãy nhập tên và thêm ít nhất một bài tập.',
-        target: 'Mục tiêu',
-        reps: 'Số lần',
-        load: 'Mức tạ',
-        rest: 'Nghỉ',
-        duration: 'Thời lượng',
-        distance: 'Quãng đường',
-        rounds: 'Số vòng',
-        work: 'Thời gian tập',
-        remove: 'Xóa bài tập',
-        liveMuscleMap: 'Bản đồ nhóm cơ',
-        clearMuscle: 'Xem tất cả',
-        days: 'Ngày tập',
-        newPlan: 'Tạo plan mới',
-        optionalAddon: 'Thêm bài tập bổ sung',
-        savedAddon: 'Đã thêm vào lịch cá nhân và không ảnh hưởng tiến độ plan chính.',
-        scheduleMissing:
-          'Hãy chọn ít nhất một ngày cho mỗi bài và không lặp cùng bài trong một ngày.',
-        chooseDay: 'Chọn ít nhất một ngày tập',
-        primary: 'Bài tác động chính',
-        related: 'Bài tác động phụ',
-      }
-    : {
-        library: 'Exercise library',
-        search: 'Search exercises',
-        category: 'Target muscle',
-        all: 'All categories',
-        builder: 'Build your workout',
-        name: 'Name your workout',
-        autosave: 'Draft auto-saved on this device',
-        exercises: 'exercises',
-        sets: 'total sets',
-        targetSets: 'Sets',
-        reorder: 'Reorder exercises',
-        empty: 'Add exercises from the library to begin.',
-        summary: 'Workout summary',
-        estimated: 'Est. min',
-        muscle: 'Volume by muscle',
-        save: 'Save workout',
-        clear: 'Clear draft',
-        saved: 'Personal workout saved.',
-        invalid: 'Enter a workout name and add at least one exercise.',
-        target: 'Target',
-        reps: 'Reps',
-        load: 'Load',
-        rest: 'Rest',
-        duration: 'Duration',
-        distance: 'Distance',
-        rounds: 'Rounds',
-        work: 'Work',
-        remove: 'Remove exercise',
-        liveMuscleMap: 'Live muscle map',
-        clearMuscle: 'View all',
-        days: 'Training days',
-        newPlan: 'Create new plan',
-        optionalAddon: 'Add as optional exercises',
-        savedAddon: 'Added to your schedule without affecting main plan progress.',
-        scheduleMissing:
-          'Choose at least one day per exercise and do not repeat an exercise on the same day.',
-        chooseDay: 'Choose at least one training day',
-        primary: 'Primary exercises',
-        related: 'Related exercises',
-      };
+function getCopy(t: TFunction) {
+  return {
+    library: t('workout:memberWorkoutBuilder.copy.library'),
+    search: t('workout:memberWorkoutBuilder.copy.search'),
+    category: t('workout:memberWorkoutBuilder.copy.category'),
+    all: t('workout:memberWorkoutBuilder.copy.all'),
+    builder: t('workout:memberWorkoutBuilder.copy.builder'),
+    name: t('workout:memberWorkoutBuilder.copy.name'),
+    autosave: t('workout:memberWorkoutBuilder.copy.autosave'),
+    exercises: t('workout:memberWorkoutBuilder.copy.exercises'),
+    sets: t('workout:memberWorkoutBuilder.copy.sets'),
+    targetSets: t('workout:memberWorkoutBuilder.copy.targetSets'),
+    reorder: t('workout:memberWorkoutBuilder.copy.reorder'),
+    empty: t('workout:memberWorkoutBuilder.copy.empty'),
+    summary: t('workout:memberWorkoutBuilder.copy.summary'),
+    estimated: t('workout:memberWorkoutBuilder.copy.estimated'),
+    muscle: t('workout:memberWorkoutBuilder.copy.muscle'),
+    save: t('workout:memberWorkoutBuilder.copy.save'),
+    clear: t('workout:memberWorkoutBuilder.copy.clear'),
+    saved: t('workout:memberWorkoutBuilder.copy.saved'),
+    invalid: t('workout:memberWorkoutBuilder.copy.invalid'),
+    target: t('workout:memberWorkoutBuilder.copy.target'),
+    reps: t('workout:memberWorkoutBuilder.copy.reps'),
+    load: t('workout:memberWorkoutBuilder.copy.load'),
+    rest: t('workout:memberWorkoutBuilder.copy.rest'),
+    duration: t('workout:memberWorkoutBuilder.copy.duration'),
+    distance: t('workout:memberWorkoutBuilder.copy.distance'),
+    rounds: t('workout:memberWorkoutBuilder.copy.rounds'),
+    work: t('workout:memberWorkoutBuilder.copy.work'),
+    remove: t('workout:memberWorkoutBuilder.copy.remove'),
+    liveMuscleMap: t('workout:memberWorkoutBuilder.copy.liveMuscleMap'),
+    clearMuscle: t('workout:memberWorkoutBuilder.copy.clearMuscle'),
+    days: t('workout:memberWorkoutBuilder.copy.days'),
+    newPlan: t('workout:memberWorkoutBuilder.copy.newPlan'),
+    optionalAddon: t('workout:memberWorkoutBuilder.copy.optionalAddon'),
+    savedAddon: t('workout:memberWorkoutBuilder.copy.savedAddon'),
+    scheduleMissing: t('workout:memberWorkoutBuilder.copy.scheduleMissing'),
+    chooseDay: t('workout:memberWorkoutBuilder.copy.chooseDay'),
+    primary: t('workout:memberWorkoutBuilder.copy.primary'),
+    related: t('workout:memberWorkoutBuilder.copy.related'),
+  };
 }
 
 function targetFields(
@@ -176,17 +136,8 @@ function toggleDay(days: Weekday[], day: Weekday): Weekday[] {
   return days.includes(day) ? days.filter((item) => item !== day) : [...days, day];
 }
 
-function weekdayLabel(day: Weekday, isVi: boolean): string {
-  const labels: Record<Weekday, { en: string; vi: string }> = {
-    monday: { en: 'Mon', vi: 'T2' },
-    tuesday: { en: 'Tue', vi: 'T3' },
-    wednesday: { en: 'Wed', vi: 'T4' },
-    thursday: { en: 'Thu', vi: 'T5' },
-    friday: { en: 'Fri', vi: 'T6' },
-    saturday: { en: 'Sat', vi: 'T7' },
-    sunday: { en: 'Sun', vi: 'CN' },
-  };
-  return labels[day][isVi ? 'vi' : 'en'];
+function weekdayLabel(day: Weekday, t: TFunction): string {
+  return t(`workout:memberWorkoutBuilder.weekdays.${day}`);
 }
 
 function hasDuplicateExerciseDay(exercises: ReadonlyArray<BuilderExercise>): boolean {
@@ -197,9 +148,10 @@ function hasDuplicateExerciseDay(exercises: ReadonlyArray<BuilderExercise>): boo
 }
 
 export function MemberWorkoutBuilder() {
-  const { i18n } = useTranslation();
+  const { language } = useLocale();
+  const { t, i18n } = useTranslation();
   const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = getCopy(isVi);
+  const copy = getCopy(t);
   const [search, setSearch] = useState('');
   const [muscle, setMuscle] = useState<MuscleId | 'all'>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -224,7 +176,7 @@ export function MemberWorkoutBuilder() {
   const filtered = memberExerciseCatalog.filter(
     (item) =>
       (muscle === 'all' || item.muscles.some((target) => isMuscleRelated(muscle, target.id))) &&
-      item.name[isVi ? 'vi' : 'en'].toLowerCase().includes(search.toLowerCase()),
+      item.name[language].toLowerCase().includes(search.toLowerCase()),
   );
   const counts = exercises.reduce<Record<string, number>>((result, exercise) => {
     const item = memberExerciseCatalog.find((candidate) => candidate.id === exercise.exerciseId);
@@ -318,7 +270,7 @@ export function MemberWorkoutBuilder() {
             <option value="all">{copy.all}</option>
             {muscles.map((item) => (
               <option value={item} key={item}>
-                {MUSCLES[item].name[isVi ? 'vi' : 'en']}
+                {MUSCLES[item].name[language]}
               </option>
             ))}
           </select>
@@ -332,7 +284,7 @@ export function MemberWorkoutBuilder() {
                   <Dumbbell size={20} />
                 </div>
                 <div>
-                  <strong>{item.name[isVi ? 'vi' : 'en']}</strong>
+                  <strong>{item.name[language]}</strong>
                 </div>
                 {count > 0 && <small>×{count}</small>}
                 <button
@@ -350,7 +302,7 @@ export function MemberWorkoutBuilder() {
 
       <main className="member-builder__canvas">
         <header>
-          <span>WORKOUT BUILDER</span>
+          <span>{t('workout:memberWorkoutBuilder.wORKOUTBUILDER')}</span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
@@ -394,7 +346,7 @@ export function MemberWorkoutBuilder() {
                     onClick={() => setExpanded(isOpen ? null : exercise.uid)}
                     aria-expanded={isOpen}
                   >
-                    <strong>{item.name[isVi ? 'vi' : 'en']}</strong>
+                    <strong>{item.name[language]}</strong>
                   </button>
                   <div className="member-builder__reorder">
                     <button
@@ -459,7 +411,7 @@ export function MemberWorkoutBuilder() {
                               updateExercise(exercise.uid, { days: toggleDay(exercise.days, day) })
                             }
                           >
-                            {weekdayLabel(day, isVi)}
+                            {weekdayLabel(day, t)}
                           </button>
                         ))}
                       </div>
@@ -504,14 +456,14 @@ export function MemberWorkoutBuilder() {
         <section>
           <header>
             <h2>{copy.liveMuscleMap}</h2>
-            <span className="muscle-map__gender">{isVi ? 'Nam' : 'Male'}</span>
+            <span className="muscle-map__gender">{t('workout:memberWorkoutBuilder.male')}</span>
           </header>
           <MaleAnatomyMuscleMap
             selected={muscle === 'all' ? null : muscle}
             activeMuscles={activeMuscles}
             volumeByMuscle={counts}
-            locale={isVi ? 'vi' : 'en'}
-            label={(id) => MUSCLES[id].name[isVi ? 'vi' : 'en']}
+            locale={language}
+            label={(id) => MUSCLES[id].name[language]}
             onSelect={(selectedMuscle) => {
               setMuscle((current) => (current === selectedMuscle ? 'all' : selectedMuscle));
             }}
@@ -533,7 +485,7 @@ export function MemberWorkoutBuilder() {
                 onClick={() => setMuscle(item)}
                 key={item}
               >
-                {MUSCLES[item].name[isVi ? 'vi' : 'en']}
+                {MUSCLES[item].name[language]}
                 <span>
                   {
                     memberExerciseCatalog.filter((exercise) =>
@@ -546,8 +498,8 @@ export function MemberWorkoutBuilder() {
           </div>
           {selectedMuscle && (
             <div className="muscle-map__selection" role="status">
-              <strong>{selectedMuscle.name[isVi ? 'vi' : 'en']}</strong>
-              <span>{selectedMuscle.description[isVi ? 'vi' : 'en']}</span>
+              <strong>{selectedMuscle.name[language]}</strong>
+              <span>{selectedMuscle.description[language]}</span>
               <small>
                 {
                   memberExerciseCatalog.filter((exercise) =>

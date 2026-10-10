@@ -12,13 +12,62 @@ function generateUuid(): string {
 
 const MUTATING_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 type UnwrapEnvelope<T> = T extends { data: infer D } ? D : T;
-type ApiEnvelope<T> = { data: T; meta?: Record<string, unknown> };
+// Backend envelope: { isSuccess, message, data, errorCode } (ResponseDto<T>).
+type ApiEnvelope<T> = {
+  data: T;
+  isSuccess?: boolean;
+  message?: string;
+  errorCode?: string;
+  meta?: Record<string, unknown>;
+};
+
+const AUTH_PATHS: ReadonlyArray<string> = [
+  ENDPOINTS.auth.login,
+  ENDPOINTS.auth.register,
+  ENDPOINTS.auth.refresh,
+];
+
+// Backend validation message: "400: ... thất bại - Email: msg | Password: msg".
+export function extractFieldErrors(
+  data: unknown,
+  code: string | undefined,
+  message: string,
+): Record<string, string[]> {
+  const explicit = (data as { fieldErrors?: Record<string, string[]> } | undefined)?.fieldErrors;
+  if (explicit) return explicit;
+  if (code !== 'Validation') return {};
+
+  const detail = message.split(' - ').slice(1).join(' - ');
+  const result: Record<string, string[]> = {};
+  for (const part of detail.split(' | ')) {
+    const separator = part.indexOf(': ');
+    if (separator <= 0) continue;
+    const field = part.slice(0, separator).trim();
+    const key = field.charAt(0).toLowerCase() + field.slice(1);
+    (result[key] ??= []).push(part.slice(separator + 2).trim());
+  }
+  return result;
+}
+
+function isAuthRequest(url: string | undefined): boolean {
+  return url !== undefined && AUTH_PATHS.some((path) => url.endsWith(path));
+}
 
 class TokenManager {
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
   private refreshQueue: Array<(token: string | null) => void> = [];
   private isRefreshing = false;
+  private sessionExpiredHandler: (() => void) | null = null;
+
+  // Registered by the app shell so this module does not import the auth store (no cycle).
+  onSessionExpired(handler: () => void): void {
+    this.sessionExpiredHandler = handler;
+  }
+
+  notifySessionExpired(): void {
+    this.sessionExpiredHandler?.();
+  }
 
   hydrate(): void {
     this.accessToken = sessionStorage.getItem(STORAGE_KEYS.accessToken);
@@ -61,7 +110,7 @@ class TokenManager {
     try {
       const response = await axios.post<ApiEnvelope<{ accessToken: string; refreshToken: string }>>(
         `${env.VITE_API_BASE_URL}${ENDPOINTS.auth.refresh}`,
-        { refreshToken: this.refreshToken },
+        { accessToken: this.accessToken ?? '', refreshToken: this.refreshToken },
       );
       const { accessToken, refreshToken } = response.data.data;
       this.setTokens(accessToken, refreshToken);
@@ -89,7 +138,6 @@ export const tokenManager = new TokenManager();
 const instance: AxiosInstance = axios.create({
   baseURL: env.VITE_API_BASE_URL,
   timeout: env.VITE_API_TIMEOUT_MS,
-  headers: { 'Content-Type': 'application/json' },
 });
 
 instance.interceptors.request.use((config) => {
@@ -114,8 +162,14 @@ instance.interceptors.response.use(
     if (!error.response) throw new NetworkError(error.message);
 
     const { status, data } = error.response;
-    const message = (data as { message?: string } | undefined)?.message ?? error.message;
-    const code = (data as { code?: string } | undefined)?.code;
+    const body = data as { message?: string; errorCode?: string; code?: string } | undefined;
+    const message = body?.message ?? error.message;
+    const code = body?.errorCode ?? body?.code;
+
+    // Credential errors on login/register/refresh must not trigger a refresh or a sign-out.
+    if (status === 401 && isAuthRequest(error.config?.url)) {
+      throw new AuthError(status, message, code);
+    }
 
     if (status === 401 && error.config && !(error.config as { _retried?: boolean })._retried) {
       const newToken = await tokenManager.refresh();
@@ -124,28 +178,43 @@ instance.interceptors.response.use(
         error.config.headers.set('Authorization', `Bearer ${newToken}`);
         return instance.request(error.config);
       }
+      tokenManager.notifySessionExpired();
       throw new AuthError(status, message, code);
     }
 
+    if (status === 401) throw new AuthError(status, message, code);
+
     if (status === 422 || status === 400) {
-      const fieldErrors =
-        (data as { fieldErrors?: Record<string, string[]> } | undefined)?.fieldErrors ?? {};
-      throw new ValidationError(status, message, fieldErrors, code);
+      const fieldErrors = extractFieldErrors(data, code, message);
+      // A plain 400 without field details (e.g. a domain rule) is a regular API error.
+      if (code === 'Validation' || Object.keys(fieldErrors).length > 0) {
+        throw new ValidationError(status, message, fieldErrors, code);
+      }
     }
 
     throw new ApiError(status, message, code, data);
   },
 );
 
-function unwrap<T>(response: AxiosResponse<ApiEnvelope<T>>): T {
-  return response.data.data;
+export function unwrapApiResponse<T>(body: ApiEnvelope<T> | T): T {
+  if (body && typeof body === 'object' && 'data' in body) {
+    const keys = Object.keys(body);
+    if ('isSuccess' in body || 'message' in body || 'errorCode' in body || keys.length === 1) {
+      return body.data;
+    }
+  }
+  return body as T;
+}
+
+function unwrap<T>(response: AxiosResponse<ApiEnvelope<T> | T>): T {
+  return unwrapApiResponse(response.data);
 }
 
 export async function apiGet<T>(
   url: string,
   config?: Parameters<AxiosInstance['get']>[1],
 ): Promise<T> {
-  const res = await instance.get<ApiEnvelope<T>>(url, config);
+  const res = await instance.get<ApiEnvelope<T> | T>(url, config);
   return unwrap(res);
 }
 
@@ -154,7 +223,7 @@ export async function apiPost<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['post']>[2],
 ): Promise<T> {
-  const res = await instance.post<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -163,7 +232,7 @@ export async function apiPut<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['put']>[2],
 ): Promise<T> {
-  const res = await instance.put<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -172,7 +241,7 @@ export async function apiPatch<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['patch']>[2],
 ): Promise<T> {
-  const res = await instance.patch<ApiEnvelope<T>>(url, body, config);
+  const res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -180,7 +249,13 @@ export async function apiDelete<T>(
   url: string,
   config?: Parameters<AxiosInstance['delete']>[1],
 ): Promise<T> {
-  const res = await instance.delete<ApiEnvelope<T>>(url, config);
+  const res = await instance.delete<ApiEnvelope<T> | T>(url, config);
+  return unwrap(res);
+}
+
+export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+  // Do not set Content-Type: the browser must add the multipart boundary.
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
   return unwrap(res);
 }
 

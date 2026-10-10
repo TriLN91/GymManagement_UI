@@ -1,5 +1,4 @@
 import { ArrowRight, Building2, FileCheck2, ShieldCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { gymOwnerCopy } from './copy';
@@ -10,13 +9,14 @@ import {
   useGymOwnerOnboardingStore,
 } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/ui/workspace';
 
 export function GymOwnerOnboardingEntryPage() {
-  const { i18n } = useTranslation();
-  const copy = gymOwnerCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const { language } = useLocale();
+  const copy = gymOwnerCopy[language];
   const navigate = useNavigate();
   const data = useGymOwnerOnboardingStore();
   const profileComplete = isBrandAndBranchesComplete(data);

@@ -28,7 +28,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding';
-import { ROUTES } from '@/shared/config/constants';
+import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 
 import '@/pages/member/components/member-layout.css';
@@ -56,13 +56,26 @@ interface OwnerNavGroup {
   items: ReadonlyArray<OwnerNavItem>;
 }
 
+const END_ROUTES: ReadonlySet<string> = new Set([
+  ROUTES.admin.root,
+  ROUTES.admin.onboarding,
+  ROUTES.admin.pts,
+  ROUTES.admin.packages,
+  ROUTES.admin.customers,
+  ROUTES.admin.orders,
+  ROUTES.admin.settlements,
+  ROUTES.admin.analytics,
+  ROUTES.admin.notifications,
+  ROUTES.admin.accountSecurity,
+]);
+
 function matchesRoute(to: string, pathname: string) {
   if (to === ROUTES.admin.root || to === ROUTES.admin.onboarding) return pathname === to;
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
 export function GymOwnerLayout() {
-  const { i18n, t } = useTranslation('common');
+  const { i18n, t } = useTranslation(['owner', 'common']);
   const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
   const status = useGymOwnerOnboardingStore((state) => state.status);
@@ -76,27 +89,27 @@ export function GymOwnerLayout() {
     if (status === 'approved') {
       groups.push({
         id: 'dashboard',
-        label: isVi ? 'Tổng quan' : 'Dashboard',
+        label: t('shell.nav.dashboard'),
         icon: LayoutDashboard,
-        items: [{ label: isVi ? 'Bảng điều khiển' : 'Overview', to: ROUTES.admin.root }],
+        items: [{ label: t('shell.nav.dashboardOverview'), to: ROUTES.admin.root }],
       });
       groups.push({
         id: 'profile',
-        label: isVi ? 'Hồ sơ phòng gym' : 'Gym profile',
+        label: t('shell.nav.profile'),
         icon: Building2,
         items: [
           {
-            label: isVi ? 'Tổng quan hồ sơ' : 'Profile overview',
+            label: t('shell.nav.profileOverview'),
             to: ROUTES.admin.profile,
             icon: Building2,
           },
           {
-            label: isVi ? 'Thông tin thương hiệu' : 'Brand information',
+            label: t('shell.nav.profileBrand'),
             to: ROUTES.admin.profileBrand,
             icon: ClipboardCheck,
           },
           {
-            label: isVi ? 'Chi nhánh' : 'Branches',
+            label: t('shell.nav.profileBranches'),
             to: ROUTES.admin.profileBranches,
             icon: Circle,
           },
@@ -104,16 +117,16 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'trainers',
-        label: isVi ? 'Đội ngũ Trainer' : 'Trainers',
+        label: t('shell.nav.trainers'),
         icon: UsersRound,
         items: [
           {
-            label: isVi ? 'Danh sách Trainer' : 'Trainer list',
+            label: t('shell.nav.trainerList'),
             to: ROUTES.admin.pts,
             icon: UsersRound,
           },
           {
-            label: isVi ? 'Ngoại lệ phân công' : 'Assignment exceptions',
+            label: t('shell.nav.assignmentExceptions'),
             to: ROUTES.admin.trainerAssignments,
             icon: ClipboardCheck,
           },
@@ -121,11 +134,11 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'packages',
-        label: isVi ? 'Gói PT' : 'PT packages',
+        label: t('shell.nav.packages'),
         icon: PackageCheck,
         items: [
           {
-            label: isVi ? 'Quản lý gói PT' : 'Package management',
+            label: t('shell.nav.packageManagement'),
             to: ROUTES.admin.packages,
             icon: PackageCheck,
           },
@@ -133,11 +146,11 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'customers',
-        label: isVi ? 'Khách hàng / Người mua' : 'Customers / Purchasers',
+        label: t('shell.nav.customers'),
         icon: ReceiptText,
         items: [
           {
-            label: isVi ? 'Danh sách vận hành' : 'Operational list',
+            label: t('shell.nav.customerList'),
             to: ROUTES.admin.customers,
             icon: ReceiptText,
           },
@@ -145,16 +158,16 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'orders',
-        label: isVi ? 'Đơn hàng & đối soát' : 'Orders & Settlement',
+        label: t('shell.nav.orders'),
         icon: Landmark,
         items: [
           {
-            label: isVi ? 'Đơn hàng' : 'Orders',
+            label: t('shell.nav.orderList'),
             to: ROUTES.admin.orders,
             icon: ReceiptText,
           },
           {
-            label: isVi ? 'Kỳ đối soát' : 'Settlement periods',
+            label: t('shell.nav.settlements'),
             to: ROUTES.admin.settlements,
             icon: Landmark,
           },
@@ -162,11 +175,11 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'analytics',
-        label: isVi ? 'Phân tích' : 'Analytics',
+        label: t('shell.nav.analytics'),
         icon: LineChart,
         items: [
           {
-            label: isVi ? 'Hiệu quả vận hành' : 'Operational analytics',
+            label: t('shell.nav.analyticsOps'),
             to: ROUTES.admin.analytics,
             icon: LineChart,
           },
@@ -174,11 +187,11 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'notifications',
-        label: isVi ? 'Thông báo' : 'Notifications',
+        label: t('shell.nav.notifications'),
         icon: Bell,
         items: [
           {
-            label: isVi ? 'Thông báo trong hệ thống' : 'In-system notifications',
+            label: t('shell.nav.notificationsSystem'),
             to: ROUTES.admin.notifications,
             icon: Bell,
           },
@@ -186,11 +199,11 @@ export function GymOwnerLayout() {
       });
       groups.push({
         id: 'security',
-        label: isVi ? 'Tài khoản & bảo mật' : 'Account & security',
+        label: t('shell.nav.security'),
         icon: KeyRound,
         items: [
           {
-            label: isVi ? 'Xác minh & hoạt động' : 'Verification & activity',
+            label: t('shell.nav.securityVerification'),
             to: ROUTES.admin.accountSecurity,
             icon: ShieldCheck,
           },
@@ -199,38 +212,38 @@ export function GymOwnerLayout() {
     }
     groups.push({
       id: 'onboarding',
-      label: isVi ? 'Thiết lập đối tác' : 'Partner setup',
+      label: t('shell.nav.onboarding'),
       icon: ClipboardCheck,
       items: [
         {
-          label: isVi ? 'Tổng quan hồ sơ' : 'Setup overview',
+          label: t('shell.nav.onboardingOverview'),
           to: ROUTES.admin.onboarding,
           icon: ClipboardCheck,
         },
         {
-          label: isVi ? 'Thương hiệu & chi nhánh' : 'Brand & branches',
+          label: t('shell.nav.onboardingBrand'),
           to: ROUTES.admin.onboardingProfile,
           icon: Building2,
         },
         {
-          label: isVi ? 'Giấy phép kinh doanh' : 'Business license',
+          label: t('shell.nav.onboardingLicense'),
           to: ROUTES.admin.onboardingLicense,
           icon: FileCheck2,
         },
         {
-          label: isVi ? 'Xem lại & gửi' : 'Review & submit',
+          label: t('shell.nav.onboardingReview'),
           to: ROUTES.admin.onboardingReview,
           icon: ShieldCheck,
         },
         {
-          label: isVi ? 'Trạng thái phê duyệt' : 'Approval status',
+          label: t('shell.nav.onboardingStatus'),
           to: ROUTES.admin.onboardingStatus,
           icon: Circle,
         },
       ],
     });
     return groups;
-  }, [isVi, status]);
+  }, [t, status]);
 
   const initialGroup =
     navGroups.find((group) => group.items.some((item) => matchesRoute(item.to, location.pathname)))
@@ -251,10 +264,10 @@ export function GymOwnerLayout() {
     });
   }, [location.pathname, navGroups]);
 
-  const userName = user?.fullName || (isVi ? 'Chủ phòng gym' : 'Gym Owner');
+  const userName = user?.fullName || t('shell.role');
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'G';
-  const ownerLabel = isVi ? 'Chủ phòng gym' : 'Gym Owner';
-  const workspaceLabel = isVi ? 'Không gian đối tác' : 'Partner workspace';
+  const ownerLabel = t('shell.role');
+  const workspaceLabel = t('shell.workspace');
 
   const toggleGroup = (groupId: OwnerNavGroup['id']) => {
     setExpandedGroups((current) => {
@@ -287,16 +300,14 @@ export function GymOwnerLayout() {
         <button
           type="button"
           className="member-icon-button"
-          aria-label={
-            isMenuOpen ? (isVi ? 'Đóng menu' : 'Close menu') : isVi ? 'Mở menu' : 'Open menu'
-          }
+          aria-label={isMenuOpen ? t('shell.closeMenu') : t('shell.openMenu')}
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((open) => !open)}
         >
           {isMenuOpen ? <X aria-hidden="true" size={20} /> : <Menu aria-hidden="true" size={20} />}
         </button>
         <div className="member-brand">
-          <span>Fit®</span>
+          <span>{BRAND_MARK}</span>
           <small>{ownerLabel}</small>
         </div>
         <div className="member-avatar" aria-hidden="true">
@@ -308,7 +319,7 @@ export function GymOwnerLayout() {
         <button
           type="button"
           className="member-sidebar-overlay"
-          aria-label={isVi ? 'Đóng menu' : 'Close menu'}
+          aria-label={t('shell.closeMenu')}
           onClick={() => setIsMenuOpen(false)}
         />
       ) : null}
@@ -316,7 +327,7 @@ export function GymOwnerLayout() {
       <aside className={cn('member-sidebar', isMenuOpen && 'is-open')}>
         <div className="member-sidebar__brand">
           <div className="member-brand">
-            <span>Fit®</span>
+            <span>{BRAND_MARK}</span>
             <small>{ownerLabel}</small>
           </div>
           <span>{workspaceLabel}</span>
@@ -358,18 +369,7 @@ export function GymOwnerLayout() {
                       <NavLink
                         key={item.to}
                         to={item.to}
-                        end={
-                          item.to === ROUTES.admin.root ||
-                          item.to === ROUTES.admin.onboarding ||
-                          item.to === ROUTES.admin.pts ||
-                          item.to === ROUTES.admin.packages ||
-                          item.to === ROUTES.admin.customers ||
-                          item.to === ROUTES.admin.orders ||
-                          item.to === ROUTES.admin.settlements ||
-                          item.to === ROUTES.admin.analytics ||
-                          item.to === ROUTES.admin.notifications ||
-                          item.to === ROUTES.admin.accountSecurity
-                        }
+                        end={END_ROUTES.has(item.to)}
                         onClick={() => setIsMenuOpen(false)}
                         className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
                       >
@@ -392,7 +392,7 @@ export function GymOwnerLayout() {
               <span>{ownerLabel}</span>
             </div>
           </div>
-          <button type="button" onClick={handleLogout} aria-label={t('signOut')}>
+          <button type="button" onClick={handleLogout} aria-label={t('common:signOut')}>
             <LogOut aria-hidden="true" size={16} />
           </button>
         </div>
@@ -401,14 +401,14 @@ export function GymOwnerLayout() {
       <div className="member-main">
         <header className="member-topbar">
           <div className="member-topbar__context">
-            <span>Fit®</span>
+            <span>{BRAND_MARK}</span>
             <span>/</span>
             <strong>{workspaceLabel}</strong>
           </div>
           <div className="member-topbar__actions">
             <button type="button" onClick={toggleLanguage} className="member-language-button">
               <Languages aria-hidden="true" size={16} />
-              <span>{isVi ? 'English' : 'Tiếng Việt'}</span>
+              <span>{t('shell.switchLanguage')}</span>
             </button>
             <div className="member-topbar__profile">
               <div>
@@ -427,7 +427,7 @@ export function GymOwnerLayout() {
             fallback={
               <div className="member-route-loading">
                 <Loader2 aria-hidden="true" size={28} />
-                <span>{t('loading')}</span>
+                <span>{t('common:loading')}</span>
               </div>
             }
           >
@@ -443,18 +443,7 @@ export function GymOwnerLayout() {
             <NavLink
               key={item.to}
               to={item.to}
-              end={
-                item.to === ROUTES.admin.root ||
-                item.to === ROUTES.admin.onboarding ||
-                item.to === ROUTES.admin.pts ||
-                item.to === ROUTES.admin.packages ||
-                item.to === ROUTES.admin.customers ||
-                item.to === ROUTES.admin.orders ||
-                item.to === ROUTES.admin.settlements ||
-                item.to === ROUTES.admin.analytics ||
-                item.to === ROUTES.admin.notifications ||
-                item.to === ROUTES.admin.accountSecurity
-              }
+              end={END_ROUTES.has(item.to)}
               className={({ isActive }) => cn(isActive && 'is-active')}
             >
               <Icon aria-hidden="true" size={19} strokeWidth={1.8} />

@@ -1,6 +1,5 @@
 import { ArrowLeft, Send, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -13,6 +12,7 @@ import { formatDateTime } from './formatters';
 import { RefundDisputeDialog } from './RefundDisputeDialog';
 
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { EmptyState } from '@/shared/ui/empty';
@@ -21,11 +21,9 @@ import { WorkspacePage } from '@/shared/ui/workspace';
 import './gym-owner-orders.css';
 
 export function GymOwnerOrderDetailPage() {
+  const { language, locale } = useLocale();
   const { orderId } = useParams();
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerOrdersCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const copy = gymOwnerOrdersCopy[language];
   const [requestOpen, setRequestOpen] = useState(false);
   const [submittedRequest, setSubmittedRequest] = useState<SubmittedRefundDisputeRequest | null>(
     null,

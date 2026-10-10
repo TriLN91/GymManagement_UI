@@ -62,6 +62,26 @@ export default tseslint.config(
       ],
     },
   },
+  // One-way layer dependencies: app -> pages -> features -> entities -> shared.
+  ...[
+    { layer: 'shared', forbidden: ['entities', 'features', 'pages', 'app'] },
+    { layer: 'entities', forbidden: ['features', 'pages', 'app'] },
+    { layer: 'features', forbidden: ['pages', 'app'] },
+    { layer: 'pages', forbidden: ['app'] },
+  ].map(({ layer, forbidden }) => ({
+    files: [`src/${layer}/**/*.{ts,tsx}`],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: forbidden.map((target) => ({
+            group: [`@/${target}`, `@/${target}/*`],
+            message: `${layer}/ must not import from ${target}/ (dependencies go app -> pages -> features -> entities -> shared).`,
+          })),
+        },
+      ],
+    },
+  })),
   {
     files: ['**/*.test.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
     rules: {

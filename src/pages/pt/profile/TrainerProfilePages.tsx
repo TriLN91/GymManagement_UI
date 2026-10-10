@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,125 +20,81 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { useTrainerProfileStore } from './useTrainerProfileStore';
-
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { getGym } from '@/features/marketplace/model/marketplaceData';
+import { useTrainerProfileStore } from '@/features/trainer-profile';
+import { translateTrainerText } from '@/features/trainer-workspace';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 
 import './trainer-profile.css';
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        eyebrow: 'FIT® / TRAINER PROFILE',
-        title: 'Hồ sơ huấn luyện viên',
-        body: 'Thông tin chuyên môn mà Member và Gym sử dụng để hiểu phong cách coaching của bạn.',
-        edit: 'Chỉnh sửa hồ sơ',
-        complete: 'Hồ sơ hoàn thiện',
-        experience: 'Kinh nghiệm',
-        years: 'năm',
-        specializations: 'Chuyên môn',
-        about: 'Bio chuyên môn',
-        introduction: 'Lời giới thiệu',
-        contact: 'Thông tin liên hệ',
-        email: 'Email',
-        phone: 'Số điện thoại',
-        gym: 'Gym đang công tác',
-        assigned: 'Đã được phân công',
-        viewGym: 'Xem thông tin Gym',
-        editTitle: 'Chỉnh sửa hồ sơ Trainer',
-        editBody: 'Cập nhật thông tin cá nhân và chuyên môn. Gym được hệ thống phân công riêng.',
-        avatar: 'Ảnh đại diện',
-        upload: 'Tải ảnh mới',
-        imageRule: 'JPG, PNG hoặc WebP, tối đa 2 MB.',
-        invalidImage: 'Vui lòng chọn ảnh JPG, PNG hoặc WebP dưới 2 MB.',
-        fullName: 'Họ và tên',
-        bio: 'Bio ngắn',
-        selfIntroduction: 'Tự giới thiệu',
-        selectMultiple: 'Có thể chọn nhiều',
-        cancel: 'Hủy bỏ',
-        save: 'Lưu thay đổi',
-        required: 'Hãy hoàn thành tên, email, bio, kinh nghiệm và ít nhất một chuyên môn.',
-        saved: 'Đã cập nhật hồ sơ Trainer.',
-        gymLocked: 'Gym được phân công và không thể thay đổi tại đây.',
-        gymTitle: 'Thông tin Gym',
-        gymBody: 'Thông tin nơi công tác được quản lý bởi Gym Owner và chỉ đọc đối với Trainer.',
-        readOnly: 'Chỉ đọc',
-        verified: 'Gym đã xác minh',
-        location: 'Địa điểm',
-        type: 'Loại hình',
-        rating: 'Đánh giá',
-        facilities: 'Tiện ích',
-        description: 'Giới thiệu Gym',
-        assignment: 'Quan hệ công tác',
-        active: 'Đang hoạt động',
-        backProfile: 'Về hồ sơ Trainer',
-      }
-    : {
-        eyebrow: 'FIT® / TRAINER PROFILE',
-        title: 'Trainer profile',
-        body: 'Professional information Members and your Gym use to understand your coaching approach.',
-        edit: 'Edit profile',
-        complete: 'Profile complete',
-        experience: 'Experience',
-        years: 'years',
-        specializations: 'Specializations',
-        about: 'Professional bio',
-        introduction: 'Self-introduction',
-        contact: 'Contact information',
-        email: 'Email',
-        phone: 'Phone',
-        gym: 'Assigned Gym',
-        assigned: 'Assigned',
-        viewGym: 'View Gym information',
-        editTitle: 'Edit Trainer profile',
-        editBody:
-          'Update personal and professional information. Gym assignment is managed separately.',
-        avatar: 'Profile photo',
-        upload: 'Upload new photo',
-        imageRule: 'JPG, PNG or WebP, up to 2 MB.',
-        invalidImage: 'Choose a JPG, PNG or WebP image under 2 MB.',
-        fullName: 'Full name',
-        bio: 'Short bio',
-        selfIntroduction: 'Self-introduction',
-        selectMultiple: 'Select multiple',
-        cancel: 'Cancel',
-        save: 'Save changes',
-        required: 'Complete name, email, bio, experience and at least one specialization.',
-        saved: 'Trainer profile updated.',
-        gymLocked: 'Gym assignment cannot be changed here.',
-        gymTitle: 'Gym information',
-        gymBody:
-          'Your workplace information is managed by the Gym Owner and is read-only for Trainers.',
-        readOnly: 'Read only',
-        verified: 'Verified Gym',
-        location: 'Location',
-        type: 'Gym type',
-        rating: 'Rating',
-        facilities: 'Facilities',
-        description: 'About the Gym',
-        assignment: 'Work assignment',
-        active: 'Active',
-        backProfile: 'Back to Trainer profile',
-      };
+function getCopy(t: TFunction) {
+  return {
+    eyebrow: t('trainerProfile:trainerProfilePages.copy.eyebrow'),
+    title: t('trainerProfile:trainerProfilePages.copy.title'),
+    body: t('trainerProfile:trainerProfilePages.copy.body'),
+    edit: t('trainerProfile:trainerProfilePages.copy.edit'),
+    complete: t('trainerProfile:trainerProfilePages.copy.complete'),
+    experience: t('trainerProfile:trainerProfilePages.copy.experience'),
+    years: t('trainerProfile:trainerProfilePages.copy.years'),
+    specializations: t('trainerProfile:trainerProfilePages.copy.specializations'),
+    about: t('trainerProfile:trainerProfilePages.copy.about'),
+    introduction: t('trainerProfile:trainerProfilePages.copy.introduction'),
+    contact: t('trainerProfile:trainerProfilePages.copy.contact'),
+    email: t('trainerProfile:trainerProfilePages.copy.email'),
+    phone: t('trainerProfile:trainerProfilePages.copy.phone'),
+    gym: t('trainerProfile:trainerProfilePages.copy.gym'),
+    assigned: t('trainerProfile:trainerProfilePages.copy.assigned'),
+    viewGym: t('trainerProfile:trainerProfilePages.copy.viewGym'),
+    editTitle: t('trainerProfile:trainerProfilePages.copy.editTitle'),
+    editBody: t('trainerProfile:trainerProfilePages.copy.editBody'),
+    avatar: t('trainerProfile:trainerProfilePages.copy.avatar'),
+    upload: t('trainerProfile:trainerProfilePages.copy.upload'),
+    imageRule: t('trainerProfile:trainerProfilePages.copy.imageRule'),
+    invalidImage: t('trainerProfile:trainerProfilePages.copy.invalidImage'),
+    fullName: t('trainerProfile:trainerProfilePages.copy.fullName'),
+    bio: t('trainerProfile:trainerProfilePages.copy.bio'),
+    selfIntroduction: t('trainerProfile:trainerProfilePages.copy.selfIntroduction'),
+    selectMultiple: t('trainerProfile:trainerProfilePages.copy.selectMultiple'),
+    cancel: t('trainerProfile:trainerProfilePages.copy.cancel'),
+    save: t('trainerProfile:trainerProfilePages.copy.save'),
+    required: t('trainerProfile:trainerProfilePages.copy.required'),
+    saved: t('trainerProfile:trainerProfilePages.copy.saved'),
+    gymLocked: t('trainerProfile:trainerProfilePages.copy.gymLocked'),
+    gymTitle: t('trainerProfile:trainerProfilePages.copy.gymTitle'),
+    gymBody: t('trainerProfile:trainerProfilePages.copy.gymBody'),
+    readOnly: t('trainerProfile:trainerProfilePages.copy.readOnly'),
+    verified: t('trainerProfile:trainerProfilePages.copy.verified'),
+    location: t('trainerProfile:trainerProfilePages.copy.location'),
+    type: t('trainerProfile:trainerProfilePages.copy.type'),
+    rating: t('trainerProfile:trainerProfilePages.copy.rating'),
+    facilities: t('trainerProfile:trainerProfilePages.copy.facilities'),
+    description: t('trainerProfile:trainerProfilePages.copy.description'),
+    assignment: t('trainerProfile:trainerProfilePages.copy.assignment'),
+    active: t('trainerProfile:trainerProfilePages.copy.active'),
+    backProfile: t('trainerProfile:trainerProfilePages.copy.backProfile'),
+  };
 }
 
 function useTrainerCopy() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  return { copy: getCopy(isVi), isVi };
+  const { t } = useTranslation();
+  const { language } = useLocale();
+  return { copy: getCopy(t), language };
 }
 
-const specializationOptions = (isVi: boolean) => [
-  { value: 'strength', label: isVi ? 'Sức mạnh' : 'Strength' },
-  { value: 'hypertrophy', label: isVi ? 'Tăng cơ' : 'Hypertrophy' },
-  { value: 'fat_loss', label: isVi ? 'Giảm mỡ' : 'Fat loss' },
-  { value: 'movement', label: isVi ? 'Chất lượng vận động' : 'Movement quality' },
-  { value: 'mobility', label: isVi ? 'Linh hoạt' : 'Mobility' },
-  { value: 'endurance', label: isVi ? 'Sức bền' : 'Endurance' },
-  { value: 'rehabilitation', label: isVi ? 'Phục hồi vận động' : 'Exercise rehabilitation' },
+const specializationOptions = (t: TFunction) => [
+  { value: 'strength', label: t('trainerProfile:trainerProfilePages.strength') },
+  { value: 'hypertrophy', label: t('trainerProfile:trainerProfilePages.hypertrophy') },
+  { value: 'fat_loss', label: t('trainerProfile:trainerProfilePages.fatLoss') },
+  { value: 'movement', label: t('trainerProfile:trainerProfilePages.movementQuality') },
+  { value: 'mobility', label: t('trainerProfile:trainerProfilePages.mobility') },
+  { value: 'endurance', label: t('trainerProfile:trainerProfilePages.endurance') },
+  {
+    value: 'rehabilitation',
+    label: t('trainerProfile:trainerProfilePages.exerciseRehabilitation'),
+  },
 ];
 
 function TrainerAvatar({
@@ -164,7 +121,8 @@ function TrainerAvatar({
 }
 
 export function TrainerProfilePage() {
-  const { copy, isVi } = useTrainerCopy();
+  const { t } = useTranslation();
+  const { copy, language } = useTrainerCopy();
   const user = useAuthStore((state) => state.user);
   const profile = useTrainerProfileStore((state) => state.profile);
   const gym = getGym('fit-district-thao-dien');
@@ -192,11 +150,11 @@ export function TrainerProfilePage() {
       <section className="trainer-profile-hero">
         <TrainerAvatar name={name} source={profile.avatarDataUrl ?? user?.avatarUrl} large />
         <div>
-          <span>FIT® TRAINER</span>
+          <span>{translateTrainerText(language, 'FIT® TRAINER')}</span>
           <h2>{name}</h2>
           <p>
             {profile.specializations
-              .map((id) => specializationOptions(isVi).find((item) => item.value === id)?.label)
+              .map((id) => specializationOptions(t).find((item) => item.value === id)?.label)
               .filter(Boolean)
               .join(' · ')}
           </p>
@@ -225,15 +183,15 @@ export function TrainerProfilePage() {
       <div className="trainer-profile-grid">
         <section className="trainer-profile-panel is-about">
           <h2>{copy.about}</h2>
-          <p>{profile.bio}</p>
+          <p>{translateTrainerText(language, profile.bio)}</p>
           <h2>{copy.introduction}</h2>
-          <blockquote>{profile.selfIntroduction}</blockquote>
+          <blockquote>{translateTrainerText(language, profile.selfIntroduction)}</blockquote>
           <h2>{copy.specializations}</h2>
           <div className="trainer-specialty-list">
             {profile.specializations.map((id) => (
               <span key={id}>
                 <Sparkles size={13} />
-                {specializationOptions(isVi).find((item) => item.value === id)?.label}
+                {specializationOptions(t).find((item) => item.value === id)?.label}
               </span>
             ))}
           </div>
@@ -272,7 +230,7 @@ export function TrainerProfilePage() {
                 <h2>{gym.name}</h2>
                 <p>
                   <MapPin size={13} />
-                  {gym.area[isVi ? 'vi' : 'en']}
+                  {gym.area[language]}
                 </p>
                 <em>
                   {copy.viewGym}
@@ -297,7 +255,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export function EditTrainerProfilePage() {
-  const { copy, isVi } = useTrainerCopy();
+  const { t } = useTranslation();
+  const { copy } = useTrainerCopy();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
@@ -437,7 +396,7 @@ export function EditTrainerProfilePage() {
               <small>{copy.selectMultiple}</small>
             </h2>
             <div>
-              {specializationOptions(isVi).map((option) => (
+              {specializationOptions(t).map((option) => (
                 <button
                   type="button"
                   key={option.value}
@@ -473,19 +432,16 @@ export function EditTrainerProfilePage() {
 }
 
 export function TrainerGymInformationPage() {
-  const { copy, isVi } = useTrainerCopy();
+  const { t } = useTranslation();
+  const { copy, language } = useTrainerCopy();
   const gym = getGym('fit-district-thao-dien');
   if (!gym) return null;
   const gymType =
     gym.type === 'boutique'
       ? 'Boutique'
       : gym.type === 'strength'
-        ? isVi
-          ? 'Sức mạnh'
-          : 'Strength'
-        : isVi
-          ? 'Đa dịch vụ'
-          : 'Full service';
+        ? t('trainerProfile:trainerProfilePages.strength')
+        : t('trainerProfile:trainerProfilePages.fullService');
   return (
     <div className="trainer-profile-page">
       <div className="trainer-profile-tools is-between">
@@ -515,7 +471,7 @@ export function TrainerGymInformationPage() {
           <h1>{gym.name}</h1>
           <p>
             <MapPin size={15} />
-            {gym.address[isVi ? 'vi' : 'en']}
+            {gym.address[language]}
           </p>
           <div>
             <strong>{copy.assignment}</strong>
@@ -527,7 +483,7 @@ export function TrainerGymInformationPage() {
         <article>
           <MapPin size={18} />
           <span>{copy.location}</span>
-          <strong>{gym.area[isVi ? 'vi' : 'en']}</strong>
+          <strong>{gym.area[language]}</strong>
         </article>
         <article>
           <Dumbbell size={18} />
@@ -545,7 +501,7 @@ export function TrainerGymInformationPage() {
       <div className="trainer-gym-content">
         <section>
           <h2>{copy.description}</h2>
-          <p>{gym.description[isVi ? 'vi' : 'en']}</p>
+          <p>{gym.description[language]}</p>
         </section>
         <section>
           <h2>{copy.facilities}</h2>
@@ -553,7 +509,7 @@ export function TrainerGymInformationPage() {
             {gym.facilities.map((facility) => (
               <span key={facility.en}>
                 <Check size={14} />
-                {facility[isVi ? 'vi' : 'en']}
+                {facility[language]}
               </span>
             ))}
           </div>

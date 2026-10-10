@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { completeGymOwnerOtp } from './helpers/gymOwnerAuth';
+import { waitForGymOwnerPortal } from './helpers/gymOwnerAuth';
 
 const approvedOnboarding = {
   brand: {
@@ -35,15 +35,15 @@ const approvedOnboarding = {
 async function loginApprovedGymOwner(page: Page) {
   await page.goto('/login');
   await page.evaluate(() => {
-    window.localStorage.clear();
+    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
     window.sessionStorage.clear();
     window.localStorage.setItem('gmc.locale', 'en');
   });
   await page.reload();
   await page.getByLabel(/email/i).fill('admin@demo.gym');
-  await page.getByLabel(/password/i).fill('Password1!');
+  await page.getByLabel(/mật khẩu|password/i).fill('Password1!');
   await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
-  await completeGymOwnerOtp(page);
+  await waitForGymOwnerPortal(page);
   await expect(page).toHaveURL(/\/admin/);
   await page.evaluate((state) => {
     window.localStorage.setItem('gmc.gymOwnerOnboarding', JSON.stringify({ state, version: 1 }));

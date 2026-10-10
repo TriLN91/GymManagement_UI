@@ -26,7 +26,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
-import { ROUTES } from '@/shared/config/constants';
+import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 
 import '@/pages/member/components/member-layout.css';
@@ -198,7 +198,7 @@ export function TrainerLayout() {
           {isMenuOpen ? <X aria-hidden="true" size={20} /> : <Menu aria-hidden="true" size={20} />}
         </button>
         <div className="member-brand">
-          <span>Fit®</span>
+          <span>{BRAND_MARK}</span>
           <small>{t('trainerShell.trainer')}</small>
         </div>
         <div className="member-avatar" aria-hidden="true">
@@ -218,7 +218,7 @@ export function TrainerLayout() {
       <aside className={cn('member-sidebar', isMenuOpen && 'is-open')}>
         <div className="member-sidebar__brand">
           <div className="member-brand">
-            <span>Fit®</span>
+            <span>{BRAND_MARK}</span>
             <small>{t('trainerShell.trainer')}</small>
           </div>
           <span>{t('trainerShell.workspace')}</span>
@@ -293,7 +293,7 @@ export function TrainerLayout() {
       <div className="member-main">
         <header className="member-topbar">
           <div className="member-topbar__context">
-            <span>Fit®</span>
+            <span>{BRAND_MARK}</span>
             <span>/</span>
             <strong>{t('trainerShell.context')}</strong>
           </div>

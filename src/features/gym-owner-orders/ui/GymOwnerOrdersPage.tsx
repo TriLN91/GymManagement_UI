@@ -1,5 +1,4 @@
 import { Download, Eye, ShieldCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { createOrdersCsv, downloadCsv } from '../model/csvExport';
@@ -11,6 +10,7 @@ import { gymOwnerOrdersCopy, type GymOwnerOrdersCopy } from './copy';
 import { formatDateTime, formatVnd } from './formatters';
 
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import {
@@ -33,10 +33,8 @@ function fulfillmentLabel(order: GymOwnerOrderRecord, copy: GymOwnerOrdersCopy) 
 }
 
 export function GymOwnerOrdersPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerOrdersCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const copy = gymOwnerOrdersCopy[language];
 
   const exportOrders = () => {
     if (gymOwnerOrderMockResource.state !== 'loaded') return;

@@ -31,18 +31,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TrainerExerciseArtwork, TrainerExercisePreviewDialog } from './TrainerExerciseMedia';
-import {
-  getTrainerExercise,
-  getTrainerMember,
-  trainerExercises,
-  trainerMembers,
-  useTrainerWorkspaceStore,
-  weekdays,
-  type TrainerAppointment,
-  type TrainerExercise,
-  type TrainerPlanExercise,
-  type TrainerWeekday,
-} from './useTrainerWorkspaceStore';
 
 import {
   isMuscleRelated,
@@ -50,7 +38,22 @@ import {
   type MuscleId,
 } from '@/features/member-workout-builder/model/muscleMapData';
 import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
+import {
+  getTrainerExercise,
+  getTrainerMember,
+  trainerExercises,
+  trainerMembers,
+  trainerWorkoutHistory,
+  useTrainerText,
+  useTrainerWorkspaceStore,
+  weekdays,
+  type TrainerAppointment,
+  type TrainerExercise,
+  type TrainerPlanExercise,
+  type TrainerWeekday,
+} from '@/features/trainer-workspace';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 
 export { TrainerExerciseLibraryPage } from './TrainerExerciseLibraryPage';
@@ -86,11 +89,6 @@ const trainerMuscleIds: Partial<Record<string, MuscleId>> = {
   Core: 'rectus_abdominis',
 };
 
-function useWorkspaceLanguage() {
-  const { i18n } = useTranslation();
-  return i18n.resolvedLanguage === 'vi' ? 'vi' : 'en';
-}
-
 function MemberSelect({
   value,
   onChange,
@@ -98,13 +96,14 @@ function MemberSelect({
   value: string;
   onChange: (memberId: string) => void;
 }) {
+  const tr = useTrainerText();
   return (
     <label className="trainer-member-select">
       <UsersRound size={16} />
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        aria-label="Select member"
+        aria-label={tr('Select member')}
       >
         {trainerMembers.map((member) => (
           <option value={member.id} key={member.id}>
@@ -133,6 +132,7 @@ function MemberAvatar({ name, source }: { name: string; source?: string }) {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const tr = useTrainerText();
   const labels: Record<string, string> = {
     on_track: 'On track',
     attention: 'Needs review',
@@ -143,7 +143,9 @@ function StatusBadge({ status }: { status: string }) {
     cancelled: 'Cancelled',
     active: 'Active',
   };
-  return <span className={cn('trainer-status', `is-${status}`)}>{labels[status] ?? status}</span>;
+  return (
+    <span className={cn('trainer-status', `is-${status}`)}>{tr(labels[status] ?? status)}</span>
+  );
 }
 
 function MiniLineChart({
@@ -196,44 +198,28 @@ function MiniLineChart({
 }
 
 export function TrainerDashboardPage() {
-  const lang = useWorkspaceLanguage();
+  const { t } = useTranslation();
+  const tr = useTrainerText();
   const selectedMemberId = useTrainerWorkspaceStore((state) => state.selectedMemberId);
   const setSelectedMember = useTrainerWorkspaceStore((state) => state.setSelectedMember);
   const appointments = useTrainerWorkspaceStore((state) => state.appointments);
   const member = getTrainerMember(selectedMemberId) ?? trainerMembers[0]!;
   const completion = Math.round((member.completed / member.planned) * 100);
-  const copy =
-    lang === 'vi'
-      ? {
-          eyebrow: 'TRAINER COMMAND / DASHBOARD',
-          title: 'Trung tâm coaching',
-          members: 'Member quản lý',
-          sessions: 'Buổi sắp tới',
-          completion: 'Tỷ lệ hoàn thành',
-          review: 'Cần xem lại',
-          performance: 'Hiệu suất Member',
-          calorie: 'Calories trung bình',
-          load: 'Training load',
-          video: 'AI phát hiện lỗi động tác',
-          issue: 'Lưng dưới mất vị trí trung lập ở rep 6',
-          view: 'Xem video',
-          today: 'Lịch hôm nay',
-        }
-      : {
-          eyebrow: 'TRAINER COMMAND / DASHBOARD',
-          title: 'Coaching command center',
-          members: 'Managed Members',
-          sessions: 'Upcoming sessions',
-          completion: 'Completion rate',
-          review: 'Needs review',
-          performance: 'Member performance',
-          calorie: 'Average calories',
-          load: 'Training load',
-          video: 'AI form issue detected',
-          issue: 'Lower back lost neutral position at rep 6',
-          view: 'View video',
-          today: "Today's schedule",
-        };
+  const copy = {
+    eyebrow: t('trainer:trainerWorkspacePages.trainerDashboardPage.eyebrow'),
+    title: t('trainer:trainerWorkspacePages.trainerDashboardPage.title'),
+    members: t('trainer:trainerWorkspacePages.trainerDashboardPage.members'),
+    sessions: t('trainer:trainerWorkspacePages.trainerDashboardPage.sessions'),
+    completion: t('trainer:trainerWorkspacePages.trainerDashboardPage.completion'),
+    review: t('trainer:trainerWorkspacePages.trainerDashboardPage.review'),
+    performance: t('trainer:trainerWorkspacePages.trainerDashboardPage.performance'),
+    calorie: t('trainer:trainerWorkspacePages.trainerDashboardPage.calorie'),
+    load: t('trainer:trainerWorkspacePages.trainerDashboardPage.load'),
+    video: t('trainer:trainerWorkspacePages.trainerDashboardPage.video'),
+    issue: t('trainer:trainerWorkspacePages.trainerDashboardPage.issue'),
+    view: t('trainer:trainerWorkspacePages.trainerDashboardPage.view'),
+    today: t('trainer:trainerWorkspacePages.trainerDashboardPage.today'),
+  };
   return (
     <div className="trainer-workspace-page">
       <div className="trainer-context-tools">
@@ -265,7 +251,7 @@ export function TrainerDashboardPage() {
         <div className="trainer-panel trainer-performance-panel">
           <div className="trainer-panel-heading">
             <div>
-              <span>MEMBER DATA / 7 DAYS</span>
+              <span>{tr('MEMBER DATA / 7 DAYS')}</span>
               <h2>{copy.performance}</h2>
             </div>
             <StatusBadge status={member.status} />
@@ -279,18 +265,18 @@ export function TrainerDashboardPage() {
             <div>
               <strong>{member.name}</strong>
               <span>
-                {member.goal} · {member.experience}
+                {tr(member.goal)} · {tr(member.experience)}
               </span>
             </div>
             <Link to={ROUTES.pt.memberWorkout}>
-              <Dumbbell size={15} /> {lang === 'vi' ? 'Mở lịch tập' : 'Open workout'}
+              <Dumbbell size={15} /> {t('trainer:trainerWorkspacePages.openWorkout')}
             </Link>
           </div>
         </div>
         <aside className="trainer-dashboard-side">
           <section className="trainer-panel trainer-ai-alert">
             <Video />
-            <span>AI REVIEW / 02:14</span>
+            <span>{tr('AI REVIEW / 02:14')}</span>
             <h2>{copy.video}</h2>
             <p>{copy.issue}</p>
             <button type="button">
@@ -301,7 +287,7 @@ export function TrainerDashboardPage() {
           <section className="trainer-panel trainer-priority-panel">
             <div className="trainer-panel-heading">
               <div>
-                <span>SCHEDULE</span>
+                <span>{tr('SCHEDULE')}</span>
                 <h2>{copy.today}</h2>
               </div>
             </div>
@@ -330,7 +316,8 @@ export function TrainerDashboardPage() {
 }
 
 export function TrainerMembersPage() {
-  const lang = useWorkspaceLanguage();
+  const { t } = useTranslation();
+  const tr = useTrainerText();
   const navigate = useNavigate();
   const loadMemberPlan = useTrainerWorkspaceStore((state) => state.loadMemberPlan);
   const [search, setSearch] = useState('');
@@ -359,15 +346,21 @@ export function TrainerMembersPage() {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder={lang === 'vi' ? 'Tìm tên hoặc email' : 'Search name or email'}
+            placeholder={t('trainer:trainerWorkspacePages.searchNameOrEmail')}
           />
         </label>
         <label>
           <Filter size={15} />
-          <select value={goal} onChange={(event) => setGoal(event.target.value)} aria-label="Goal">
-            <option value="all">All goals</option>
+          <select
+            value={goal}
+            onChange={(event) => setGoal(event.target.value)}
+            aria-label={tr('Goal')}
+          >
+            <option value="all">{tr('All goals')}</option>
             {[...new Set(trainerMembers.map((item) => item.goal))].map((item) => (
-              <option key={item}>{item}</option>
+              <option key={item} value={item}>
+                {tr(item)}
+              </option>
             ))}
           </select>
         </label>
@@ -375,24 +368,24 @@ export function TrainerMembersPage() {
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            aria-label="Workout status"
+            aria-label={tr('Workout status')}
           >
-            <option value="all">All statuses</option>
-            <option value="on_track">On track</option>
-            <option value="attention">Needs review</option>
-            <option value="paused">Paused</option>
+            <option value="all">{tr('All statuses')}</option>
+            <option value="on_track">{tr('On track')}</option>
+            <option value="attention">{tr('Needs review')}</option>
+            <option value="paused">{tr('Paused')}</option>
           </select>
         </label>
         <label>
           <select
             value={experience}
             onChange={(event) => setExperience(event.target.value)}
-            aria-label="Experience"
+            aria-label={tr('Experience')}
           >
-            <option value="all">All experience</option>
-            <option>Beginner</option>
-            <option>Intermediate</option>
-            <option>Advanced</option>
+            <option value="all">{tr('All experience')}</option>
+            <option value="Beginner">{tr('Beginner')}</option>
+            <option value="Intermediate">{tr('Intermediate')}</option>
+            <option value="Advanced">{tr('Advanced')}</option>
           </select>
         </label>
       </section>
@@ -415,22 +408,22 @@ export function TrainerMembersPage() {
                 </div>
               </header>
               <div className="trainer-member-card__goal">
-                <span>{lang === 'vi' ? 'Mục tiêu chính' : 'Primary goal'}</span>
-                <strong>{member.goal}</strong>
+                <span>{t('trainer:trainerWorkspacePages.primaryGoal')}</span>
+                <strong>{tr(member.goal)}</strong>
               </div>
               <dl>
                 <div>
-                  <dt>{lang === 'vi' ? 'Cơ thể' : 'Body'}</dt>
+                  <dt>{t('trainer:trainerWorkspacePages.body')}</dt>
                   <dd>
                     {member.height} cm · {member.weight} kg
                   </dd>
                 </div>
                 <div>
-                  <dt>{lang === 'vi' ? 'Kinh nghiệm' : 'Experience'}</dt>
-                  <dd>{member.experience}</dd>
+                  <dt>{t('trainer:trainerWorkspacePages.experience')}</dt>
+                  <dd>{tr(member.experience)}</dd>
                 </div>
                 <div>
-                  <dt>{lang === 'vi' ? 'Hoàn thành' : 'Completion'}</dt>
+                  <dt>{t('trainer:trainerWorkspacePages.completion')}</dt>
                   <dd>{Math.round((member.completed / member.planned) * 100)}%</dd>
                 </div>
               </dl>
@@ -441,10 +434,10 @@ export function TrainerMembersPage() {
                   onClick={() => openDetail(member.id)}
                 >
                   <Eye size={14} />
-                  {lang === 'vi' ? 'Xem hồ sơ' : 'View detail'}
+                  {t('trainer:trainerWorkspacePages.viewDetail')}
                 </button>
                 <button type="button" onClick={() => openWorkout(member.id)}>
-                  {lang === 'vi' ? 'Xem lịch tập' : 'View workout'}
+                  {t('trainer:trainerWorkspacePages.viewWorkout')}
                   <ArrowRight size={15} />
                 </button>
               </footer>
@@ -454,7 +447,7 @@ export function TrainerMembersPage() {
       </div>
       <footer className="trainer-pagination">
         <span>
-          {filtered.length} {lang === 'vi' ? 'Member' : 'Members'}
+          {filtered.length} {t('trainer:trainerWorkspacePages.members')}
         </span>
         <div>
           <button type="button" disabled>
@@ -486,7 +479,8 @@ function ReadonlyList({ items, empty }: { items: string[]; empty: string }) {
 }
 
 export function TrainerMemberDetailPage() {
-  const lang = useWorkspaceLanguage();
+  const { t } = useTranslation();
+  const tr = useTrainerText();
   const navigate = useNavigate();
   const { memberId } = useParams();
   const loadMemberPlan = useTrainerWorkspaceStore((state) => state.loadMemberPlan);
@@ -497,9 +491,9 @@ export function TrainerMemberDetailPage() {
       <div className="trainer-workspace-page">
         <div className="trainer-empty trainer-member-detail-empty">
           <UsersRound aria-hidden="true" />
-          <strong>{lang === 'vi' ? 'Không tìm thấy Member' : 'Member not found'}</strong>
+          <strong>{t('trainer:trainerWorkspacePages.memberNotFound')}</strong>
           <button type="button" onClick={() => navigate(ROUTES.pt.members)}>
-            {lang === 'vi' ? 'Về danh sách' : 'Back to Members'}
+            {t('trainer:trainerWorkspacePages.backToMembers')}
           </button>
         </div>
       </div>
@@ -517,11 +511,11 @@ export function TrainerMemberDetailPage() {
       <div className="trainer-context-tools is-between">
         <button className="trainer-detail-back" type="button" onClick={() => navigate(-1)}>
           <ArrowLeft size={15} />
-          {lang === 'vi' ? 'Danh sách Member' : 'Member list'}
+          {t('trainer:trainerWorkspacePages.memberList')}
         </button>
         <button className="trainer-primary-action" type="button" onClick={openWorkout}>
           <Dumbbell size={15} />
-          {lang === 'vi' ? 'Xem lịch tập' : 'View workout'}
+          {t('trainer:trainerWorkspacePages.viewWorkout')}
         </button>
       </div>
 
@@ -536,24 +530,24 @@ export function TrainerMemberDetailPage() {
             {member.membershipCode} · {member.email} · {member.phone}
           </p>
           <div>
-            <span>{member.goal}</span>
-            <span>{member.experience}</span>
+            <span>{tr(member.goal)}</span>
+            <span>{tr(member.experience)}</span>
             <span>
-              {lang === 'vi' ? 'Tham gia' : 'Joined'} {member.joinedAt}
+              {t('trainer:trainerWorkspacePages.joined')} {member.joinedAt}
             </span>
           </div>
         </div>
         <dl className="trainer-member-vitals">
           <div>
-            <dt>{lang === 'vi' ? 'Tuổi' : 'Age'}</dt>
+            <dt>{t('trainer:trainerWorkspacePages.age')}</dt>
             <dd>{member.age}</dd>
           </div>
           <div>
-            <dt>{lang === 'vi' ? 'Chiều cao' : 'Height'}</dt>
+            <dt>{t('trainer:trainerWorkspacePages.height')}</dt>
             <dd>{member.height} cm</dd>
           </div>
           <div>
-            <dt>{lang === 'vi' ? 'Cân nặng' : 'Weight'}</dt>
+            <dt>{t('trainer:trainerWorkspacePages.weight')}</dt>
             <dd>{member.weight} kg</dd>
           </div>
           <div>
@@ -561,7 +555,7 @@ export function TrainerMemberDetailPage() {
             <dd>{bmi.toFixed(1)}</dd>
           </div>
           <div>
-            <dt>{lang === 'vi' ? 'Mỡ cơ thể' : 'Body fat'}</dt>
+            <dt>{t('trainer:trainerWorkspacePages.bodyFat')}</dt>
             <dd>{member.bodyFat}%</dd>
           </div>
         </dl>
@@ -571,74 +565,74 @@ export function TrainerMemberDetailPage() {
         <main>
           <section className="trainer-member-detail-section is-accent">
             <header>
-              <span>{lang === 'vi' ? 'Mục tiêu tập luyện' : 'Training goals'}</span>
-              <strong>{member.goal}</strong>
+              <span>{t('trainer:trainerWorkspacePages.trainingGoals')}</span>
+              <strong>{tr(member.goal)}</strong>
             </header>
             <ReadonlyList
               items={member.secondaryGoals}
-              empty={lang === 'vi' ? 'Chưa có mục tiêu phụ' : 'No secondary goals'}
+              empty={t('trainer:trainerWorkspacePages.noSecondaryGoals')}
             />
           </section>
           <section className="trainer-member-detail-section">
             <header>
-              <span>{lang === 'vi' ? 'Bệnh lý và sức khỏe' : 'Medical conditions'}</span>
+              <span>{t('trainer:trainerWorkspacePages.medicalConditions')}</span>
             </header>
             <ReadonlyList
               items={member.medicalConditions}
-              empty={lang === 'vi' ? 'Không ghi nhận' : 'None reported'}
+              empty={t('trainer:trainerWorkspacePages.noneReported')}
             />
           </section>
           <section className="trainer-member-detail-section">
             <header>
-              <span>{lang === 'vi' ? 'Chấn thương' : 'Injury history'}</span>
+              <span>{t('trainer:trainerWorkspacePages.injuryHistory')}</span>
             </header>
             <ReadonlyList
               items={member.injuries}
-              empty={lang === 'vi' ? 'Không ghi nhận' : 'None reported'}
+              empty={t('trainer:trainerWorkspacePages.noneReported')}
             />
           </section>
           <section className="trainer-member-detail-section">
             <header>
-              <span>{lang === 'vi' ? 'Giới hạn khi tập' : 'Training limitations'}</span>
+              <span>{t('trainer:trainerWorkspacePages.trainingLimitations')}</span>
             </header>
             <ReadonlyList
               items={member.trainingLimitations}
-              empty={lang === 'vi' ? 'Không có giới hạn' : 'No limitations'}
+              empty={t('trainer:trainerWorkspacePages.noLimitations')}
             />
           </section>
         </main>
         <aside>
           <section className="trainer-member-detail-section">
             <header>
-              <span>{lang === 'vi' ? 'Thuốc đang sử dụng' : 'Medication'}</span>
+              <span>{t('trainer:trainerWorkspacePages.medication')}</span>
             </header>
             <ReadonlyList
               items={member.medications}
-              empty={lang === 'vi' ? 'Không ghi nhận' : 'None reported'}
+              empty={t('trainer:trainerWorkspacePages.noneReported')}
             />
           </section>
           <section className="trainer-member-detail-section trainer-member-lifestyle">
             <header>
-              <span>{lang === 'vi' ? 'Lối sống và dinh dưỡng' : 'Lifestyle and nutrition'}</span>
+              <span>{t('trainer:trainerWorkspacePages.lifestyleAndNutrition')}</span>
             </header>
             <dl>
               <div>
-                <dt>{lang === 'vi' ? 'Mức vận động' : 'Activity level'}</dt>
+                <dt>{t('trainer:trainerWorkspacePages.activityLevel')}</dt>
                 <dd>{member.activityLevel}</dd>
               </div>
               <div>
-                <dt>{lang === 'vi' ? 'Giấc ngủ' : 'Sleep'}</dt>
+                <dt>{t('trainer:trainerWorkspacePages.sleep')}</dt>
                 <dd>{member.sleepHours} h/night</dd>
               </div>
               <div>
-                <dt>{lang === 'vi' ? 'Dinh dưỡng' : 'Dietary notes'}</dt>
+                <dt>{t('trainer:trainerWorkspacePages.dietaryNotes')}</dt>
                 <dd>{member.dietaryNotes}</dd>
               </div>
             </dl>
           </section>
           <section className="trainer-member-detail-section">
             <header>
-              <span>{lang === 'vi' ? 'Liên hệ khẩn cấp' : 'Emergency contact'}</span>
+              <span>{t('trainer:trainerWorkspacePages.emergencyContact')}</span>
             </header>
             <p>{member.emergencyContact}</p>
           </section>
@@ -649,6 +643,7 @@ export function TrainerMemberDetailPage() {
 }
 
 export function TrainerMemberDataPage() {
+  const tr = useTrainerText();
   const selectedMemberId = useTrainerWorkspaceStore((state) => state.selectedMemberId);
   const setSelectedMember = useTrainerWorkspaceStore((state) => state.setSelectedMember);
   const member = getTrainerMember(selectedMemberId) ?? trainerMembers[0]!;
@@ -660,42 +655,42 @@ export function TrainerMemberDataPage() {
       <section className="trainer-metric-grid">
         <article>
           <ClipboardList />
-          <span>Planned workouts</span>
+          <span>{tr('Planned workouts')}</span>
           <strong>{member.planned}</strong>
         </article>
         <article>
           <Check />
-          <span>Completed</span>
+          <span>{tr('Completed')}</span>
           <strong>{member.completed}</strong>
         </article>
         <article>
           <Activity />
-          <span>Completion rate</span>
+          <span>{tr('Completion rate')}</span>
           <strong>{Math.round((member.completed / member.planned) * 100)}%</strong>
         </article>
         <article>
           <Dumbbell />
-          <span>Current weight</span>
+          <span>{tr('Current weight')}</span>
           <strong>{member.weight} kg</strong>
         </article>
       </section>
       <div className="trainer-chart-grid is-dashboard">
-        <MiniLineChart values={member.calories} label="Calories" suffix=" kcal" />
-        <MiniLineChart values={member.loads} label="Training load" suffix=" kg" />
-        <MiniLineChart values={member.weights} label="Body weight" suffix=" kg" />
+        <MiniLineChart values={member.calories} label={tr('Calories')} suffix=" kcal" />
+        <MiniLineChart values={member.loads} label={tr('Training load')} suffix=" kg" />
+        <MiniLineChart values={member.weights} label={tr('Body weight')} suffix=" kg" />
       </div>
       <section className="trainer-panel trainer-video-review">
         <div className="trainer-video-thumb">
           <Play size={25} />
         </div>
         <div>
-          <span>AI ERROR VIDEO / 2026-09-24 · 02:14</span>
-          <h2>Barbell Back Squat</h2>
-          <p>AI detected excessive forward trunk lean during the final two repetitions.</p>
+          <span>{tr('AI ERROR VIDEO')} / 2026-09-24 · 02:14</span>
+          <h2>{tr('Barbell Back Squat')}</h2>
+          <p>{tr('AI detected excessive forward trunk lean during the final two repetitions.')}</p>
         </div>
         <button type="button">
           <Eye size={15} />
-          View video
+          {tr('View video')}
         </button>
       </section>
     </div>
@@ -709,6 +704,7 @@ function PrescriptionFields({
   exercise: TrainerPlanExercise;
   update: (patch: Partial<TrainerPlanExercise>) => void;
 }) {
+  const tr = useTrainerText();
   const catalog = getTrainerExercise(exercise.exerciseId);
   const numberField = (label: string, key: keyof TrainerPlanExercise, value: number) => (
     <label>
@@ -724,37 +720,39 @@ function PrescriptionFields({
   if (catalog?.trackingType === 'duration')
     return (
       <div className="trainer-prescription-grid">
-        {numberField('Duration (sec)', 'duration', exercise.duration)}
-        {numberField('Rest (sec)', 'rest', exercise.rest)}
+        {numberField(tr('Duration (sec)'), 'duration', exercise.duration)}
+        {numberField(tr('Rest (sec)'), 'rest', exercise.rest)}
       </div>
     );
   if (catalog?.trackingType === 'distance')
     return (
       <div className="trainer-prescription-grid">
-        {numberField('Distance (km)', 'distance', exercise.distance)}
-        {numberField('Duration (sec)', 'duration', exercise.duration)}
+        {numberField(tr('Distance (km)'), 'distance', exercise.distance)}
+        {numberField(tr('Duration (sec)'), 'duration', exercise.duration)}
       </div>
     );
   if (catalog?.trackingType === 'interval')
     return (
       <div className="trainer-prescription-grid">
-        {numberField('Rounds', 'rounds', exercise.rounds)}
-        {numberField('Work (sec)', 'duration', exercise.duration)}
-        {numberField('Rest (sec)', 'rest', exercise.rest)}
+        {numberField(tr('Rounds'), 'rounds', exercise.rounds)}
+        {numberField(tr('Work (sec)'), 'duration', exercise.duration)}
+        {numberField(tr('Rest (sec)'), 'rest', exercise.rest)}
       </div>
     );
   return (
     <div className="trainer-prescription-grid">
-      {numberField('Sets', 'sets', exercise.sets)}
-      {numberField('Reps', 'reps', exercise.reps)}
-      {numberField('Load (kg)', 'load', exercise.load)}
-      {numberField('Rest (sec)', 'rest', exercise.rest)}
+      {numberField(tr('Sets'), 'sets', exercise.sets)}
+      {numberField(tr('Reps'), 'reps', exercise.reps)}
+      {numberField(tr('Load (kg)'), 'load', exercise.load)}
+      {numberField(tr('Rest (sec)'), 'rest', exercise.rest)}
     </div>
   );
 }
 
 export function TrainerPlanBuilderPage() {
-  const lang = useWorkspaceLanguage();
+  const { t } = useTranslation();
+  const tr = useTrainerText();
+  const { language: lang } = useLocale();
   const selectedMemberId = useTrainerWorkspaceStore((state) => state.selectedMemberId);
   const draftName = useTrainerWorkspaceStore((state) => state.draftName);
   const draftWeek = useTrainerWorkspaceStore((state) => state.draftWeek);
@@ -822,19 +820,17 @@ export function TrainerPlanBuilderPage() {
         ),
     );
     if (availableDays.length === 0) {
-      toast.error(
-        lang === 'vi'
-          ? 'Bài tập này đã có trong tất cả ngày đang chọn.'
-          : 'This exercise is already scheduled for every selected day.',
-      );
+      toast.error(t('trainer:trainerWorkspacePages.thisExerciseIsAlready'));
       return;
     }
     availableDays.forEach((selectedDay) => addExercise(exerciseId, selectedDay));
     const skipped = selectedDays.length - availableDays.length;
     toast.success(
-      lang === 'vi'
-        ? `Đã thêm vào ${availableDays.length} ngày${skipped ? `, bỏ qua ${skipped} ngày bị trùng` : ''}.`
-        : `Added to ${availableDays.length} day${availableDays.length > 1 ? 's' : ''}${skipped ? `; skipped ${skipped} duplicate${skipped > 1 ? 's' : ''}` : ''}.`,
+      t('trainer:trainerWorkspacePages.addedDays', {
+        count: availableDays.length,
+        skipped,
+        context: skipped ? 'skipped' : undefined,
+      }),
     );
   };
 
@@ -842,9 +838,7 @@ export function TrainerPlanBuilderPage() {
     setSelectedDays((current) => {
       if (!current.includes(weekday)) return [...current, weekday];
       if (current.length === 1) {
-        toast.error(
-          lang === 'vi' ? 'Hãy giữ lại ít nhất một ngày.' : 'Keep at least one day selected.',
-        );
+        toast.error(t('trainer:trainerWorkspacePages.keepAtLeastOne'));
         return current;
       }
       return current.filter((day) => day !== weekday);
@@ -858,9 +852,7 @@ export function TrainerPlanBuilderPage() {
     );
     if (duplicate) {
       toast.error(
-        lang === 'vi'
-          ? `Bài tập này đã có trong ${dayLabels.vi[nextDay]}.`
-          : `This exercise is already scheduled for ${dayLabels.en[nextDay]}.`,
+        t('trainer:trainerWorkspacePages.alreadyScheduled', { day: dayLabels[lang][nextDay] }),
       );
       return;
     }
@@ -871,14 +863,14 @@ export function TrainerPlanBuilderPage() {
       <section className="trainer-builder-toolbar">
         <MemberSelect value={selectedMemberId} onChange={loadMemberPlan} />
         <label>
-          <span>Plan name</span>
+          <span>{tr('Plan name')}</span>
           <input
             value={draftName}
             onChange={(event) => setDraftMeta({ name: event.target.value })}
           />
         </label>
         <label>
-          <span>Week</span>
+          <span>{tr('Week')}</span>
           <input
             type="number"
             min="1"
@@ -892,11 +884,11 @@ export function TrainerPlanBuilderPage() {
           type="button"
           onClick={() => {
             savePlan();
-            toast.success(lang === 'vi' ? 'Đã lưu kế hoạch.' : 'Plan saved.');
+            toast.success(t('trainer:trainerWorkspacePages.planSaved'));
           }}
         >
           <Save size={15} />
-          {lang === 'vi' ? 'Lưu kế hoạch' : 'Save plan'}
+          {t('trainer:trainerWorkspacePages.savePlan')}
         </button>
       </section>
       <div className="trainer-day-tabs">
@@ -916,7 +908,7 @@ export function TrainerPlanBuilderPage() {
         <aside className="trainer-builder-library-panel">
           <header>
             <div>
-              <span>EXERCISE LIBRARY</span>
+              <span>{tr('EXERCISE LIBRARY')}</span>
               <strong>{trainerExercises.length}</strong>
             </div>
             <small>
@@ -928,8 +920,8 @@ export function TrainerPlanBuilderPage() {
             <input
               value={exerciseQuery}
               onChange={(event) => setExerciseQuery(event.target.value)}
-              placeholder={lang === 'vi' ? 'Tìm bài tập' : 'Search exercises'}
-              aria-label={lang === 'vi' ? 'Tìm bài tập' : 'Search exercises'}
+              placeholder={t('trainer:trainerWorkspacePages.searchExercises')}
+              aria-label={t('trainer:trainerWorkspacePages.searchExercises')}
             />
           </label>
           <label className="trainer-builder-filter">
@@ -940,12 +932,12 @@ export function TrainerPlanBuilderPage() {
                 setSelectedMuscle(null);
                 setMuscleFilter(event.target.value);
               }}
-              aria-label={lang === 'vi' ? 'Lọc nhóm cơ' : 'Filter muscle group'}
+              aria-label={t('trainer:trainerWorkspacePages.filterMuscleGroup')}
             >
-              <option value="all">{lang === 'vi' ? 'Tất cả nhóm cơ' : 'All muscle groups'}</option>
+              <option value="all">{t('trainer:trainerWorkspacePages.allMuscleGroups')}</option>
               {[...new Set(trainerExercises.map((exercise) => exercise.muscle))].map((muscle) => (
                 <option value={muscle} key={muscle}>
-                  {muscle}
+                  {tr(muscle)}
                 </option>
               ))}
             </select>
@@ -964,14 +956,14 @@ export function TrainerPlanBuilderPage() {
                     type="button"
                     className="trainer-builder-exercise-mark"
                     onClick={() => setPreview(exercise)}
-                    aria-label={`${lang === 'vi' ? 'Xem video' : 'View video'} ${exercise.name}`}
+                    aria-label={`${t('trainer:trainerWorkspacePages.viewVideo')} ${exercise.name}`}
                   >
                     <TrainerExerciseArtwork exercise={exercise} compact />
                   </button>
                   <div>
-                    <strong>{exercise.name}</strong>
+                    <strong>{tr(exercise.name)}</strong>
                     <span>
-                      {exercise.equipment} · {exercise.muscle}
+                      {tr(exercise.equipment)} · {tr(exercise.muscle)}
                     </span>
                   </div>
                   <button
@@ -991,7 +983,7 @@ export function TrainerPlanBuilderPage() {
             })}
             {filteredExercises.length === 0 && (
               <div className="trainer-builder-library-empty">
-                {lang === 'vi' ? 'Không tìm thấy bài tập.' : 'No exercises found.'}
+                {t('trainer:trainerWorkspacePages.noExercisesFound')}
               </div>
             )}
           </div>
@@ -1000,19 +992,19 @@ export function TrainerPlanBuilderPage() {
           <header>
             <div>
               <span>
-                {selectedDays.map((selectedDay) => dayLabels[lang][selectedDay]).join(' · ')} / WEEK{' '}
-                {draftWeek}
+                {selectedDays.map((selectedDay) => dayLabels[lang][selectedDay]).join(' · ')} /{' '}
+                {tr('WEEK')} {draftWeek}
               </span>
               <h2>{draftName}</h2>
             </div>
             <em>
-              {visible.length} exercises · {selectedDays.length} days
+              {visible.length} {tr('exercises')} · {selectedDays.length} {tr('days')}
             </em>
           </header>
           {visible.length === 0 ? (
             <div className="trainer-empty">
               <Dumbbell />
-              <strong>No exercises for this day</strong>
+              <strong>{tr('No exercises for this day')}</strong>
             </div>
           ) : (
             visible.map((exercise, index) => {
@@ -1022,9 +1014,9 @@ export function TrainerPlanBuilderPage() {
                   <header>
                     <span>{String(index + 1).padStart(2, '0')}</span>
                     <div>
-                      <h3>{catalog?.name}</h3>
+                      <h3>{tr(catalog?.name ?? '')}</h3>
                       <p>
-                        {catalog?.muscle} · {catalog?.trackingType}
+                        {tr(catalog?.muscle ?? '')} · {tr(catalog?.trackingType ?? '')}
                       </p>
                     </div>
                     <div>
@@ -1054,7 +1046,7 @@ export function TrainerPlanBuilderPage() {
                     </div>
                   </header>
                   <label className="trainer-day-select">
-                    <span>Training day</span>
+                    <span>{tr('Training day')}</span>
                     <select
                       value={exercise.day}
                       onChange={(event) =>
@@ -1084,8 +1076,8 @@ export function TrainerPlanBuilderPage() {
         <aside className="trainer-builder-side">
           <section className="trainer-panel trainer-live-map">
             <div className="trainer-live-map__header">
-              <span>LIVE MUSCLE MAP</span>
-              <span className="muscle-map__gender">{lang === 'vi' ? 'Nam' : 'Male'}</span>
+              <span>{tr('LIVE MUSCLE MAP')}</span>
+              <span className="muscle-map__gender">{t('trainer:trainerWorkspacePages.male')}</span>
             </div>
             <MaleAnatomyMuscleMap
               selected={selectedMuscle}
@@ -1102,7 +1094,7 @@ export function TrainerPlanBuilderPage() {
               <div className="trainer-live-map__selection" role="status">
                 <strong>{MUSCLES[selectedMuscle].name[lang]}</strong>
                 <span>
-                  {filteredExercises.length} {lang === 'vi' ? 'bài tập' : 'exercises'}
+                  {filteredExercises.length} {t('trainer:trainerWorkspacePages.exercises')}
                 </span>
                 <button
                   type="button"
@@ -1115,28 +1107,28 @@ export function TrainerPlanBuilderPage() {
                     setMuscleFilter('all');
                   }}
                 >
-                  {lang === 'vi' ? 'Xóa lọc' : 'Clear'}
+                  {t('trainer:trainerWorkspacePages.clear')}
                 </button>
               </div>
             )}
           </section>
           <section className="trainer-panel trainer-summary">
-            <span>WORKOUT SUMMARY</span>
+            <span>{tr('WORKOUT SUMMARY')}</span>
             <dl>
               <div>
-                <dt>Exercises</dt>
+                <dt>{tr('Exercises')}</dt>
                 <dd>{exercises.length}</dd>
               </div>
               <div>
-                <dt>Total sets</dt>
+                <dt>{tr('Total sets')}</dt>
                 <dd>{totalSets}</dd>
               </div>
               <div>
-                <dt>Est. duration</dt>
+                <dt>{tr('Est. duration')}</dt>
                 <dd>~{Math.max(20, exercises.length * 8)} min</dd>
               </div>
             </dl>
-            <h3>Volume by muscle</h3>
+            <h3>{tr('Volume by muscle')}</h3>
             {[
               ...new Set(
                 exercises
@@ -1145,7 +1137,7 @@ export function TrainerPlanBuilderPage() {
               ),
             ].map((muscle) => (
               <div className="trainer-volume" key={muscle}>
-                <span>{muscle}</span>
+                <span>{tr(muscle ?? '')}</span>
                 <i>
                   <b
                     style={{
@@ -1162,14 +1154,14 @@ export function TrainerPlanBuilderPage() {
         exercise={preview}
         open={Boolean(preview)}
         onOpenChange={(open) => !open && setPreview(null)}
-        lang={lang}
       />
     </div>
   );
 }
 
 export function TrainerMemberWorkoutPage() {
-  const lang = useWorkspaceLanguage();
+  const tr = useTrainerText();
+  const { language: lang, locale } = useLocale();
   const selectedMemberId = useTrainerWorkspaceStore((state) => state.selectedMemberId);
   const plans = useTrainerWorkspaceStore((state) => state.plans);
   const loadMemberPlan = useTrainerWorkspaceStore((state) => state.loadMemberPlan);
@@ -1188,8 +1180,8 @@ export function TrainerMemberWorkoutPage() {
         <div>
           <h2>{member.name}</h2>
           <p>
-            {plan?.name} · Week {plan?.week} · {member.age} years · {member.goal} · {member.weight}{' '}
-            kg · {member.experience}
+            {plan?.name} · {tr('Week')} {plan?.week} · {member.age} {tr('years')} ·{' '}
+            {tr(member.goal)} · {member.weight} kg · {tr(member.experience)}
           </p>
         </div>
         <StatusBadge status={member.status} />
@@ -1209,17 +1201,17 @@ export function TrainerMemberWorkoutPage() {
       <section className="trainer-metric-grid is-compact">
         <article>
           <Dumbbell />
-          <span>Exercises</span>
+          <span>{tr('Exercises')}</span>
           <strong>{exercises.length}</strong>
         </article>
         <article>
           <Check />
-          <span>Completed</span>
+          <span>{tr('Completed')}</span>
           <strong>{exercises.filter((item) => item.completed).length}</strong>
         </article>
         <article>
           <Activity />
-          <span>Target load</span>
+          <span>{tr('Target load')}</span>
           <strong>
             {exercises
               .reduce((sum, item) => sum + item.sets * item.reps * item.load, 0)
@@ -1229,7 +1221,7 @@ export function TrainerMemberWorkoutPage() {
         </article>
         <article>
           <Activity />
-          <span>Actual load</span>
+          <span>{tr('Actual load')}</span>
           <strong>
             {exercises
               .reduce((sum, item) => sum + item.actualSets * item.actualReps * item.actualLoad, 0)
@@ -1255,17 +1247,17 @@ export function TrainerMemberWorkoutPage() {
               </header>
               <div className="trainer-target-actual">
                 <section>
-                  <h3>TARGET</h3>
+                  <h3>{tr('TARGET')}</h3>
                   <PrescriptionFields
                     exercise={exercise}
                     update={(patch) => update(member.id, exercise.uid, patch)}
                   />
                 </section>
                 <section>
-                  <h3>ACTUAL</h3>
+                  <h3>{tr('ACTUAL')}</h3>
                   <div className="trainer-prescription-grid">
                     <label>
-                      <span>Sets</span>
+                      <span>{tr('Sets')}</span>
                       <input
                         type="number"
                         min="0"
@@ -1278,7 +1270,7 @@ export function TrainerMemberWorkoutPage() {
                       />
                     </label>
                     <label>
-                      <span>Reps</span>
+                      <span>{tr('Reps')}</span>
                       <input
                         type="number"
                         min="0"
@@ -1291,7 +1283,7 @@ export function TrainerMemberWorkoutPage() {
                       />
                     </label>
                     <label>
-                      <span>Load (kg)</span>
+                      <span>{tr('Load (kg)')}</span>
                       <input
                         type="number"
                         min="0"
@@ -1323,46 +1315,39 @@ export function TrainerMemberWorkoutPage() {
       <section className="trainer-panel trainer-history-table">
         <div className="trainer-panel-heading">
           <div>
-            <span>READ ONLY</span>
-            <h2>Training history</h2>
+            <span>{tr('READ ONLY')}</span>
+            <h2>{tr('Training history')}</h2>
           </div>
           <History />
         </div>
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Workout</th>
-              <th>Exercises</th>
-              <th>Completed</th>
-              <th>Duration</th>
-              <th>Load</th>
-              <th>Status</th>
+              <th>{tr('Date')}</th>
+              <th>{tr('Workout')}</th>
+              <th>{tr('Exercises')}</th>
+              <th>{tr('Completed')}</th>
+              <th>{tr('Duration')}</th>
+              <th>{tr('Load')}</th>
+              <th>{tr('Status')}</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2026-09-22</td>
-              <td>{plan?.name}</td>
-              <td>4</td>
-              <td>4/4</td>
-              <td>52 min</td>
-              <td>12,840 kg</td>
-              <td>
-                <StatusBadge status="completed" />
-              </td>
-            </tr>
-            <tr>
-              <td>2026-09-18</td>
-              <td>{plan?.name}</td>
-              <td>3</td>
-              <td>3/3</td>
-              <td>46 min</td>
-              <td>11,920 kg</td>
-              <td>
-                <StatusBadge status="completed" />
-              </td>
-            </tr>
+            {trainerWorkoutHistory.map((entry) => (
+              <tr key={entry.id}>
+                <td>{entry.date}</td>
+                <td>{plan?.name}</td>
+                <td>{entry.exerciseCount}</td>
+                <td>
+                  {entry.completedCount}/{entry.exerciseCount}
+                </td>
+                <td>{entry.durationMinutes} min</td>
+                <td>{entry.loadKg.toLocaleString(locale)} kg</td>
+                <td>
+                  <StatusBadge status={entry.status} />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </section>
@@ -1382,7 +1367,8 @@ const emptyAppointment = (): TrainerAppointment => ({
 });
 
 export function TrainerAppointmentsPage() {
-  const lang = useWorkspaceLanguage();
+  const { t } = useTranslation();
+  const tr = useTrainerText();
   const appointments = useTrainerWorkspaceStore((state) => state.appointments);
   const saveAppointment = useTrainerWorkspaceStore((state) => state.saveAppointment);
   const [editing, setEditing] = useState<TrainerAppointment | null>(null);
@@ -1390,7 +1376,7 @@ export function TrainerAppointmentsPage() {
     if (!editing) return;
     saveAppointment(editing);
     setEditing(null);
-    toast.success(lang === 'vi' ? 'Đã lưu lịch hẹn.' : 'Appointment saved.');
+    toast.success(t('trainer:trainerWorkspacePages.appointmentSaved'));
   };
   return (
     <div className="trainer-workspace-page">
@@ -1401,20 +1387,20 @@ export function TrainerAppointmentsPage() {
           onClick={() => setEditing(emptyAppointment())}
         >
           <Plus size={15} />
-          Create appointment
+          {tr('Create appointment')}
         </button>
       </div>
       <section className="trainer-table-panel">
         <table>
           <thead>
             <tr>
-              <th>Member</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Duration</th>
-              <th>Status</th>
-              <th>Notes</th>
+              <th>{tr('Member')}</th>
+              <th>{tr('Type')}</th>
+              <th>{tr('Date')}</th>
+              <th>{tr('Time')}</th>
+              <th>{tr('Duration')}</th>
+              <th>{tr('Status')}</th>
+              <th>{tr('Notes')}</th>
               <th />
             </tr>
           </thead>
@@ -1424,19 +1410,19 @@ export function TrainerAppointmentsPage() {
                 <td>
                   <strong>{getTrainerMember(appointment.memberId)?.name}</strong>
                 </td>
-                <td>{appointment.type}</td>
+                <td>{tr(appointment.type)}</td>
                 <td>{appointment.date}</td>
                 <td>{appointment.time}</td>
                 <td>{appointment.duration} min</td>
                 <td>
                   <StatusBadge status={appointment.status} />
                 </td>
-                <td>{appointment.notes}</td>
+                <td>{tr(appointment.notes)}</td>
                 <td>
                   <button
                     type="button"
                     onClick={() => setEditing(appointment)}
-                    aria-label="Edit appointment"
+                    aria-label={tr('Edit appointment')}
                   >
                     <Pencil size={14} />
                   </button>
@@ -1456,20 +1442,20 @@ export function TrainerAppointmentsPage() {
           >
             <header>
               <div>
-                <span>APPOINTMENT</span>
+                <span>{tr('APPOINTMENT')}</span>
                 <h2 id="appointment-title">
                   {appointments.some((item) => item.id === editing.id)
                     ? 'Update appointment'
                     : 'Create appointment'}
                 </h2>
               </div>
-              <button type="button" onClick={() => setEditing(null)} aria-label="Close">
+              <button type="button" onClick={() => setEditing(null)} aria-label={tr('Close')}>
                 <X />
               </button>
             </header>
             <div className="trainer-modal-grid">
               <label>
-                <span>Member</span>
+                <span>{tr('Member')}</span>
                 <select
                   value={editing.memberId}
                   onChange={(event) => setEditing({ ...editing, memberId: event.target.value })}
@@ -1482,18 +1468,18 @@ export function TrainerAppointmentsPage() {
                 </select>
               </label>
               <label>
-                <span>Appointment type</span>
+                <span>{tr('Appointment type')}</span>
                 <select
                   value={editing.type}
                   onChange={(event) => setEditing({ ...editing, type: event.target.value })}
                 >
-                  <option>In-person training</option>
-                  <option>Video check-in</option>
-                  <option>Body assessment</option>
+                  <option value="In-person training">{tr('In-person training')}</option>
+                  <option value="Video check-in">{tr('Video check-in')}</option>
+                  <option value="Body assessment">{tr('Body assessment')}</option>
                 </select>
               </label>
               <label>
-                <span>Date</span>
+                <span>{tr('Date')}</span>
                 <input
                   type="date"
                   value={editing.date}
@@ -1501,7 +1487,7 @@ export function TrainerAppointmentsPage() {
                 />
               </label>
               <label>
-                <span>Time</span>
+                <span>{tr('Time')}</span>
                 <input
                   type="time"
                   value={editing.time}
@@ -1509,7 +1495,7 @@ export function TrainerAppointmentsPage() {
                 />
               </label>
               <label>
-                <span>Duration</span>
+                <span>{tr('Duration')}</span>
                 <input
                   type="number"
                   min="15"
@@ -1521,7 +1507,7 @@ export function TrainerAppointmentsPage() {
                 />
               </label>
               <label>
-                <span>Status</span>
+                <span>{tr('Status')}</span>
                 <select
                   value={editing.status}
                   onChange={(event) =>
@@ -1531,14 +1517,14 @@ export function TrainerAppointmentsPage() {
                     })
                   }
                 >
-                  <option value="pending">Pending</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="pending">{tr('Pending')}</option>
+                  <option value="confirmed">{tr('Confirmed')}</option>
+                  <option value="completed">{tr('Completed')}</option>
+                  <option value="cancelled">{tr('Cancelled')}</option>
                 </select>
               </label>
               <label className="is-full">
-                <span>Notes</span>
+                <span>{tr('Notes')}</span>
                 <textarea
                   value={editing.notes}
                   onChange={(event) => setEditing({ ...editing, notes: event.target.value })}
@@ -1547,11 +1533,11 @@ export function TrainerAppointmentsPage() {
             </div>
             <footer>
               <button type="button" onClick={() => setEditing(null)}>
-                Cancel
+                {tr('Cancel')}
               </button>
               <button type="button" className="is-primary" onClick={save}>
                 <Save size={15} />
-                Save appointment
+                {tr('Save appointment')}
               </button>
             </footer>
           </section>
@@ -1597,6 +1583,7 @@ const coachingEvents = [
 ];
 
 export function TrainerCoachingHistoryPage() {
+  const tr = useTrainerText();
   const [memberId, setMemberId] = useState('all');
   const events = coachingEvents.filter(
     (event) => memberId === 'all' || event.memberId === memberId,
@@ -1607,7 +1594,7 @@ export function TrainerCoachingHistoryPage() {
         <label className="trainer-member-select">
           <UsersRound size={16} />
           <select value={memberId} onChange={(event) => setMemberId(event.target.value)}>
-            <option value="all">All Members</option>
+            <option value="all">{tr('All Members')}</option>
             {trainerMembers.map((member) => (
               <option value={member.id} key={member.id}>
                 {member.name}
@@ -1622,12 +1609,12 @@ export function TrainerCoachingHistoryPage() {
             <time>{event.date}</time>
             <i />
             <div>
-              <span>{event.type}</span>
-              <h2>{event.title}</h2>
+              <span>{tr(event.type)}</span>
+              <h2>{tr(event.title)}</h2>
               <strong>{getTrainerMember(event.memberId)?.name}</strong>
-              <p>{event.note}</p>
+              <p>{tr(event.note)}</p>
               <button type="button">
-                View coaching detail <ChevronRight size={14} />
+                {tr('View coaching detail')} <ChevronRight size={14} />
               </button>
             </div>
           </article>
@@ -1673,6 +1660,7 @@ const incomeRows = [
 ];
 
 export function TrainerIncomePage() {
+  const tr = useTrainerText();
   const total = incomeRows.reduce((sum, row) => sum + row.amount, 0);
   const active = incomeRows.filter((row) => row.status === 'active').length;
   return (
@@ -1680,29 +1668,29 @@ export function TrainerIncomePage() {
       <section className="trainer-metric-grid">
         <article>
           <CircleDollarSign />
-          <span>Total income</span>
+          <span>{tr('Total income')}</span>
           <strong>{new Intl.NumberFormat('vi-VN').format(total)} ₫</strong>
         </article>
         <article>
           <ClipboardList />
-          <span>Package sales</span>
+          <span>{tr('Package sales')}</span>
           <strong>{incomeRows.length}</strong>
         </article>
         <article>
           <Activity />
-          <span>Active packages</span>
+          <span>{tr('Active packages')}</span>
           <strong>{active}</strong>
         </article>
         <article>
           <UsersRound />
-          <span>Package Members</span>
+          <span>{tr('Package Members')}</span>
           <strong>{new Set(incomeRows.map((row) => row.memberId)).size}</strong>
         </article>
       </section>
       <div className="trainer-chart-grid is-income">
         <MiniLineChart
           values={[3200000, 5600000, 4400000, 3200000, 6100000, 7200000, 6900000]}
-          label="Income history"
+          label={tr('Income history')}
           suffix=" ₫"
         />
       </div>
@@ -1710,11 +1698,11 @@ export function TrainerIncomePage() {
         <table>
           <thead>
             <tr>
-              <th>Package</th>
-              <th>Member</th>
-              <th>Purchase / start date</th>
-              <th>Status</th>
-              <th>Income</th>
+              <th>{tr('Package')}</th>
+              <th>{tr('Member')}</th>
+              <th>{tr('Purchase / start date')}</th>
+              <th>{tr('Status')}</th>
+              <th>{tr('Income')}</th>
             </tr>
           </thead>
           <tbody>

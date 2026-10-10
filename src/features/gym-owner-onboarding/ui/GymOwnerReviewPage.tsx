@@ -1,6 +1,5 @@
 import { ArrowLeft, Building2, FileCheck2, MapPin, Pencil, Send } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -11,7 +10,8 @@ import {
   isBrandAndBranchesComplete,
   useGymOwnerOnboardingStore,
 } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
-import { ROUTES } from '@/shared/config/constants';
+import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
 import {
   Dialog,
@@ -28,24 +28,13 @@ import {
   WorkspaceToolbar,
 } from '@/shared/ui/workspace';
 
-const FACILITY_IDS = [
-  'free-weights',
-  'cardio',
-  'functional',
-  'locker-shower',
-  'parking',
-  'sauna',
-  'recovery',
-  'body-assessment',
-] as const;
-
 function formatFileSize(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
 export function GymOwnerReviewPage() {
-  const { i18n } = useTranslation();
-  const copy = gymOwnerCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const { language } = useLocale();
+  const copy = gymOwnerCopy[language];
   const navigate = useNavigate();
   const data = useGymOwnerOnboardingStore();
   const [isConfirming, setIsConfirming] = useState(false);
