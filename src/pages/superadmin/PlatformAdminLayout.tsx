@@ -40,9 +40,9 @@ import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
-  useSidebarCollapse,
   SidebarSearch,
   SidebarToggle,
+  useSidebarCollapse,
   useSidebarFlyout,
 } from '@/shared/ui/sidebar-controls';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
@@ -144,7 +144,9 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'movement',
     icon: Dumbbell,
-    items: [{ label: 'movementAssessment', to: ROUTES.superadmin.movementAssessment, icon: Dumbbell }],
+    items: [
+      { label: 'movementAssessment', to: ROUTES.superadmin.movementAssessment, icon: Dumbbell },
+    ],
   },
   {
     id: 'security',
@@ -186,12 +188,12 @@ export function PlatformAdminLayout() {
     }))
     .filter((group) => group.items.length > 0);
 
-  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
-
   const activeItem = groups
     .flatMap((group) => group.items)
     .filter((item) => item.to && matchesPlatformRoute(item.to, location.pathname))
     .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
+
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
   useEffect(() => {
     const active = groups.find((group) =>
@@ -225,7 +227,9 @@ export function PlatformAdminLayout() {
   };
 
   return (
-    <div className={cn('member-shell platform-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
+    <div
+      className={cn('member-shell platform-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}
+    >
       <header className="member-mobile-header">
         <button
           type="button"
@@ -338,14 +342,20 @@ export function PlatformAdminLayout() {
                       <NavLink
                         key={item.label}
                         to={item.to}
-                        end={item.to !== ROUTES.superadmin.movementAssessment}
+                        end
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
                         }}
                         aria-label={copy[item.label]}
                         title={isSidebarCollapsed ? copy[item.label] : undefined}
-                        className={cn('member-nav-link', activeItem?.to === item.to && 'is-active')}
+                        className={({ isActive }) =>
+                          cn(
+                            'member-nav-link',
+                            (isActive || matchesPlatformRoute(item.to!, location.pathname)) &&
+                              'is-active',
+                          )
+                        }
                       >
                         <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
