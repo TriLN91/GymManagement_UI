@@ -1,13 +1,16 @@
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { ROUTES } from '@/shared/config/constants';
+import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
+import { LanguageSwitcher } from '@/shared/ui/language-switcher';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
 export function AuthLayout({ children }: AuthLayoutProps) {
+  const { t } = useTranslation('auth');
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#F3F6F2] font-sans">
       {/* Background Graphic Elements */}
@@ -18,12 +21,15 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       <header className="relative z-10 flex w-full items-center justify-between px-6 py-8 text-forest md:px-12">
         <Link
           to={ROUTES.public.landing}
-          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors hover:text-mint"
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors hover:text-forest/70"
         >
-          <ChevronLeft className="h-4 w-4" /> Quay lại trang chủ
+          <ChevronLeft className="h-4 w-4" /> {t('layout.back')}
         </Link>
-        <div className="text-xs font-bold uppercase tracking-widest text-forest/50">
-          FIT CORP // HYER V1.0
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher variant="pill" />
+          <div className="hidden text-xs font-bold uppercase tracking-widest text-forest/50 sm:block">
+            {t('layout.version')}
+          </div>
         </div>
       </header>
 
@@ -35,8 +41,8 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       {/* Graphic Widget Bottom Left */}
       <div className="absolute bottom-12 left-12 z-10 hidden w-64 rounded-xl border border-forest/10 bg-white/50 p-4 shadow-sm backdrop-blur-sm lg:block">
         <div className="mb-3 flex items-center justify-between border-b border-forest/10 pb-2 text-[10px] font-bold uppercase tracking-wider text-forest/50">
-          <span>AI KINEMATICS // DELTA</span>
-          <span className="rounded-sm bg-mint px-1.5 py-0.5 text-forest">ACTIVE</span>
+          <span>{t('layout.widget')}</span>
+          <span className="rounded-sm bg-mint px-1.5 py-0.5 text-forest">{t('layout.active')}</span>
         </div>
         <div className="relative flex h-24 w-full items-center justify-center rounded border border-dashed border-forest/20 bg-white/80">
           <div className="absolute left-1/4 top-1/4 h-1.5 w-1.5 rounded-full bg-forest"></div>
@@ -59,15 +65,17 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
       {/* Footer */}
       <footer className="relative z-10 flex w-full flex-col items-center justify-between gap-4 px-6 py-8 text-[10px] font-bold uppercase tracking-widest text-forest/40 md:flex-row md:px-12">
-        <div>FIT® AI FITNESS PLATFORM | HYER SOLUTIONS • PRO TECH ARCHITECTURE</div>
+        <div>{t('layout.footer')}</div>
         <div className="flex gap-4">
           <Link to="#" className="transition-colors hover:text-forest">
-            Tiêu chuẩn compliance
+            {t('layout.compliance')}
           </Link>
           <Link to="#" className="transition-colors hover:text-forest">
-            Bảo mật sinh trắc học
+            {t('layout.biometric')}
           </Link>
-          <span>© 2026 FIT®</span>
+          <span>
+            © {new Date().getFullYear()} {BRAND_MARK.toUpperCase()}
+          </span>
         </div>
       </footer>
     </div>

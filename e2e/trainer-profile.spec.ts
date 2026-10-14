@@ -12,7 +12,7 @@ async function openAsTrainer(page: Page, path: string) {
     };
     const seedKey = 'trainer-profile-e2e-seeded';
     if (!window.sessionStorage.getItem(seedKey)) {
-      window.localStorage.clear();
+      { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
       window.localStorage.setItem('app:auth', JSON.stringify({ state: { user }, version: 1 }));
       window.localStorage.setItem('gmc.locale', 'en');
       window.sessionStorage.setItem(seedKey, 'true');

@@ -227,5 +227,104 @@
       "saturday-hiit": "26 Thg 9",
       "sunday-rest": "27 Thg 9"
     }
+  },
+  "workoutHistory": {
+    "sets": "hiệp",
+    "rounds": "vòng",
+    "workoutHistory": {
+      "title": "Lịch sử tập luyện",
+      "back": "Về lịch tập",
+      "empty": "Chưa có buổi tập hoàn thành.",
+      "exercises": "bài đã ghi nhận",
+      "volume": "Tổng tải",
+      "duration": "Thời lượng",
+      "distance": "Quãng đường",
+      "rounds": "Số vòng"
+    }
+  },
+  "workoutProgress": {
+    "copy": {
+      "title": "Tiến trình tập luyện",
+      "back": "Về lịch tập",
+      "week": "Theo dõi tuần này",
+      "completed": "Đã hoàn thành",
+      "planned": "Đã lên lịch",
+      "rest": "Nghỉ",
+      "data": "Dữ liệu buổi tập",
+      "chart": "Xu hướng theo thời gian",
+      "volume": "Tổng tải",
+      "duration": "Thời lượng",
+      "distance": "Quãng đường",
+      "rounds": "Số vòng",
+      "sessions": "Buổi đã hoàn thành",
+      "empty": "Hoàn thành buổi tập đầu tiên để xem dữ liệu tiến trình."
+    }
+  },
+  "memberWorkoutBuilder": {
+    "copy": {
+      "library": "Thư viện bài tập",
+      "search": "Tìm bài tập",
+      "category": "Nhóm cơ mục tiêu",
+      "all": "Tất cả nhóm cơ",
+      "builder": "Tự tạo lịch tập",
+      "name": "Đặt tên lịch tập",
+      "autosave": "Bản nháp tự lưu trên thiết bị",
+      "exercises": "bài tập",
+      "sets": "tổng hiệp",
+      "targetSets": "Số hiệp",
+      "reorder": "Sắp xếp thứ tự",
+      "empty": "Thêm bài tập từ thư viện để bắt đầu.",
+      "summary": "Tổng quan lịch tập",
+      "estimated": "Phút dự kiến",
+      "muscle": "Khối lượng theo nhóm cơ",
+      "save": "Lưu lịch tập",
+      "clear": "Xóa bản nháp",
+      "saved": "Đã lưu lịch tập cá nhân.",
+      "invalid": "Hãy nhập tên và thêm ít nhất một bài tập.",
+      "target": "Mục tiêu",
+      "reps": "Số lần",
+      "load": "Mức tạ",
+      "rest": "Nghỉ",
+      "duration": "Thời lượng",
+      "distance": "Quãng đường",
+      "rounds": "Số vòng",
+      "work": "Thời gian tập",
+      "remove": "Xóa bài tập",
+      "liveMuscleMap": "Bản đồ nhóm cơ",
+      "clearMuscle": "Xem tất cả",
+      "days": "Ngày tập",
+      "newPlan": "Tạo plan mới",
+      "optionalAddon": "Thêm bài tập bổ sung",
+      "savedAddon": "Đã thêm vào lịch cá nhân và không ảnh hưởng tiến độ plan chính.",
+      "scheduleMissing": "Hãy chọn ít nhất một ngày cho mỗi bài và không lặp cùng bài trong một ngày.",
+      "chooseDay": "Chọn ít nhất một ngày tập",
+      "primary": "Bài tác động chính",
+      "related": "Bài tác động phụ"
+    },
+    "wORKOUTBUILDER": "TRÌNH TẠO BUỔI TẬP",
+    "male": "Nam",
+    "weekdays": {
+      "monday": "T2",
+      "tuesday": "T3",
+      "wednesday": "T4",
+      "thursday": "T5",
+      "friday": "T6",
+      "saturday": "T7",
+      "sunday": "CN"
+    }
+  },
+  "maleAnatomyMuscleMap": {
+    "expandMuscleMap": "Phóng lớn bản đồ cơ",
+    "low": "Thấp",
+    "highVolume": "Lượng tập cao",
+    "maleMuscleMap": "Bản đồ cơ nam",
+    "viewLabelFront": "Bản đồ cơ mặt trước",
+    "viewLabelBack": "Bản đồ cơ mặt sau",
+    "captionFront": "Mặt trước",
+    "captionBack": "Mặt sau"
+  },
+  "aria": {
+    "trainingStations": "Các trạm tập luyện",
+    "loadingPlans": "Đang tải kế hoạch tập luyện"
   }
 }

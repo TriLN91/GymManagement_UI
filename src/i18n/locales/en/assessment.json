@@ -1,0 +1,19 @@
+{
+  "aIAssessment": {
+    "copy": {
+      "upload": "Choose workout video",
+      "replace": "Choose another video",
+      "empty": "Choose a full-body video with the working joints clearly visible.",
+      "formats": "Supports MP4, MOV, or WebM video from this device.",
+      "file": "Selected file",
+      "size": "File size",
+      "queue": "Submit for assessment",
+      "queued": "Video added to the assessment queue.",
+      "pendingTitle": "Video is ready",
+      "pendingBody": "Scores and feedback will appear when the form-analysis service is connected.",
+      "resume": "Resume workout",
+      "schedule": "Back to schedule",
+      "noExercise": "No exercise selected"
+    }
+  }
+}

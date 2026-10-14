@@ -5,6 +5,7 @@ import {
   Building2,
   ChevronDown,
   ClipboardCheck,
+  Dumbbell,
   FileText,
   History,
   Landmark,
@@ -30,6 +31,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { isNavigationRouteActive } from './navigationRoute';
+
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { platformCopy } from '@/features/platform-admin-dashboard/ui/copy';
@@ -49,6 +52,9 @@ import './platform-admin-layout.css';
 
 type CopyKey =
   | 'overview'
+  | 'tenants'
+  | 'movementAssessment'
+  | 'analyticsOverview'
   | 'gymApplications'
   | 'activeGyms'
   | 'legalChanges'
@@ -71,7 +77,8 @@ type GroupKey =
   | 'campaigns'
   | 'transactions'
   | 'analytics'
-  | 'security';
+  | 'security'
+  | 'movement';
 
 interface NavItem {
   label: CopyKey;
@@ -129,7 +136,15 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'analytics',
     icon: LineChart,
-    items: [{ label: 'platformAnalytics', to: ROUTES.superadmin.platformAnalytics, icon: LineChart }],
+    items: [
+      { label: 'analyticsOverview', to: ROUTES.superadmin.analytics, icon: LineChart },
+      { label: 'platformAnalytics', to: ROUTES.superadmin.platformAnalytics, icon: LineChart },
+    ],
+  },
+  {
+    id: 'movement',
+    icon: Dumbbell,
+    items: [{ label: 'movementAssessment', to: ROUTES.superadmin.movementAssessment, icon: Dumbbell }],
   },
   {
     id: 'security',
@@ -143,7 +158,7 @@ const groups: ReadonlyArray<NavGroup> = [
 
 function matchesPlatformRoute(to: string, pathname: string) {
   if (to === ROUTES.superadmin.root) return pathname === to;
-  return pathname === to || pathname.startsWith(`${to}/`);
+  return isNavigationRouteActive(pathname, to);
 }
 
 export function PlatformAdminLayout() {
@@ -172,6 +187,11 @@ export function PlatformAdminLayout() {
     .filter((group) => group.items.length > 0);
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
+
+  const activeItem = groups
+    .flatMap((group) => group.items)
+    .filter((item) => item.to && matchesPlatformRoute(item.to, location.pathname))
+    .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
 
   useEffect(() => {
     const active = groups.find((group) =>
@@ -318,20 +338,14 @@ export function PlatformAdminLayout() {
                       <NavLink
                         key={item.label}
                         to={item.to}
-                        end
+                        end={item.to !== ROUTES.superadmin.movementAssessment}
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
                         }}
                         aria-label={copy[item.label]}
                         title={isSidebarCollapsed ? copy[item.label] : undefined}
-                        className={({ isActive }) =>
-                          cn(
-                            'member-nav-link',
-                            (isActive || matchesPlatformRoute(item.to!, location.pathname)) &&
-                              'is-active',
-                          )
-                        }
+                        className={cn('member-nav-link', activeItem?.to === item.to && 'is-active')}
                       >
                         <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
@@ -382,7 +396,7 @@ export function PlatformAdminLayout() {
           <div className="member-topbar__context">
             <span>Fit®</span>
             <span>/</span>
-            <strong>{copy.workspace}</strong>
+            <strong>{activeItem ? copy[activeItem.label] : copy.workspace}</strong>
           </div>
           <div className="member-topbar__actions">
             <button type="button" onClick={toggleLanguage} className="member-language-button">

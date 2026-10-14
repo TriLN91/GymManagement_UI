@@ -1,0 +1,116 @@
+{
+  "skip": "Đến nội dung chính",
+  "homeAria": "Fit — Trang chủ",
+  "audienceNav": "Đối tượng khách hàng",
+  "member": "Người tập",
+  "owner": "Chủ phòng tập",
+  "login": "Đăng nhập",
+  "ctaMember": "Bắt đầu tập luyện",
+  "ctaOwner": "Đăng ký đối tác",
+  "titleMember": "Fit® — Tập luyện có định hướng",
+  "titleOwner": "Fit® — Dành cho chủ phòng tập",
+  "footer": {
+    "tagline": "Tập luyện là vận động. AI mang đến sự chính xác.",
+    "nav": "Liên kết cuối trang",
+    "register": "Đăng ký",
+    "motto": "CHUYỂN ĐỘNG. DỮ LIỆU. TIẾN BỘ."
+  },
+  "movement": {
+    "aria": "Minh họa phân tích tư thế squat với điểm khớp và đường đo chuyển động",
+    "top": "PHÂN TÍCH VIDEO",
+    "bottom": "VIDEO → PHÂN TÍCH → PHẢN HỒI",
+    "illustration": "HÌNH MINH HỌA",
+    "joints": "ĐIỂM KHỚP",
+    "range": "BIÊN ĐỘ",
+    "posture": "TƯ THẾ"
+  },
+  "m": {
+    "label": "FIT® / DÀNH CHO NGƯỜI TẬP",
+    "title": "Sức mạnh.",
+    "titleEm": "Có định hướng.",
+    "lead": "Phân tích tư thế bằng AI, giáo án rõ ràng và huấn luyện viên đồng hành. Tất cả trong một hành trình tập luyện.",
+    "explore": "Khám phá tính năng",
+    "featuresTitle": "Một ứng dụng.\nCả hành trình tập luyện.",
+    "featuresLead": "Từ video bài tập đến giáo án và người đồng hành, mọi dữ liệu nằm ở cùng một nơi.",
+    "features": [
+      {
+        "label": "01 / PHÂN TÍCH TƯ THẾ",
+        "title": "Hiểu từng chuyển động.",
+        "body": "Quay hoặc tải video bài tập. AI chỉ ra điểm cần điều chỉnh theo từng thời điểm."
+      },
+      {
+        "label": "02 / GIÁO ÁN",
+        "title": "Tập có định hướng.",
+        "body": "Theo dõi mục tiêu và kết quả từng hiệp tập trong một lộ trình rõ ràng."
+      },
+      {
+        "label": "03 / HUẤN LUYỆN VIÊN",
+        "title": "Có người đồng hành.",
+        "body": "Chọn huấn luyện viên của phòng tập phù hợp để được điều chỉnh giáo án và theo sát tiến độ."
+      }
+    ],
+    "focus": "Tập trung vào",
+    "focusEm": "lần tập tiếp theo.",
+    "focusLead": "Biết hôm nay tập gì, bao nhiêu hiệp, và mình đã làm được đến đâu so với mục tiêu.",
+    "preview": {
+      "top": "BUỔI TẬP CỦA BẠN",
+      "ui": "GIAO DIỆN MINH HỌA",
+      "title": "Sức mạnh\nthân trên.",
+      "daysAria": "Lịch tập minh họa",
+      "days": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+      "exercise": "BÀI TẬP",
+      "target": "MỤC TIÊU",
+      "actual": "THỰC TẾ",
+      "rows": [
+        { "name": "Đẩy ngực với tạ", "target": "3 × 12", "actual": "3 × 12" },
+        { "name": "Kéo tạ một tay", "target": "3 × 10", "actual": "2 × 10" },
+        { "name": "Plank", "target": "45 giây", "actual": "—" }
+      ]
+    },
+    "final": "Tiềm năng của bạn.",
+    "finalEm": "Không giới hạn."
+  },
+  "o": {
+    "label": "FIT® / DÀNH CHO CHỦ PHÒNG TẬP",
+    "title": "Phòng tập của bạn.",
+    "titleEm": "Vươn xa hơn.",
+    "lead": "Đưa phòng tập, gói dịch vụ và đội ngũ huấn luyện viên đến với người đang tìm kiếm nơi tập phù hợp.",
+    "visualAria": "Minh họa hồ sơ phòng tập trên nền tảng",
+    "visualTop": "KHÁM PHÁ PHÒNG TẬP",
+    "illustration": "HÌNH MINH HỌA",
+    "found": "Được tìm thấy.\nĐược lựa chọn.",
+    "tags": ["Phòng tập", "Gói dịch vụ", "Huấn luyện viên"],
+    "stepsTitle": "Một hồ sơ rõ ràng.\nMột điểm bắt đầu.",
+    "stepsLead": "Ba bước để phòng tập của bạn có mặt trên nền tảng và đến gần người tập hơn.",
+    "steps": [
+      {
+        "label": "01 / HOÀN THIỆN",
+        "title": "Giới thiệu phòng tập.",
+        "body": "Bổ sung vị trí, tiện ích và hình ảnh thể hiện đúng không gian, dịch vụ của bạn."
+      },
+      {
+        "label": "02 / XÉT DUYỆT",
+        "title": "Sẵn sàng hiện diện.",
+        "body": "Gửi hồ sơ phòng tập để được xét duyệt trên nền tảng."
+      },
+      {
+        "label": "03 / KẾT NỐI",
+        "title": "Đến gần người tập.",
+        "body": "Đưa gói tập, gói PT và đội ngũ huấn luyện viên đến người đang tìm nơi tập."
+      }
+    ],
+    "offerTitle": "Dịch vụ rõ ràng.",
+    "offerTitleEm": "Giao dịch minh bạch.",
+    "offerLead": "Công bố quyền lợi, thời hạn và giá của từng gói tập hoặc gói PT. Theo dõi giao dịch và đối soát ngay trên nền tảng.",
+    "commission": "Hoa hồng 10% áp dụng trên phần dịch vụ phòng tập. Phần AI Plus của nền tảng được tách riêng.",
+    "offerLabel": "CẤU TRÚC GÓI / MINH HỌA",
+    "offerRows": [
+      { "title": "Quyền lợi", "body": "Dịch vụ được cung cấp" },
+      { "title": "Thời hạn", "body": "Thời gian sử dụng gói" },
+      { "title": "Giá bán", "body": "Chi phí được công bố" },
+      { "title": "Điều kiện", "body": "Thông tin trước khi mua" }
+    ],
+    "final": "Giá trị của bạn.",
+    "finalEm": "Đến đúng người."
+  }
+}

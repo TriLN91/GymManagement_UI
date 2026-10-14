@@ -1,16 +1,16 @@
 import { ArrowLeft, MapPin, Pencil, Plus, Save, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { FACILITY_IDS, gymProfileCopy } from './copy';
+import { gymProfileCopy } from './copy';
 import { useGymProfileBootstrap } from './useGymProfileBootstrap';
 
 import { createEmptyBranch, isBranchProfileComplete } from '@/features/gym-owner-onboarding';
 import type { GymProfileBranch } from '@/features/gym-owner-profile/model/types';
 import { useGymOwnerProfileStore } from '@/features/gym-owner-profile/model/useGymOwnerProfileStore';
-import { ROUTES } from '@/shared/config/constants';
+import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
@@ -31,9 +31,9 @@ function createBranchId() {
 }
 
 export function GymOwnerBranchesPage() {
+  const { language } = useLocale();
   useGymProfileBootstrap();
-  const { i18n } = useTranslation();
-  const copy = gymProfileCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const copy = gymProfileCopy[language];
   const branches = useGymOwnerProfileStore((state) => state.branches);
   const addBranch = useGymOwnerProfileStore((state) => state.addBranch);
   const updateBranch = useGymOwnerProfileStore((state) => state.updateBranch);

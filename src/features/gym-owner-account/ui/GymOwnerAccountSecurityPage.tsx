@@ -1,5 +1,4 @@
 import { KeyRound, MailCheck, ShieldCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 import { importantActivityResource } from '../model/mockData';
 
@@ -7,6 +6,7 @@ import { AccountResourceStateView } from './AccountResourceState';
 import { gymOwnerAccountCopy } from './copy';
 
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import {
   Table,
@@ -28,10 +28,8 @@ function maskEmail(email: string) {
 }
 
 export function GymOwnerAccountSecurityPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const text = gymOwnerAccountCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const text = gymOwnerAccountCopy[language];
   const email = useAuthStore((state) => state.user?.email ?? '');
 
   return (
@@ -96,11 +94,9 @@ export function GymOwnerAccountSecurityPage() {
                         </time>
                       </TableCell>
                       <TableCell data-label={text.activity}>
-                        <strong>{record.activity[isVi ? 'vi' : 'en']}</strong>
+                        <strong>{record.activity[language]}</strong>
                       </TableCell>
-                      <TableCell data-label={text.context}>
-                        {record.context[isVi ? 'vi' : 'en']}
-                      </TableCell>
+                      <TableCell data-label={text.context}>{record.context[language]}</TableCell>
                       <TableCell data-label={text.result}>
                         <Badge variant={record.result === 'success' ? 'accent' : 'neutral'}>
                           {record.result === 'success' ? text.success : text.submitted}

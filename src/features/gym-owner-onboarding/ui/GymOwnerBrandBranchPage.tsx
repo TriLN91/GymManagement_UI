@@ -1,6 +1,5 @@
 import { ArrowLeft, ArrowRight, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { gymOwnerCopy } from './copy';
@@ -16,7 +15,8 @@ import {
   isBrandProfileComplete,
   useGymOwnerOnboardingStore,
 } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
-import { ROUTES } from '@/shared/config/constants';
+import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
 import { Input } from '@/shared/ui/input';
@@ -29,22 +29,11 @@ import {
   WorkspaceToolbar,
 } from '@/shared/ui/workspace';
 
-const FACILITY_IDS = [
-  'free-weights',
-  'cardio',
-  'functional',
-  'locker-shower',
-  'parking',
-  'sauna',
-  'recovery',
-  'body-assessment',
-] as const;
-
 type FormErrors = Record<string, string>;
 
 export function GymOwnerBrandBranchPage() {
-  const { i18n } = useTranslation();
-  const copy = gymOwnerCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const { language } = useLocale();
+  const copy = gymOwnerCopy[language];
   const navigate = useNavigate();
   const storedBrand = useGymOwnerOnboardingStore((state) => state.brand);
   const storedBranches = useGymOwnerOnboardingStore((state) => state.branches);

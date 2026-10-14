@@ -1,0 +1,56 @@
+{
+  "plan": {
+    "title": "Your training plan",
+    "open": "View AI plan",
+    "start": "Start workout"
+  },
+  "profile": {
+    "title": "YOUR PROFILE",
+    "complete": "complete",
+    "goalLabel": "TRAINING GOAL",
+    "bodyLabel": "BODY METRICS",
+    "healthLabel": "HEALTH SCREENING",
+    "notSet": "Not set",
+    "target": "Target",
+    "bmi": "BMI",
+    "goals": {
+      "muscle_gain": "Build muscle",
+      "fat_loss": "Lose fat",
+      "strength": "Build strength",
+      "mobility": "Improve mobility",
+      "cardio_endurance": "Improve cardio endurance",
+      "muscular_endurance": "Improve muscular endurance"
+    },
+    "readiness": {
+      "ready": "Ready to train",
+      "pt_review": "Trainer review needed"
+    },
+    "completeness": "PROFILE COMPLETENESS",
+    "edit": "EDIT PROFILE",
+    "energyLabel": "DAILY MAINTENANCE CALORIES (ESTIMATE)"
+  },
+  "actions": {
+    "one": {
+      "tag": "QUICK ACTION // 01",
+      "title": "START\nTODAY'S SESSION",
+      "body": "Load your plan straight into the rep counter. Rest timing and form-error handling are automatic.",
+      "cta": "Start now →"
+    },
+    "two": {
+      "tag": "COMPUTER VISION // 02",
+      "title": "SCORE YOUR FORM\nWITH AI VIDEO",
+      "body": "Record a draft video to detect skeleton errors. Compare 3D Pose-Net rep ratios against the trainer's standard.",
+      "cta": "Record form video ↑"
+    }
+  },
+  "progress": {
+    "tag": "TRAINING TRACKING // LAST 7 DAYS",
+    "title": "This week's training volume",
+    "volume": "VOLUME LOAD (KG) / DAY",
+    "sessions": "COMPLETED SESSIONS",
+    "totalVolume": "TOTAL VOLUME",
+    "kg": "KG",
+    "empty": "No sessions in the last 7 days. Finish a workout to see your chart.",
+    "history": "View workout history"
+  }
+}

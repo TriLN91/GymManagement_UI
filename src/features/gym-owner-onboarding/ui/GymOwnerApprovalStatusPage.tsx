@@ -7,6 +7,7 @@ import { gymOwnerCopy } from './copy';
 import type { GymOwnerApplicationStatus } from '@/features/gym-owner-onboarding/model/types';
 import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/ui/workspace';
@@ -20,9 +21,9 @@ const STATUS_ICONS = {
 } satisfies Record<GymOwnerApplicationStatus, typeof FileCheck2>;
 
 export function GymOwnerApprovalStatusPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerCopy[isVi ? 'vi' : 'en'];
+  const { language, locale } = useLocale();
+  const { t } = useTranslation();
+  const copy = gymOwnerCopy[language];
   const status = useGymOwnerOnboardingStore((state) => state.status);
   const rejectionReason = useGymOwnerOnboardingStore((state) => state.rejectionReason);
   const submittedAt = useGymOwnerOnboardingStore((state) => state.submittedAt);
@@ -32,9 +33,7 @@ export function GymOwnerApprovalStatusPage() {
   const content = {
     draft: {
       title: copy.entry.title,
-      body: isVi
-        ? 'Hồ sơ vẫn đang ở dạng bản nháp. Hoàn thành ba bước để gửi xét duyệt.'
-        : 'The application is still a draft. Complete all three steps to submit it for review.',
+      body: t('owner:gymOwnerApprovalStatus.theApplicationIsStill'),
     },
     submitted: {
       title: copy.approval.submittedTitle,
@@ -81,7 +80,7 @@ export function GymOwnerApprovalStatusPage() {
                 <div>
                   <dt>{copy.approval.submittedAt}</dt>
                   <dd>
-                    {new Intl.DateTimeFormat(isVi ? 'vi-VN' : 'en-US', {
+                    {new Intl.DateTimeFormat(locale, {
                       dateStyle: 'medium',
                       timeStyle: 'short',
                     }).format(new Date(submittedAt))}

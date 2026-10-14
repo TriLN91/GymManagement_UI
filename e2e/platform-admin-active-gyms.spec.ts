@@ -10,7 +10,8 @@ test('filters gym people and shows all or one trainer bookings by week', async (
   await page.reload();
   await page.getByLabel(/email/i).fill('super@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
-  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
+  await expect(page).toHaveURL(/\/superadmin$/);
 
   await page.goto('/superadmin/gyms');
   await page.getByRole('link', { name: 'Detail' }).first().click();

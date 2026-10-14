@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { Activity, CalendarDays, Clock3, Dumbbell, MapPin, Repeat2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,45 +12,28 @@ import { ROUTES } from '@/shared/config/constants';
 
 type ProgressMetric = 'volume' | 'duration' | 'distance' | 'rounds';
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        title: 'Tiến trình tập luyện',
-        back: 'Về lịch tập',
-        week: 'Theo dõi tuần này',
-        completed: 'Đã hoàn thành',
-        planned: 'Đã lên lịch',
-        rest: 'Nghỉ',
-        data: 'Dữ liệu buổi tập',
-        chart: 'Xu hướng theo thời gian',
-        volume: 'Tổng tải',
-        duration: 'Thời lượng',
-        distance: 'Quãng đường',
-        rounds: 'Số vòng',
-        sessions: 'Buổi đã hoàn thành',
-        empty: 'Hoàn thành buổi tập đầu tiên để xem dữ liệu tiến trình.',
-      }
-    : {
-        title: 'Workout progress',
-        back: 'Back to schedule',
-        week: 'This week tracking',
-        completed: 'Completed',
-        planned: 'Planned',
-        rest: 'Rest',
-        data: 'Workout data',
-        chart: 'Trend over time',
-        volume: 'Training volume',
-        duration: 'Duration',
-        distance: 'Distance',
-        rounds: 'Rounds',
-        sessions: 'Completed sessions',
-        empty: 'Complete your first workout to see progress data.',
-      };
+function getCopy(t: TFunction) {
+  return {
+    title: t('workout:workoutProgress.copy.title'),
+    back: t('workout:workoutProgress.copy.back'),
+    week: t('workout:workoutProgress.copy.week'),
+    completed: t('workout:workoutProgress.copy.completed'),
+    planned: t('workout:workoutProgress.copy.planned'),
+    rest: t('workout:workoutProgress.copy.rest'),
+    data: t('workout:workoutProgress.copy.data'),
+    chart: t('workout:workoutProgress.copy.chart'),
+    volume: t('workout:workoutProgress.copy.volume'),
+    duration: t('workout:workoutProgress.copy.duration'),
+    distance: t('workout:workoutProgress.copy.distance'),
+    rounds: t('workout:workoutProgress.copy.rounds'),
+    sessions: t('workout:workoutProgress.copy.sessions'),
+    empty: t('workout:workoutProgress.copy.empty'),
+  };
 }
 
 export function WorkoutProgress() {
-  const { i18n, t } = useTranslation('workout');
-  const copy = getCopy(i18n.resolvedLanguage === 'vi');
+  const { t } = useTranslation('workout');
+  const copy = getCopy(t);
   const sessions = useWorkoutSessionStore((state) => state.completedSessions);
   const [metric, setMetric] = useState<ProgressMetric>('volume');
   const completedDayIds = new Set(sessions.map((session) => session.dayId));

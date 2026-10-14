@@ -10,7 +10,7 @@ async function loginPlatformAdmin(page: Page) {
   await page.reload();
   await page.getByLabel(/email/i).fill('super@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
-  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
   await expect(page).toHaveURL(/\/superadmin$/);
 }
 
@@ -22,7 +22,7 @@ test.describe('Platform Admin M1', () => {
       if (message.type() === 'error') runtimeErrors.push(message.text());
     });
     await loginPlatformAdmin(page);
-    await expect(page.locator('.member-topbar').getByText('Platform workspace')).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Platform workspace' })).toBeVisible();
     await expect(page.getByText('Sample data')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Pending approvals' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Moderation queue' })).toBeVisible();

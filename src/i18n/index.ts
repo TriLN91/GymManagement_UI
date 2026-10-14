@@ -2,19 +2,19 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-import enAuth from './locales/en/auth.json';
-import enCoaching from './locales/en/coaching.json';
-import enCommon from './locales/en/common.json';
-import enErrors from './locales/en/errors.json';
-import enWorkout from './locales/en/workout.json';
-import viAuth from './locales/vi/auth.json';
-import viCoaching from './locales/vi/coaching.json';
-import viCommon from './locales/vi/common.json';
-import viErrors from './locales/vi/errors.json';
-import viWorkout from './locales/vi/workout.json';
-
 import { STORAGE_KEYS } from '@/shared/config/constants';
 import { env } from '@/shared/config/env';
+
+type Resources = Record<string, Record<string, object>>;
+
+// Every src/i18n/locales/<lang>/<namespace>.json is registered automatically.
+const resources: Resources = {};
+for (const [file, json] of Object.entries(
+  import.meta.glob<object>('./locales/*/*.json', { eager: true, import: 'default' }),
+)) {
+  const [, lang, namespace] = /^\.\/locales\/(\w+)\/(\w+)\.json$/.exec(file) ?? [];
+  if (lang && namespace) (resources[lang] ??= {})[namespace] = json;
+}
 
 function syncDocumentLanguage(language: string) {
   document.documentElement.lang = language.startsWith('vi') ? 'vi' : 'en';
@@ -26,26 +26,11 @@ void i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: {
-      en: {
-        auth: enAuth,
-        common: enCommon,
-        coaching: enCoaching,
-        errors: enErrors,
-        workout: enWorkout,
-      },
-      vi: {
-        auth: viAuth,
-        common: viCommon,
-        coaching: viCoaching,
-        errors: viErrors,
-        workout: viWorkout,
-      },
-    },
+    resources,
     lng: localStorage.getItem(STORAGE_KEYS.locale) ?? env.VITE_DEFAULT_LOCALE,
-    fallbackLng: 'en',
+    fallbackLng: 'vi',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'coaching', 'errors', 'workout'],
+    ns: Object.keys(resources.vi ?? {}),
     interpolation: { escapeValue: false },
     detection: {
       order: ['localStorage', 'navigator'],

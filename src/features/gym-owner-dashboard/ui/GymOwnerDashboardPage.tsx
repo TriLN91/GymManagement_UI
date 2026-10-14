@@ -9,7 +9,6 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { gymOwnerDashboardMockResources } from '../model/dashboardMockData';
 import { countTrainersByStatus, sortAlertsBySeverity } from '../model/dashboardSelectors';
@@ -31,6 +30,7 @@ import { gymOwnerDashboardCopy, type GymOwnerDashboardCopy } from './copy';
 import { DashboardCustomizationDialog } from './DashboardCustomizationDialog';
 import { DashboardWidgetState } from './DashboardWidgetState';
 
+import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
@@ -344,10 +344,8 @@ function AlertsWidget({ copy, locale }: { copy: GymOwnerDashboardCopy; locale: s
 }
 
 export function GymOwnerDashboardPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerDashboardCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const copy = gymOwnerDashboardCopy[language];
   const order = useGymOwnerDashboardPreferences((state) => state.order);
   const hidden = useGymOwnerDashboardPreferences((state) => state.hidden);
   const [isCustomizing, setIsCustomizing] = useState(false);

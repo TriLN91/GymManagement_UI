@@ -89,7 +89,9 @@ test.describe('Trainer workspace', () => {
     await dialog.getByLabel('Appointment type').selectOption({ label: 'Video check-in' });
     await dialog.getByLabel('Notes').fill('E2E movement review');
     await dialog.getByRole('button', { name: 'Save appointment' }).click();
-    await expect(page.getByText('E2E movement review')).toBeVisible();
+    await expect(
+      page.locator('.trainer-appointments-table').getByText('E2E movement review'),
+    ).toBeVisible();
 
     await page.goto('/pt/history/coaching');
     await expect(page.getByText('Progressive load updated')).toBeVisible();

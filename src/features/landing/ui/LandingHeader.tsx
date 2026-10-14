@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import type { LandingAudience } from '../model/types';
@@ -5,6 +6,7 @@ import type { LandingAudience } from '../model/types';
 import { LandingButton } from './LandingButton';
 
 import { ROUTES } from '@/shared/config/constants';
+import { LanguageSwitcher } from '@/shared/ui/language-switcher';
 
 export function LandingHeader({
   audience,
@@ -13,31 +15,33 @@ export function LandingHeader({
   audience: LandingAudience;
   onAudienceChange: (next: LandingAudience) => void;
 }) {
+  const { t } = useTranslation('landing');
   return (
     <header className="fit-header">
-      <Link to={ROUTES.public.landing} className="fit-wordmark" aria-label="Fit — Trang chủ">
+      <Link to={ROUTES.public.landing} className="fit-wordmark" aria-label={t('homeAria')}>
         FIT<sup>®</sup>
       </Link>
-      <nav aria-label="Đối tượng khách hàng" className="fit-audience">
+      <nav aria-label={t('audienceNav')} className="fit-audience">
         <button
           type="button"
           aria-pressed={audience === 'member'}
           onClick={() => onAudienceChange('member')}
         >
-          Người tập
+          {t('member')}
         </button>
         <button
           type="button"
           aria-pressed={audience === 'gym_owner'}
           onClick={() => onAudienceChange('gym_owner')}
         >
-          Chủ phòng tập
+          {t('owner')}
         </button>
       </nav>
       <div className="fit-header-actions">
-        <Link to={ROUTES.public.login}>Đăng nhập</Link>
+        <LanguageSwitcher variant="pill" />
+        <Link to={ROUTES.public.login}>{t('login')}</Link>
         <LandingButton to={ROUTES.public.register}>
-          {audience === 'member' ? 'Bắt đầu tập luyện' : 'Đăng ký đối tác'}
+          {audience === 'member' ? t('ctaMember') : t('ctaOwner')}
         </LandingButton>
       </div>
     </header>

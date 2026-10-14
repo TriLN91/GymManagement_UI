@@ -1,0 +1,46 @@
+{
+  "shell": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "dashboardOverview": "Overview",
+      "profile": "Gym profile",
+      "profileOverview": "Profile overview",
+      "profileBrand": "Brand information",
+      "profileBranches": "Branches",
+      "trainers": "Trainers",
+      "trainerList": "Trainer list",
+      "assignmentExceptions": "Assignment exceptions",
+      "packages": "PT packages",
+      "packageManagement": "Package management",
+      "customers": "Customers / Purchasers",
+      "customerList": "Operational list",
+      "orders": "Orders & Settlement",
+      "orderList": "Orders",
+      "settlements": "Settlement periods",
+      "analytics": "Analytics",
+      "analyticsOps": "Operational analytics",
+      "notifications": "Notifications",
+      "notificationsSystem": "In-system notifications",
+      "security": "Account & security",
+      "securityVerification": "Verification & activity",
+      "onboarding": "Partner setup",
+      "onboardingOverview": "Setup overview",
+      "onboardingBrand": "Brand & branches",
+      "onboardingLicense": "Business license",
+      "onboardingReview": "Review & submit",
+      "onboardingStatus": "Approval status"
+    },
+    "defaultName": "Gym Owner",
+    "role": "Gym Owner",
+    "workspace": "Partner workspace",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu",
+    "switchLanguage": "Tiếng Việt"
+  },
+  "gymOwnerApprovalStatus": {
+    "theApplicationIsStill": "The application is still a draft. Complete all three steps to submit it for review."
+  },
+  "pTPackagePages": {
+    "features": "Features"
+  }
+}
