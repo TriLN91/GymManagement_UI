@@ -2,21 +2,37 @@ import type { LucideIcon } from 'lucide-react';
 import {
   Bell,
   Bot,
+  Building2,
+  CalendarDays,
+  Camera,
   ChevronDown,
-  Circle,
+  ClipboardList,
   Dumbbell,
   Grid2X2,
+  History,
   Languages,
   LayoutDashboard,
+  ListPlus,
   Loader2,
   LogOut,
+  MapPin,
   Menu,
+  Package,
+  Pencil,
+  Play,
   Settings2,
+  ShieldCheck,
+  ShoppingCart,
   Store,
+  Tag,
+  TrendingUp,
+  Trophy,
   UserRound,
+  UsersRound,
+  Watch,
   X,
 } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -24,6 +40,13 @@ import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
+import {
+  matchesSidebarSearch,
+  useSidebarCollapse,
+  SidebarSearch,
+  SidebarToggle,
+  useSidebarFlyout,
+} from '@/shared/ui/sidebar-controls';
 
 import './member-layout.css';
 
@@ -55,15 +78,15 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     labelKey: 'memberShell.workoutGroup',
     icon: Dumbbell,
     items: [
-      { labelKey: 'memberShell.workoutPlans', to: ROUTES.member.workout },
-      { labelKey: 'memberShell.workoutBuilder', to: ROUTES.member.workoutBuilder },
-      { labelKey: 'memberShell.weeklySchedule', to: ROUTES.member.workoutSchedule },
+      { labelKey: 'memberShell.workoutPlans', to: ROUTES.member.workout, icon: ClipboardList },
+      { labelKey: 'memberShell.workoutBuilder', to: ROUTES.member.workoutBuilder, icon: ListPlus },
+      { labelKey: 'memberShell.weeklySchedule', to: ROUTES.member.workoutSchedule, icon: CalendarDays },
       { labelKey: 'memberShell.aiCoaching', to: ROUTES.member.coaching, icon: Bot },
-      { labelKey: 'memberShell.workoutExecution', to: ROUTES.member.workoutExecution },
-      { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress },
-      { labelKey: 'memberShell.achievements', to: ROUTES.member.achievements },
-      { labelKey: 'memberShell.aiAssessment', to: ROUTES.member.aiAssessment },
-      { labelKey: 'memberShell.workoutHistory', to: ROUTES.member.workoutHistory },
+      { labelKey: 'memberShell.workoutExecution', to: ROUTES.member.workoutExecution, icon: Play },
+      { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress, icon: TrendingUp },
+      { labelKey: 'memberShell.achievements', to: ROUTES.member.achievements, icon: Trophy },
+      { labelKey: 'memberShell.aiAssessment', to: ROUTES.member.aiAssessment, icon: Camera },
+      { labelKey: 'memberShell.workoutHistory', to: ROUTES.member.workoutHistory, icon: History },
     ],
   },
   {
@@ -71,15 +94,16 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     labelKey: 'memberShell.marketplaceGroup',
     icon: Store,
     items: [
-      { labelKey: 'memberShell.findGyms', to: ROUTES.member.marketplace },
+      { labelKey: 'memberShell.findGyms', to: ROUTES.member.marketplace, icon: MapPin },
       {
         labelKey: 'memberShell.gymDetails',
         to: ROUTES.member.marketplaceGymPath('fit-district-thao-dien'),
+        icon: Building2,
       },
-      { labelKey: 'memberShell.gymOffers', to: ROUTES.member.marketplaceOffers },
-      { labelKey: 'memberShell.trainers', to: ROUTES.member.marketplaceTrainers },
-      { labelKey: 'memberShell.ptPackages', to: ROUTES.member.marketplacePackages },
-      { labelKey: 'memberShell.checkout', to: ROUTES.member.marketplaceCheckout },
+      { labelKey: 'memberShell.gymOffers', to: ROUTES.member.marketplaceOffers, icon: Tag },
+      { labelKey: 'memberShell.trainers', to: ROUTES.member.marketplaceTrainers, icon: UsersRound },
+      { labelKey: 'memberShell.ptPackages', to: ROUTES.member.marketplacePackages, icon: Package },
+      { labelKey: 'memberShell.checkout', to: ROUTES.member.marketplaceCheckout, icon: ShoppingCart },
     ],
   },
   {
@@ -87,13 +111,13 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     labelKey: 'memberShell.profileGroup',
     icon: UserRound,
     items: [
-      { labelKey: 'memberShell.personalProfile', to: ROUTES.member.profile },
-      { labelKey: 'memberShell.editProfile', to: ROUTES.member.profileEdit },
-      { labelKey: 'memberShell.accountSecurity', to: ROUTES.member.profileSecurity },
-      { labelKey: 'memberShell.assessmentHistory', to: ROUTES.member.profileAssessments },
-      { labelKey: 'memberShell.appointments', to: ROUTES.member.profileAppointments },
-      { labelKey: 'memberShell.wearables', to: ROUTES.member.profileWearables },
-      { labelKey: 'memberShell.notifications', to: ROUTES.member.profileNotifications },
+      { labelKey: 'memberShell.personalProfile', to: ROUTES.member.profile, icon: UserRound },
+      { labelKey: 'memberShell.editProfile', to: ROUTES.member.profileEdit, icon: Pencil },
+      { labelKey: 'memberShell.accountSecurity', to: ROUTES.member.profileSecurity, icon: ShieldCheck },
+      { labelKey: 'memberShell.assessmentHistory', to: ROUTES.member.profileAssessments, icon: Camera },
+      { labelKey: 'memberShell.appointments', to: ROUTES.member.profileAppointments, icon: CalendarDays },
+      { labelKey: 'memberShell.wearables', to: ROUTES.member.profileWearables, icon: Watch },
+      { labelKey: 'memberShell.notifications', to: ROUTES.member.profileNotifications, icon: Bell },
     ],
   },
 ];
@@ -165,6 +189,7 @@ function matchesMemberNavRoute(itemTo: string, pathname: string) {
 
 export function MemberLayout() {
   const { i18n, t } = useTranslation('common');
+  const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
   const initialGroup =
     navGroups.find((group) =>
@@ -174,12 +199,27 @@ export function MemberLayout() {
     () => new Set([initialGroup]),
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
+  const [sidebarQuery, setSidebarQuery] = useState('');
+  const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const navigate = useNavigate();
 
   const userInitial = user?.fullName?.trim().charAt(0).toUpperCase() || 'M';
   const userName = user?.fullName || 'Member';
+  const query = sidebarQuery.trim();
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items:
+        !query || matchesSidebarSearch(t(group.labelKey), query)
+          ? group.items
+          : group.items.filter((item) => matchesSidebarSearch(t(item.labelKey), query)),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
   const handleLogout = () => {
     void logout.mutate();
@@ -200,7 +240,7 @@ export function MemberLayout() {
   };
 
   return (
-    <div className="member-shell">
+    <div className={cn('member-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
       <header className="member-mobile-header">
         <button
           type="button"
@@ -236,12 +276,25 @@ export function MemberLayout() {
             <small>{t('memberShell.member')}</small>
           </div>
           <span>{t('memberShell.workspace')}</span>
+          <SidebarToggle
+            collapsed={isSidebarCollapsed}
+            isVi={isVi}
+            onToggle={() => {
+              if (!isSidebarCollapsed) setSidebarQuery('');
+              closeFlyout();
+              setIsSidebarCollapsed((collapsed) => !collapsed);
+            }}
+          />
         </div>
 
         <nav className="member-sidebar__nav" aria-label={t('memberShell.workspace')}>
-          {navGroups.map((group) => {
+          <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
+          {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
-            const isExpanded = expandedGroups.has(group.id);
+            const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
+            const isExpanded = isSidebarCollapsed
+              ? isFlyoutOpen
+              : Boolean(query) || expandedGroups.has(group.id);
             const hasActiveChild = group.items.some(
               (item) => item.to && matchesMemberNavRoute(item.to, location.pathname),
             );
@@ -250,14 +303,24 @@ export function MemberLayout() {
               <div className="member-nav-group" key={group.id}>
                 <button
                   type="button"
-                  className={cn('member-nav-group__trigger', hasActiveChild && 'has-active-child')}
+                  className={cn(
+                    'member-nav-group__trigger',
+                    hasActiveChild && 'has-active-child',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   aria-expanded={isExpanded}
+                  aria-label={t(group.labelKey)}
+                  title={isSidebarCollapsed ? t(group.labelKey) : undefined}
                   aria-controls={`member-nav-${group.id}`}
-                  onClick={() => toggleGroup(group.id)}
+                  onClick={(event) =>
+                    isSidebarCollapsed
+                      ? toggleFlyout(group.id, event.currentTarget, group.items.length)
+                      : toggleGroup(group.id)
+                  }
                 >
                   <span>
-                    <GroupIcon aria-hidden="true" size={17} strokeWidth={1.8} />
-                    {t(group.labelKey)}
+                    <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                    <span className="member-nav-group__label">{t(group.labelKey)}</span>
                   </span>
                   <ChevronDown
                     className={cn(isExpanded && 'is-rotated')}
@@ -267,11 +330,17 @@ export function MemberLayout() {
                 </button>
 
                 <div
-                  className={cn('member-nav-children', isExpanded && 'is-expanded')}
+                  className={cn(
+                    'member-nav-children',
+                    isExpanded && 'is-expanded',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   id={`member-nav-${group.id}`}
+                  style={isFlyoutOpen ? { top: flyout?.top } : undefined}
                 >
+                  <div className="member-nav-children__heading">{t(group.labelKey)}</div>
                   {group.items.map((item) => {
-                    const ItemIcon = item.icon ?? Circle;
+                    const ItemIcon = item.icon ?? ClipboardList;
 
                     if (!item.to) {
                       return (
@@ -280,8 +349,10 @@ export function MemberLayout() {
                           className="member-nav-link is-unavailable"
                           key={item.labelKey}
                           disabled
+                        aria-label={t(item.labelKey)}
+                        title={isSidebarCollapsed ? t(item.labelKey) : undefined}
                         >
-                          <ItemIcon aria-hidden="true" size={13} strokeWidth={1.8} />
+                      <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                           <span>{t(item.labelKey)}</span>
                           <small>{t('memberShell.soon')}</small>
                         </button>
@@ -297,10 +368,15 @@ export function MemberLayout() {
                           item.to === ROUTES.member.marketplace ||
                           item.to === ROUTES.member.profile
                         }
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          closeFlyout();
+                        }}
+                        aria-label={t(item.labelKey)}
+                        title={isSidebarCollapsed ? t(item.labelKey) : undefined}
                         className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
                       >
-                        <ItemIcon aria-hidden="true" size={13} strokeWidth={1.8} />
+                        <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{t(item.labelKey)}</span>
                       </NavLink>
                     );
@@ -309,6 +385,11 @@ export function MemberLayout() {
               </div>
             );
           })}
+          {visibleGroups.length === 0 ? (
+            <p className="member-sidebar__no-results">
+              {isVi ? 'Không tìm thấy mục phù hợp' : 'No matching menu items'}
+            </p>
+          ) : null}
         </nav>
 
         <div className="member-sidebar__footer">
