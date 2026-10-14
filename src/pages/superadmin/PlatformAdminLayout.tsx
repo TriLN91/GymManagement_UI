@@ -30,6 +30,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { isNavigationRouteActive } from './navigationRoute';
+
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { platformCopy } from '@/features/platform-admin-dashboard/ui/copy';
@@ -49,6 +51,9 @@ import './platform-admin-layout.css';
 
 type CopyKey =
   | 'overview'
+  | 'tenants'
+  | 'movementAssessment'
+  | 'analyticsOverview'
   | 'gymApplications'
   | 'activeGyms'
   | 'legalChanges'
@@ -71,7 +76,8 @@ type GroupKey =
   | 'campaigns'
   | 'transactions'
   | 'analytics'
-  | 'security';
+  | 'security'
+  | 'movement';
 
 interface NavItem {
   label: CopyKey;
@@ -89,7 +95,18 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'dashboard',
     icon: LayoutDashboard,
-    items: [{ label: 'overview', to: ROUTES.superadmin.root, icon: LayoutDashboard }],
+items: [
+  {
+    label: 'overview',
+    to: ROUTES.superadmin.root,
+    icon: LayoutDashboard,
+  },
+  {
+    label: 'tenants',
+    to: ROUTES.superadmin.tenants,
+    icon: Building2,
+  },
+],
   },
   {
     id: 'approvals',
@@ -129,7 +146,33 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'analytics',
     icon: LineChart,
-    items: [{ label: 'platformAnalytics', to: ROUTES.superadmin.platformAnalytics, icon: LineChart }],
+{
+  id: 'analytics',
+  icon: LineChart,
+  items: [
+    {
+      label: 'analyticsOverview',
+      to: ROUTES.superadmin.analytics,
+      icon: LayoutDashboard,
+    },
+    {
+      label: 'platformAnalytics',
+      to: ROUTES.superadmin.platformAnalytics,
+      icon: LineChart,
+    },
+  ],
+},
+{
+  id: 'movement',
+  icon: Dumbbell,
+  items: [
+    {
+      label: 'movementAssessment',
+      to: ROUTES.superadmin.movementAssessment,
+      icon: ClipboardCheck,
+    },
+  ],
+},
   },
   {
     id: 'security',
@@ -160,22 +203,44 @@ export function PlatformAdminLayout() {
   const [expanded, setExpanded] = useState<ReadonlySet<GroupKey>>(() => new Set(['dashboard']));
   const userName = user?.fullName ?? copy.role;
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'P';
-  const query = sidebarQuery.trim();
-  const visibleGroups = groups
-    .map((group) => ({
-      ...group,
-      items:
-        !query || matchesSidebarSearch(copy[group.id], query)
-          ? group.items
-          : group.items.filter((item) => matchesSidebarSearch(copy[item.label], query)),
-    }))
-    .filter((group) => group.items.length > 0);
+const query = sidebarQuery.trim();
 
-  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
+const visibleGroups = groups
+  .map((group) => ({
+    ...group,
+    items:
+      !query || matchesSidebarSearch(copy[group.id], query)
+        ? group.items
+        : group.items.filter((item) =>
+            matchesSidebarSearch(copy[item.label], query),
+          ),
+  }))
+  .filter((group) => group.items.length > 0);
 
-  useEffect(() => {
-    const active = groups.find((group) =>
-      group.items.some((item) => item.to && matchesPlatformRoute(item.to, location.pathname)),
+const activeItem = groups
+  .flatMap((group) => group.items)
+  .filter((item) =>
+    isNavigationRouteActive(location.pathname, item.to),
+  )
+  .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
+
+useEffect(() => {
+  closeFlyout();
+}, [closeFlyout, location.pathname]);
+
+useEffect(() => {
+  const active = groups.find((group) =>
+    group.items.some((item) =>
+      isNavigationRouteActive(location.pathname, item.to),
+    ),
+  )?.id;
+
+  if (!active) return;
+
+  setExpanded((current) =>
+    current.has(active) ? current : new Set([...current, active]),
+  );
+}, [location.pathname]);
     )?.id;
     if (!active) return;
     setExpanded((current) => (current.has(active) ? current : new Set([...current, active])));
@@ -267,13 +332,18 @@ export function PlatformAdminLayout() {
           />
           {visibleGroups.map((group) => {
             const Icon = group.icon;
-            const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
-            const isExpanded = isSidebarCollapsed
-              ? isFlyoutOpen
-              : Boolean(query) || expanded.has(group.id);
-            const active = group.items.some(
-              (item) => item.to && matchesPlatformRoute(item.to, location.pathname),
-            );
+const Icon = group.icon;
+
+const isFlyoutOpen =
+  isSidebarCollapsed && flyout?.id === group.id;
+
+const isExpanded = isSidebarCollapsed
+  ? isFlyoutOpen
+  : Boolean(query) || expanded.has(group.id);
+
+const active = group.items.some((item) =>
+  isNavigationRouteActive(location.pathname, item.to),
+);
             return (
               <div className="member-nav-group" key={group.id}>
                 <button
@@ -318,24 +388,23 @@ export function PlatformAdminLayout() {
                       <NavLink
                         key={item.label}
                         to={item.to}
-                        end
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
                         }}
                         aria-label={copy[item.label]}
                         title={isSidebarCollapsed ? copy[item.label] : undefined}
-                        className={({ isActive }) =>
+                        className={() =>
                           cn(
                             'member-nav-link',
-                            (isActive || matchesPlatformRoute(item.to!, location.pathname)) &&
+                            isNavigationRouteActive(location.pathname, item.to) &&
                               'is-active',
                           )
                         }
-                      >
+                        >
                         <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
-                      </NavLink>
+                        </NavLink>
                     ) : (
                       <button
                         type="button"
@@ -382,7 +451,7 @@ export function PlatformAdminLayout() {
           <div className="member-topbar__context">
             <span>Fit®</span>
             <span>/</span>
-            <strong>{copy.workspace}</strong>
+            <strong>{activeItem ? copy[activeItem.label] : copy.workspace}</strong>
           </div>
           <div className="member-topbar__actions">
             <button type="button" onClick={toggleLanguage} className="member-language-button">

@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-const schema = z.object({ password: z.string().min(8, 'min8') });
+const schema = z.object({ password: z.string().min(8, 'auth:reset.tooShort') });
 type FormValues = z.infer<typeof schema>;
 
 export function ResetPasswordPage() {
@@ -68,7 +68,7 @@ export function ResetPasswordPage() {
                   {...register('password')}
                 />
                 {errors.password ? (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.password.message ?? '')}</p>
                 ) : null}
               </div>
               {errors.root ? (

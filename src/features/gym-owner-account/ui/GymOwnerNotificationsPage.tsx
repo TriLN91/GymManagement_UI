@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   UserRoundCheck,
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { gymOwnerNotificationResource } from '../model/mockData';
@@ -19,6 +18,7 @@ import { useGymOwnerAccountStore } from '../model/useGymOwnerAccountStore';
 import { AccountResourceStateView } from './AccountResourceState';
 import { gymOwnerAccountCopy } from './copy';
 
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { WorkspacePage } from '@/shared/ui/workspace';
 
@@ -33,10 +33,8 @@ const eventIcons = {
 } satisfies Record<GymOwnerNotificationEvent, typeof Bell>;
 
 export function GymOwnerNotificationsPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const text = gymOwnerAccountCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const text = gymOwnerAccountCopy[language];
   const readIds = useGymOwnerAccountStore((state) => state.readNotificationIds);
   const markRead = useGymOwnerAccountStore((state) => state.markNotificationRead);
   const notifications =
@@ -73,12 +71,12 @@ export function GymOwnerNotificationsPage() {
                   </span>
                   <span className="gym-notification-copy">
                     <span className="gym-notification-meta">
-                      <strong>{item.title[isVi ? 'vi' : 'en']}</strong>
+                      <strong>{item.title[language]}</strong>
                       <Badge variant={isRead ? 'neutral' : 'accent'}>
                         {isRead ? text.read : text.unread}
                       </Badge>
                     </span>
-                    <span>{item.message[isVi ? 'vi' : 'en']}</span>
+                    <span>{item.message[language]}</span>
                     <time dateTime={item.createdAt}>
                       {new Intl.DateTimeFormat(locale, {
                         dateStyle: 'medium',
@@ -99,7 +97,7 @@ export function GymOwnerNotificationsPage() {
                   key={item.id}
                   to={item.target}
                   className={isRead ? undefined : 'is-unread'}
-                  aria-label={`${text.open}: ${item.title[isVi ? 'vi' : 'en']}`}
+                  aria-label={`${text.open}: ${item.title[language]}`}
                   onClick={() => markRead(item.id)}
                 >
                   {content}
@@ -109,7 +107,7 @@ export function GymOwnerNotificationsPage() {
                   key={item.id}
                   type="button"
                   className={isRead ? undefined : 'is-unread'}
-                  aria-label={`${text.markRead}: ${item.title[isVi ? 'vi' : 'en']}`}
+                  aria-label={`${text.markRead}: ${item.title[language]}`}
                   onClick={() => markRead(item.id)}
                 >
                   {content}

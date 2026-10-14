@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { ChevronDown, Clock3, Dumbbell, History, MapPin, Repeat2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,47 +11,35 @@ import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { ROUTES } from '@/shared/config/constants';
 
-function summarize(log: ExerciseLog, isVi: boolean) {
+function summarize(log: ExerciseLog, t: TFunction) {
   if (log.trackingType === 'strength') {
     const sets = log.sets.filter((set) => set.completed);
     const volume = sets.reduce((sum, set) => sum + set.reps * set.loadKg, 0);
-    return `${sets.length} ${isVi ? 'hiệp' : 'sets'} · ${volume.toLocaleString()} kg`;
+    return `${sets.length} ${t('workout:workoutHistory.sets')} · ${volume.toLocaleString()} kg`;
   }
   if (log.trackingType === 'duration') {
     const seconds = log.sets.reduce((sum, set) => sum + set.durationSeconds, 0);
-    return `${log.sets.length} ${isVi ? 'hiệp' : 'sets'} · ${Math.round(seconds / 60)} min`;
+    return `${log.sets.length} ${t('workout:workoutHistory.sets')} · ${Math.round(seconds / 60)} min`;
   }
   if (log.trackingType === 'distance')
     return `${log.distanceKm.toFixed(2)} km · ${Math.round(log.durationSeconds / 60)} min`;
-  return `${log.completedRounds} ${isVi ? 'vòng' : 'rounds'}`;
+  return `${log.completedRounds} ${t('workout:workoutHistory.rounds')}`;
 }
 
 export function WorkoutHistory() {
   const { i18n, t } = useTranslation('workout');
-  const isVi = i18n.resolvedLanguage === 'vi';
   const sessions = useWorkoutSessionStore((state) => state.completedSessions);
   const [expanded, setExpanded] = useState<string | null>(sessions[0]?.id ?? null);
-  const copy = isVi
-    ? {
-        title: 'Lịch sử tập luyện',
-        back: 'Về lịch tập',
-        empty: 'Chưa có buổi tập hoàn thành.',
-        exercises: 'bài đã ghi nhận',
-        volume: 'Tổng tải',
-        duration: 'Thời lượng',
-        distance: 'Quãng đường',
-        rounds: 'Số vòng',
-      }
-    : {
-        title: 'Workout history',
-        back: 'Back to schedule',
-        empty: 'No completed workouts yet.',
-        exercises: 'logged exercises',
-        volume: 'Volume',
-        duration: 'Duration',
-        distance: 'Distance',
-        rounds: 'Rounds',
-      };
+  const copy = {
+    title: t('workout:workoutHistory.workoutHistory.title'),
+    back: t('workout:workoutHistory.workoutHistory.back'),
+    empty: t('workout:workoutHistory.workoutHistory.empty'),
+    exercises: t('workout:workoutHistory.workoutHistory.exercises'),
+    volume: t('workout:workoutHistory.workoutHistory.volume'),
+    duration: t('workout:workoutHistory.workoutHistory.duration'),
+    distance: t('workout:workoutHistory.workoutHistory.distance'),
+    rounds: t('workout:workoutHistory.workoutHistory.rounds'),
+  };
 
   return (
     <WorkoutFlowShell backTo={ROUTES.member.workoutSchedule} backLabel={copy.back}>
@@ -119,7 +108,7 @@ export function WorkoutHistory() {
                         <strong>
                           {t(`flow.exercises.${exerciseId}`, { defaultValue: exerciseId })}
                         </strong>
-                        <small>{summarize(log, isVi)}</small>
+                        <small>{summarize(log, t)}</small>
                       </div>
                     ))}
                   </div>

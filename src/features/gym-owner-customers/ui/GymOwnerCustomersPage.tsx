@@ -1,5 +1,4 @@
 import { LockKeyhole } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 import { gymOwnerPurchaserMockResource } from '../model/mockData';
 import type { OperationalPurchaserRecord } from '../model/types';
@@ -7,6 +6,7 @@ import type { OperationalPurchaserRecord } from '../model/types';
 import { gymOwnerCustomersCopy, type GymOwnerCustomersCopy } from './copy';
 import { PurchaserListState } from './PurchaserListState';
 
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import {
   Table,
@@ -38,10 +38,8 @@ function processingLabel(record: OperationalPurchaserRecord, copy: GymOwnerCusto
 }
 
 export function GymOwnerCustomersPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerCustomersCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const copy = gymOwnerCustomersCopy[language];
 
   return (
     <WorkspacePage width="wide" className="gym-customers-page">

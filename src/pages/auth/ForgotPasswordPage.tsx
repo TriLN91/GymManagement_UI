@@ -13,7 +13,7 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-const schema = z.object({ email: z.string().email('invalid') });
+const schema = z.object({ email: z.string().email('auth:errors.invalidEmail') });
 type FormValues = z.infer<typeof schema>;
 
 // FR-IAM-06 AC4: identical response for existing and non-existing emails — prevent enumeration.
@@ -49,21 +49,21 @@ export function ForgotPasswordPage() {
           <div className="mb-4 flex items-center font-syne text-4xl font-bold text-forest">
             FIT<span className="relative -top-2 align-top text-sm">®</span>
           </div>
-          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">Khôi Phục.</h1>
-          <p className="text-sm font-medium text-forest/70">
-            Nhập email đăng ký của bạn để nhận mã xác minh OTP bảo mật.
-          </p>
+          <h1 className="mb-2 font-syne text-4xl font-bold text-forest">
+            {t('auth:forgot.heading')}
+          </h1>
+          <p className="text-sm font-medium text-forest/70">{t('auth:forgot.subtitle')}</p>
         </div>
 
         {submitted ? (
-          <div className="bg-mint/5 w-full rounded-xl border border-mint p-6 text-center">
-            <p className="mb-2 font-bold text-forest">Email Đã Được Gửi</p>
+          <div className="w-full rounded-xl border border-forest/30 bg-forest/5 p-6 text-center">
+            <p className="mb-2 font-bold text-forest">{t('auth:forgot.sentTitle')}</p>
             <p className="text-sm text-forest/70">{t('auth:forgot.success')}</p>
             <Link
               to={ROUTES.public.login}
               className="mt-6 block text-xs font-medium text-forest/60 transition-colors hover:text-forest"
             >
-              &larr; Quay lại Đăng nhập
+              {t('auth:forgot.back')}
             </Link>
           </div>
         ) : (
@@ -73,7 +73,7 @@ export function ForgotPasswordPage() {
                 htmlFor="email"
                 className="text-xs font-bold uppercase tracking-wider text-forest"
               >
-                Email tài khoản
+                {t('auth:forgot.email')}
               </Label>
               <Input
                 id="email"
@@ -81,19 +81,19 @@ export function ForgotPasswordPage() {
                 autoComplete="email"
                 {...register('email')}
                 className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
-                placeholder="email@gmail.com"
+                placeholder={t('auth:login.emailPlaceholder')}
               />
               {errors.email ? (
-                <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
+                <p className="text-xs font-medium text-red-500">{t(errors.email.message ?? '')}</p>
               ) : null}
             </div>
 
             <Button
               type="submit"
-              className="hover:bg-mint/90 mt-6 h-12 w-full rounded-full bg-mint font-bold text-forest"
+              className="mt-6 h-12 w-full rounded-full bg-forest font-bold text-white hover:bg-forest/90"
               disabled={isSubmitting}
             >
-              Gửi mã xác nhận &rarr;
+              {t('auth:forgot.submit')}
             </Button>
 
             <div className="w-full pt-6 text-center">
@@ -101,7 +101,7 @@ export function ForgotPasswordPage() {
                 to={ROUTES.public.login}
                 className="text-xs font-medium text-forest/60 transition-colors hover:text-forest"
               >
-                &larr; Quay lại Đăng nhập
+                {t('auth:forgot.back')}
               </Link>
             </div>
           </form>

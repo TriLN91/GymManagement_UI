@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   Activity,
   ArrowLeft,
@@ -7,6 +8,7 @@ import {
   CircleAlert,
   ClipboardCheck,
   Dumbbell,
+  Flame,
   HeartPulse,
   LockKeyhole,
   ShieldCheck,
@@ -20,279 +22,189 @@ import { toast } from 'sonner';
 
 import {
   calculateProfileReadiness,
-  toggleExclusiveValue,
+  estimateEnergy,
+  getInjuryAdvice,
+  useProfileSetupStore,
+  useSyncFitnessProfile,
   type MemberFitnessProfile,
   type TernaryAnswer,
-} from './profileSetupModel';
-import { useProfileSetupStore } from './useProfileSetupStore';
-
-import { ROUTES } from '@/shared/config/constants';
+  type YesNoAnswer,
+} from '@/features/member-fitness';
+import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 
 import './profile-setup.css';
 
 type Option = { value: string; label: string };
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        back: 'Quay lại Dashboard',
-        eyebrow: 'HỒ SƠ THỂ CHẤT & SỨC KHỎE',
-        title: 'Thiết lập nền tảng cho plan của bạn',
-        intro:
-          'Thông tin được dùng để AI và PT chọn mức độ, bài tập, khối lượng và lịch tập phù hợp.',
-        saved: 'Tự động lưu trên thiết bị',
-        completeness: 'Hoàn thiện',
-        next: 'Tiếp tục',
-        previous: 'Quay lại',
-        save: 'Lưu hồ sơ & xem Workout Plans',
-        saveReview: 'Lưu hồ sơ & về Dashboard',
-        required: 'Hãy hoàn thành các trường bắt buộc trước khi tiếp tục.',
-        savedDone: 'Hồ sơ tập luyện đã được lưu.',
-        optional: 'Không bắt buộc',
-        chooseMany: 'Có thể chọn nhiều',
-        steps: [
-          ['Chỉ số cơ thể', 'Dữ liệu nền'],
-          ['Mục tiêu', 'Kết quả mong muốn'],
-          ['Sức khỏe', 'Sàng lọc an toàn'],
-          ['Vận động', 'Đau và chấn thương'],
-          ['Tập luyện', 'Kinh nghiệm và lịch'],
-          ['Phục hồi', 'Thói quen và quyền riêng tư'],
-          ['Xem lại', 'Mức sẵn sàng'],
-        ],
-        sections: {
-          body: ['Chỉ số cơ thể', 'Các số đo gần nhất giúp plan chính xác hơn.'],
-          goals: ['Mục tiêu tập luyện', 'AI/PT sẽ ưu tiên mục tiêu chính khi có xung đột.'],
-          health: ['Sàng lọc trước vận động', 'Nếu không chắc, hãy chọn “Không rõ”.'],
-          movement: [
-            'Đau, chấn thương và giới hạn',
-            'Thông tin này giúp thay thế động tác không phù hợp.',
-          ],
-          training: [
-            'Năng lực và điều kiện tập',
-            'Plan sẽ được xếp theo thời gian và thiết bị thực tế.',
-          ],
-          recovery: [
-            'Phục hồi và chia sẻ dữ liệu',
-            'Giấc ngủ và căng thẳng ảnh hưởng trực tiếp đến tải tập.',
-          ],
-          review: ['Xem lại hồ sơ', 'Bạn có thể quay lại bất kỳ bước nào để chỉnh sửa.'],
-        },
-        fields: {
-          dob: 'Ngày sinh',
-          sex: 'Giới tính sinh học',
-          female: 'Nữ',
-          male: 'Nam',
-          intersex: 'Liên giới tính',
-          preferNot: 'Không muốn trả lời',
-          height: 'Chiều cao',
-          weight: 'Cân nặng',
-          waist: 'Vòng eo',
-          bodyFat: 'Tỷ lệ mỡ',
-          heartRate: 'Nhịp tim lúc nghỉ',
-          source: 'Nguồn số đo',
-          self: 'Tự nhập',
-          scale: 'Cân thông minh',
-          scan: 'Body scan tại Gym',
-          primaryGoal: 'Mục tiêu chính',
-          targetWeight: 'Cân nặng mục tiêu',
-          targetDate: 'Thời hạn mong muốn',
-          secondaryGoals: 'Mục tiêu bổ sung',
-          focusAreas: 'Khu vực muốn ưu tiên',
-          conditions: 'Tình trạng sức khỏe đã biết',
-          details: 'Chi tiết bệnh nền hoặc chỉ định theo dõi',
-          medications: 'Thuốc đang sử dụng',
-          allergies: 'Dị ứng cần lưu ý',
-          surgeries: 'Phẫu thuật hoặc điều trị lớn trước đây',
-          currentPain: 'Bạn hiện có đau hoặc sưng ảnh hưởng đến vận động?',
-          painAreas: 'Vị trí đau / chấn thương',
-          painLevel: 'Mức đau hiện tại',
-          injuryDetails: 'Mô tả chấn thương và thời điểm xảy ra',
-          restrictions: 'Giới hạn hoặc động tác bác sĩ/PT yêu cầu tránh',
-          experience: 'Kinh nghiệm tập luyện',
-          activityLevel: 'Mức vận động hằng ngày',
-          cardioDays: 'Số ngày cardio mỗi tuần',
-          cardioMinutes: 'Phút cardio mỗi buổi',
-          strengthDays: 'Số ngày tập sức mạnh mỗi tuần',
-          availableDays: 'Ngày có thể tập',
-          session: 'Thời lượng mỗi buổi',
-          environments: 'Nơi tập',
-          equipment: 'Thiết bị sẵn có',
-          preferred: 'Bài tập hoặc môn vận động yêu thích',
-          avoided: 'Bài tập không thích hoặc muốn tránh',
-          sleep: 'Giấc ngủ trung bình',
-          stress: 'Mức căng thẳng hiện tại',
-          work: 'Đặc điểm công việc',
-          smoking: 'Bạn có hút thuốc hoặc nicotine?',
-          alcohol: 'Số đơn vị đồ uống có cồn mỗi tuần',
-        },
-        yes: 'Có',
-        no: 'Không',
-        unsure: 'Không rõ',
-        none: 'Không có',
-        privacyTitle: 'Quyền sử dụng dữ liệu',
-        shareTrainer: 'Cho phép PT đang được phân công xem hồ sơ sức khỏe và vận động này.',
-        accuracy: 'Tôi xác nhận thông tin đã nhập là đúng theo hiểu biết hiện tại.',
-        screeningConsent:
-          'Tôi hiểu đây là bước sàng lọc vận động, không thay thế chẩn đoán hoặc tư vấn y tế.',
-        reviewLabels: {
-          body: 'Cơ thể',
-          goal: 'Mục tiêu',
-          health: 'Sức khỏe',
-          schedule: 'Lịch tập',
-          bmi: 'BMI tham khảo',
-        },
-        readiness: {
-          ready: ['Có thể tạo plan', 'AI có thể tạo bản nháp plan từ hồ sơ hiện tại.'],
-          pt_review: [
-            'Cần PT xem lại',
-            'Plan chỉ nên hoàn tất sau khi PT xem tình trạng được ghi nhận.',
-          ],
-          medical_review: [
-            'Cần xác minh trước khi tạo plan',
-            'Tạm giữ việc tự động tạo plan cường độ cao cho đến khi có xác minh phù hợp.',
-          ],
-        },
-      }
-    : {
-        back: 'Back to Dashboard',
-        eyebrow: 'PHYSICAL & HEALTH PROFILE',
-        title: 'Build the foundation for your plan',
-        intro:
-          'AI and your Trainer use this information to select suitable intensity, exercises, load and schedule.',
-        saved: 'Auto-saved on this device',
-        completeness: 'Complete',
-        next: 'Continue',
-        previous: 'Back',
-        save: 'Save profile & view Workout Plans',
-        saveReview: 'Save profile & return to Dashboard',
-        required: 'Complete the required fields before continuing.',
-        savedDone: 'Your fitness profile has been saved.',
-        optional: 'Optional',
-        chooseMany: 'Select multiple',
-        steps: [
-          ['Body metrics', 'Baseline data'],
-          ['Goals', 'Desired outcomes'],
-          ['Health', 'Safety screening'],
-          ['Movement', 'Pain and injury'],
-          ['Training', 'Experience and schedule'],
-          ['Recovery', 'Habits and privacy'],
-          ['Review', 'Readiness level'],
-        ],
-        sections: {
-          body: ['Body metrics', 'Recent measurements help improve plan accuracy.'],
-          goals: [
-            'Training goals',
-            'AI and your Trainer prioritize the primary goal when goals conflict.',
-          ],
-          health: ['Pre-activity screening', 'Choose “Unsure” whenever you are not certain.'],
-          movement: [
-            'Pain, injury and limitations',
-            'This information helps replace unsuitable exercises.',
-          ],
-          training: [
-            'Training ability and access',
-            'The plan fits your actual time and equipment.',
-          ],
-          recovery: [
-            'Recovery and data sharing',
-            'Sleep and stress directly affect training load.',
-          ],
-          review: ['Review your profile', 'Return to any step if something needs changing.'],
-        },
-        fields: {
-          dob: 'Date of birth',
-          sex: 'Sex at birth',
-          female: 'Female',
-          male: 'Male',
-          intersex: 'Intersex',
-          preferNot: 'Prefer not to answer',
-          height: 'Height',
-          weight: 'Weight',
-          waist: 'Waist',
-          bodyFat: 'Body fat',
-          heartRate: 'Resting heart rate',
-          source: 'Measurement source',
-          self: 'Self reported',
-          scale: 'Smart scale',
-          scan: 'Gym body scan',
-          primaryGoal: 'Primary goal',
-          targetWeight: 'Target weight',
-          targetDate: 'Target date',
-          secondaryGoals: 'Secondary goals',
-          focusAreas: 'Priority areas',
-          conditions: 'Known health conditions',
-          details: 'Condition details or monitoring instructions',
-          medications: 'Current medications',
-          allergies: 'Relevant allergies',
-          surgeries: 'Previous surgery or major treatment',
-          currentPain: 'Do you currently have pain or swelling that affects movement?',
-          painAreas: 'Pain / injury areas',
-          painLevel: 'Current pain level',
-          injuryDetails: 'Describe the injury and when it occurred',
-          restrictions: 'Movements a clinician or Trainer told you to avoid',
-          experience: 'Training experience',
-          activityLevel: 'Daily activity level',
-          cardioDays: 'Cardio days per week',
-          cardioMinutes: 'Cardio minutes per session',
-          strengthDays: 'Strength days per week',
-          availableDays: 'Available training days',
-          session: 'Session duration',
-          environments: 'Training locations',
-          equipment: 'Available equipment',
-          preferred: 'Preferred exercises or activities',
-          avoided: 'Exercises you dislike or want to avoid',
-          sleep: 'Average sleep',
-          stress: 'Current stress level',
-          work: 'Work pattern',
-          smoking: 'Do you smoke or use nicotine?',
-          alcohol: 'Alcoholic drinks per week',
-        },
-        yes: 'Yes',
-        no: 'No',
-        unsure: 'Unsure',
-        none: 'None',
-        privacyTitle: 'Data permissions',
-        shareTrainer: 'Allow your assigned Trainer to view this health and movement profile.',
-        accuracy: 'I confirm this information is accurate to the best of my knowledge.',
-        screeningConsent:
-          'I understand this is activity screening and does not replace medical diagnosis or advice.',
-        reviewLabels: {
-          body: 'Body',
-          goal: 'Goal',
-          health: 'Health',
-          schedule: 'Schedule',
-          bmi: 'Reference BMI',
-        },
-        readiness: {
-          ready: [
-            'Ready for plan creation',
-            'AI can create a draft plan from the current profile.',
-          ],
-          pt_review: [
-            'Trainer review needed',
-            'A Trainer should review the recorded condition before the plan is finalized.',
-          ],
-          medical_review: [
-            'Verification needed before plan creation',
-            'Automatic high-intensity plan creation is held until appropriate verification is available.',
-          ],
-        },
-      };
+function getCopy(t: TFunction) {
+  return {
+    back: t('memberProfile:profileSetup.copy.back'),
+    eyebrow: t('memberProfile:profileSetup.copy.eyebrow'),
+    title: t('memberProfile:profileSetup.copy.title'),
+    intro: t('memberProfile:profileSetup.copy.intro'),
+    saved: t('memberProfile:profileSetup.copy.saved'),
+    completeness: t('memberProfile:profileSetup.copy.completeness'),
+    next: t('memberProfile:profileSetup.copy.next'),
+    previous: t('memberProfile:profileSetup.copy.previous'),
+    save: t('memberProfile:profileSetup.copy.save'),
+    required: t('memberProfile:profileSetup.copy.required'),
+    savedDone: t('memberProfile:profileSetup.copy.savedDone'),
+    syncFailed: t('memberProfile:profileSetup.copy.syncFailed'),
+    optional: t('memberProfile:profileSetup.copy.optional'),
+    injuryAdvice: {
+      train_lower: t('memberProfile:profileSetup.copy.injuryAdvice.train_lower'),
+      train_upper: t('memberProfile:profileSetup.copy.injuryAdvice.train_upper'),
+      rest: t('memberProfile:profileSetup.copy.injuryAdvice.rest'),
+    },
+    units: {
+      days: t('memberProfile:profileSetup.copy.units.days'),
+      min: t('memberProfile:profileSetup.copy.units.min'),
+      hours: t('memberProfile:profileSetup.copy.units.hours'),
+    },
+    healthNotice: {
+      lead: t('memberProfile:profileSetup.copy.healthNotice.lead'),
+      items: t('memberProfile:profileSetup.copy.healthNotice.items', {
+        returnObjects: true,
+      }) as string[],
+      footer: t('memberProfile:profileSetup.copy.healthNotice.footer'),
+    },
+    chooseMany: t('memberProfile:profileSetup.copy.chooseMany'),
+    steps: [
+      [
+        t('memberProfile:profileSetup.copy.steps.0.0'),
+        t('memberProfile:profileSetup.copy.steps.0.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.1.0'),
+        t('memberProfile:profileSetup.copy.steps.1.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.2.0'),
+        t('memberProfile:profileSetup.copy.steps.2.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.3.0'),
+        t('memberProfile:profileSetup.copy.steps.3.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.4.0'),
+        t('memberProfile:profileSetup.copy.steps.4.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.5.0'),
+        t('memberProfile:profileSetup.copy.steps.5.1'),
+      ],
+      [
+        t('memberProfile:profileSetup.copy.steps.6.0'),
+        t('memberProfile:profileSetup.copy.steps.6.1'),
+      ],
+    ],
+    sections: {
+      body: [
+        t('memberProfile:profileSetup.copy.sections.body.0'),
+        t('memberProfile:profileSetup.copy.sections.body.1'),
+      ],
+      goals: [
+        t('memberProfile:profileSetup.copy.sections.goals.0'),
+        t('memberProfile:profileSetup.copy.sections.goals.1'),
+      ],
+      health: [
+        t('memberProfile:profileSetup.copy.sections.health.0'),
+        t('memberProfile:profileSetup.copy.sections.health.1'),
+      ],
+      movement: [
+        t('memberProfile:profileSetup.copy.sections.movement.0'),
+        t('memberProfile:profileSetup.copy.sections.movement.1'),
+      ],
+      training: [
+        t('memberProfile:profileSetup.copy.sections.training.0'),
+        t('memberProfile:profileSetup.copy.sections.training.1'),
+      ],
+      recovery: [
+        t('memberProfile:profileSetup.copy.sections.recovery.0'),
+        t('memberProfile:profileSetup.copy.sections.recovery.1'),
+      ],
+      review: [
+        t('memberProfile:profileSetup.copy.sections.review.0'),
+        t('memberProfile:profileSetup.copy.sections.review.1'),
+      ],
+    },
+    fields: {
+      dob: t('memberProfile:profileSetup.copy.fields.dob'),
+      sex: t('memberProfile:profileSetup.copy.fields.sex'),
+      female: t('memberProfile:profileSetup.copy.fields.female'),
+      male: t('memberProfile:profileSetup.copy.fields.male'),
+      intersex: t('memberProfile:profileSetup.copy.fields.intersex'),
+      preferNot: t('memberProfile:profileSetup.copy.fields.preferNot'),
+      height: t('memberProfile:profileSetup.copy.fields.height'),
+      weight: t('memberProfile:profileSetup.copy.fields.weight'),
+      targetWeight: t('memberProfile:profileSetup.copy.fields.targetWeight'),
+      targetDate: t('memberProfile:profileSetup.copy.fields.targetDate'),
+      goals: t('memberProfile:profileSetup.copy.fields.goals'),
+      upperInjury: t('memberProfile:profileSetup.copy.fields.upperInjury'),
+      lowerInjury: t('memberProfile:profileSetup.copy.fields.lowerInjury'),
+      upperBody: t('memberProfile:profileSetup.copy.fields.upperBody'),
+      lowerBody: t('memberProfile:profileSetup.copy.fields.lowerBody'),
+      experience: t('memberProfile:profileSetup.copy.fields.experience'),
+      activityLevel: t('memberProfile:profileSetup.copy.fields.activityLevel'),
+      cardioDays: t('memberProfile:profileSetup.copy.fields.cardioDays'),
+      cardioMinutes: t('memberProfile:profileSetup.copy.fields.cardioMinutes'),
+      strengthDays: t('memberProfile:profileSetup.copy.fields.strengthDays'),
+      availableDays: t('memberProfile:profileSetup.copy.fields.availableDays'),
+      session: t('memberProfile:profileSetup.copy.fields.session'),
+      environments: t('memberProfile:profileSetup.copy.fields.environments'),
+      equipment: t('memberProfile:profileSetup.copy.fields.equipment'),
+      preferred: t('memberProfile:profileSetup.copy.fields.preferred'),
+      avoided: t('memberProfile:profileSetup.copy.fields.avoided'),
+      sleep: t('memberProfile:profileSetup.copy.fields.sleep'),
+      stress: t('memberProfile:profileSetup.copy.fields.stress'),
+      work: t('memberProfile:profileSetup.copy.fields.work'),
+      smoking: t('memberProfile:profileSetup.copy.fields.smoking'),
+      alcohol: t('memberProfile:profileSetup.copy.fields.alcohol'),
+    },
+    yes: t('memberProfile:profileSetup.copy.yes'),
+    no: t('memberProfile:profileSetup.copy.no'),
+    unsure: t('memberProfile:profileSetup.copy.unsure'),
+    none: t('memberProfile:profileSetup.copy.none'),
+    privacyTitle: t('memberProfile:profileSetup.copy.privacyTitle'),
+    shareTrainer: t('memberProfile:profileSetup.copy.shareTrainer'),
+    accuracy: t('memberProfile:profileSetup.copy.accuracy'),
+    screeningConsent: t('memberProfile:profileSetup.copy.screeningConsent'),
+    reviewLabels: {
+      body: t('memberProfile:profileSetup.copy.reviewLabels.body'),
+      goal: t('memberProfile:profileSetup.copy.reviewLabels.goal'),
+      health: t('memberProfile:profileSetup.copy.reviewLabels.health'),
+      schedule: t('memberProfile:profileSetup.copy.reviewLabels.schedule'),
+      bmi: t('memberProfile:profileSetup.copy.reviewLabels.bmi'),
+    },
+    readinessEyebrow: t('memberProfile:profileSetup.copy.readinessEyebrow'),
+    readiness: {
+      ready: [
+        t('memberProfile:profileSetup.copy.readiness.ready.0'),
+        t('memberProfile:profileSetup.copy.readiness.ready.1'),
+      ],
+      pt_review: [
+        t('memberProfile:profileSetup.copy.readiness.pt_review.0'),
+        t('memberProfile:profileSetup.copy.readiness.pt_review.1'),
+      ],
+    },
+  };
 }
 
 function toOptions(items: Array<[string, string]>): Option[] {
   return items.map(([value, label]) => ({ value, label }));
 }
 
-const goals = (isVi: boolean): Option[] =>
+const goals = (t: TFunction): Option[] =>
   toOptions([
-    ['muscle_gain', isVi ? 'Tăng cơ' : 'Build muscle'],
-    ['fat_loss', isVi ? 'Giảm mỡ' : 'Lose fat'],
-    ['strength', isVi ? 'Tăng sức mạnh' : 'Build strength'],
-    ['endurance', isVi ? 'Tăng sức bền' : 'Improve endurance'],
-    ['mobility', isVi ? 'Cải thiện vận động' : 'Improve mobility'],
-    ['general', isVi ? 'Sức khỏe tổng thể' : 'General fitness'],
+    ['muscle_gain', t('memberProfile:profileSetup.buildMuscle')],
+    ['fat_loss', t('memberProfile:profileSetup.loseFat')],
+    ['strength', t('memberProfile:profileSetup.buildStrength')],
+    ['cardio_endurance', t('memberProfile:profileSetup.improveCardioEndurance')],
+    ['muscular_endurance', t('memberProfile:profileSetup.improveMuscularEndurance')],
+    ['mobility', t('memberProfile:profileSetup.improveMobility')],
   ]);
 
 const days = (isVi: boolean): Option[] =>
@@ -423,41 +335,17 @@ function parseNumber(value: string) {
   return value === '' ? null : Number(value);
 }
 
-const focusOptions = (isVi: boolean): Option[] =>
-  toOptions([
-    ['full_body', isVi ? 'Toàn thân' : 'Full body'],
-    ['chest', isVi ? 'Ngực' : 'Chest'],
-    ['back', isVi ? 'Lưng' : 'Back'],
-    ['shoulders', isVi ? 'Vai' : 'Shoulders'],
-    ['arms', isVi ? 'Tay' : 'Arms'],
-    ['core', 'Core'],
-    ['glutes', isVi ? 'Mông' : 'Glutes'],
-    ['legs', isVi ? 'Chân' : 'Legs'],
-  ]);
-
-const painOptions = (isVi: boolean): Option[] =>
-  toOptions([
-    ['neck', isVi ? 'Cổ' : 'Neck'],
-    ['shoulder', isVi ? 'Vai' : 'Shoulder'],
-    ['elbow', isVi ? 'Khuỷu tay' : 'Elbow'],
-    ['wrist', isVi ? 'Cổ tay' : 'Wrist'],
-    ['upper_back', isVi ? 'Lưng trên' : 'Upper back'],
-    ['lower_back', isVi ? 'Lưng dưới' : 'Lower back'],
-    ['hip', isVi ? 'Hông' : 'Hip'],
-    ['knee', isVi ? 'Đầu gối' : 'Knee'],
-    ['ankle', isVi ? 'Cổ chân' : 'Ankle'],
-  ]);
-
 export function ProfileSetupPage() {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = getCopy(isVi);
+  const copy = getCopy(t);
   const profile = useProfileSetupStore((state) => state.profile);
   const step = useProfileSetupStore((state) => state.currentStep);
   const setProfile = useProfileSetupStore((state) => state.setProfile);
   const setStep = useProfileSetupStore((state) => state.setCurrentStep);
   const completeProfile = useProfileSetupStore((state) => state.completeProfile);
+  const syncProfile = useSyncFitnessProfile();
   const readiness = useMemo(() => calculateProfileReadiness(profile), [profile]);
   const setSection = <K extends keyof MemberFitnessProfile>(
     section: K,
@@ -467,89 +355,29 @@ export function ProfileSetupPage() {
   const goal = profile.goals;
   const training = profile.training;
 
-  const healthQuestions: Array<[keyof MemberFitnessProfile['health']['screening'], string]> = [
-    [
-      'heartOrChestSymptoms',
-      isVi
-        ? 'Trong 6 tháng qua, bạn có bệnh tim/đột quỵ hoặc đau, tức ngực khi sinh hoạt hay vận động?'
-        : 'In the past six months, have you had heart disease, stroke, or chest pain during daily activity or exercise?',
-    ],
-    [
-      'highBloodPressure',
-      isVi
-        ? 'Bạn được chẩn đoán hoặc điều trị huyết áp cao?'
-        : 'Have you been diagnosed with or treated for high blood pressure?',
-    ],
-    [
-      'dizzinessOrFainting',
-      isVi
-        ? 'Bạn có chóng mặt, choáng hoặc từng mất ý thức khi vận động?'
-        : 'Do you experience dizziness, lightheadedness or loss of consciousness during activity?',
-    ],
-    [
-      'breathlessAtRest',
-      isVi ? 'Bạn có khó thở ngay cả khi nghỉ?' : 'Do you experience shortness of breath at rest?',
-    ],
-    [
-      'recentConcussion',
-      isVi ? 'Bạn có bị chấn động não gần đây?' : 'Have you had a recent concussion?',
-    ],
-    [
-      'providerRestriction',
-      isVi
-        ? 'Bác sĩ từng yêu cầu bạn tránh hoặc điều chỉnh vận động?'
-        : 'Has a healthcare professional told you to avoid or modify physical activity?',
-    ],
-  ];
-  const conditionOptions: Option[] = toOptions([
-    ['none', copy.none],
-    ['cardiovascular', isVi ? 'Tim mạch' : 'Cardiovascular'],
-    ['hypertension', isVi ? 'Cao huyết áp' : 'Hypertension'],
-    ['diabetes', isVi ? 'Tiểu đường' : 'Diabetes'],
-    ['asthma', isVi ? 'Hen / hô hấp' : 'Asthma / respiratory'],
-    ['arthritis', isVi ? 'Viêm khớp' : 'Arthritis'],
-    ['osteoporosis', isVi ? 'Loãng xương' : 'Osteoporosis'],
-    ['neurological', isVi ? 'Thần kinh' : 'Neurological'],
-    ['kidney', isVi ? 'Thận' : 'Kidney disease'],
-    ['cancer', isVi ? 'Ung thư' : 'Cancer'],
-    ['pregnancy', isVi ? 'Mang thai / sau sinh' : 'Pregnancy / postpartum'],
-    ['other', isVi ? 'Khác' : 'Other'],
-  ]);
-
-  const validateStep = () => {
+  const isStepValid = (index: number) => {
     if (
-      step === 0 &&
+      index === 1 &&
       (!identity.dateOfBirth ||
         !identity.sexAtBirth ||
         !identity.heightCm ||
         !identity.weightKg ||
-        !identity.measurementSource)
+        !identity.activityLevel)
     )
       return false;
-    if (step === 1 && !goal.primary) return false;
-    if (
-      step === 2 &&
-      (profile.health.conditions.length === 0 ||
-        Object.values(profile.health.screening).some((answer) => !answer))
-    )
+    if (index === 2 && goal.selected.length === 0) return false;
+    if (index === 3 && (!profile.movement.upperBodyInjury || !profile.movement.lowerBodyInjury))
       return false;
     if (
-      step === 3 &&
-      (!profile.movement.currentPain ||
-        (profile.movement.currentPain === 'yes' && profile.movement.painAreas.length === 0))
-    )
-      return false;
-    if (
-      step === 4 &&
+      index === 4 &&
       (!training.experience ||
-        !training.activityLevel ||
         training.availableDays.length === 0 ||
         !training.sessionMinutes ||
         training.environments.length === 0)
     )
       return false;
     if (
-      step === 5 &&
+      index === 5 &&
       (!profile.recovery.sleepHours ||
         !profile.recovery.stressLevel ||
         !profile.recovery.workPattern ||
@@ -561,7 +389,7 @@ export function ProfileSetupPage() {
     return true;
   };
   const next = () => {
-    if (!validateStep()) {
+    if (!isStepValid(step)) {
       toast.error(copy.required);
       return;
     }
@@ -585,10 +413,22 @@ export function ProfileSetupPage() {
             <button
               type="button"
               key={title}
-              className={cn(index === step && 'is-active', index < step && 'is-complete')}
-              onClick={() => index <= step && setStep(index)}
+              className={cn(
+                index === step && 'is-active',
+                index !== step && index < 6 && isStepValid(index) && 'is-complete',
+              )}
+              onClick={() => {
+                setStep(index);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             >
-              <span>{index < step ? <Check size={14} /> : index + 1}</span>
+              <span>
+                {index !== step && index < 6 && isStepValid(index) ? (
+                  <Check size={14} />
+                ) : (
+                  index + 1
+                )}
+              </span>
               <div>
                 <strong>{title}</strong>
                 <small>{detail}</small>
@@ -597,33 +437,17 @@ export function ProfileSetupPage() {
           ))}
         </aside>
         <main className="profile-form-card">
-          {step === 0 && (
+          {step === 0 && <HealthNoticeStep copy={copy} />}
+          {step === 1 && (
             <BodyStep copy={copy} profile={profile} readiness={readiness} setSection={setSection} />
           )}
-          {step === 1 && (
-            <GoalStep copy={copy} isVi={isVi} profile={profile} setSection={setSection} />
-          )}
-          {step === 2 && (
-            <HealthStep
-              copy={copy}
-              profile={profile}
-              questions={healthQuestions}
-              conditions={conditionOptions}
-              setSection={setSection}
-            />
-          )}
-          {step === 3 && (
-            <MovementStep copy={copy} isVi={isVi} profile={profile} setSection={setSection} />
-          )}
+          {step === 2 && <GoalStep copy={copy} profile={profile} setSection={setSection} />}
+          {step === 3 && <MovementStep copy={copy} profile={profile} setSection={setSection} />}
           {step === 4 && (
             <TrainingStep copy={copy} isVi={isVi} profile={profile} setSection={setSection} />
           )}
-          {step === 5 && (
-            <RecoveryStep copy={copy} isVi={isVi} profile={profile} setSection={setSection} />
-          )}
-          {step === 6 && (
-            <ReviewStep copy={copy} isVi={isVi} profile={profile} readiness={readiness} />
-          )}
+          {step === 5 && <RecoveryStep copy={copy} profile={profile} setSection={setSection} />}
+          {step === 6 && <ReviewStep copy={copy} profile={profile} readiness={readiness} />}
           <footer className="profile-form-actions">
             <button
               type="button"
@@ -642,17 +466,23 @@ export function ProfileSetupPage() {
                 type="button"
                 className="is-primary"
                 onClick={() => {
+                  // Steps can be filled in any order, so check every required step before saving.
+                  const firstInvalid = [0, 1, 2, 3, 4, 5].find((index) => !isStepValid(index));
+                  if (firstInvalid !== undefined) {
+                    toast.error(copy.required);
+                    setStep(firstInvalid);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                  }
                   completeProfile();
+                  // Best effort: the local copy is the source of truth for the wizard; a failed
+                  // sync is reported by the global mutation error toast and retried on next save.
+                  syncProfile.mutate(profile, { onError: () => toast.error(copy.syncFailed) });
                   toast.success(copy.savedDone);
-                  void navigate(
-                    readiness.level === 'medical_review'
-                      ? ROUTES.member.root
-                      : ROUTES.member.workout,
-                  );
+                  void navigate(ROUTES.member.root);
                 }}
               >
-                {readiness.level === 'medical_review' ? copy.saveReview : copy.save}{' '}
-                <ArrowRight size={17} />
+                {copy.save} <ArrowRight size={17} />
               </button>
             )}
           </footer>
@@ -668,6 +498,53 @@ type SetSection = <K extends keyof MemberFitnessProfile>(
   value: MemberFitnessProfile[K],
 ) => void;
 
+function EnergyCard({ identity }: { identity: MemberFitnessProfile['identity'] }) {
+  const { t } = useTranslation();
+  const { locale } = useLocale();
+  const estimate = useMemo(() => estimateEnergy(identity), [identity]);
+  const number = new Intl.NumberFormat(locale);
+
+  return (
+    <section className="profile-energy" aria-live="polite">
+      <header>
+        <Flame size={18} aria-hidden="true" />
+        <strong>{t('memberProfile:profileSetup.energy.title')}</strong>
+      </header>
+      {estimate.status === 'ok' ? (
+        <>
+          <dl>
+            <div>
+              <dt>{t('memberProfile:profileSetup.energy.ree')}</dt>
+              <dd>
+                {number.format(estimate.reeKcal)} <small>kcal</small>
+              </dd>
+            </div>
+            <div>
+              <dt>{t('memberProfile:profileSetup.energy.pal')}</dt>
+              <dd>× {estimate.pal}</dd>
+            </div>
+            <div className="is-total">
+              <dt>{t('memberProfile:profileSetup.energy.tdee')}</dt>
+              <dd>
+                ≈ {number.format(estimate.tdeeKcal)} <small>kcal</small>
+              </dd>
+              <span>
+                {t('memberProfile:profileSetup.energy.range', {
+                  low: number.format(estimate.tdeeLowKcal),
+                  high: number.format(estimate.tdeeHighKcal),
+                })}
+              </span>
+            </div>
+          </dl>
+          <p>{t('memberProfile:profileSetup.energy.disclaimer')}</p>
+        </>
+      ) : (
+        <p>{t(`memberProfile:profileSetup.energy.${estimate.status}`)}</p>
+      )}
+    </section>
+  );
+}
+
 function BodyStep({
   copy,
   profile,
@@ -679,6 +556,7 @@ function BodyStep({
   readiness: ReturnType<typeof calculateProfileReadiness>;
   setSection: SetSection;
 }) {
+  const { t } = useTranslation();
   const data = profile.identity;
   const number = (key: keyof typeof data, value: string) =>
     setSection('identity', { ...data, [key]: parseNumber(value) });
@@ -728,71 +606,25 @@ function BodyStep({
           step="0.1"
           onChange={(v) => number('weightKg', v)}
         />
-        <UnitNumber
-          label={copy.fields.waist}
-          unit="cm"
-          optional={copy.optional}
-          value={data.waistCm}
-          min={35}
-          max={250}
-          onChange={(v) => number('waistCm', v)}
-        />
-        <UnitNumber
-          label={copy.fields.bodyFat}
-          unit="%"
-          optional={copy.optional}
-          value={data.bodyFatPercent}
-          min={2}
-          max={70}
-          step="0.1"
-          onChange={(v) => number('bodyFatPercent', v)}
-        />
-        <UnitNumber
-          label={copy.fields.heartRate}
-          unit="bpm"
-          optional={copy.optional}
-          value={data.restingHeartRate}
-          min={30}
-          max={220}
-          onChange={(v) => number('restingHeartRate', v)}
-        />
-        <div className="profile-field">
-          <span>
-            Blood pressure <small>{copy.optional}</small>
-          </span>
-          <div className="profile-blood-pressure">
-            <input
-              type="number"
-              placeholder="SYS"
-              value={data.systolicBp ?? ''}
-              onChange={(e) => number('systolicBp', e.target.value)}
-            />
-            <span>/</span>
-            <input
-              type="number"
-              placeholder="DIA"
-              value={data.diastolicBp ?? ''}
-              onChange={(e) => number('diastolicBp', e.target.value)}
-            />
-          </div>
-        </div>
-        <Field label={copy.fields.source}>
-          <select
-            value={data.measurementSource}
-            onChange={(e) =>
-              setSection('identity', {
-                ...data,
-                measurementSource: e.target.value as typeof data.measurementSource,
-              })
-            }
-          >
-            <option value="">—</option>
-            <option value="self_reported">{copy.fields.self}</option>
-            <option value="smart_scale">{copy.fields.scale}</option>
-            <option value="gym_scan">{copy.fields.scan}</option>
-          </select>
-        </Field>
       </div>
+      <Block title={copy.fields.activityLevel}>
+        <ChoiceGrid
+          compact
+          options={[
+            { value: 'sedentary', label: t('memberProfile:profileSetup.sedentary') },
+            { value: 'light', label: t('memberProfile:profileSetup.lightlyActive') },
+            { value: 'moderate', label: t('memberProfile:profileSetup.moderatelyActive') },
+            { value: 'high', label: t('memberProfile:profileSetup.highlyActive') },
+          ]}
+          value={data.activityLevel}
+          onChange={(activityLevel) =>
+            setSection('identity', {
+              ...data,
+              activityLevel: activityLevel as typeof data.activityLevel,
+            })
+          }
+        />
+      </Block>
       {readiness.bmi && (
         <div className="profile-metric-strip">
           <Activity size={19} />
@@ -800,6 +632,7 @@ function BodyStep({
           <strong>{readiness.bmi.toFixed(1)}</strong>
         </div>
       )}
+      <EnergyCard identity={data} />
     </>
   );
 }
@@ -842,33 +675,25 @@ function UnitNumber({
 
 function GoalStep({
   copy,
-  isVi,
   profile,
   setSection,
 }: {
   copy: Copy;
-  isVi: boolean;
   profile: MemberFitnessProfile;
   setSection: SetSection;
 }) {
+  const { t } = useTranslation();
   const data = profile.goals;
   return (
     <>
       <SectionHeader title={copy.sections.goals[0] ?? ''} body={copy.sections.goals[1] ?? ''} />
-      <Block title={copy.fields.primaryGoal}>
-        <ChoiceGrid
-          options={goals(isVi)}
-          value={data.primary}
-          onChange={(primary) =>
-            setSection('goals', { ...data, primary: primary as typeof data.primary })
-          }
-        />
-      </Block>
-      <Block title={copy.fields.secondaryGoals} note={copy.chooseMany}>
+      <Block title={copy.fields.goals} note={copy.chooseMany}>
         <ChipGroup
-          options={goals(isVi).filter((o) => o.value !== data.primary)}
-          values={data.secondary}
-          onChange={(secondary) => setSection('goals', { ...data, secondary })}
+          options={goals(t)}
+          values={data.selected}
+          onChange={(selected) =>
+            setSection('goals', { ...data, selected: selected as typeof data.selected })
+          }
         />
       </Block>
       <div className="profile-form-grid">
@@ -891,13 +716,6 @@ function GoalStep({
           />
         </Field>
       </div>
-      <Block title={copy.fields.focusAreas} note={copy.chooseMany}>
-        <ChipGroup
-          options={focusOptions(isVi)}
-          values={data.focusAreas}
-          onChange={(focusAreas) => setSection('goals', { ...data, focusAreas })}
-        />
-      </Block>
     </>
   );
 }
@@ -913,84 +731,22 @@ function Block({ title, note, children }: { title: string; note?: string; childr
   );
 }
 
-function HealthStep({
-  copy,
-  profile,
-  questions,
-  conditions,
-  setSection,
-}: {
-  copy: Copy;
-  profile: MemberFitnessProfile;
-  questions: Array<[keyof MemberFitnessProfile['health']['screening'], string]>;
-  conditions: Option[];
-  setSection: SetSection;
-}) {
-  const data = profile.health;
+function HealthNoticeStep({ copy }: { copy: Copy }) {
   return (
     <>
       <SectionHeader title={copy.sections.health[0] ?? ''} body={copy.sections.health[1] ?? ''} />
-      <div className="profile-question-list">
-        {questions.map(([key, question], index) => (
-          <div className="profile-question" key={key}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{question}</strong>
-            <Ternary
-              value={data.screening[key]}
-              labels={[copy.yes, copy.no, copy.unsure]}
-              onChange={(answer) =>
-                setSection('health', { ...data, screening: { ...data.screening, [key]: answer } })
-              }
-            />
-          </div>
-        ))}
-      </div>
-      <Block title={copy.fields.conditions} note={copy.chooseMany}>
-        <div className="profile-chips">
-          {conditions.map((option) => (
-            <button
-              type="button"
-              key={option.value}
-              className={cn(data.conditions.includes(option.value) && 'is-selected')}
-              onClick={() =>
-                setSection('health', {
-                  ...data,
-                  conditions: toggleExclusiveValue(data.conditions, option.value),
-                })
-              }
-            >
-              {data.conditions.includes(option.value) && <Check size={13} />}
-              {option.label}
-            </button>
-          ))}
+      <section className="profile-health-notice" role="note">
+        <CircleAlert size={20} aria-hidden="true" />
+        <div>
+          <p>{copy.healthNotice.lead}</p>
+          <ul>
+            {copy.healthNotice.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <small>{copy.healthNotice.footer}</small>
         </div>
-      </Block>
-      <div className="profile-form-grid">
-        <TextField
-          label={copy.fields.details}
-          value={data.conditionDetails}
-          onChange={(conditionDetails) => setSection('health', { ...data, conditionDetails })}
-          optional={copy.optional}
-        />
-        <TextField
-          label={copy.fields.medications}
-          value={data.medications}
-          onChange={(medications) => setSection('health', { ...data, medications })}
-          optional={copy.optional}
-        />
-        <TextField
-          label={copy.fields.allergies}
-          value={data.allergies}
-          onChange={(allergies) => setSection('health', { ...data, allergies })}
-          optional={copy.optional}
-        />
-        <TextField
-          label={copy.fields.surgeries}
-          value={data.surgeries}
-          onChange={(surgeries) => setSection('health', { ...data, surgeries })}
-          optional={copy.optional}
-        />
-      </div>
+      </section>
     </>
   );
 }
@@ -1013,75 +769,72 @@ function TextField({
   );
 }
 
+function YesNo({
+  value,
+  onChange,
+  labels,
+}: {
+  value: YesNoAnswer;
+  onChange: (value: YesNoAnswer) => void;
+  labels: [string, string];
+}) {
+  return (
+    <div className="profile-ternary">
+      {(['yes', 'no'] as const).map((answer, index) => (
+        <button
+          type="button"
+          key={answer}
+          className={cn(value === answer && 'is-selected')}
+          onClick={() => onChange(answer)}
+        >
+          {labels[index]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function MovementStep({
   copy,
-  isVi,
   profile,
   setSection,
 }: {
   copy: Copy;
-  isVi: boolean;
   profile: MemberFitnessProfile;
   setSection: SetSection;
 }) {
   const data = profile.movement;
+  const advice = getInjuryAdvice(data);
   return (
     <>
       <SectionHeader
         title={copy.sections.movement[0] ?? ''}
         body={copy.sections.movement[1] ?? ''}
       />
-      <div className="profile-feature-question">
-        <div>
-          <HeartPulse size={22} />
-          <strong>{copy.fields.currentPain}</strong>
-        </div>
-        <Ternary
-          value={data.currentPain}
-          labels={[copy.yes, copy.no, copy.unsure]}
-          onChange={(currentPain) => setSection('movement', { ...data, currentPain })}
-        />
-      </div>
-      {data.currentPain === 'yes' && (
-        <>
-          <Block title={copy.fields.painAreas} note={copy.chooseMany}>
-            <ChipGroup
-              options={painOptions(isVi)}
-              values={data.painAreas}
-              onChange={(painAreas) => setSection('movement', { ...data, painAreas })}
-            />
-          </Block>
-          <div className="profile-range">
-            <span>{copy.fields.painLevel}</span>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              value={data.painLevel}
-              onChange={(e) =>
-                setSection('movement', { ...data, painLevel: Number(e.target.value) })
-              }
-            />
-            <strong>{data.painLevel}/10</strong>
+      {(
+        [
+          ['upperBodyInjury', copy.fields.upperInjury],
+          ['lowerBodyInjury', copy.fields.lowerInjury],
+        ] as const
+      ).map(([key, question]) => (
+        <div className="profile-feature-question" key={key}>
+          <div>
+            <HeartPulse size={22} />
+            <strong>{question}</strong>
           </div>
-        </>
+          <YesNo
+            value={data[key]}
+            labels={[copy.yes, copy.no]}
+            onChange={(answer) => setSection('movement', { ...data, [key]: answer })}
+          />
+        </div>
+      ))}
+      {advice && advice !== 'none' && (
+        <p className={cn('profile-health-notice', advice === 'rest' && 'is-rest')} role="note">
+          <CircleAlert size={20} aria-hidden="true" />
+          {copy.injuryAdvice[advice]}
+        </p>
       )}
-      <div className="profile-form-grid">
-        <TextField
-          label={copy.fields.injuryDetails}
-          value={data.injuryDetails}
-          onChange={(injuryDetails) => setSection('movement', { ...data, injuryDetails })}
-          optional={copy.optional}
-        />
-        <TextField
-          label={copy.fields.restrictions}
-          value={data.movementRestrictions}
-          onChange={(movementRestrictions) =>
-            setSection('movement', { ...data, movementRestrictions })
-          }
-          optional={copy.optional}
-        />
-      </div>
     </>
   );
 }
@@ -1097,14 +850,15 @@ function TrainingStep({
   profile: MemberFitnessProfile;
   setSection: SetSection;
 }) {
+  const { t } = useTranslation();
   const data = profile.training;
   const equipment: Option[] = toOptions([
-    ['bodyweight', isVi ? 'Trọng lượng cơ thể' : 'Bodyweight'],
-    ['dumbbells', isVi ? 'Tạ đơn' : 'Dumbbells'],
-    ['barbell', isVi ? 'Thanh đòn' : 'Barbell'],
-    ['machines', isVi ? 'Máy tập' : 'Machines'],
-    ['bands', isVi ? 'Dây kháng lực' : 'Bands'],
-    ['cardio', isVi ? 'Máy cardio' : 'Cardio machines'],
+    ['bodyweight', t('memberProfile:profileSetup.bodyweight')],
+    ['dumbbells', t('memberProfile:profileSetup.dumbbells')],
+    ['barbell', t('memberProfile:profileSetup.barbell')],
+    ['machines', t('memberProfile:profileSetup.machines')],
+    ['bands', t('memberProfile:profileSetup.bands')],
+    ['cardio', t('memberProfile:profileSetup.cardioMachines')],
   ]);
   return (
     <>
@@ -1118,15 +872,15 @@ function TrainingStep({
           options={[
             {
               value: 'beginner',
-              label: isVi ? 'Mới tập · dưới 6 tháng' : 'Beginner · under 6 months',
+              label: t('memberProfile:profileSetup.beginnerUnder6Months'),
             },
             {
               value: 'intermediate',
-              label: isVi ? 'Trung cấp · 6–24 tháng' : 'Intermediate · 6–24 months',
+              label: t('memberProfile:profileSetup.intermediate624Months'),
             },
             {
               value: 'advanced',
-              label: isVi ? 'Nâng cao · trên 2 năm' : 'Advanced · over 2 years',
+              label: t('memberProfile:profileSetup.advancedOver2Years'),
             },
           ]}
           value={data.experience}
@@ -1135,28 +889,10 @@ function TrainingStep({
           }
         />
       </Block>
-      <Block title={copy.fields.activityLevel}>
-        <ChoiceGrid
-          compact
-          options={[
-            { value: 'sedentary', label: isVi ? 'Ít vận động' : 'Sedentary' },
-            { value: 'light', label: isVi ? 'Vận động nhẹ' : 'Lightly active' },
-            { value: 'moderate', label: isVi ? 'Vận động vừa' : 'Moderately active' },
-            { value: 'high', label: isVi ? 'Vận động cao' : 'Highly active' },
-          ]}
-          value={data.activityLevel}
-          onChange={(activityLevel) =>
-            setSection('training', {
-              ...data,
-              activityLevel: activityLevel as typeof data.activityLevel,
-            })
-          }
-        />
-      </Block>
       <div className="profile-form-grid is-three">
         <UnitNumber
           label={copy.fields.cardioDays}
-          unit="days"
+          unit={copy.units.days}
           optional={copy.optional}
           value={data.cardioDays}
           min={0}
@@ -1165,7 +901,7 @@ function TrainingStep({
         />
         <UnitNumber
           label={copy.fields.cardioMinutes}
-          unit="min"
+          unit={copy.units.min}
           optional={copy.optional}
           value={data.cardioMinutes}
           min={0}
@@ -1174,7 +910,7 @@ function TrainingStep({
         />
         <UnitNumber
           label={copy.fields.strengthDays}
-          unit="days"
+          unit={copy.units.days}
           optional={copy.optional}
           value={data.strengthDays}
           min={0}
@@ -1192,7 +928,10 @@ function TrainingStep({
       <Block title={copy.fields.session}>
         <ChoiceGrid
           compact
-          options={[30, 45, 60, 75, 90].map((m) => ({ value: String(m), label: `${m} min` }))}
+          options={[30, 45, 60, 75, 90].map((m) => ({
+            value: String(m),
+            label: `${m} ${copy.units.min}`,
+          }))}
           value={String(data.sessionMinutes ?? '')}
           onChange={(value) =>
             setSection('training', {
@@ -1206,9 +945,9 @@ function TrainingStep({
         <Block title={copy.fields.environments}>
           <ChipGroup
             options={[
-              { value: 'gym', label: isVi ? 'Phòng Gym' : 'Gym' },
-              { value: 'home', label: isVi ? 'Tại nhà' : 'Home' },
-              { value: 'outdoor', label: isVi ? 'Ngoài trời' : 'Outdoor' },
+              { value: 'gym', label: t('memberProfile:profileSetup.gym') },
+              { value: 'home', label: t('memberProfile:profileSetup.home') },
+              { value: 'outdoor', label: t('memberProfile:profileSetup.outdoor') },
             ]}
             values={data.environments}
             onChange={(environments) => setSection('training', { ...data, environments })}
@@ -1242,15 +981,14 @@ function TrainingStep({
 
 function RecoveryStep({
   copy,
-  isVi,
   profile,
   setSection,
 }: {
   copy: Copy;
-  isVi: boolean;
   profile: MemberFitnessProfile;
   setSection: SetSection;
 }) {
+  const { t } = useTranslation();
   const data = profile.recovery;
   return (
     <>
@@ -1261,7 +999,7 @@ function RecoveryStep({
       <div className="profile-form-grid">
         <UnitNumber
           label={copy.fields.sleep}
-          unit="hours"
+          unit={copy.units.hours}
           value={data.sleepHours}
           min={2}
           max={14}
@@ -1285,7 +1023,7 @@ function RecoveryStep({
           compact
           options={[1, 2, 3, 4, 5].map((value) => ({
             value: String(value),
-            label: `${value} · ${(isVi ? ['Rất thấp', 'Thấp', 'Vừa', 'Cao', 'Rất cao'] : ['Very low', 'Low', 'Moderate', 'High', 'Very high'])[value - 1]}`,
+            label: `${value} · ${[t('memberProfile:profileSetup.recoveryStep.0'), t('memberProfile:profileSetup.recoveryStep.1'), t('memberProfile:profileSetup.recoveryStep.2'), t('memberProfile:profileSetup.recoveryStep.3'), t('memberProfile:profileSetup.recoveryStep.4')][value - 1]}`,
           }))}
           value={String(data.stressLevel ?? '')}
           onChange={(value) =>
@@ -1300,10 +1038,10 @@ function RecoveryStep({
         <ChoiceGrid
           compact
           options={[
-            { value: 'mostly_sitting', label: isVi ? 'Chủ yếu ngồi' : 'Mostly sitting' },
-            { value: 'mixed', label: isVi ? 'Ngồi và di chuyển' : 'Mixed' },
-            { value: 'mostly_active', label: isVi ? 'Vận động nhiều' : 'Mostly active' },
-            { value: 'shift_work', label: isVi ? 'Làm việc theo ca' : 'Shift work' },
+            { value: 'mostly_sitting', label: t('memberProfile:profileSetup.mostlySitting') },
+            { value: 'mixed', label: t('memberProfile:profileSetup.mixed') },
+            { value: 'mostly_active', label: t('memberProfile:profileSetup.mostlyActive') },
+            { value: 'shift_work', label: t('memberProfile:profileSetup.shiftWork') },
           ]}
           value={data.workPattern}
           onChange={(workPattern) =>
@@ -1351,15 +1089,14 @@ function RecoveryStep({
 
 function ReviewStep({
   copy,
-  isVi,
   profile,
   readiness,
 }: {
   copy: Copy;
-  isVi: boolean;
   profile: MemberFitnessProfile;
   readiness: ReturnType<typeof calculateProfileReadiness>;
 }) {
+  const { t } = useTranslation();
   const status = copy.readiness[readiness.level];
   return (
     <>
@@ -1367,7 +1104,9 @@ function ReviewStep({
       <section className={cn('profile-readiness', `is-${readiness.level}`)}>
         {readiness.level === 'ready' ? <ClipboardCheck size={28} /> : <CircleAlert size={28} />}
         <div>
-          <span>FIT® READINESS</span>
+          <span>
+            {BRAND_MARK.toUpperCase()} {copy.readinessEyebrow}
+          </span>
           <h2>{status[0] ?? ''}</h2>
           <p>{status[1] ?? ''}</p>
         </div>
@@ -1383,33 +1122,37 @@ function ReviewStep({
         <ReviewCard
           icon={<Target size={20} />}
           label={copy.reviewLabels.goal}
-          value={goals(isVi).find((o) => o.value === profile.goals.primary)?.label ?? '—'}
+          value={
+            goals(t)
+              .filter((o) => (profile.goals.selected as string[]).includes(o.value))
+              .map((o) => o.label)
+              .join(', ') || '—'
+          }
           detail={profile.goals.targetDate || '—'}
         />
         <ReviewCard
           icon={<HeartPulse size={20} />}
           label={copy.reviewLabels.health}
           value={
-            profile.health.conditions.includes('none')
-              ? copy.none
-              : `${profile.health.conditions.length} ${isVi ? 'mục cần lưu ý' : 'items recorded'}`
+            [
+              profile.movement.upperBodyInjury === 'yes' ? copy.fields.upperBody : '',
+              profile.movement.lowerBodyInjury === 'yes' ? copy.fields.lowerBody : '',
+            ]
+              .filter(Boolean)
+              .join(', ') || copy.none
           }
-          detail={profile.movement.painAreas.join(', ') || '—'}
+          detail=""
         />
         <ReviewCard
           icon={<Dumbbell size={20} />}
           label={copy.reviewLabels.schedule}
-          value={`${profile.training.availableDays.length} ${isVi ? 'ngày/tuần' : 'days/week'}`}
-          detail={`${profile.training.sessionMinutes} min · ${profile.training.experience}`}
+          value={`${profile.training.availableDays.length} ${t('memberProfile:profileSetup.daysWeek')}`}
+          detail={`${profile.training.sessionMinutes} ${copy.units.min} · ${profile.training.experience}`}
         />
       </div>
       <div className="profile-review-notice">
         <ShieldCheck size={18} />
-        <span>
-          {isVi
-            ? 'AI chỉ nhận dữ liệu có cấu trúc cần thiết để đề xuất plan. PT chỉ xem được hồ sơ khi bạn cho phép và được phân công.'
-            : 'AI receives only structured data needed for plan recommendations. A Trainer can view this profile only when assigned and permitted.'}
-        </span>
+        <span>{t('memberProfile:profileSetup.aIReceivesOnlyStructured')}</span>
       </div>
     </>
   );

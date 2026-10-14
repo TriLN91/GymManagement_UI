@@ -1,0 +1,293 @@
+{
+  "eyebrow": "Quản trị nền tảng",
+  "loading": "Đang tải dữ liệu tham chiếu chuyển động",
+  "list": {
+    "title": "Thư viện tham chiếu bài tập",
+    "description": "Chuẩn bị tham chiếu chuyển động đáng tin cậy và theo dõi góc quay sẵn sàng cho đánh giá hội viên.",
+    "searchLabel": "Tìm bài tập",
+    "searchPlaceholder": "Tìm theo bài tập, nhóm cơ hoặc thiết bị",
+    "filterTitle": "Tìm bộ tham chiếu",
+    "allExercises": "Tất cả bài tập",
+    "emptyTitle": "Không tìm thấy bài tập",
+    "emptyDescription": "Thêm bài tập để bắt đầu chuẩn bị video tham chiếu đáng tin cậy.",
+    "activeCount_one": "{{count}} hồ sơ đang hoạt động",
+    "activeCount_other": "{{count}} hồ sơ đang hoạt động"
+  },
+  "fields": {
+    "exercise": "Bài tập",
+    "pattern": "Mẫu chuyển động",
+    "sources": "Nguồn",
+    "profiles": "Hồ sơ",
+    "status": "Trạng thái",
+    "active": "Hồ sơ đang hoạt động",
+    "actions": "Thao tác",
+    "name": "Tên",
+    "muscleGroup": "Nhóm cơ",
+    "equipment": "Thiết bị",
+    "acceptedReps": "Lần lặp được chấp nhận",
+    "rejectedReps": "Lần lặp bị loại",
+    "acceptedVideos": "Video được chấp nhận",
+    "viewConfidence": "Độ tin cậy góc quay",
+    "reason": "Lý do quyết định",
+    "version": "Phiên bản",
+    "view": "Góc quay",
+    "readiness": "Mức sẵn sàng vận hành",
+    "liveViews": "Góc đang dùng",
+    "candidateViews": "Góc có bản đề xuất",
+    "nextAction": "Bước tiếp theo",
+    "contributingFootage": "Video đóng góp"
+  },
+  "actions": {
+    "open": "Mở",
+    "createSet": "Tạo bộ tham chiếu",
+    "createExercise": "Thêm bài tập",
+    "cancel": "Hủy",
+    "create": "Tạo",
+    "creating": "Đang tạo…",
+    "back": "Quay lại bộ tham chiếu",
+    "confirm": "Xác nhận",
+    "confirming": "Đang xác nhận…",
+    "activate": "Kích hoạt",
+    "activating": "Đang kích hoạt…",
+    "addExercise": "Thêm bài tập",
+    "saveAndStart": "Lưu và bắt đầu chuẩn bị tham chiếu",
+    "startPreparation": "Bắt đầu chuẩn bị",
+    "continuePreparation": "Tiếp tục chuẩn bị",
+    "reviewUpdate": "Xem bản cập nhật",
+    "viewLive": "Xem tham chiếu đang dùng",
+    "opening": "Đang mở…",
+    "approveVersion": "Phê duyệt phiên bản tham chiếu này",
+    "approving": "Đang phê duyệt…",
+    "publishLive": "Xuất bản để sử dụng",
+    "publishing": "Đang xuất bản…"
+  },
+  "createSet": {
+    "title": "Tạo bộ tham chiếu",
+    "description": "Bộ xử lý hiện hỗ trợ mẫu SQUAT. Góc quay được tự động phát hiện từ từng video nguồn.",
+    "selectExercise": "Chọn bài tập"
+  },
+  "createExercise": {
+    "title": "Thêm bài tập vào danh mục",
+    "description": "Tạo bài tập toàn cục và chuyển thẳng sang bước chuẩn bị tham chiếu."
+  },
+  "breadcrumbs": {
+    "label": "Đường dẫn",
+    "standards": "Tiêu chuẩn đánh giá",
+    "references": "Tham chiếu bài tập"
+  },
+  "presentationState": {
+    "NEEDS_FOOTAGE": "Cần video",
+    "ANALYZING": "Đang phân tích",
+    "NEEDS_REVIEW": "Cần xem xét",
+    "READY_TO_APPROVE": "Sẵn sàng phê duyệt",
+    "APPROVED": "Đã phê duyệt",
+    "LIVE": "Đang dùng",
+    "UPDATE_READY": "Có bản cập nhật",
+    "PROBLEM": "Có sự cố"
+  },
+  "sourceOutcome": {
+    "ANALYZING": "Đang phân tích",
+    "USABLE": "Có thể sử dụng",
+    "USABLE_REDUCED": "Sử dụng với trọng số giảm",
+    "NEEDS_REVIEW": "Cần xem xét",
+    "EXCLUDED": "Đã loại",
+    "FAILED": "Thất bại"
+  },
+  "sourceOutcomeDescription": {
+    "ANALYZING": "Hệ thống đang phân tích video này.",
+    "USABLE": "Video đáng tin cậy có thể dùng cho tham chiếu góc {{view}}.",
+    "USABLE_REDUCED": "Có thể dùng cho góc {{view}} với mức ảnh hưởng giảm.",
+    "NEEDS_REVIEW": "Xem bằng chứng trước khi video có thể đóng góp.",
+    "EXCLUDED": "Video này không đóng góp vào tham chiếu được tạo.",
+    "FAILED": "Xử lý thất bại. Hãy tải lên video thay thế."
+  },
+  "workspace": {
+    "eyebrow": "Chuẩn bị tham chiếu",
+    "pattern": "Tiêu chuẩn chuyển động {{pattern}}",
+    "footageTitle": "Video tham chiếu",
+    "footageDescription": "Cung cấp ví dụ chuyển động GOOD đáng tin cậy. Góc quay được tự động phát hiện.",
+    "generatedTitle": "Tham chiếu được tạo",
+    "generatedDescription": "Xem bản đề xuất hiện tại cho từng góc. Phiên bản cũ nằm trong lịch sử.",
+    "unsupportedFootage": "Video bị loại hoặc không được hỗ trợ",
+    "footageResult": "{{accepted}} lần lặp đạt · {{rejected}} lần lặp bị loại",
+    "evidenceDetails": "Xem bằng chứng và chất lượng",
+    "technicalAudit": "Chi tiết kiểm tra kỹ thuật",
+    "rawPayload": "Dữ liệu thô để gỡ lỗi",
+    "currentCandidate": "Bản đề xuất hiện tại",
+    "liveVersion": "Phiên bản đang dùng",
+    "liveForAssessments": "Đang dùng cho đánh giá",
+    "contributingFootage": "Video đóng góp",
+    "sourcesTitle": "Video nguồn",
+    "sourcesDescription": "Trạng thái xử lý và quyết định xem xét được hiển thị riêng biệt.",
+    "noSources": "Chưa có video nguồn",
+    "noSourcesDescription": "Tải lên video tham chiếu GOOD định dạng MP4 để tạo hồ sơ đầu tiên.",
+    "detectedView": "Góc quay phát hiện: {{view}}",
+    "viewPending": "Đang phát hiện góc quay",
+    "technicalEvidence": "Xem bằng chứng kỹ thuật",
+    "dataQuality": "Chất lượng dữ liệu",
+    "deterministicEvidence": "Bằng chứng xác định",
+    "fallbackEvidence": "Dự phòng TypeSafe và quản trị",
+    "profilesTitle": "Hồ sơ tham chiếu tổng hợp",
+    "profilesDescription": "Hồ sơ được tách theo góc quay và giữ toàn bộ lịch sử phiên bản.",
+    "noProfiles": "Chưa có hồ sơ tổng hợp",
+    "noProfilesDescription": "Hồ sơ được tạo đồng bộ sau khi nguồn tương thích được xử lý.",
+    "profileVersion": "Hồ sơ v{{version}}",
+    "profileQuality": "Tóm tắt chất lượng",
+    "historyTitle": "Lịch sử phiên bản hồ sơ",
+    "historyDescription": "Phiên bản cũ được giữ để kiểm tra. Đánh giá lịch sử vẫn liên kết với phiên bản ban đầu.",
+    "noHistory": "Chưa có phiên bản lịch sử.",
+    "unknownView": "góc quay đang chờ",
+    "qualitySummary": "Chất lượng",
+    "profileTechnicalQuality": "Xem toàn bộ bằng chứng chất lượng",
+    "live": "Tham chiếu đang dùng",
+    "notActive": "Chưa hoạt động",
+    "noActiveForView": "Chưa có hồ sơ hoạt động cho góc {{view}}"
+  },
+  "upload": {
+    "title": "Tải lên nguồn tham chiếu GOOD",
+    "description": "Tải từng tệp MP4. Xử lý diễn ra đồng bộ và góc quay được gán tự động.",
+    "file": "Video MP4",
+    "submit": "Tải lên và xử lý",
+    "processing": "Đang phân tích video…",
+    "first": "Tải video tham chiếu GOOD đầu tiên",
+    "another": "Tải thêm video tham chiếu GOOD",
+    "invalidType": "Hãy chọn video MP4.",
+    "empty": "Video đã chọn không có dữ liệu.",
+    "tooLarge": "Video vượt quá giới hạn 500 MB của backend."
+  },
+  "processing": {
+    "title": "Đang chuẩn bị video tham chiếu",
+    "description": "Phân tích có thể mất vài giây. Giữ trang mở cho đến khi yêu cầu hoàn tất.",
+    "stages": {
+      "uploading": "Tải video lên",
+      "normalizing": "Chuẩn hóa khi cần",
+      "analyzing": "Phân tích chuyển động",
+      "detecting": "Phát hiện góc quay",
+      "building": "Xây dựng bằng chứng"
+    }
+  },
+  "readiness": {
+    "title": "Mức sẵn sàng phân tích",
+    "description": "Hệ thống tạo tham chiếu riêng cho từng góc quay được hỗ trợ để video hội viên được đánh giá theo góc tương ứng.",
+    "matchingView": "Góc quay tương ứng",
+    "usableVideos": "Video có thể dùng",
+    "needsReview": "Cần xem xét",
+    "empty": "Mức sẵn sàng sẽ xuất hiện sau khi phát hiện góc quay được hỗ trợ đầu tiên."
+  },
+  "publish": {
+    "title": "Xuất bản",
+    "description": "Phê duyệt phiên bản đã tạo sau khi xem xét, rồi xuất bản riêng để dùng cho các đánh giá hội viên trong tương lai.",
+    "pending": "Chưa có phiên bản đang dùng. Hãy phê duyệt bản đề xuất phía trên trước khi xuất bản."
+  },
+  "workflow": {
+    "title": "Việc cần làm tiếp theo",
+    "live": "Hồ sơ tham chiếu đang hoạt động",
+    "stages": {
+      "referenceSet": "Bộ tham chiếu",
+      "uploadSources": "Tải nguồn",
+      "reviewSources": "Xem nguồn",
+      "reviewProfile": "Xem hồ sơ",
+      "confirm": "Xác nhận",
+      "activate": "Kích hoạt"
+    },
+    "next": {
+      "UPLOAD_SOURCE": {
+        "title": "Tải video tham chiếu GOOD",
+        "description": "Mẫu chuyển động do bộ tham chiếu quy định. Backend tự động phát hiện góc quay.",
+        "action": "Chọn video"
+      },
+      "PROCESSING": {
+        "title": "Nguồn đang được xử lý",
+        "description": "Xử lý diễn ra đồng bộ. Giữ trang này mở và xem kết quả khi yêu cầu hoàn tất.",
+        "action": "Xem nguồn"
+      },
+      "INSPECT_FAILURE": {
+        "title": "Kiểm tra lỗi xử lý",
+        "description": "Xem chi tiết lỗi rồi tải lên video tham chiếu GOOD thay thế.",
+        "action": "Xem lỗi"
+      },
+      "REVIEW_SOURCES": {
+        "title": "Xem tính hợp lệ của nguồn",
+        "description": "Kiểm tra quyết định và bằng chứng. Tải thêm nguồn nếu chưa tạo được hồ sơ tổng hợp phù hợp.",
+        "action": "Xem nguồn"
+      },
+      "CONFIRM_PROFILE": {
+        "title": "Xem và xác nhận hồ sơ tổng hợp",
+        "description": "Kiểm tra quyết định nguồn, chất lượng và cảnh báo trước khi xác nhận phiên bản.",
+        "action": "Xem hồ sơ"
+      },
+      "ACTIVATE_PROFILE": {
+        "title": "Kích hoạt hồ sơ đã xác nhận",
+        "description": "Kích hoạt sẽ đặt phiên bản này làm tham chiếu đang dùng cho góc quay đã phát hiện.",
+        "action": "Xem kích hoạt"
+      },
+      "LIVE": {
+        "title": "Hồ sơ tham chiếu đang hoạt động",
+        "description": "Đã có phiên bản đang dùng và các phiên bản lịch sử vẫn có thể kiểm tra.",
+        "action": ""
+      }
+    }
+  },
+  "summary": {
+    "sourceBreakdown": "{{accepted}} được chấp nhận · {{review}} cần xem xét",
+    "views": "Góc quay",
+    "groupedByView": "Hồ sơ được tách riêng theo góc quay",
+    "activeViews": "Đang dùng: {{views}}",
+    "noActive": "Chưa có hồ sơ đang hoạt động",
+    "usable": "{{count}} có thể dùng",
+    "review": "{{count}} cần xem xét",
+    "excluded": "{{count}} bị loại",
+    "failed": "{{count}} thất bại"
+  },
+  "sourceDescription": {
+    "processing": "Video đang được xử lý trước khi có thể vào nhóm tham chiếu.",
+    "failed": "Xử lý thất bại. Xem chẩn đoán và tải lên video thay thế.",
+    "accepted": "Đã xử lý thành công và chấp nhận vào nhóm tham chiếu {{view}}.",
+    "excluded": "Đã xử lý thành công nhưng bị loại khỏi quá trình tổng hợp tham chiếu.",
+    "review": "Cần xem bằng chứng vì quyết định chưa rõ ràng.",
+    "downWeight": "Đủ điều kiện vào nhóm {{view}} với trọng số tổng hợp giảm.",
+    "processed": "Đã xử lý thành công. Hãy xem bằng chứng trước khi tiếp tục."
+  },
+  "profileAction": {
+    "confirmTitle": "Xác nhận hồ sơ v{{version}}?",
+    "confirmDescription": "Xác nhận hồ sơ tổng hợp {{view}} đã được xem xét. Hồ sơ sẽ đủ điều kiện kích hoạt.",
+    "activateTitle": "Kích hoạt hồ sơ v{{version}}?",
+    "activateDescription": "Phiên bản v{{version}} sẽ trở thành tham chiếu {{view}} đang dùng. Phiên bản đang hoạt động trước đó của cùng bài tập và góc quay sẽ trở thành lịch sử, không bị xóa.",
+    "approveTitle": "Phê duyệt phiên bản tham chiếu này?",
+    "approveDescription": "Tôi đã xem video, phân tích và cảnh báo, đồng thời chấp nhận phiên bản tham chiếu {{view}} v{{version}}.",
+    "publishTitle": "Xuất bản phiên bản này để sử dụng?",
+    "publishDescription": "Phiên bản v{{version}} sẽ được dùng cho các đánh giá hội viên có góc {{view}} trong tương lai.",
+    "replacementNotice": "Phiên bản đang dùng trước đó sẽ thành lịch sử. Các đánh giá hiện có vẫn giữ liên kết phiên bản ban đầu."
+  },
+  "status": {
+    "processing": "Đang xử lý",
+    "processed": "Đã xử lý",
+    "reviewRequired": "Cần xem xét",
+    "confirmed": "Đã xác nhận",
+    "active": "Đang hoạt động",
+    "failed": "Xử lý thất bại",
+    "accepted": "Được chấp nhận",
+    "rejected": "Bị loại",
+    "ambiguous": "Chưa rõ",
+    "needsReview": "Cần xem xét",
+    "keep": "Giữ lại",
+    "downWeight": "Giảm trọng số",
+    "exclude": "Loại bỏ",
+    "unknown": "Không xác định"
+  },
+  "errors": {
+    "invalid": "Yêu cầu hoặc tệp tải lên không hợp lệ.",
+    "forbidden": "Tài khoản của bạn không thể quản lý dữ liệu tham chiếu nền tảng.",
+    "notFound": "Bài tập hoặc bộ tham chiếu không còn tồn tại.",
+    "conflict": "Thao tác vòng đời này không hợp lệ ở trạng thái hiện tại.",
+    "generic": "Không thể tải dữ liệu tham chiếu chuyển động."
+  },
+  "messages": {
+    "setCreated": "Đã tạo bộ tham chiếu.",
+    "exerciseCreated": "Đã thêm bài tập vào danh mục toàn cục.",
+    "sourceUploaded": "Đã xử lý nguồn và làm mới hồ sơ tham chiếu.",
+    "sourceUploadFailed": "Không thể xử lý nguồn. Hãy xem lỗi và thử video khác.",
+    "profileConfirmed": "Đã phê duyệt phiên bản tham chiếu.",
+    "profileActivated": "Đã xuất bản tham chiếu để sử dụng và giữ lại các phiên bản lịch sử."
+  }
+}

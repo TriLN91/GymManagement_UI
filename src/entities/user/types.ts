@@ -1,4 +1,4 @@
-// FR-IAM-02: RBAC roles drive route isolation.
+// FR-IAM-02: RBAC roles drive route isolation (Platform Admin > Gym Admin > PT > User).
 // Roles are stored as an array — a user MAY belong to multiple roles (e.g. pt + gym_admin).
 export type Role = 'member' | 'pt' | 'gym_admin' | 'super_admin';
 export const ALL_ROLES: ReadonlyArray<Role> = ['member', 'pt', 'gym_admin', 'super_admin'];
@@ -8,7 +8,8 @@ export interface AuthUser {
   email: string;
   fullName: string;
   roles: Role[];
-  tenantId: string;
+  /** Not provided by the backend yet; only set when a tenant concept exists. */
+  tenantId?: string;
   avatarUrl?: string;
   locale?: string;
 }
@@ -16,37 +17,11 @@ export interface AuthUser {
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
-  expiresIn: number;
 }
 
 export interface AuthSession {
   user: AuthUser;
   tokens: AuthTokens;
-}
-
-export interface EmailOtpPolicy {
-  codeLength: number;
-  expiresAt: string;
-  resendAvailableAt: string;
-  attemptsRemaining: number;
-}
-
-export interface EmailOtpChallenge {
-  challengeId: string;
-  maskedEmail: string;
-  policy: EmailOtpPolicy;
-  requiredFor: 'gym_admin_session';
-}
-
-export type LoginResponse = AuthSession | EmailOtpChallenge;
-
-export interface VerifyEmailOtpPayload {
-  challengeId: string;
-  code: string;
-}
-
-export interface ResendEmailOtpPayload {
-  challengeId: string;
 }
 
 export interface LoginPayload {

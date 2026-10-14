@@ -15,20 +15,19 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TrainerExerciseArtwork, TrainerExercisePreviewDialog } from './TrainerExerciseMedia';
+
 import {
   EMPTY_TRAINER_EXERCISE_FILTERS,
   filterTrainerExercises,
   getExerciseGoal,
   toggleTrainerExerciseFilter,
-  type TrainerExerciseFilterKey,
-  type TrainerExerciseFilters,
-} from './trainerExerciseModel';
-import {
   trainerExercises,
+  useTrainerText,
   useTrainerWorkspaceStore,
   type TrainerExercise,
-} from './useTrainerWorkspaceStore';
-
+  type TrainerExerciseFilterKey,
+  type TrainerExerciseFilters,
+} from '@/features/trainer-workspace';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -54,6 +53,7 @@ function FilterOptions({
   filters: TrainerExerciseFilters;
   onChange: (filters: TrainerExerciseFilters) => void;
 }) {
+  const tr = useTrainerText();
   return (
     <div className="trainer-library-filter-options">
       {values.map((value) => (
@@ -66,7 +66,7 @@ function FilterOptions({
           <span aria-hidden="true">
             <Check />
           </span>
-          {value}
+          {tr(value)}
         </label>
       ))}
     </div>
@@ -74,8 +74,8 @@ function FilterOptions({
 }
 
 export function TrainerExerciseLibraryPage() {
-  const { i18n } = useTranslation();
-  const lang = i18n.resolvedLanguage === 'vi' ? 'vi' : 'en';
+  const tr = useTrainerText();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const add = useTrainerWorkspaceStore((state) => state.addDraftExercise);
   const [query, setQuery] = useState('');
@@ -124,34 +124,34 @@ export function TrainerExerciseLibraryPage() {
   };
   const addExercise = (exercise: TrainerExercise) => {
     add(exercise.id);
-    toast.success(lang === 'vi' ? 'Đã thêm vào bản nháp kế hoạch.' : 'Added to the plan draft.', {
+    toast.success(t('trainer:trainerExerciseLibrary.addedToThePlan'), {
       action: {
-        label: lang === 'vi' ? 'Mở kế hoạch' : 'Open plan',
+        label: t('trainer:trainerExerciseLibrary.openPlan'),
         onClick: () => navigate(ROUTES.pt.planBuilder),
       },
     });
   };
   const labels: Record<TrainerExerciseFilterKey, string> = {
-    equipment: lang === 'vi' ? 'Dụng cụ' : 'Equipment',
-    difficulty: lang === 'vi' ? 'Độ khó' : 'Difficulty',
-    muscle: lang === 'vi' ? 'Nhóm cơ' : 'Muscle group',
-    goal: lang === 'vi' ? 'Mục tiêu' : 'Goal',
+    equipment: t('trainer:trainerExerciseLibrary.equipment'),
+    difficulty: t('trainer:trainerExerciseLibrary.difficulty'),
+    muscle: t('trainer:trainerExerciseLibrary.muscleGroup'),
+    goal: t('trainer:trainerExerciseLibrary.goal'),
   };
 
   return (
     <div className="trainer-workspace-page trainer-library-page">
       <div className="trainer-library-heading">
-        <h1>{lang === 'vi' ? 'Thư viện bài tập' : 'Exercise library'}</h1>
+        <h1>{t('trainer:trainerExerciseLibrary.exerciseLibrary')}</h1>
         <button
           className="trainer-primary-action"
           type="button"
           onClick={() => navigate(ROUTES.pt.planBuilder)}
         >
-          {lang === 'vi' ? 'Mở kế hoạch' : 'Open plan'} <ArrowRight size={15} />
+          {t('trainer:trainerExerciseLibrary.openPlan')} <ArrowRight size={15} />
         </button>
       </div>
 
-      <section className="trainer-library-controls" aria-label="Exercise filters">
+      <section className="trainer-library-controls" aria-label={tr('Exercise filters')}>
         <label className="trainer-library-search">
           <Search aria-hidden="true" />
           <input
@@ -160,11 +160,7 @@ export function TrainerExerciseLibraryPage() {
               setQuery(event.target.value);
               setPage(1);
             }}
-            placeholder={
-              lang === 'vi'
-                ? 'Tìm bài tập, nhóm cơ hoặc dụng cụ'
-                : 'Search exercise, muscle or equipment'
-            }
+            placeholder={t('trainer:trainerExerciseLibrary.searchExerciseMuscleOr')}
           />
         </label>
         <div className="trainer-library-desktop-filters">
@@ -193,11 +189,11 @@ export function TrainerExerciseLibraryPage() {
           }}
         >
           <Filter aria-hidden="true" />
-          {lang === 'vi' ? 'Bộ lọc' : 'Filters'}
+          {t('trainer:trainerExerciseLibrary.filters')}
           {activeCount > 0 && <b>{activeCount}</b>}
         </button>
         <label className="trainer-library-sort">
-          <span className="sr-only">{lang === 'vi' ? 'Sắp xếp' : 'Sort'}</span>
+          <span className="sr-only">{t('trainer:trainerExerciseLibrary.sort')}</span>
           <SlidersHorizontal aria-hidden="true" />
           <select
             value={sort}
@@ -206,23 +202,23 @@ export function TrainerExerciseLibraryPage() {
               setPage(1);
             }}
           >
-            <option value="name">{lang === 'vi' ? 'Tên A–Z' : 'Name A–Z'}</option>
-            <option value="difficulty">{lang === 'vi' ? 'Độ khó' : 'Difficulty'}</option>
+            <option value="name">{t('trainer:trainerExerciseLibrary.nameAZ')}</option>
+            <option value="difficulty">{t('trainer:trainerExerciseLibrary.difficulty')}</option>
           </select>
         </label>
       </section>
 
       {activeCount > 0 && (
-        <div className="trainer-library-chips" aria-label="Active filters">
+        <div className="trainer-library-chips" aria-label={tr('Active filters')}>
           {(Object.keys(filters) as TrainerExerciseFilterKey[]).flatMap((key) =>
             filters[key].map((value) => (
               <button
                 type="button"
                 key={`${key}-${value}`}
                 onClick={() => updateFilters(toggleTrainerExerciseFilter(filters, key, value))}
-                aria-label={`${lang === 'vi' ? 'Xóa' : 'Remove'} ${value}`}
+                aria-label={`${t('trainer:trainerExerciseLibrary.remove')} ${tr(value)}`}
               >
-                <span>{value}</span>
+                <span>{tr(value)}</span>
                 <X aria-hidden="true" />
               </button>
             )),
@@ -232,14 +228,14 @@ export function TrainerExerciseLibraryPage() {
             className="is-clear"
             onClick={() => updateFilters(EMPTY_TRAINER_EXERCISE_FILTERS)}
           >
-            {lang === 'vi' ? 'Xóa tất cả' : 'Clear all'}
+            {t('trainer:trainerExerciseLibrary.clearAll')}
           </button>
         </div>
       )}
 
       <div className="trainer-library-results-bar" aria-live="polite">
         <strong>
-          {filtered.length} {lang === 'vi' ? 'kết quả' : 'results'}
+          {filtered.length} {t('trainer:trainerExerciseLibrary.results')}
         </strong>
         {filtered.length > 0 && (
           <span>
@@ -259,7 +255,7 @@ export function TrainerExerciseLibraryPage() {
                   className="trainer-exercise-card__media"
                   type="button"
                   onClick={() => setPreview(exercise)}
-                  aria-label={`${lang === 'vi' ? 'Xem' : 'View'} ${exercise.name}`}
+                  aria-label={`${t('trainer:trainerExerciseLibrary.view')} ${tr(exercise.name)}`}
                 >
                   <TrainerExerciseArtwork exercise={exercise} />
                   <span className="trainer-exercise-card__badges">
@@ -273,12 +269,12 @@ export function TrainerExerciseLibraryPage() {
                     type="button"
                     onClick={() => setPreview(exercise)}
                   >
-                    {exercise.name}
+                    {tr(exercise.name)}
                   </button>
-                  <span className="trainer-exercise-card__equipment">{exercise.equipment}</span>
+                  <span className="trainer-exercise-card__equipment">{tr(exercise.equipment)}</span>
                   <div className="trainer-exercise-card__muscles">
                     {(musclesExpanded ? muscles : muscles.slice(0, 3)).map((muscle) => (
-                      <span key={muscle}>{muscle}</span>
+                      <span key={muscle}>{tr(muscle)}</span>
                     ))}
                     {muscles.length > 3 && (
                       <button
@@ -304,10 +300,10 @@ export function TrainerExerciseLibraryPage() {
                     className="trainer-exercise-card__add"
                     type="button"
                     onClick={() => addExercise(exercise)}
-                    aria-label={`Add ${exercise.name}`}
+                    aria-label={`${t('trainer:trainerExerciseLibrary.add')} ${tr(exercise.name)}`}
                   >
                     <Plus aria-hidden="true" />
-                    {lang === 'vi' ? 'Thêm vào kế hoạch' : 'Add to plan'}
+                    {t('trainer:trainerExerciseLibrary.addToPlan')}
                   </button>
                 </div>
               </article>
@@ -317,7 +313,7 @@ export function TrainerExerciseLibraryPage() {
       ) : (
         <div className="trainer-library-empty">
           <Search aria-hidden="true" />
-          <strong>{lang === 'vi' ? 'Không tìm thấy bài tập' : 'No exercises found'}</strong>
+          <strong>{t('trainer:trainerExerciseLibrary.noExercisesFound')}</strong>
           <button
             type="button"
             onClick={() => {
@@ -325,18 +321,18 @@ export function TrainerExerciseLibraryPage() {
               updateFilters(EMPTY_TRAINER_EXERCISE_FILTERS);
             }}
           >
-            {lang === 'vi' ? 'Xóa tìm kiếm và bộ lọc' : 'Clear search and filters'}
+            {t('trainer:trainerExerciseLibrary.clearSearchAndFilters')}
           </button>
         </div>
       )}
 
       {totalPages > 1 && (
-        <nav className="trainer-library-pagination" aria-label="Exercise library pagination">
+        <nav className="trainer-library-pagination" aria-label={tr('Exercise library pagination')}>
           <button
             type="button"
             disabled={currentPage === 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            aria-label={lang === 'vi' ? 'Trang trước' : 'Previous page'}
+            aria-label={t('trainer:trainerExerciseLibrary.previousPage')}
           >
             <ArrowLeft />
           </button>
@@ -355,7 +351,7 @@ export function TrainerExerciseLibraryPage() {
             type="button"
             disabled={currentPage === totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            aria-label={lang === 'vi' ? 'Trang sau' : 'Next page'}
+            aria-label={t('trainer:trainerExerciseLibrary.nextPage')}
           >
             <ArrowRight />
           </button>
@@ -371,11 +367,9 @@ export function TrainerExerciseLibraryPage() {
       >
         <DialogContent className="trainer-library-filter-sheet">
           <DialogHeader>
-            <DialogTitle>{lang === 'vi' ? 'Bộ lọc bài tập' : 'Exercise filters'}</DialogTitle>
+            <DialogTitle>{t('trainer:trainerExerciseLibrary.exerciseFilters')}</DialogTitle>
             <DialogDescription>
-              {lang === 'vi'
-                ? 'Chọn nhiều điều kiện rồi áp dụng cùng lúc.'
-                : 'Select multiple values, then apply them together.'}
+              {t('trainer:trainerExerciseLibrary.selectMultipleValuesThen')}
             </DialogDescription>
           </DialogHeader>
           <div className="trainer-library-filter-sheet__groups">
@@ -393,7 +387,7 @@ export function TrainerExerciseLibraryPage() {
           </div>
           <footer>
             <button type="button" onClick={() => setDraftFilters(EMPTY_TRAINER_EXERCISE_FILTERS)}>
-              {lang === 'vi' ? 'Xóa lựa chọn' : 'Clear selection'}
+              {t('trainer:trainerExerciseLibrary.clearSelection')}
             </button>
             <button
               type="button"
@@ -403,7 +397,7 @@ export function TrainerExerciseLibraryPage() {
                 setFilterSheetOpen(false);
               }}
             >
-              {lang === 'vi' ? 'Xem kết quả' : 'View results'}
+              {t('trainer:trainerExerciseLibrary.viewResults')}
             </button>
           </footer>
         </DialogContent>
@@ -413,7 +407,6 @@ export function TrainerExerciseLibraryPage() {
         exercise={preview}
         open={Boolean(preview)}
         onOpenChange={(open) => !open && setPreview(null)}
-        lang={lang}
       />
     </div>
   );

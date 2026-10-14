@@ -30,65 +30,35 @@ interface TowerLevel {
 }
 
 export function AchievementsPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
+  const { t } = useTranslation();
   const sessions = useWorkoutSessionStore((state) => state.completedSessions);
   const progress = calculateAchievementProgress(sessions);
-  const copy = isVi
-    ? {
-        title: 'Thành tích',
-        back: 'Về lịch tập',
-        tower: 'Tháp chinh phục',
-        floor: 'Tầng',
-        next: 'Mốc tiếp theo',
-        streak: 'Chuỗi ngày hiện tại',
-        weekly: 'Mục tiêu tuần',
-        shield: 'Tiến độ được bảo vệ',
-        shieldBody:
-          'Tầng đã mở luôn được giữ lại. Ngày nghỉ có kế hoạch không xóa thành tích; người tập quay lại từ tầng gần nhất thay vì bị đưa về đầu.',
-        unlocked: 'Đã mở',
-        sessions: 'Tổng buổi tập',
-        volume: 'Tổng tải',
-        highestLoad: 'Mức tạ cao nhất',
-        first: 'Bước chân đầu tiên',
-        week: 'Nhịp tuần ổn định',
-        sevenDays: 'Ngọn lửa 7 ngày',
-        month: 'Một tháng bền bỉ',
-        season: 'Ba tháng liên tục',
-        pr: 'Thợ săn kỷ lục',
-        year: 'Kỷ luật năm',
-        summit: 'Đỉnh tháp',
-        start: 'Khởi đầu',
-        consistency: 'Duy trì',
-        mastery: 'Chinh phục',
-      }
-    : {
-        title: 'Achievements',
-        back: 'Back to schedule',
-        tower: 'Progression tower',
-        floor: 'Floor',
-        next: 'Next milestone',
-        streak: 'Current day streak',
-        weekly: 'Weekly target',
-        shield: 'Progress is protected',
-        shieldBody:
-          'Unlocked floors remain permanent. Planned rest never erases achievements; members return from their nearest floor instead of starting over.',
-        unlocked: 'Unlocked',
-        sessions: 'Total sessions',
-        volume: 'Total volume',
-        highestLoad: 'Highest load',
-        first: 'First step',
-        week: 'Weekly rhythm',
-        sevenDays: 'Seven-day flame',
-        month: 'Consistent month',
-        season: 'Three-month run',
-        pr: 'Record hunter',
-        year: 'Year discipline',
-        summit: 'Tower summit',
-        start: 'Start',
-        consistency: 'Consistency',
-        mastery: 'Mastery',
-      };
+  const copy = {
+    title: t('gamification:achievementTower.achievementsPage.title'),
+    back: t('gamification:achievementTower.achievementsPage.back'),
+    tower: t('gamification:achievementTower.achievementsPage.tower'),
+    floor: t('gamification:achievementTower.achievementsPage.floor'),
+    next: t('gamification:achievementTower.achievementsPage.next'),
+    streak: t('gamification:achievementTower.achievementsPage.streak'),
+    weekly: t('gamification:achievementTower.achievementsPage.weekly'),
+    shield: t('gamification:achievementTower.achievementsPage.shield'),
+    shieldBody: t('gamification:achievementTower.achievementsPage.shieldBody'),
+    unlocked: t('gamification:achievementTower.achievementsPage.unlocked'),
+    sessions: t('gamification:achievementTower.achievementsPage.sessions'),
+    volume: t('gamification:achievementTower.achievementsPage.volume'),
+    highestLoad: t('gamification:achievementTower.achievementsPage.highestLoad'),
+    first: t('gamification:achievementTower.achievementsPage.first'),
+    week: t('gamification:achievementTower.achievementsPage.week'),
+    sevenDays: t('gamification:achievementTower.achievementsPage.sevenDays'),
+    month: t('gamification:achievementTower.achievementsPage.month'),
+    season: t('gamification:achievementTower.achievementsPage.season'),
+    pr: t('gamification:achievementTower.achievementsPage.pr'),
+    year: t('gamification:achievementTower.achievementsPage.year'),
+    summit: t('gamification:achievementTower.achievementsPage.summit'),
+    start: t('gamification:achievementTower.achievementsPage.start'),
+    consistency: t('gamification:achievementTower.achievementsPage.consistency'),
+    mastery: t('gamification:achievementTower.achievementsPage.mastery'),
+  };
 
   const levels: TowerLevel[] = [
     {

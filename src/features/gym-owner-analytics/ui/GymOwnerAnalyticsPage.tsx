@@ -7,7 +7,6 @@ import {
   WalletCards,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { createPeriodPair, validateCustomRange } from '../model/dateRange';
 import { analyticsPresetResources, getCustomAnalyticsResource } from '../model/mockData';
@@ -23,6 +22,7 @@ import { AnalyticsState } from './AnalyticsState';
 import { AnalyticsTrendChart } from './AnalyticsTrendChart';
 import { gymOwnerAnalyticsCopy } from './copy';
 
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
@@ -90,10 +90,8 @@ function formatSignedMetricValue(metric: BackendAnalyticsMetric, value: number, 
 }
 
 export function GymOwnerAnalyticsPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerAnalyticsCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const copy = gymOwnerAnalyticsCopy[language];
   const [range, setRange] = useState<AnalyticsRangeKey>('30d');
   const [customStart, setCustomStart] = useState('2026-09-01');
   const [customEnd, setCustomEnd] = useState('2026-09-15');

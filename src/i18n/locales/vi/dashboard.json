@@ -1,0 +1,56 @@
+{
+  "plan": {
+    "title": "Kế hoạch tập luyện của bạn",
+    "open": "Xem kế hoạch AI",
+    "start": "Bắt đầu buổi tập"
+  },
+  "profile": {
+    "title": "HỒ SƠ CỦA BẠN",
+    "complete": "hoàn tất",
+    "goalLabel": "MỤC TIÊU HUẤN LUYỆN",
+    "bodyLabel": "CHỈ SỐ CƠ THỂ",
+    "healthLabel": "SÀNG LỌC SỨC KHỎE",
+    "notSet": "Chưa cập nhật",
+    "target": "Mục tiêu",
+    "bmi": "BMI",
+    "goals": {
+      "muscle_gain": "Tăng cơ",
+      "fat_loss": "Giảm mỡ",
+      "strength": "Tăng sức mạnh",
+      "mobility": "Cải thiện vận động",
+      "cardio_endurance": "Tăng sức bền tim mạch",
+      "muscular_endurance": "Tăng sức bền cơ bắp"
+    },
+    "readiness": {
+      "ready": "Sẵn sàng tập luyện",
+      "pt_review": "Cần PT xem xét"
+    },
+    "completeness": "ĐỘ ĐẦY ĐỦ HỒ SƠ",
+    "edit": "CHỈNH SỬA HỒ SƠ",
+    "energyLabel": "CALO DUY TRÌ MỖI NGÀY (ƯỚC TÍNH)"
+  },
+  "actions": {
+    "one": {
+      "tag": "HÀNH ĐỘNG NHANH // 01",
+      "title": "KÍCH HOẠT\nPHIÊN TẬP HÔM NAY",
+      "body": "Nạp giáo án trực tiếp vào giao diện đếm nhịp. Thời gian nghỉ và quản lý lỗi form tự động.",
+      "cta": "Bắt đầu ngay →"
+    },
+    "two": {
+      "tag": "THỊ GIÁC MÁY TÍNH // 02",
+      "title": "CHẤM DÁNG\nAI BẰNG VIDEO",
+      "body": "Quay 1 video nháp xương phát hiện lỗi. So tỷ lệ rep 3D Pose-Net với tiêu chuẩn của HLV.",
+      "cta": "Quay video form ↑"
+    }
+  },
+  "progress": {
+    "tag": "THEO DÕI TẬP LUYỆN // 7 NGÀY QUA",
+    "title": "Khối lượng tập tuần này",
+    "volume": "KHỐI LƯỢNG TẠ (KG) / NGÀY",
+    "sessions": "PHIÊN ĐÃ HOÀN THÀNH",
+    "totalVolume": "TỔNG KHỐI LƯỢNG",
+    "kg": "KG",
+    "empty": "Chưa có phiên tập nào trong 7 ngày qua. Hoàn thành một buổi tập để xem biểu đồ.",
+    "history": "Xem lịch sử tập"
+  }
+}

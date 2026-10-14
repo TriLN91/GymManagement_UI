@@ -1,5 +1,6 @@
 import { Maximize2 } from 'lucide-react';
 import { useRef, useState, type CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { MALE_MUSCLE_REGIONS } from '../model/maleMuscleRegions';
 import { MUSCLES, type MuscleId } from '../model/muscleMapData';
@@ -30,6 +31,7 @@ export function MaleAnatomyMuscleMap({
   onSelect,
   zoomed = false,
 }: MaleAnatomyMuscleMapProps) {
+  const { t } = useTranslation();
   const [hovered, setHovered] = useState<MuscleId | null>(null);
   const [zoomOpen, setZoomOpen] = useState(false);
   const zoomTitleRef = useRef<HTMLHeadingElement>(null);
@@ -45,7 +47,7 @@ export function MaleAnatomyMuscleMap({
             className="muscle-map__zoom-button"
             type="button"
             onClick={() => setZoomOpen(true)}
-            aria-label={locale === 'vi' ? 'Phóng lớn bản đồ cơ' : 'Expand muscle map'}
+            aria-label={t('workout:maleAnatomyMuscleMap.expandMuscleMap')}
           >
             <Maximize2 aria-hidden="true" size={14} />
           </button>
@@ -58,13 +60,9 @@ export function MaleAnatomyMuscleMap({
                 viewBox={view === 'front' ? '100 0 480 835' : '660 0 480 835'}
                 role="img"
                 aria-label={
-                  locale === 'vi'
-                    ? view === 'front'
-                      ? 'Bản đồ cơ mặt trước'
-                      : 'Bản đồ cơ mặt sau'
-                    : view === 'front'
-                      ? 'Anterior anatomy muscle map'
-                      : 'Posterior anatomy muscle map'
+                  view === 'front'
+                    ? t('workout:maleAnatomyMuscleMap.viewLabelFront')
+                    : t('workout:maleAnatomyMuscleMap.viewLabelBack')
                 }
               >
                 <image href={imageUrl} x="0" y="0" width="1220" height="841" pointerEvents="none" />
@@ -132,21 +130,17 @@ export function MaleAnatomyMuscleMap({
                 })}
               </svg>
               <figcaption>
-                {locale === 'vi'
-                  ? view === 'front'
-                    ? 'Mặt trước'
-                    : 'Mặt sau'
-                  : view === 'front'
-                    ? 'Front'
-                    : 'Back'}
+                {view === 'front'
+                  ? t('workout:maleAnatomyMuscleMap.captionFront')
+                  : t('workout:maleAnatomyMuscleMap.captionBack')}
               </figcaption>
             </figure>
           ))}
         </div>
         <div className="muscle-map__legend" aria-hidden="true">
-          <span>{locale === 'vi' ? 'Thấp' : 'Low'}</span>
+          <span>{t('workout:maleAnatomyMuscleMap.low')}</span>
           <i />
-          <span>{locale === 'vi' ? 'Lượng tập cao' : 'High volume'}</span>
+          <span>{t('workout:maleAnatomyMuscleMap.highVolume')}</span>
         </div>
         {hovered && (
           <span className="muscle-map__tooltip" role="status">
@@ -165,7 +159,7 @@ export function MaleAnatomyMuscleMap({
           >
             <DialogHeader>
               <DialogTitle ref={zoomTitleRef} tabIndex={-1}>
-                {locale === 'vi' ? 'Bản đồ cơ nam' : 'Male muscle map'}
+                {t('workout:maleAnatomyMuscleMap.maleMuscleMap')}
               </DialogTitle>
             </DialogHeader>
             <MaleAnatomyMuscleMap

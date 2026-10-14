@@ -1,5 +1,4 @@
 import { Download, LockKeyhole } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 import { createSettlementsCsv, downloadCsv } from '../model/csvExport';
 import { gymOwnerSettlementMockResource } from '../model/mockData';
@@ -8,6 +7,7 @@ import { CommerceState } from './CommerceState';
 import { gymOwnerOrdersCopy } from './copy';
 import { formatPeriod, formatVnd } from './formatters';
 
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import {
@@ -24,10 +24,8 @@ import { WorkspacePage } from '@/shared/ui/workspace';
 import './gym-owner-orders.css';
 
 export function GymOwnerSettlementsPage() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymOwnerOrdersCopy[isVi ? 'vi' : 'en'];
-  const locale = isVi ? 'vi-VN' : 'en-US';
+  const { language, locale } = useLocale();
+  const copy = gymOwnerOrdersCopy[language];
 
   const exportSettlements = () => {
     if (gymOwnerSettlementMockResource.state !== 'loaded') return;
@@ -97,9 +95,7 @@ export function GymOwnerSettlementsPage() {
                       {formatVnd(period.financial.netReceivedVnd, locale)}
                     </TableCell>
                     <TableCell data-label={copy.reconciliation}>
-                      <Badge variant="accent">
-                        {isVi ? period.reconciliation.label.vi : period.reconciliation.label.en}
-                      </Badge>
+                      <Badge variant="accent">{period.reconciliation.label[language]}</Badge>
                     </TableCell>
                   </TableRow>
                 ))}

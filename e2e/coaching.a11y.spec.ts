@@ -3,12 +3,12 @@ import { test, expect } from '@playwright/test';
 test.describe('Coaching — accessibility wiring', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
-    await page.evaluate(() => window.localStorage.clear());
+    await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
     await page.evaluate(() => window.sessionStorage.clear());
     await page.reload();
     await page.getByLabel(/email/i).fill('member@demo.gym');
-    await page.getByLabel(/password/i).fill('Password1!');
-    await page.getByRole('button', { name: /đăng nhập/i }).click();
+    await page.getByLabel(/mật khẩu|password/i).fill('Password1!');
+    await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
     await expect(page).toHaveURL(/\/app$/);
   });
 

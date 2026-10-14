@@ -1,6 +1,5 @@
 import { ArrowLeft, Building2, Pencil, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -11,6 +10,7 @@ import { isBrandProfileComplete } from '@/features/gym-owner-onboarding';
 import type { GymProfileBrand } from '@/features/gym-owner-profile/model/types';
 import { useGymOwnerProfileStore } from '@/features/gym-owner-profile/model/useGymOwnerProfileStore';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -18,9 +18,9 @@ import { Textarea } from '@/shared/ui/textarea';
 import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/ui/workspace';
 
 export function GymOwnerBrandProfilePage() {
+  const { language } = useLocale();
   useGymProfileBootstrap();
-  const { i18n } = useTranslation();
-  const copy = gymProfileCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const copy = gymProfileCopy[language];
   const brand = useGymOwnerProfileStore((state) => state.brand);
   const saveBrand = useGymOwnerProfileStore((state) => state.saveBrand);
   const [draft, setDraft] = useState<GymProfileBrand>(() => ({ ...brand }));

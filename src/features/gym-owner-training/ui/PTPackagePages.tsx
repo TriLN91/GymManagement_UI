@@ -12,6 +12,7 @@ import { ManagementState } from './ManagementState';
 import { TrainerAvatar } from './TrainingShared';
 
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import {
@@ -32,13 +33,12 @@ import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/u
 import './gym-owner-training.css';
 
 function usePackageCopy() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  return { copy: gymOwnerTrainingCopy[isVi ? 'vi' : 'en'], isVi };
+  const { language, locale } = useLocale();
+  return { copy: gymOwnerTrainingCopy[language], locale };
 }
 
-function formatVnd(value: number, isVi: boolean) {
-  return new Intl.NumberFormat(isVi ? 'vi-VN' : 'en-US', {
+function formatVnd(value: number, locale: string) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'VND',
     maximumFractionDigits: 0,
@@ -46,7 +46,8 @@ function formatVnd(value: number, isVi: boolean) {
 }
 
 export function GymOwnerPTPackageListPage() {
-  const { copy, isVi } = usePackageCopy();
+  const { language } = useLocale();
+  const { copy, locale } = usePackageCopy();
   const packages = useGymOwnerTrainingStore((state) => state.packages);
   const trainers = useGymOwnerTrainingStore((state) => state.trainers);
 
@@ -86,8 +87,8 @@ export function GymOwnerPTPackageListPage() {
               return (
                 <article key={gymPackage.id}>
                   <div className="gym-package-name">
-                    <strong>{gymPackage.name[isVi ? 'vi' : 'en']}</strong>
-                    <span>{gymPackage.name[isVi ? 'en' : 'vi']}</span>
+                    <strong>{gymPackage.name[language]}</strong>
+                    <span>{gymPackage.name[language]}</span>
                   </div>
                   <div className="gym-package-trainer">
                     {trainer ? (
@@ -101,7 +102,7 @@ export function GymOwnerPTPackageListPage() {
                   </div>
                   <strong>{gymPackage.sessionsIncluded}</strong>
                   <span>{gymPackage.durationDays}</span>
-                  <strong>{formatVnd(gymPackage.servicePriceVnd, isVi)}</strong>
+                  <strong>{formatVnd(gymPackage.servicePriceVnd, locale)}</strong>
                   <Badge
                     variant={gymPackage.publicationStatus === 'published' ? 'accent' : 'neutral'}
                   >
@@ -356,7 +357,9 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
 }
 
 export function GymOwnerPTPackageDetailPage() {
-  const { copy, isVi } = usePackageCopy();
+  const { language } = useLocale();
+  const { t } = useTranslation();
+  const { copy, locale } = usePackageCopy();
   const { packageId = '' } = useParams();
   const gymPackage = useGymOwnerTrainingStore((state) =>
     state.packages.find((item) => item.id === packageId),
@@ -402,10 +405,10 @@ export function GymOwnerPTPackageDetailPage() {
           <Badge variant={gymPackage.publicationStatus === 'published' ? 'accent' : 'neutral'}>
             {gymPackage.publicationStatus === 'published' ? copy.published : copy.draft}
           </Badge>
-          <h1>{gymPackage.name[isVi ? 'vi' : 'en']}</h1>
-          <span>{gymPackage.name[isVi ? 'en' : 'vi']}</span>
+          <h1>{gymPackage.name[language]}</h1>
+          <span>{gymPackage.name[language]}</span>
         </div>
-        <strong>{formatVnd(gymPackage.servicePriceVnd, isVi)}</strong>
+        <strong>{formatVnd(gymPackage.servicePriceVnd, locale)}</strong>
       </section>
 
       <div className="gym-package-metrics">
@@ -422,7 +425,7 @@ export function GymOwnerPTPackageDetailPage() {
         <article>
           <CircleDollarSign aria-hidden="true" size={20} />
           <span>{copy.servicePrice}</span>
-          <strong>{formatVnd(gymPackage.servicePriceVnd, isVi)}</strong>
+          <strong>{formatVnd(gymPackage.servicePriceVnd, locale)}</strong>
         </article>
       </div>
 
@@ -447,14 +450,14 @@ export function GymOwnerPTPackageDetailPage() {
         </WorkspacePanel>
         <WorkspacePanel>
           <div className="gym-training-section-head">
-            <h2>{isVi ? 'Quyền lợi' : 'Features'}</h2>
+            <h2>{t('owner:pTPackagePages.features')}</h2>
           </div>
           <WorkspacePanelContent>
             <ul className="gym-package-features">
               {gymPackage.features.map((feature, index) => (
                 <li key={`${feature.en}-${index}`}>
                   <CheckMark />
-                  <span>{feature[isVi ? 'vi' : 'en']}</span>
+                  <span>{feature[language]}</span>
                 </li>
               ))}
             </ul>

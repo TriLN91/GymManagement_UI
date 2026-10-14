@@ -1,23 +1,22 @@
 import { Building2, FileCheck2, Images, MapPin, Pencil, Phone, ShieldCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { FACILITY_IDS, gymProfileCopy } from './copy';
+import { gymProfileCopy } from './copy';
 import { useGymProfileBootstrap } from './useGymProfileBootstrap';
 
 import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding';
 import { useGymOwnerProfileStore } from '@/features/gym-owner-profile/model/useGymOwnerProfileStore';
-import { ROUTES } from '@/shared/config/constants';
+import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { EmptyState } from '@/shared/ui/empty';
 import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/ui/workspace';
 
 export function GymOwnerProfileOverviewPage() {
+  const { language, locale } = useLocale();
   useGymProfileBootstrap();
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  const copy = gymProfileCopy[isVi ? 'vi' : 'en'];
+  const copy = gymProfileCopy[language];
   const brand = useGymOwnerProfileStore((state) => state.brand);
   const branches = useGymOwnerProfileStore((state) => state.branches);
   const updatedAt = useGymOwnerProfileStore((state) => state.updatedAt);
@@ -48,7 +47,7 @@ export function GymOwnerProfileOverviewPage() {
             <dt>{copy.updatedAt}</dt>
             <dd>
               {updatedAt
-                ? new Intl.DateTimeFormat(isVi ? 'vi-VN' : 'en-US', {
+                ? new Intl.DateTimeFormat(locale, {
                     dateStyle: 'medium',
                   }).format(new Date(updatedAt))
                 : '—'}

@@ -10,7 +10,6 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -26,6 +25,7 @@ import { ManagementState } from './ManagementState';
 import { ApprovalBadge, DetailRow, OperationalBadge, TrainerAvatar } from './TrainingShared';
 
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
@@ -46,9 +46,8 @@ import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/u
 import './gym-owner-training.css';
 
 function useTrainingCopy() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  return { copy: gymOwnerTrainingCopy[isVi ? 'vi' : 'en'], isVi };
+  const { language, locale } = useLocale();
+  return { copy: gymOwnerTrainingCopy[language], locale };
 }
 
 export function GymOwnerTrainerListPage() {

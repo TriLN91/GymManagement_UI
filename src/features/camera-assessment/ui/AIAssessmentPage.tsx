@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { ArrowLeft, CheckCircle2, Film, ScanLine, Upload } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,44 +17,28 @@ interface AssessmentLocationState {
   returnTo?: string;
 }
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        upload: 'Chọn video bài tập',
-        replace: 'Chọn video khác',
-        empty: 'Chọn video quay toàn thân và nhìn rõ khớp vận động.',
-        formats: 'Hỗ trợ video MP4, MOV hoặc WebM trên thiết bị.',
-        file: 'Tệp đã chọn',
-        size: 'Dung lượng',
-        queue: 'Gửi video để đánh giá',
-        queued: 'Video đã được đưa vào hàng chờ.',
-        pendingTitle: 'Video đã sẵn sàng',
-        pendingBody: 'Điểm và nhận xét sẽ xuất hiện khi dịch vụ phân tích động tác được kết nối.',
-        resume: 'Quay lại buổi tập',
-        schedule: 'Về lịch tập',
-        noExercise: 'Chưa chọn bài tập',
-      }
-    : {
-        upload: 'Choose workout video',
-        replace: 'Choose another video',
-        empty: 'Choose a full-body video with the working joints clearly visible.',
-        formats: 'Supports MP4, MOV, or WebM video from this device.',
-        file: 'Selected file',
-        size: 'File size',
-        queue: 'Submit for assessment',
-        queued: 'Video added to the assessment queue.',
-        pendingTitle: 'Video is ready',
-        pendingBody: 'Scores and feedback will appear when the form-analysis service is connected.',
-        resume: 'Resume workout',
-        schedule: 'Back to schedule',
-        noExercise: 'No exercise selected',
-      };
+function getCopy(t: TFunction) {
+  return {
+    upload: t('assessment:aIAssessment.copy.upload'),
+    replace: t('assessment:aIAssessment.copy.replace'),
+    empty: t('assessment:aIAssessment.copy.empty'),
+    formats: t('assessment:aIAssessment.copy.formats'),
+    file: t('assessment:aIAssessment.copy.file'),
+    size: t('assessment:aIAssessment.copy.size'),
+    queue: t('assessment:aIAssessment.copy.queue'),
+    queued: t('assessment:aIAssessment.copy.queued'),
+    pendingTitle: t('assessment:aIAssessment.copy.pendingTitle'),
+    pendingBody: t('assessment:aIAssessment.copy.pendingBody'),
+    resume: t('assessment:aIAssessment.copy.resume'),
+    schedule: t('assessment:aIAssessment.copy.schedule'),
+    noExercise: t('assessment:aIAssessment.copy.noExercise'),
+  };
 }
 
 export function AIAssessmentPage() {
   const { exerciseId: routeExerciseId } = useParams();
-  const { i18n, t } = useTranslation('workout');
-  const copy = getCopy(i18n.resolvedLanguage === 'vi');
+  const { t } = useTranslation('workout');
+  const copy = getCopy(t);
   const navigate = useNavigate();
   const location = useLocation();
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);

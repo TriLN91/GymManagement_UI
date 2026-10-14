@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,6 +25,7 @@ import { toast } from 'sonner';
 import {
   getGym,
   getTrainer,
+  GYM_CITIES,
   gymOffers,
   marketplaceGyms,
   marketplaceTrainers,
@@ -40,165 +42,100 @@ import {
   type PaymentMethod,
 } from '../model/useMarketplaceStore';
 
-import { ROUTES } from '@/shared/config/constants';
+import { BRAND_MARK, ROUTES, type Language } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 
 import './marketplace.css';
 
-function getCopy(isVi: boolean) {
-  return isVi
-    ? {
-        marketplace: 'Marketplace',
-        discover: 'Khám phá nơi tập phù hợp với bạn',
-        discoverBody: 'So sánh phòng tập, ưu đãi và huấn luyện viên từ các đối tác đã xác minh.',
-        searchGym: 'Tìm theo tên hoặc khu vực',
-        allCities: 'Tất cả thành phố',
-        allTypes: 'Tất cả loại hình',
-        results: 'kết quả',
-        verified: 'Đã xác minh',
-        reviews: 'đánh giá',
-        from: 'Từ',
-        viewGym: 'Xem phòng tập',
-        facilities: 'Tiện ích',
-        offers: 'Ưu đãi đang mở',
-        trainersAtGym: 'Huấn luyện viên tại phòng tập',
-        selectOffer: 'Chọn ưu đãi',
-        days: 'ngày',
-        includesPlus: 'Có thể thêm Fit® Plus',
-        popular: 'Phổ biến',
-        backMarketplace: 'Về Marketplace',
-        allOffers: 'Tất cả ưu đãi',
-        allOffersBody: 'So sánh giá dịch vụ Gym và quyền lợi Plus theo từng thành phần.',
-        trainers: 'Huấn luyện viên',
-        trainersBody: 'Mỗi huấn luyện viên thuộc một phòng tập đã được xác minh.',
-        searchTrainer: 'Tìm tên hoặc chuyên môn',
-        experience: 'năm kinh nghiệm',
-        viewTrainer: 'Xem hồ sơ',
-        packages: 'Gói PT',
-        packagesBody: 'Chọn gói huấn luyện gắn với một PT và phòng tập cụ thể.',
-        sessions: 'buổi',
-        validFor: 'Sử dụng trong',
-        selectPackage: 'Chọn gói PT',
-        checkout: 'Thanh toán',
-        checkoutBody: 'Kiểm tra từng thành phần trước khi xác nhận.',
-        emptyCheckout: 'Bạn chưa chọn ưu đãi hoặc gói PT.',
-        browseOffers: 'Khám phá ưu đãi',
-        orderSummary: 'Tóm tắt đơn hàng',
-        gymService: 'Dịch vụ Gym / PT',
-        serviceDiscount: 'Giảm giá dịch vụ',
-        plusDigital: 'Fit® Plus',
-        plusCoverage: 'ngày quyền lợi chưa được bao phủ',
-        total: 'Tổng thanh toán',
-        addPlus: 'Thêm Fit® Plus vào gói',
-        plusNote: 'Giá Plus do nền tảng kiểm soát và không tính vào doanh thu dịch vụ Gym.',
-        paymentMethod: 'Phương thức thanh toán',
-        card: 'Thẻ ngân hàng',
-        bank: 'Chuyển khoản',
-        cardNumber: 'Số thẻ',
-        cardHolder: 'Tên chủ thẻ',
-        expiry: 'Hết hạn',
-        confirm: 'Xác nhận thanh toán',
-        demoPayment: 'Thanh toán đang được mô phỏng cục bộ, không thu tiền thật.',
-        paymentSuccess: 'Thanh toán thành công',
-        paymentFailed: 'Thanh toán chưa thành công',
-        orderId: 'Mã đơn hàng',
-        paymentState: 'Trạng thái thanh toán',
-        fulfillmentState: 'Trạng thái dịch vụ',
-        paid: 'Đã thanh toán',
-        pendingGym: 'Chờ Gym xác nhận thực hiện dịch vụ',
-        trainerActive: 'Đã kích hoạt quan hệ Trainer–Member',
-        resultBodyGym: 'Gym sẽ thực hiện quyền lợi vật lý theo điều kiện của ưu đãi.',
-        resultBodyPt: 'Bạn và PT sẽ trao đổi lịch trực tiếp; PT tạo lịch hẹn trên hệ thống.',
-        continueMarketplace: 'Tiếp tục khám phá',
-        paymentDone: 'Đã ghi nhận giao dịch.',
-        noResults: 'Không tìm thấy kết quả phù hợp.',
-        location: 'Vị trí',
-        gymType: 'Loại hình',
-        boutique: 'Boutique',
-        strength: 'Sức mạnh',
-        fullService: 'Đa dịch vụ',
-      }
-    : {
-        marketplace: 'Marketplace',
-        discover: 'Find the right place to train',
-        discoverBody: 'Compare gyms, offers and trainers from verified partners.',
-        searchGym: 'Search by name or area',
-        allCities: 'All cities',
-        allTypes: 'All gym types',
-        results: 'results',
-        verified: 'Verified',
-        reviews: 'reviews',
-        from: 'From',
-        viewGym: 'View gym',
-        facilities: 'Facilities',
-        offers: 'Available offers',
-        trainersAtGym: 'Trainers at this gym',
-        selectOffer: 'Select offer',
-        days: 'days',
-        includesPlus: 'Fit® Plus available',
-        popular: 'Popular',
-        backMarketplace: 'Back to Marketplace',
-        allOffers: 'All offers',
-        allOffersBody: 'Compare Gym service and Plus value as separate components.',
-        trainers: 'Trainers',
-        trainersBody: 'Every trainer belongs to a verified partner gym.',
-        searchTrainer: 'Search name or specialty',
-        experience: 'years experience',
-        viewTrainer: 'View profile',
-        packages: 'PT packages',
-        packagesBody: 'Choose coaching tied to a specific trainer and gym.',
-        sessions: 'sessions',
-        validFor: 'Valid for',
-        selectPackage: 'Select PT package',
-        checkout: 'Checkout',
-        checkoutBody: 'Review every component before confirming payment.',
-        emptyCheckout: 'No gym offer or PT package has been selected.',
-        browseOffers: 'Browse offers',
-        orderSummary: 'Order summary',
-        gymService: 'Gym / PT service',
-        serviceDiscount: 'Service discount',
-        plusDigital: 'Fit® Plus',
-        plusCoverage: 'uncovered entitlement days',
-        total: 'Total payment',
-        addPlus: 'Add Fit® Plus to this offer',
-        plusNote: 'Plus pricing is platform-controlled and separate from Gym service revenue.',
-        paymentMethod: 'Payment method',
-        card: 'Bank card',
-        bank: 'Bank transfer',
-        cardNumber: 'Card number',
-        cardHolder: 'Cardholder name',
-        expiry: 'Expiry',
-        confirm: 'Confirm payment',
-        demoPayment: 'Payment is simulated locally and no real charge is made.',
-        paymentSuccess: 'Payment successful',
-        paymentFailed: 'Payment unsuccessful',
-        orderId: 'Order ID',
-        paymentState: 'Payment status',
-        fulfillmentState: 'Service status',
-        paid: 'Paid',
-        pendingGym: 'Waiting for Gym service confirmation',
-        trainerActive: 'Trainer–Member assignment activated',
-        resultBodyGym: 'The Gym fulfills physical benefits under the purchased offer terms.',
-        resultBodyPt:
-          'Coordinate availability directly; the Trainer creates appointments in the platform.',
-        continueMarketplace: 'Continue exploring',
-        paymentDone: 'Transaction recorded.',
-        noResults: 'No matching results found.',
-        location: 'Location',
-        gymType: 'Gym type',
-        boutique: 'Boutique',
-        strength: 'Strength',
-        fullService: 'Full service',
-      };
+function getCopy(t: TFunction) {
+  return {
+    marketplace: t('marketplace:marketplacePages.copy.marketplace'),
+    discover: t('marketplace:marketplacePages.copy.discover'),
+    discoverBody: t('marketplace:marketplacePages.copy.discoverBody'),
+    searchGym: t('marketplace:marketplacePages.copy.searchGym'),
+    allCities: t('marketplace:marketplacePages.copy.allCities'),
+    cities: {
+      'ho-chi-minh': t('marketplace:marketplacePages.copy.cityHoChiMinh'),
+      'ha-noi': t('marketplace:marketplacePages.copy.cityHaNoi'),
+      'da-nang': t('marketplace:marketplacePages.copy.cityDaNang'),
+    },
+    cardHolderPlaceholder: t('marketplace:marketplacePages.copy.cardHolderPlaceholder'),
+    orderConfirmation: t('marketplace:marketplacePages.copy.orderConfirmation'),
+    allTypes: t('marketplace:marketplacePages.copy.allTypes'),
+    results: t('marketplace:marketplacePages.copy.results'),
+    verified: t('marketplace:marketplacePages.copy.verified'),
+    reviews: t('marketplace:marketplacePages.copy.reviews'),
+    from: t('marketplace:marketplacePages.copy.from'),
+    viewGym: t('marketplace:marketplacePages.copy.viewGym'),
+    facilities: t('marketplace:marketplacePages.copy.facilities'),
+    offers: t('marketplace:marketplacePages.copy.offers'),
+    trainersAtGym: t('marketplace:marketplacePages.copy.trainersAtGym'),
+    selectOffer: t('marketplace:marketplacePages.copy.selectOffer'),
+    days: t('marketplace:marketplacePages.copy.days'),
+    includesPlus: t('marketplace:marketplacePages.copy.includesPlus'),
+    popular: t('marketplace:marketplacePages.copy.popular'),
+    backMarketplace: t('marketplace:marketplacePages.copy.backMarketplace'),
+    allOffers: t('marketplace:marketplacePages.copy.allOffers'),
+    allOffersBody: t('marketplace:marketplacePages.copy.allOffersBody'),
+    trainers: t('marketplace:marketplacePages.copy.trainers'),
+    trainersBody: t('marketplace:marketplacePages.copy.trainersBody'),
+    searchTrainer: t('marketplace:marketplacePages.copy.searchTrainer'),
+    experience: t('marketplace:marketplacePages.copy.experience'),
+    viewTrainer: t('marketplace:marketplacePages.copy.viewTrainer'),
+    packages: t('marketplace:marketplacePages.copy.packages'),
+    packagesBody: t('marketplace:marketplacePages.copy.packagesBody'),
+    sessions: t('marketplace:marketplacePages.copy.sessions'),
+    validFor: t('marketplace:marketplacePages.copy.validFor'),
+    selectPackage: t('marketplace:marketplacePages.copy.selectPackage'),
+    checkout: t('marketplace:marketplacePages.copy.checkout'),
+    checkoutBody: t('marketplace:marketplacePages.copy.checkoutBody'),
+    emptyCheckout: t('marketplace:marketplacePages.copy.emptyCheckout'),
+    browseOffers: t('marketplace:marketplacePages.copy.browseOffers'),
+    orderSummary: t('marketplace:marketplacePages.copy.orderSummary'),
+    gymService: t('marketplace:marketplacePages.copy.gymService'),
+    serviceDiscount: t('marketplace:marketplacePages.copy.serviceDiscount'),
+    plusDigital: t('marketplace:marketplacePages.copy.plusDigital'),
+    plusCoverage: t('marketplace:marketplacePages.copy.plusCoverage'),
+    total: t('marketplace:marketplacePages.copy.total'),
+    addPlus: t('marketplace:marketplacePages.copy.addPlus'),
+    plusNote: t('marketplace:marketplacePages.copy.plusNote'),
+    paymentMethod: t('marketplace:marketplacePages.copy.paymentMethod'),
+    card: t('marketplace:marketplacePages.copy.card'),
+    bank: t('marketplace:marketplacePages.copy.bank'),
+    cardNumber: t('marketplace:marketplacePages.copy.cardNumber'),
+    cardHolder: t('marketplace:marketplacePages.copy.cardHolder'),
+    expiry: t('marketplace:marketplacePages.copy.expiry'),
+    confirm: t('marketplace:marketplacePages.copy.confirm'),
+    demoPayment: t('marketplace:marketplacePages.copy.demoPayment'),
+    paymentSuccess: t('marketplace:marketplacePages.copy.paymentSuccess'),
+    paymentFailed: t('marketplace:marketplacePages.copy.paymentFailed'),
+    orderId: t('marketplace:marketplacePages.copy.orderId'),
+    paymentState: t('marketplace:marketplacePages.copy.paymentState'),
+    fulfillmentState: t('marketplace:marketplacePages.copy.fulfillmentState'),
+    paid: t('marketplace:marketplacePages.copy.paid'),
+    pendingGym: t('marketplace:marketplacePages.copy.pendingGym'),
+    trainerActive: t('marketplace:marketplacePages.copy.trainerActive'),
+    resultBodyGym: t('marketplace:marketplacePages.copy.resultBodyGym'),
+    resultBodyPt: t('marketplace:marketplacePages.copy.resultBodyPt'),
+    continueMarketplace: t('marketplace:marketplacePages.copy.continueMarketplace'),
+    paymentDone: t('marketplace:marketplacePages.copy.paymentDone'),
+    noResults: t('marketplace:marketplacePages.copy.noResults'),
+    location: t('marketplace:marketplacePages.copy.location'),
+    gymType: t('marketplace:marketplacePages.copy.gymType'),
+    boutique: t('marketplace:marketplacePages.copy.boutique'),
+    strength: t('marketplace:marketplacePages.copy.strength'),
+    fullService: t('marketplace:marketplacePages.copy.fullService'),
+  };
 }
 
 function useMarketplaceCopy() {
-  const { i18n } = useTranslation();
-  const isVi = i18n.resolvedLanguage === 'vi';
-  return { isVi, copy: getCopy(isVi) };
+  const { t } = useTranslation();
+  const { language } = useLocale();
+  return { language, copy: getCopy(t) };
 }
 
-function localize(value: LocalizedText, isVi: boolean) {
-  return value[isVi ? 'vi' : 'en'];
+function localize(value: LocalizedText, language: Language) {
+  return value[language];
 }
 
 function money(value: number) {
@@ -220,7 +157,7 @@ function GymVisual({ gym, compact = false }: { gym: MarketplaceGym; compact?: bo
 }
 
 function GymCard({ gym }: { gym: MarketplaceGym }) {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const offers = gymOffers.filter((offer) => offer.gymId === gym.id && offer.published);
   const lowest = Math.min(
     ...offers.map((offer) => offer.servicePriceVnd - offer.serviceDiscountVnd),
@@ -239,7 +176,7 @@ function GymCard({ gym }: { gym: MarketplaceGym }) {
         </div>
         <h2>{gym.name}</h2>
         <p>
-          <MapPin size={14} /> {localize(gym.area, isVi)}
+          <MapPin size={14} /> {localize(gym.area, language)}
         </p>
         <div className="marketplace-rating">
           <Star size={14} fill="currentColor" /> <strong>{gym.rating}</strong>
@@ -260,7 +197,7 @@ function GymCard({ gym }: { gym: MarketplaceGym }) {
 }
 
 function OfferCard({ offer }: { offer: GymOffer }) {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const navigate = useNavigate();
   const selectGymOffer = useMarketplaceStore((state) => state.selectGymOffer);
   return (
@@ -269,13 +206,13 @@ function OfferCard({ offer }: { offer: GymOffer }) {
         <span>{offer.popular ? copy.popular : `${offer.durationDays} ${copy.days}`}</span>
         {offer.plusEligible && <Sparkles size={17} />}
       </header>
-      <h3>{localize(offer.name, isVi)}</h3>
+      <h3>{localize(offer.name, language)}</h3>
       <strong>{money(offer.servicePriceVnd - offer.serviceDiscountVnd)}</strong>
       {offer.serviceDiscountVnd > 0 && <del>{money(offer.servicePriceVnd)}</del>}
       <ul>
         {offer.features.map((feature) => (
           <li key={feature.en}>
-            <Check size={14} /> {localize(feature, isVi)}
+            <Check size={14} /> {localize(feature, language)}
           </li>
         ))}
       </ul>
@@ -298,7 +235,7 @@ function OfferCard({ offer }: { offer: GymOffer }) {
 }
 
 function TrainerCard({ trainer }: { trainer: PTTrainer }) {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const gym = getGym(trainer.gymId);
   return (
     <article className="marketplace-trainer-card">
@@ -308,7 +245,7 @@ function TrainerCard({ trainer }: { trainer: PTTrainer }) {
       <div>
         <span>{gym?.name}</span>
         <h2>{trainer.fullName}</h2>
-        <p>{trainer.specialties.map((item) => localize(item, isVi)).join(' · ')}</p>
+        <p>{trainer.specialties.map((item) => localize(item, language)).join(' · ')}</p>
         <div>
           <Star size={13} fill="currentColor" /> {trainer.rating} · {trainer.experienceYears}{' '}
           {copy.experience}
@@ -322,7 +259,7 @@ function TrainerCard({ trainer }: { trainer: PTTrainer }) {
 }
 
 function PackageCard({ trainerPackage }: { trainerPackage: PTPackage }) {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const navigate = useNavigate();
   const trainer = getTrainer(trainerPackage.trainerId);
   const gym = getGym(trainerPackage.gymId);
@@ -332,7 +269,7 @@ function PackageCard({ trainerPackage }: { trainerPackage: PTPackage }) {
       <span>
         {trainer?.fullName} · {gym?.name}
       </span>
-      <h3>{localize(trainerPackage.name, isVi)}</h3>
+      <h3>{localize(trainerPackage.name, language)}</h3>
       <strong>{money(trainerPackage.servicePriceVnd)}</strong>
       <div>
         <span>
@@ -345,7 +282,7 @@ function PackageCard({ trainerPackage }: { trainerPackage: PTPackage }) {
       <ul>
         {trainerPackage.features.map((feature) => (
           <li key={feature.en}>
-            <Check size={14} /> {localize(feature, isVi)}
+            <Check size={14} /> {localize(feature, language)}
           </li>
         ))}
       </ul>
@@ -363,12 +300,12 @@ function PackageCard({ trainerPackage }: { trainerPackage: PTPackage }) {
 }
 
 export function MarketplaceHome() {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const [query, setQuery] = useState('');
   const [city, setCity] = useState('all');
   const [type, setType] = useState('all');
   const gyms = marketplaceGyms.filter((gym) => {
-    const haystack = `${gym.name} ${localize(gym.area, isVi)}`.toLowerCase();
+    const haystack = `${gym.name} ${localize(gym.area, language)}`.toLowerCase();
     return (
       haystack.includes(query.toLowerCase()) &&
       (city === 'all' || gym.city === city) &&
@@ -394,9 +331,11 @@ export function MarketplaceHome() {
             aria-label={copy.location}
           >
             <option value="all">{copy.allCities}</option>
-            <option value="ho-chi-minh">Hồ Chí Minh</option>
-            <option value="ha-noi">Hà Nội</option>
-            <option value="da-nang">Đà Nẵng</option>
+            {GYM_CITIES.map((item) => (
+              <option key={item} value={item}>
+                {copy.cities[item]}
+              </option>
+            ))}
           </select>
         </label>
         <label>
@@ -434,7 +373,7 @@ export function MarketplaceHome() {
 
 export function GymDetailPage() {
   const { gymId = '' } = useParams();
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const gym = getGym(gymId);
   if (!gym) return <Navigate to={ROUTES.member.marketplace} replace />;
   const offers = gymOffers.filter((offer) => offer.gymId === gym.id && offer.published);
@@ -452,9 +391,9 @@ export function GymDetailPage() {
           </span>
           <h1>{gym.name}</h1>
           <p>
-            <MapPin size={15} /> {localize(gym.address, isVi)}
+            <MapPin size={15} /> {localize(gym.address, language)}
           </p>
-          <p>{localize(gym.description, isVi)}</p>
+          <p>{localize(gym.description, language)}</p>
           <div className="marketplace-rating">
             <Star size={15} fill="currentColor" /> <strong>{gym.rating}</strong>
             <span>
@@ -473,7 +412,7 @@ export function GymDetailPage() {
         <div className="marketplace-facilities">
           {gym.facilities.map((facility) => (
             <span key={facility.en}>
-              <Check size={15} /> {localize(facility, isVi)}
+              <Check size={15} /> {localize(facility, language)}
             </span>
           ))}
         </div>
@@ -538,10 +477,10 @@ export function GymOffersPage() {
 }
 
 export function TrainerDiscoveryPage() {
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const [query, setQuery] = useState('');
   const trainers = marketplaceTrainers.filter((trainer) =>
-    `${trainer.fullName} ${trainer.specialties.map((item) => localize(item, isVi)).join(' ')}`
+    `${trainer.fullName} ${trainer.specialties.map((item) => localize(item, language)).join(' ')}`
       .toLowerCase()
       .includes(query.toLowerCase()),
   );
@@ -568,7 +507,7 @@ export function TrainerDiscoveryPage() {
 
 export function TrainerDetailPage() {
   const { trainerId = '' } = useParams();
-  const { isVi, copy } = useMarketplaceCopy();
+  const { language, copy } = useMarketplaceCopy();
   const trainer = getTrainer(trainerId);
   if (!trainer) return <Navigate to={ROUTES.member.marketplaceTrainers} replace />;
   const gym = getGym(trainer.gymId);
@@ -585,12 +524,12 @@ export function TrainerDetailPage() {
         <div>
           <span>{gym?.name}</span>
           <h1>{trainer.fullName}</h1>
-          <p>{trainer.specialties.map((item) => localize(item, isVi)).join(' · ')}</p>
+          <p>{trainer.specialties.map((item) => localize(item, language)).join(' · ')}</p>
           <div className="marketplace-rating">
             <Star size={14} fill="currentColor" /> {trainer.rating} · {trainer.experienceYears}{' '}
             {copy.experience}
           </div>
-          <blockquote>{localize(trainer.bio, isVi)}</blockquote>
+          <blockquote>{localize(trainer.bio, language)}</blockquote>
         </div>
       </section>
       <section className="marketplace-section">
@@ -625,7 +564,7 @@ export function PTPackagesPage() {
 }
 
 export function MarketplaceCheckoutPage() {
-  const { copy, isVi } = useMarketplaceCopy();
+  const { copy, language } = useMarketplaceCopy();
   const navigate = useNavigate();
   const selection = useMarketplaceStore((state) => state.selection);
   const coverageDays = useMarketplaceStore((state) => state.currentPlusCoverageDays);
@@ -643,9 +582,9 @@ export function MarketplaceCheckoutPage() {
       ? ptPackages.find((trainerPackage) => trainerPackage.id === selection.productId)
       : undefined;
   const displayTitle = selectedOffer
-    ? localize(selectedOffer.name, isVi)
+    ? localize(selectedOffer.name, language)
     : selectedPackage
-      ? localize(selectedPackage.name, isVi)
+      ? localize(selectedPackage.name, language)
       : breakdown?.title;
   if (!selection || !breakdown)
     return (
@@ -699,7 +638,7 @@ export function MarketplaceCheckoutPage() {
                 </label>
                 <label>
                   <span>{copy.cardHolder}</span>
-                  <input required placeholder="NGUYEN VAN A" />
+                  <input required placeholder={copy.cardHolderPlaceholder} />
                 </label>
                 <label>
                   <span>{copy.expiry}</span>
@@ -774,7 +713,7 @@ export function MarketplaceCheckoutPage() {
 
 export function MarketplacePaymentResultPage() {
   const { orderId = '' } = useParams();
-  const { copy, isVi } = useMarketplaceCopy();
+  const { copy, language } = useMarketplaceCopy();
   const order = useMarketplaceStore((state) => state.orders.find((item) => item.id === orderId));
   if (!order) return <Navigate to={ROUTES.member.marketplace} replace />;
   const success = order.paymentStatus === 'succeeded';
@@ -782,14 +721,16 @@ export function MarketplacePaymentResultPage() {
     order.selection.kind === 'gym_offer'
       ? gymOffers.find((offer) => offer.id === order.selection.productId)
       : ptPackages.find((trainerPackage) => trainerPackage.id === order.selection.productId);
-  const orderTitle = orderedProduct ? localize(orderedProduct.name, isVi) : order.title;
+  const orderTitle = orderedProduct ? localize(orderedProduct.name, language) : order.title;
   return (
     <div className="marketplace-page">
       <section className={`marketplace-result ${success ? 'is-success' : 'is-failed'}`}>
         <span className="marketplace-result__icon">
           {success ? <Check size={34} /> : <CreditCard size={34} />}
         </span>
-        <span>FIT® / ORDER CONFIRMATION</span>
+        <span>
+          {BRAND_MARK.toUpperCase()} / {copy.orderConfirmation}
+        </span>
         <h1>{success ? copy.paymentSuccess : copy.paymentFailed}</h1>
         <strong>{orderTitle}</strong>
         <p>{order.selection.kind === 'pt_package' ? copy.resultBodyPt : copy.resultBodyGym}</p>

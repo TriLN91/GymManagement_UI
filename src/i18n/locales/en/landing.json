@@ -1,0 +1,116 @@
+{
+  "skip": "Skip to main content",
+  "homeAria": "Fit — Home",
+  "audienceNav": "Audience",
+  "member": "Members",
+  "owner": "Gym owners",
+  "login": "Sign in",
+  "ctaMember": "Start training",
+  "ctaOwner": "Become a partner",
+  "titleMember": "Fit® — Guided training",
+  "titleOwner": "Fit® — For gym owners",
+  "footer": {
+    "tagline": "Training is movement. AI brings precision.",
+    "nav": "Footer links",
+    "register": "Sign up",
+    "motto": "MOVEMENT. DATA. PROGRESS."
+  },
+  "movement": {
+    "aria": "Illustration of squat pose analysis with joint points and movement guides",
+    "top": "VIDEO ANALYSIS",
+    "bottom": "VIDEO → ANALYSIS → FEEDBACK",
+    "illustration": "ILLUSTRATION",
+    "joints": "JOINTS",
+    "range": "RANGE",
+    "posture": "POSTURE"
+  },
+  "m": {
+    "label": "FIT® / FOR MEMBERS",
+    "title": "Strength.",
+    "titleEm": "With direction.",
+    "lead": "AI pose analysis, a clear training plan and a trainer alongside you. All in one training journey.",
+    "explore": "Explore features",
+    "featuresTitle": "One app.\nYour whole training journey.",
+    "featuresLead": "From exercise videos to plans and a coach alongside you, all your data lives in one place.",
+    "features": [
+      {
+        "label": "01 / POSE ANALYSIS",
+        "title": "Understand every movement.",
+        "body": "Record or upload an exercise video. AI points out what to adjust, moment by moment."
+      },
+      {
+        "label": "02 / TRAINING PLAN",
+        "title": "Train with direction.",
+        "body": "Track targets and results for every set in one clear routine."
+      },
+      {
+        "label": "03 / TRAINER",
+        "title": "Never train alone.",
+        "body": "Choose a trainer from a suitable gym to adjust your plan and follow your progress closely."
+      }
+    ],
+    "focus": "Focus on",
+    "focusEm": "your next session.",
+    "focusLead": "Know what to train today, how many sets, and how far along you are against your goal.",
+    "preview": {
+      "top": "YOUR SESSION",
+      "ui": "ILLUSTRATIVE UI",
+      "title": "Upper body\nstrength.",
+      "daysAria": "Sample schedule",
+      "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "exercise": "EXERCISE",
+      "target": "TARGET",
+      "actual": "ACTUAL",
+      "rows": [
+        { "name": "Dumbbell chest press", "target": "3 × 12", "actual": "3 × 12" },
+        { "name": "One-arm dumbbell row", "target": "3 × 10", "actual": "2 × 10" },
+        { "name": "Plank", "target": "45 sec", "actual": "—" }
+      ]
+    },
+    "final": "Your potential.",
+    "finalEm": "Unlimited."
+  },
+  "o": {
+    "label": "FIT® / FOR GYM OWNERS",
+    "title": "Your gym.",
+    "titleEm": "Reaching further.",
+    "lead": "Bring your gym, service packages and trainers to people looking for the right place to train.",
+    "visualAria": "Illustration of a gym profile on the platform",
+    "visualTop": "DISCOVER GYMS",
+    "illustration": "ILLUSTRATION",
+    "found": "Be found.\nBe chosen.",
+    "tags": ["Gym", "Packages", "Trainers"],
+    "stepsTitle": "One clear profile.\nOne place to start.",
+    "stepsLead": "Three steps to get your gym on the platform and closer to members.",
+    "steps": [
+      {
+        "label": "01 / COMPLETE",
+        "title": "Introduce your gym.",
+        "body": "Add location, amenities and photos that show your space and services as they are."
+      },
+      {
+        "label": "02 / REVIEW",
+        "title": "Ready to be seen.",
+        "body": "Submit your gym profile for review on the platform."
+      },
+      {
+        "label": "03 / CONNECT",
+        "title": "Get closer to members.",
+        "body": "Bring training packages, PT packages and your trainers to people looking for a gym."
+      }
+    ],
+    "offerTitle": "Clear services.",
+    "offerTitleEm": "Transparent transactions.",
+    "offerLead": "Publish the benefits, duration and price of each training or PT package. Follow transactions and settlements right on the platform.",
+    "commission": "A 10% commission applies to the gym service portion. The platform's AI Plus portion is separate.",
+    "offerLabel": "PACKAGE STRUCTURE / ILLUSTRATION",
+    "offerRows": [
+      { "title": "Benefits", "body": "Services provided" },
+      { "title": "Duration", "body": "How long the package lasts" },
+      { "title": "Price", "body": "Published cost" },
+      { "title": "Terms", "body": "Information before purchase" }
+    ],
+    "final": "Your value.",
+    "finalEm": "Reaching the right people."
+  }
+}

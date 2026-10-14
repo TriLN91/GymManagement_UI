@@ -1,6 +1,5 @@
 import { ArrowLeft, ArrowRight, FileCheck2, Trash2, UploadCloud } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { gymOwnerCopy } from './copy';
@@ -8,6 +7,7 @@ import { OnboardingProgress } from './OnboardingProgress';
 
 import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
 import { ROUTES } from '@/shared/config/constants';
+import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
 import {
   WorkspacePage,
@@ -24,8 +24,8 @@ function formatFileSize(bytes: number) {
 }
 
 export function GymOwnerLicensePage() {
-  const { i18n } = useTranslation();
-  const copy = gymOwnerCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
+  const { language } = useLocale();
+  const copy = gymOwnerCopy[language];
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const license = useGymOwnerOnboardingStore((state) => state.license);

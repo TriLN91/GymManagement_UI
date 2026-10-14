@@ -10,7 +10,7 @@ async function loginPlatformAdmin(page: Page) {
   await page.reload();
   await page.getByLabel(/email/i).fill('super@demo.gym');
   await page.getByLabel(/password/i).fill('Password1!');
-  await page.getByRole('button', { name: /đăng nhập/i }).click();
+  await page.getByRole('button', { name: /đăng nhập|sign in/i }).click();
   await expect(page).toHaveURL(/\/superadmin$/);
 }
 
@@ -23,10 +23,14 @@ test.describe('Platform Admin M3', () => {
     await dialog.getByLabel('Reason').selectOption({ label: 'Policy review required' });
     await dialog.getByLabel('Note').fill('Review needed before this profile remains public.');
     await dialog.getByRole('button', { name: 'Confirm' }).click();
-    await expect(page.locator('.platform-operation-detail header').getByText('Hidden')).toBeVisible();
+    await expect(
+      page.locator('.platform-operation-detail header').getByText('Hidden'),
+    ).toBeVisible();
     await page.getByRole('button', { name: 'Restore' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
-    await expect(page.locator('.platform-operation-detail header').getByText('Published')).toBeVisible();
+    await expect(
+      page.locator('.platform-operation-detail header').getByText('Published'),
+    ).toBeVisible();
   });
 
   test('creates a campaign and follows its valid status flow', async ({ page }) => {
@@ -41,7 +45,9 @@ test.describe('Platform Admin M3', () => {
     await expect(page.getByText('Draft', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Scheduled' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
-    await expect(page.locator('.platform-operation-detail header').getByText('Scheduled')).toBeVisible();
+    await expect(
+      page.locator('.platform-operation-detail header').getByText('Scheduled'),
+    ).toBeVisible();
   });
 
   test('opens a notification target', async ({ page }) => {
