@@ -5,6 +5,7 @@ import {
   Building2,
   ChevronDown,
   ClipboardCheck,
+  Dumbbell,
   FileText,
   History,
   Landmark,
@@ -39,9 +40,9 @@ import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
-  useSidebarCollapse,
   SidebarSearch,
   SidebarToggle,
+  useSidebarCollapse,
   useSidebarFlyout,
 } from '@/shared/ui/sidebar-controls';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
@@ -95,18 +96,7 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'dashboard',
     icon: LayoutDashboard,
-items: [
-  {
-    label: 'overview',
-    to: ROUTES.superadmin.root,
-    icon: LayoutDashboard,
-  },
-  {
-    label: 'tenants',
-    to: ROUTES.superadmin.tenants,
-    icon: Building2,
-  },
-],
+    items: [{ label: 'overview', to: ROUTES.superadmin.root, icon: LayoutDashboard }],
   },
   {
     id: 'approvals',
@@ -146,33 +136,17 @@ items: [
   {
     id: 'analytics',
     icon: LineChart,
-{
-  id: 'analytics',
-  icon: LineChart,
-  items: [
-    {
-      label: 'analyticsOverview',
-      to: ROUTES.superadmin.analytics,
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'platformAnalytics',
-      to: ROUTES.superadmin.platformAnalytics,
-      icon: LineChart,
-    },
-  ],
-},
-{
-  id: 'movement',
-  icon: Dumbbell,
-  items: [
-    {
-      label: 'movementAssessment',
-      to: ROUTES.superadmin.movementAssessment,
-      icon: ClipboardCheck,
-    },
-  ],
-},
+    items: [
+      { label: 'analyticsOverview', to: ROUTES.superadmin.analytics, icon: LineChart },
+      { label: 'platformAnalytics', to: ROUTES.superadmin.platformAnalytics, icon: LineChart },
+    ],
+  },
+  {
+    id: 'movement',
+    icon: Dumbbell,
+    items: [
+      { label: 'movementAssessment', to: ROUTES.superadmin.movementAssessment, icon: Dumbbell },
+    ],
   },
   {
     id: 'security',
@@ -186,7 +160,7 @@ items: [
 
 function matchesPlatformRoute(to: string, pathname: string) {
   if (to === ROUTES.superadmin.root) return pathname === to;
-  return pathname === to || pathname.startsWith(`${to}/`);
+  return isNavigationRouteActive(pathname, to);
 }
 
 export function PlatformAdminLayout() {
@@ -203,44 +177,27 @@ export function PlatformAdminLayout() {
   const [expanded, setExpanded] = useState<ReadonlySet<GroupKey>>(() => new Set(['dashboard']));
   const userName = user?.fullName ?? copy.role;
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'P';
-const query = sidebarQuery.trim();
+  const query = sidebarQuery.trim();
+  const visibleGroups = groups
+    .map((group) => ({
+      ...group,
+      items:
+        !query || matchesSidebarSearch(copy[group.id], query)
+          ? group.items
+          : group.items.filter((item) => matchesSidebarSearch(copy[item.label], query)),
+    }))
+    .filter((group) => group.items.length > 0);
 
-const visibleGroups = groups
-  .map((group) => ({
-    ...group,
-    items:
-      !query || matchesSidebarSearch(copy[group.id], query)
-        ? group.items
-        : group.items.filter((item) =>
-            matchesSidebarSearch(copy[item.label], query),
-          ),
-  }))
-  .filter((group) => group.items.length > 0);
+  const activeItem = groups
+    .flatMap((group) => group.items)
+    .filter((item) => item.to && matchesPlatformRoute(item.to, location.pathname))
+    .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
 
-const activeItem = groups
-  .flatMap((group) => group.items)
-  .filter((item) =>
-    isNavigationRouteActive(location.pathname, item.to),
-  )
-  .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
-useEffect(() => {
-  closeFlyout();
-}, [closeFlyout, location.pathname]);
-
-useEffect(() => {
-  const active = groups.find((group) =>
-    group.items.some((item) =>
-      isNavigationRouteActive(location.pathname, item.to),
-    ),
-  )?.id;
-
-  if (!active) return;
-
-  setExpanded((current) =>
-    current.has(active) ? current : new Set([...current, active]),
-  );
-}, [location.pathname]);
+  useEffect(() => {
+    const active = groups.find((group) =>
+      group.items.some((item) => item.to && matchesPlatformRoute(item.to, location.pathname)),
     )?.id;
     if (!active) return;
     setExpanded((current) => (current.has(active) ? current : new Set([...current, active])));
@@ -270,8 +227,10 @@ useEffect(() => {
   };
 
   return (
-    <div className={cn('member-shell platform-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
-      <header className="member-mobile-header">
+    <div
+      className={cn('member-shell platform-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}
+    >
+git fetch origin      <header className="member-mobile-header">
         <button
           type="button"
           className="member-icon-button"
@@ -332,18 +291,13 @@ useEffect(() => {
           />
           {visibleGroups.map((group) => {
             const Icon = group.icon;
-const Icon = group.icon;
-
-const isFlyoutOpen =
-  isSidebarCollapsed && flyout?.id === group.id;
-
-const isExpanded = isSidebarCollapsed
-  ? isFlyoutOpen
-  : Boolean(query) || expanded.has(group.id);
-
-const active = group.items.some((item) =>
-  isNavigationRouteActive(location.pathname, item.to),
-);
+            const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
+            const isExpanded = isSidebarCollapsed
+              ? isFlyoutOpen
+              : Boolean(query) || expanded.has(group.id);
+            const active = group.items.some(
+              (item) => item.to && matchesPlatformRoute(item.to, location.pathname),
+            );
             return (
               <div className="member-nav-group" key={group.id}>
                 <button
@@ -388,20 +342,21 @@ const active = group.items.some((item) =>
                       <NavLink
                         key={item.label}
                         to={item.to}
+                        end
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
                         }}
                         aria-label={copy[item.label]}
                         title={isSidebarCollapsed ? copy[item.label] : undefined}
-                        className={() =>
+                        className={({ isActive }) =>
                           cn(
                             'member-nav-link',
-                            isNavigationRouteActive(location.pathname, item.to) &&
+                            (isActive || matchesPlatformRoute(item.to!, location.pathname)) &&
                               'is-active',
                           )
                         }
-                        >
+                      >
                         <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
                         </NavLink>

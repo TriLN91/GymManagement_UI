@@ -257,7 +257,7 @@ export function GymOwnerLayout() {
       ],
     });
     return groups;
-  }, [t, status]);
+  }, [t, status, isVi]);
 
   const initialGroup =
     navGroups.find((group) => group.items.some((item) => matchesRoute(item.to, location.pathname)))
