@@ -104,6 +104,7 @@ The real OpenAI adapter is supported when `OPENAI_API_KEY` or `AI:OpenAiApiKey` 
 | Mobile tests | PASS | 88/88 |
 | Live OpenAI smoke | NOT RUN | No configured credential; no claim of live validation |
 | Browser/native real-API walkthrough | BLOCKED | No running backend/PostgreSQL environment |
+| Pull-request creation | BLOCKED | GitHub CLI is unavailable; connected GitHub integration returned 403 for PR creation |
 
 ## Deferred work and risks
 
@@ -111,11 +112,11 @@ The real OpenAI adapter is supported when `OPENAI_API_KEY` or `AI:OpenAiApiKey` 
 - A running PostgreSQL/pgvector environment is still required to execute ownership, persistence, duplicate-submission, and loop-limit integration tests.
 - Production model pricing must be updated when the configured model or provider pricing changes.
 - Interaction TypeScript models are mirrored from the canonical backend schema and guarded by client contract tests; generated clients should replace mirroring when the repository adopts OpenAPI generation.
-- Branches are pushed but not merged. Merge must go through each repository's required review/check workflow; no force push or branch-protection bypass was attempted.
+- Branches are pushed but not merged. Automated PR creation is blocked by unavailable CLI/write permission. Merge must go through each repository's required review/check workflow; no force push or branch-protection bypass was attempted.
 
 ## Outcome labels
 
 - Implementation and static/unit validation: **PASS**
 - Database-backed integration execution: **BLOCKED**
 - Live-provider smoke: **NOT RUN**
-- Merge to `main`: **NOT RUN** pending authorized repository review/checks
+- Pull requests and merge to `main`: **BLOCKED** pending a repository collaborator with PR-write permission
