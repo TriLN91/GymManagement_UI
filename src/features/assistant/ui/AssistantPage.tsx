@@ -126,6 +126,7 @@ export function AssistantInteractionRenderer({ message, disabled, onSubmit }: Re
 }
 
 export function AssistantPage() {
+  const isSimulatedProvider = import.meta.env.VITE_ASSISTANT_PROVIDER_MODE === 'simulated';
   const [conversations, setConversations] = useState<AssistantConversation[]>([]);
   const [activeId, setActiveId] = useState<string>();
   const [detail, setDetail] = useState<AssistantConversationDetail>();
@@ -161,10 +162,12 @@ export function AssistantPage() {
     abortRef.current = controller;
     try {
       await assistantApi.events(run.conversationId, run.id, controller.signal);
-    } catch {
-      const recovered = await assistantApi.run(run.conversationId, run.id);
-      if (recovered.status === 'failed') throw new Error(recovered.errorCode ?? 'Assistant run failed');
+    } catch (reason) {
+      if (controller.signal.aborted) throw reason;
     }
+    const recovered = await assistantApi.run(run.conversationId, run.id);
+    if (recovered.status === 'failed') throw new Error(recovered.errorCode ?? 'Assistant run failed');
+    if (recovered.status === 'cancelled') throw new Error('Assistant run was cancelled');
     await Promise.all([loadDetail(run.conversationId), loadConversations()]);
     setActiveRun(undefined);
   };
@@ -225,7 +228,9 @@ export function AssistantPage() {
         ))}
       </aside>
       <main className="assistant-chat">
-        <header><div><Bot /><div><strong>FitFlex Assistant</strong><span>Account-aware, evidence-grounded guidance</span></div></div></header>
+        <header><div><Bot /><div><strong>FitFlex Assistant</strong><span>Account-aware, evidence-grounded guidance</span></div>
+          {isSimulatedProvider && <mark className="assistant-provider-badge">Development simulation — no live LLM</mark>}
+        </div></header>
         <div className="assistant-messages" aria-live="polite">
           {!detail?.messages.length && <div className="assistant-welcome"><Bot /><h2>How can I help?</h2><p>Try “Help me personalize my fitness experience” or “Show me my current training plan.”</p></div>}
           {detail?.messages.map((message) => (
