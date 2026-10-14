@@ -30,9 +30,9 @@ import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
-  useSidebarCollapse,
   SidebarSearch,
   SidebarToggle,
+  useSidebarCollapse,
   useSidebarFlyout,
 } from '@/shared/ui/sidebar-controls';
 

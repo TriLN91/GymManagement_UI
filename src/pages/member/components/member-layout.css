@@ -46,7 +46,9 @@
 .member-profile-summary > div:last-child {
   opacity: 1;
   visibility: visible;
-  transition: opacity 230ms ease 120ms, visibility 0s;
+  transition:
+    opacity 230ms ease 120ms,
+    visibility 0s;
 }
 
 .member-sidebar__toggle {
@@ -105,7 +107,9 @@
   outline: 0;
   color: var(--member-primary);
   background: transparent;
-  font: 600 11px 'Be Vietnam Pro', sans-serif;
+  font:
+    600 11px 'Be Vietnam Pro',
+    sans-serif;
 }
 
 .member-sidebar__search input::placeholder {
@@ -116,7 +120,9 @@
   margin: 0;
   padding: 14px 11px 4px;
   color: var(--member-muted);
-  font: 700 10px 'Be Vietnam Pro', sans-serif;
+  font:
+    700 10px 'Be Vietnam Pro',
+    sans-serif;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -124,7 +130,9 @@
 .member-sidebar__no-results {
   margin: 8px 11px;
   color: var(--member-muted);
-  font: 600 11px/1.5 'Be Vietnam Pro', sans-serif;
+  font:
+    600 11px/1.5 'Be Vietnam Pro',
+    sans-serif;
 }
 
 .member-brand {
@@ -221,7 +229,9 @@
   white-space: nowrap;
   opacity: 1;
   visibility: visible;
-  transition: opacity 230ms ease 120ms, visibility 0s;
+  transition:
+    opacity 230ms ease 120ms,
+    visibility 0s;
 }
 
 .member-nav-group__trigger:hover,
@@ -236,7 +246,10 @@
   top: 50%;
   right: 11px;
   margin-top: -8px;
-  transition: transform 180ms ease, opacity 230ms ease 120ms, visibility 0s;
+  transition:
+    transform 180ms ease,
+    opacity 230ms ease 120ms,
+    visibility 0s;
 }
 
 .member-nav-group__trigger > svg.is-rotated {
@@ -399,7 +412,9 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 230ms ease, visibility 0s 230ms;
+    transition:
+      opacity 230ms ease,
+      visibility 0s 230ms;
   }
 
   .member-shell.is-sidebar-collapsed .member-sidebar__search-section {
@@ -460,7 +475,9 @@
     background: var(--member-surface);
   }
 
-  .member-shell.is-sidebar-collapsed .member-nav-children.is-flyout-open .member-nav-children__heading {
+  .member-shell.is-sidebar-collapsed
+    .member-nav-children.is-flyout-open
+    .member-nav-children__heading {
     display: block;
   }
 
@@ -487,7 +504,9 @@
 .member-nav-children__heading {
   display: none;
   padding: 6px 10px 9px;
-  font: 700 11px 'Be Vietnam Pro', sans-serif;
+  font:
+    700 11px 'Be Vietnam Pro',
+    sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }

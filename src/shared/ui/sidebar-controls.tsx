@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { PanelLeftClose, PanelLeftOpen, Search } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -15,8 +16,12 @@ interface SidebarSearchProps {
 
 export function SidebarToggle({ collapsed, isVi, onToggle }: SidebarToggleProps) {
   const label = collapsed
-    ? isVi ? 'Mở rộng thanh bên' : 'Expand sidebar'
-    : isVi ? 'Thu gọn thanh bên' : 'Collapse sidebar';
+    ? isVi
+      ? 'Mở rộng thanh bên'
+      : 'Expand sidebar'
+    : isVi
+      ? 'Thu gọn thanh bên'
+      : 'Collapse sidebar';
   const Icon = collapsed ? PanelLeftOpen : PanelLeftClose;
 
   return (

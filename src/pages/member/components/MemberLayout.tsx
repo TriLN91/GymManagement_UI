@@ -42,9 +42,9 @@ import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
-  useSidebarCollapse,
   SidebarSearch,
   SidebarToggle,
+  useSidebarCollapse,
   useSidebarFlyout,
 } from '@/shared/ui/sidebar-controls';
 
@@ -80,7 +80,11 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     items: [
       { labelKey: 'memberShell.workoutPlans', to: ROUTES.member.workout, icon: ClipboardList },
       { labelKey: 'memberShell.workoutBuilder', to: ROUTES.member.workoutBuilder, icon: ListPlus },
-      { labelKey: 'memberShell.weeklySchedule', to: ROUTES.member.workoutSchedule, icon: CalendarDays },
+      {
+        labelKey: 'memberShell.weeklySchedule',
+        to: ROUTES.member.workoutSchedule,
+        icon: CalendarDays,
+      },
       { labelKey: 'memberShell.aiCoaching', to: ROUTES.member.coaching, icon: Bot },
       { labelKey: 'memberShell.workoutExecution', to: ROUTES.member.workoutExecution, icon: Play },
       { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress, icon: TrendingUp },
@@ -103,7 +107,11 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
       { labelKey: 'memberShell.gymOffers', to: ROUTES.member.marketplaceOffers, icon: Tag },
       { labelKey: 'memberShell.trainers', to: ROUTES.member.marketplaceTrainers, icon: UsersRound },
       { labelKey: 'memberShell.ptPackages', to: ROUTES.member.marketplacePackages, icon: Package },
-      { labelKey: 'memberShell.checkout', to: ROUTES.member.marketplaceCheckout, icon: ShoppingCart },
+      {
+        labelKey: 'memberShell.checkout',
+        to: ROUTES.member.marketplaceCheckout,
+        icon: ShoppingCart,
+      },
     ],
   },
   {
@@ -113,9 +121,21 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     items: [
       { labelKey: 'memberShell.personalProfile', to: ROUTES.member.profile, icon: UserRound },
       { labelKey: 'memberShell.editProfile', to: ROUTES.member.profileEdit, icon: Pencil },
-      { labelKey: 'memberShell.accountSecurity', to: ROUTES.member.profileSecurity, icon: ShieldCheck },
-      { labelKey: 'memberShell.assessmentHistory', to: ROUTES.member.profileAssessments, icon: Camera },
-      { labelKey: 'memberShell.appointments', to: ROUTES.member.profileAppointments, icon: CalendarDays },
+      {
+        labelKey: 'memberShell.accountSecurity',
+        to: ROUTES.member.profileSecurity,
+        icon: ShieldCheck,
+      },
+      {
+        labelKey: 'memberShell.assessmentHistory',
+        to: ROUTES.member.profileAssessments,
+        icon: Camera,
+      },
+      {
+        labelKey: 'memberShell.appointments',
+        to: ROUTES.member.profileAppointments,
+        icon: CalendarDays,
+      },
       { labelKey: 'memberShell.wearables', to: ROUTES.member.profileWearables, icon: Watch },
       { labelKey: 'memberShell.notifications', to: ROUTES.member.profileNotifications, icon: Bell },
     ],
@@ -349,10 +369,10 @@ export function MemberLayout() {
                           className="member-nav-link is-unavailable"
                           key={item.labelKey}
                           disabled
-                        aria-label={t(item.labelKey)}
-                        title={isSidebarCollapsed ? t(item.labelKey) : undefined}
+                          aria-label={t(item.labelKey)}
+                          title={isSidebarCollapsed ? t(item.labelKey) : undefined}
                         >
-                      <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
+                          <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                           <span>{t(item.labelKey)}</span>
                           <small>{t('memberShell.soon')}</small>
                         </button>
