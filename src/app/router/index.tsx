@@ -30,6 +30,9 @@ const MemberCoachingPage = lazy(() =>
     default: m.MemberCoachingPage,
   })),
 );
+const AssistantPage = lazy(() =>
+  import('@/features/assistant').then((m) => ({ default: m.AssistantPage })),
+);
 const MemberWorkoutPage = lazy(() =>
   import('@/pages/member/MemberWorkoutPage').then((m) => ({ default: m.MemberWorkoutPage })),
 );
@@ -466,6 +469,7 @@ const router = createBrowserRouter([
                 element: <MemberNotificationsPage />,
               },
               { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
+                { path: ROUTES.member.assistant, element: <AssistantPage /> },
               { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
               { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
               { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },
