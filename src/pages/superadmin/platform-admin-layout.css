@@ -45,9 +45,15 @@
 
 .dark .platform-shell .member-nav-group__trigger:hover,
 .dark .platform-shell .member-nav-group__trigger.has-active-child,
+.dark .platform-shell .member-nav-group__trigger.is-flyout-open,
 .dark .platform-shell .member-nav-link:hover {
   border-color: #3c503b;
   color: #edf4e9;
+  background: #263b26;
+}
+
+.dark .platform-shell .member-sidebar__toggle:hover {
+  color: var(--member-primary);
   background: #263b26;
 }
 

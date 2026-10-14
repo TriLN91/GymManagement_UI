@@ -4,7 +4,6 @@ import {
   Building2,
   CalendarDays,
   ChevronDown,
-  Circle,
   CircleDollarSign,
   ClipboardList,
   Dumbbell,
@@ -13,6 +12,7 @@ import {
   Languages,
   LayoutDashboard,
   Library,
+  ListPlus,
   Loader2,
   LogOut,
   Menu,
@@ -20,7 +20,7 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -28,6 +28,13 @@ import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
+import {
+  matchesSidebarSearch,
+  useSidebarCollapse,
+  SidebarSearch,
+  SidebarToggle,
+  useSidebarFlyout,
+} from '@/shared/ui/sidebar-controls';
 
 import '@/pages/member/components/member-layout.css';
 
@@ -77,9 +84,9 @@ const navGroups: ReadonlyArray<TrainerNavGroup> = [
       {
         labelKey: 'trainerShell.buildPlan',
         to: ROUTES.pt.planBuilder,
-        icon: ClipboardList,
+        icon: ListPlus,
       },
-      { labelKey: 'trainerShell.memberWorkout', to: ROUTES.pt.memberWorkout },
+      { labelKey: 'trainerShell.memberWorkout', to: ROUTES.pt.memberWorkout, icon: Dumbbell },
     ],
   },
   {
@@ -99,6 +106,7 @@ const navGroups: ReadonlyArray<TrainerNavGroup> = [
       {
         labelKey: 'trainerShell.personalProfile',
         to: ROUTES.pt.profile,
+        icon: UserRound,
         activePaths: [ROUTES.pt.profileEdit],
       },
       {
@@ -167,6 +175,7 @@ function matchesTrainerRoute(item: TrainerNavItem, pathname: string) {
 
 export function TrainerLayout() {
   const { i18n, t } = useTranslation('common');
+  const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
   const initialGroup =
     navGroups.find((group) =>
@@ -176,11 +185,26 @@ export function TrainerLayout() {
     () => new Set([initialGroup]),
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
+  const [sidebarQuery, setSidebarQuery] = useState('');
+  const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const navigate = useNavigate();
   const userName = user?.fullName || 'Trainer';
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'T';
+  const query = sidebarQuery.trim();
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items:
+        !query || matchesSidebarSearch(t(group.labelKey), query)
+          ? group.items
+          : group.items.filter((item) => matchesSidebarSearch(t(item.labelKey), query)),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
   const toggleGroup = (groupId: TrainerNavGroup['id']) => {
     setExpandedGroups((current) => {
@@ -201,7 +225,7 @@ export function TrainerLayout() {
   };
 
   return (
-    <div className="member-shell trainer-shell">
+    <div className={cn('member-shell trainer-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
       <header className="member-mobile-header">
         <button
           type="button"
@@ -237,12 +261,25 @@ export function TrainerLayout() {
             <small>{t('trainerShell.trainer')}</small>
           </div>
           <span>{t('trainerShell.workspace')}</span>
+          <SidebarToggle
+            collapsed={isSidebarCollapsed}
+            isVi={isVi}
+            onToggle={() => {
+              if (!isSidebarCollapsed) setSidebarQuery('');
+              closeFlyout();
+              setIsSidebarCollapsed((collapsed) => !collapsed);
+            }}
+          />
         </div>
 
         <nav className="member-sidebar__nav" aria-label={t('trainerShell.workspace')}>
-          {navGroups.map((group) => {
+          <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
+          {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
-            const isExpanded = expandedGroups.has(group.id);
+            const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
+            const isExpanded = isSidebarCollapsed
+              ? isFlyoutOpen
+              : Boolean(query) || expandedGroups.has(group.id);
             const hasActiveChild = group.items.some((item) =>
               matchesTrainerRoute(item, location.pathname),
             );
@@ -250,14 +287,24 @@ export function TrainerLayout() {
               <div className="member-nav-group" key={group.id}>
                 <button
                   type="button"
-                  className={cn('member-nav-group__trigger', hasActiveChild && 'has-active-child')}
+                  className={cn(
+                    'member-nav-group__trigger',
+                    hasActiveChild && 'has-active-child',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   aria-expanded={isExpanded}
+                  aria-label={t(group.labelKey)}
+                  title={isSidebarCollapsed ? t(group.labelKey) : undefined}
                   aria-controls={`trainer-nav-${group.id}`}
-                  onClick={() => toggleGroup(group.id)}
+                  onClick={(event) =>
+                    isSidebarCollapsed
+                      ? toggleFlyout(group.id, event.currentTarget, group.items.length)
+                      : toggleGroup(group.id)
+                  }
                 >
                   <span>
-                    <GroupIcon aria-hidden="true" size={17} strokeWidth={1.8} />
-                    {t(group.labelKey)}
+                    <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                    <span className="member-nav-group__label">{t(group.labelKey)}</span>
                   </span>
                   <ChevronDown
                     className={cn(isExpanded && 'is-rotated')}
@@ -266,21 +313,32 @@ export function TrainerLayout() {
                   />
                 </button>
                 <div
-                  className={cn('member-nav-children', isExpanded && 'is-expanded')}
+                  className={cn(
+                    'member-nav-children',
+                    isExpanded && 'is-expanded',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   id={`trainer-nav-${group.id}`}
+                  style={isFlyoutOpen ? { top: flyout?.top } : undefined}
                 >
+                  <div className="member-nav-children__heading">{t(group.labelKey)}</div>
                   {group.items.map((item) => {
-                    const ItemIcon = item.icon ?? Circle;
+                    const ItemIcon = item.icon ?? ClipboardList;
                     const active = matchesTrainerRoute(item, location.pathname);
                     return (
                       <NavLink
                         key={`${group.id}-${item.labelKey}`}
                         to={item.to}
                         end={item.to === ROUTES.pt.root || item.to === ROUTES.pt.profile}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          closeFlyout();
+                        }}
+                        aria-label={t(item.labelKey)}
+                        title={isSidebarCollapsed ? t(item.labelKey) : undefined}
                         className={cn('member-nav-link', active && 'is-active')}
                       >
-                        <ItemIcon aria-hidden="true" size={13} strokeWidth={1.8} />
+                        <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{t(item.labelKey)}</span>
                       </NavLink>
                     );
@@ -289,6 +347,11 @@ export function TrainerLayout() {
               </div>
             );
           })}
+          {visibleGroups.length === 0 ? (
+            <p className="member-sidebar__no-results">
+              {isVi ? 'Không tìm thấy mục phù hợp' : 'No matching menu items'}
+            </p>
+          ) : null}
         </nav>
 
         <div className="member-sidebar__footer">

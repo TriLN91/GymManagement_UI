@@ -1,9 +1,9 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  BadgeCheck,
   Bell,
   Building2,
   ChevronDown,
-  Circle,
   ClipboardCheck,
   FileCheck2,
   KeyRound,
@@ -11,12 +11,16 @@ import {
   Languages,
   LayoutDashboard,
   LineChart,
+  List,
+  ListChecks,
   Loader2,
   LogOut,
+  MapPin,
   Menu,
   PackageCheck,
   ReceiptText,
   ShieldCheck,
+  ShoppingBag,
   UserRound,
   UsersRound,
   X,
@@ -30,6 +34,13 @@ import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
+import {
+  matchesSidebarSearch,
+  useSidebarCollapse,
+  SidebarSearch,
+  SidebarToggle,
+  useSidebarFlyout,
+} from '@/shared/ui/sidebar-controls';
 
 import '@/pages/member/components/member-layout.css';
 
@@ -70,6 +81,9 @@ export function GymOwnerLayout() {
   const logout = useLogout();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
+  const [sidebarQuery, setSidebarQuery] = useState('');
+  const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
 
   const navGroups = useMemo<ReadonlyArray<OwnerNavGroup>>(() => {
     const groups: OwnerNavGroup[] = [];
@@ -98,7 +112,7 @@ export function GymOwnerLayout() {
           {
             label: isVi ? 'Chi nhánh' : 'Branches',
             to: ROUTES.admin.profileBranches,
-            icon: Circle,
+            icon: MapPin,
           },
         ],
       });
@@ -115,7 +129,7 @@ export function GymOwnerLayout() {
           {
             label: isVi ? 'Ngoại lệ phân công' : 'Assignment exceptions',
             to: ROUTES.admin.trainerAssignments,
-            icon: ClipboardCheck,
+            icon: ListChecks,
           },
         ],
       });
@@ -134,19 +148,19 @@ export function GymOwnerLayout() {
       groups.push({
         id: 'customers',
         label: isVi ? 'Khách hàng / Người mua' : 'Customers / Purchasers',
-        icon: ReceiptText,
+        icon: ShoppingBag,
         items: [
           {
             label: isVi ? 'Danh sách vận hành' : 'Operational list',
             to: ROUTES.admin.customers,
-            icon: ReceiptText,
+            icon: List,
           },
         ],
       });
       groups.push({
         id: 'orders',
         label: isVi ? 'Đơn hàng & đối soát' : 'Orders & Settlement',
-        icon: Landmark,
+        icon: ReceiptText,
         items: [
           {
             label: isVi ? 'Đơn hàng' : 'Orders',
@@ -225,7 +239,7 @@ export function GymOwnerLayout() {
         {
           label: isVi ? 'Trạng thái phê duyệt' : 'Approval status',
           to: ROUTES.admin.onboardingStatus,
-          icon: Circle,
+          icon: BadgeCheck,
         },
       ],
     });
@@ -238,6 +252,18 @@ export function GymOwnerLayout() {
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<OwnerNavGroup['id']>>(
     () => new Set([initialGroup]),
   );
+  const query = sidebarQuery.trim();
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items:
+        !query || matchesSidebarSearch(group.label, query)
+          ? group.items
+          : group.items.filter((item) => matchesSidebarSearch(item.label, query)),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
   useEffect(() => {
     const activeGroup = navGroups.find((group) =>
@@ -282,7 +308,7 @@ export function GymOwnerLayout() {
     .slice(0, 4);
 
   return (
-    <div className="member-shell owner-shell">
+    <div className={cn('member-shell owner-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
       <header className="member-mobile-header">
         <button
           type="button"
@@ -320,12 +346,25 @@ export function GymOwnerLayout() {
             <small>{ownerLabel}</small>
           </div>
           <span>{workspaceLabel}</span>
+          <SidebarToggle
+            collapsed={isSidebarCollapsed}
+            isVi={isVi}
+            onToggle={() => {
+              if (!isSidebarCollapsed) setSidebarQuery('');
+              closeFlyout();
+              setIsSidebarCollapsed((collapsed) => !collapsed);
+            }}
+          />
         </div>
 
         <nav className="member-sidebar__nav" aria-label={workspaceLabel}>
-          {navGroups.map((group) => {
+          <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
+          {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
-            const isExpanded = expandedGroups.has(group.id);
+            const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
+            const isExpanded = isSidebarCollapsed
+              ? isFlyoutOpen
+              : Boolean(query) || expandedGroups.has(group.id);
             const hasActiveChild = group.items.some((item) =>
               matchesRoute(item.to, location.pathname),
             );
@@ -333,14 +372,24 @@ export function GymOwnerLayout() {
               <div className="member-nav-group" key={group.id}>
                 <button
                   type="button"
-                  className={cn('member-nav-group__trigger', hasActiveChild && 'has-active-child')}
+                  className={cn(
+                    'member-nav-group__trigger',
+                    hasActiveChild && 'has-active-child',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   aria-expanded={isExpanded}
+                  aria-label={group.label}
+                  title={isSidebarCollapsed ? group.label : undefined}
                   aria-controls={`owner-nav-${group.id}`}
-                  onClick={() => toggleGroup(group.id)}
+                  onClick={(event) =>
+                    isSidebarCollapsed
+                      ? toggleFlyout(group.id, event.currentTarget, group.items.length)
+                      : toggleGroup(group.id)
+                  }
                 >
                   <span>
-                    <GroupIcon aria-hidden="true" size={17} strokeWidth={1.8} />
-                    {group.label}
+                    <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                    <span className="member-nav-group__label">{group.label}</span>
                   </span>
                   <ChevronDown
                     className={cn(isExpanded && 'is-rotated')}
@@ -349,11 +398,17 @@ export function GymOwnerLayout() {
                   />
                 </button>
                 <div
-                  className={cn('member-nav-children', isExpanded && 'is-expanded')}
+                  className={cn(
+                    'member-nav-children',
+                    isExpanded && 'is-expanded',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   id={`owner-nav-${group.id}`}
+                  style={isFlyoutOpen ? { top: flyout?.top } : undefined}
                 >
+                  <div className="member-nav-children__heading">{group.label}</div>
                   {group.items.map((item) => {
-                    const ItemIcon = item.icon ?? Circle;
+                    const ItemIcon = item.icon ?? ClipboardCheck;
                     return (
                       <NavLink
                         key={item.to}
@@ -370,10 +425,15 @@ export function GymOwnerLayout() {
                           item.to === ROUTES.admin.notifications ||
                           item.to === ROUTES.admin.accountSecurity
                         }
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          closeFlyout();
+                        }}
+                        aria-label={item.label}
+                        title={isSidebarCollapsed ? item.label : undefined}
                         className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
                       >
-                        <ItemIcon aria-hidden="true" size={13} strokeWidth={1.8} />
+                        <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{item.label}</span>
                       </NavLink>
                     );
@@ -382,6 +442,11 @@ export function GymOwnerLayout() {
               </div>
             );
           })}
+          {visibleGroups.length === 0 ? (
+            <p className="member-sidebar__no-results">
+              {isVi ? 'Không tìm thấy mục phù hợp' : 'No matching menu items'}
+            </p>
+          ) : null}
         </nav>
 
         <div className="member-sidebar__footer">
@@ -438,7 +503,7 @@ export function GymOwnerLayout() {
 
       <nav className="member-bottom-nav" aria-label={workspaceLabel}>
         {mobileItems.map((item) => {
-          const Icon = item.icon ?? Circle;
+          const Icon = item.icon ?? ClipboardCheck;
           return (
             <NavLink
               key={item.to}
