@@ -1,21 +1,29 @@
 import type { LucideIcon } from 'lucide-react';
 import {
-  BriefcaseBusiness,
+  BadgeCheck,
+  Bell,
+  Building2,
   ChevronDown,
-  Circle,
   ClipboardCheck,
-  CreditCard,
-  Dumbbell,
+  FileText,
+  History,
+  Landmark,
   Languages,
   LayoutDashboard,
   LineChart,
+  List,
   Loader2,
   LogOut,
   Megaphone,
   Menu,
+  ReceiptText,
   ShieldCheck,
+  SlidersHorizontal,
   Store,
+  Tag,
+  TriangleAlert,
   UserRound,
+  UsersRound,
   X,
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
@@ -29,6 +37,13 @@ import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { platformCopy } from '@/features/platform-admin-dashboard/ui/copy';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
+import {
+  matchesSidebarSearch,
+  useSidebarCollapse,
+  SidebarSearch,
+  SidebarToggle,
+  useSidebarFlyout,
+} from '@/shared/ui/sidebar-controls';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 import '@/pages/member/components/member-layout.css';
@@ -66,6 +81,7 @@ type GroupKey =
 
 interface NavItem {
   label: CopyKey;
+  icon: LucideIcon;
   to?: string;
 }
 
@@ -79,68 +95,99 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'dashboard',
     icon: LayoutDashboard,
-    items: [
-      { label: 'overview', to: ROUTES.superadmin.root },
-      { label: 'tenants', to: ROUTES.superadmin.tenants },
-    ],
+items: [
+  {
+    label: 'overview',
+    to: ROUTES.superadmin.root,
+    icon: LayoutDashboard,
+  },
+  {
+    label: 'tenants',
+    to: ROUTES.superadmin.tenants,
+    icon: Building2,
+  },
+],
   },
   {
     id: 'approvals',
     icon: ClipboardCheck,
     items: [
-      { label: 'gymApplications', to: ROUTES.superadmin.gymApplications },
-      { label: 'activeGyms', to: ROUTES.superadmin.activeGyms },
-      { label: 'legalChanges', to: ROUTES.superadmin.legalChanges },
-      { label: 'trainerApplications', to: ROUTES.superadmin.trainerApplications },
-      { label: 'accountActions', to: ROUTES.superadmin.accounts },
+      { label: 'gymApplications', to: ROUTES.superadmin.gymApplications, icon: Building2 },
+      { label: 'activeGyms', to: ROUTES.superadmin.activeGyms, icon: BadgeCheck },
+      { label: 'legalChanges', to: ROUTES.superadmin.legalChanges, icon: FileText },
+      { label: 'trainerApplications', to: ROUTES.superadmin.trainerApplications, icon: UserRound },
+      { label: 'accountActions', to: ROUTES.superadmin.accounts, icon: UsersRound },
     ],
   },
   {
     id: 'marketplace',
     icon: Store,
-    items: [{ label: 'listings', to: ROUTES.superadmin.listings }],
+    items: [{ label: 'listings', to: ROUTES.superadmin.listings, icon: List }],
   },
   {
     id: 'commercial',
-    icon: BriefcaseBusiness,
-    items: [{ label: 'pricing', to: ROUTES.superadmin.commercial }],
+    icon: SlidersHorizontal,
+    items: [{ label: 'pricing', to: ROUTES.superadmin.commercial, icon: Tag }],
   },
   {
     id: 'campaigns',
     icon: Megaphone,
-    items: [{ label: 'campaignsList', to: ROUTES.superadmin.campaigns }],
+    items: [{ label: 'campaignsList', to: ROUTES.superadmin.campaigns, icon: Megaphone }],
   },
   {
     id: 'transactions',
-    icon: CreditCard,
+    icon: ReceiptText,
     items: [
-      { label: 'orders', to: ROUTES.superadmin.orders },
-      { label: 'settlementsList', to: ROUTES.superadmin.settlements },
-      { label: 'disputesList', to: ROUTES.superadmin.disputes },
+      { label: 'orders', to: ROUTES.superadmin.orders, icon: ReceiptText },
+      { label: 'settlementsList', to: ROUTES.superadmin.settlements, icon: Landmark },
+      { label: 'disputesList', to: ROUTES.superadmin.disputes, icon: TriangleAlert },
     ],
   },
   {
     id: 'analytics',
     icon: LineChart,
-    items: [
-      { label: 'analyticsOverview', to: ROUTES.superadmin.analytics },
-      { label: 'platformAnalytics', to: ROUTES.superadmin.platformAnalytics },
-    ],
-  },
-  {
-    id: 'movement',
-    icon: Dumbbell,
-    items: [{ label: 'movementAssessment', to: ROUTES.superadmin.movementAssessment }],
+{
+  id: 'analytics',
+  icon: LineChart,
+  items: [
+    {
+      label: 'analyticsOverview',
+      to: ROUTES.superadmin.analytics,
+      icon: LayoutDashboard,
+    },
+    {
+      label: 'platformAnalytics',
+      to: ROUTES.superadmin.platformAnalytics,
+      icon: LineChart,
+    },
+  ],
+},
+{
+  id: 'movement',
+  icon: Dumbbell,
+  items: [
+    {
+      label: 'movementAssessment',
+      to: ROUTES.superadmin.movementAssessment,
+      icon: ClipboardCheck,
+    },
+  ],
+},
   },
   {
     id: 'security',
     icon: ShieldCheck,
     items: [
-      { label: 'notifications', to: ROUTES.superadmin.notifications },
-      { label: 'activity', to: ROUTES.superadmin.audit },
+      { label: 'notifications', to: ROUTES.superadmin.notifications, icon: Bell },
+      { label: 'activity', to: ROUTES.superadmin.audit, icon: History },
     ],
   },
 ];
+
+function matchesPlatformRoute(to: string, pathname: string) {
+  if (to === ROUTES.superadmin.root) return pathname === to;
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
 
 export function PlatformAdminLayout() {
   const { i18n, t } = useTranslation('common');
@@ -150,23 +197,61 @@ export function PlatformAdminLayout() {
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
+  const [sidebarQuery, setSidebarQuery] = useState('');
+  const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
   const [expanded, setExpanded] = useState<ReadonlySet<GroupKey>>(() => new Set(['dashboard']));
   const userName = user?.fullName ?? copy.role;
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'P';
-  const activeItem = groups
-    .flatMap((group) => group.items)
-    .filter((item) => isNavigationRouteActive(location.pathname, item.to))
-    .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
+const query = sidebarQuery.trim();
 
-  useEffect(() => {
-    const active = groups.find((group) =>
-      group.items.some((item) => isNavigationRouteActive(location.pathname, item.to)),
+const visibleGroups = groups
+  .map((group) => ({
+    ...group,
+    items:
+      !query || matchesSidebarSearch(copy[group.id], query)
+        ? group.items
+        : group.items.filter((item) =>
+            matchesSidebarSearch(copy[item.label], query),
+          ),
+  }))
+  .filter((group) => group.items.length > 0);
+
+const activeItem = groups
+  .flatMap((group) => group.items)
+  .filter((item) =>
+    isNavigationRouteActive(location.pathname, item.to),
+  )
+  .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
+
+useEffect(() => {
+  closeFlyout();
+}, [closeFlyout, location.pathname]);
+
+useEffect(() => {
+  const active = groups.find((group) =>
+    group.items.some((item) =>
+      isNavigationRouteActive(location.pathname, item.to),
+    ),
+  )?.id;
+
+  if (!active) return;
+
+  setExpanded((current) =>
+    current.has(active) ? current : new Set([...current, active]),
+  );
+}, [location.pathname]);
     )?.id;
     if (!active) return;
     setExpanded((current) => (current.has(active) ? current : new Set([...current, active])));
   }, [location.pathname]);
 
   const toggleGroup = (id: GroupKey) => {
+    if (isSidebarCollapsed) {
+      setIsSidebarCollapsed(false);
+      setExpanded((current) => new Set([...current, id]));
+      return;
+    }
     setExpanded((current) => {
       const next = new Set(current);
       if (next.has(id)) next.delete(id);
@@ -185,7 +270,7 @@ export function PlatformAdminLayout() {
   };
 
   return (
-    <div className="member-shell platform-shell">
+    <div className={cn('member-shell platform-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
       <header className="member-mobile-header">
         <button
           type="button"
@@ -229,26 +314,58 @@ export function PlatformAdminLayout() {
             <small>{copy.role}</small>
           </div>
           <span>{copy.workspace}</span>
+          <SidebarToggle
+            collapsed={isSidebarCollapsed}
+            isVi={i18n.resolvedLanguage === 'vi'}
+            onToggle={() => {
+              if (!isSidebarCollapsed) setSidebarQuery('');
+              closeFlyout();
+              setIsSidebarCollapsed((collapsed) => !collapsed);
+            }}
+          />
         </div>
         <nav className="member-sidebar__nav" aria-label={copy.workspace}>
-          {groups.map((group) => {
+          <SidebarSearch
+            query={sidebarQuery}
+            isVi={i18n.resolvedLanguage === 'vi'}
+            onChange={setSidebarQuery}
+          />
+          {visibleGroups.map((group) => {
             const Icon = group.icon;
-            const isExpanded = expanded.has(group.id);
-            const active = group.items.some((item) =>
-              isNavigationRouteActive(location.pathname, item.to),
-            );
+const Icon = group.icon;
+
+const isFlyoutOpen =
+  isSidebarCollapsed && flyout?.id === group.id;
+
+const isExpanded = isSidebarCollapsed
+  ? isFlyoutOpen
+  : Boolean(query) || expanded.has(group.id);
+
+const active = group.items.some((item) =>
+  isNavigationRouteActive(location.pathname, item.to),
+);
             return (
               <div className="member-nav-group" key={group.id}>
                 <button
                   type="button"
-                  className={cn('member-nav-group__trigger', active && 'has-active-child')}
+                  className={cn(
+                    'member-nav-group__trigger',
+                    active && 'has-active-child',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   aria-expanded={isExpanded}
+                  aria-label={copy[group.id]}
+                  title={isSidebarCollapsed ? copy[group.id] : undefined}
                   aria-controls={`platform-nav-${group.id}`}
-                  onClick={() => toggleGroup(group.id)}
+                  onClick={(event) =>
+                    isSidebarCollapsed
+                      ? toggleFlyout(group.id, event.currentTarget, group.items.length)
+                      : toggleGroup(group.id)
+                  }
                 >
                   <span>
-                    <Icon aria-hidden="true" size={17} strokeWidth={1.8} />
-                    {copy[group.id]}
+                    <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
+                    <span className="member-nav-group__label">{copy[group.id]}</span>
                   </span>
                   <ChevronDown
                     className={cn(isExpanded && 'is-rotated')}
@@ -257,29 +374,47 @@ export function PlatformAdminLayout() {
                   />
                 </button>
                 <div
-                  className={cn('member-nav-children', isExpanded && 'is-expanded')}
+                  className={cn(
+                    'member-nav-children',
+                    isExpanded && 'is-expanded',
+                    isFlyoutOpen && 'is-flyout-open',
+                  )}
                   id={`platform-nav-${group.id}`}
+                  style={isFlyoutOpen ? { top: flyout?.top } : undefined}
                 >
+                  <div className="member-nav-children__heading">{copy[group.id]}</div>
                   {group.items.map((item) =>
                     item.to ? (
                       <NavLink
                         key={item.label}
                         to={item.to}
-                        end={item.to !== ROUTES.superadmin.movementAssessment}
-                        onClick={() => setIsMenuOpen(false)}
-                        className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
-                      >
-                        <Circle aria-hidden="true" size={13} />
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          closeFlyout();
+                        }}
+                        aria-label={copy[item.label]}
+                        title={isSidebarCollapsed ? copy[item.label] : undefined}
+                        className={() =>
+                          cn(
+                            'member-nav-link',
+                            isNavigationRouteActive(location.pathname, item.to) &&
+                              'is-active',
+                          )
+                        }
+                        >
+                        <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
-                      </NavLink>
+                        </NavLink>
                     ) : (
                       <button
                         type="button"
                         key={item.label}
                         className="member-nav-link is-unavailable"
                         disabled
+                        aria-label={copy[item.label]}
+                        title={isSidebarCollapsed ? copy[item.label] : undefined}
                       >
-                        <Circle aria-hidden="true" size={13} />
+                        <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
                         <small>{copy.upcoming}</small>
                       </button>
@@ -289,6 +424,13 @@ export function PlatformAdminLayout() {
               </div>
             );
           })}
+          {visibleGroups.length === 0 ? (
+            <p className="member-sidebar__no-results">
+              {i18n.resolvedLanguage === 'vi'
+                ? 'Không tìm thấy mục phù hợp'
+                : 'No matching menu items'}
+            </p>
+          ) : null}
         </nav>
         <div className="member-sidebar__footer">
           <div className="member-profile-summary">
