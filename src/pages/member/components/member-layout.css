@@ -659,6 +659,7 @@
   .member-main {
     min-height: calc(100vh - 136px);
     padding-left: 0;
+    transition: none;
   }
 
   .member-topbar {
