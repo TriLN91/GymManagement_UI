@@ -45,14 +45,14 @@ describe('marketplace checkout', () => {
     expect(useMarketplaceStore.getState().currentPlusCoverageDays).toBe(90);
   });
 
-  it('activates trainer assignment only after a successful PT purchase', () => {
+  it('keeps a paid PT purchase pending until the Gym confirms it', () => {
     useMarketplaceStore.getState().selectPtPackage('linh-foundation-8');
 
     const order = useMarketplaceStore.getState().completeCheckout('card');
 
     expect(order).toMatchObject({
       paymentStatus: 'succeeded',
-      fulfillmentStatus: 'trainer_assignment_active',
+      fulfillmentStatus: 'pending_gym_confirmation',
       plusAmountVnd: 0,
     });
     expect(useMarketplaceStore.getState().orders).toHaveLength(1);

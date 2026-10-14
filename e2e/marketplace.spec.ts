@@ -49,7 +49,7 @@ test.describe('Member marketplace', () => {
     await expect(page.getByText('Waiting for Gym service confirmation')).toBeVisible();
   });
 
-  test('buys a trainer-specific package and activates assignment', async ({ page }) => {
+  test('buys a trainer-specific package and waits for Gym confirmation', async ({ page }) => {
     await openAsMember(page, '/app/marketplace/trainers/linh-nguyen');
 
     await expect(page.getByRole('heading', { name: 'Linh Nguyễn' })).toBeVisible();
@@ -62,6 +62,6 @@ test.describe('Member marketplace', () => {
     await page.getByRole('button', { name: 'Confirm payment' }).click();
 
     await expect(page.getByRole('heading', { name: 'Payment successful' })).toBeVisible();
-    await expect(page.getByText('Trainer–Member assignment activated')).toBeVisible();
+    await expect(page.getByText('Waiting for Gym service confirmation')).toBeVisible();
   });
 });

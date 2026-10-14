@@ -116,10 +116,7 @@ export const useMarketplaceStore = create<MarketplaceState>()(
           selection,
           paymentMethod,
           paymentStatus: 'succeeded',
-          fulfillmentStatus:
-            selection.kind === 'pt_package'
-              ? 'trainer_assignment_active'
-              : 'pending_gym_confirmation',
+          fulfillmentStatus: 'pending_gym_confirmation',
           createdAt: new Date().toISOString(),
         };
         set((state) => ({
