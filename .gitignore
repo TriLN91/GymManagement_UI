@@ -79,3 +79,8 @@ msw/
 
 # Vite 8 timestamp files
 vite.config.*.timestamp-*
+
+# AI coding agent scaffolding — local context only, never commit
+AIAgent.md
+AI_policy/
+CODEX_WORKLOG.md

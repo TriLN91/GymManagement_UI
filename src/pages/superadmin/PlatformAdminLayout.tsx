@@ -173,6 +173,11 @@ const groups: ReadonlyArray<NavGroup> = [
   },
 ];
 
+function matchesPlatformRoute(to: string, pathname: string) {
+  if (to === ROUTES.superadmin.root) return pathname === to;
+  return isNavigationRouteActive(pathname, to);
+}
+
 export function PlatformAdminLayout() {
   const { i18n, t } = useTranslation('common');
   const copy = platformCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
@@ -197,18 +202,17 @@ export function PlatformAdminLayout() {
           : group.items.filter((item) => matchesSidebarSearch(copy[item.label], query)),
     }))
     .filter((group) => group.items.length > 0);
+
   const activeItem = groups
     .flatMap((group) => group.items)
-    .filter((item) => isNavigationRouteActive(location.pathname, item.to))
+    .filter((item) => item.to && matchesPlatformRoute(item.to, location.pathname))
     .sort((a, b) => (b.to?.length ?? 0) - (a.to?.length ?? 0))[0];
 
-  useEffect(() => {
-    closeFlyout();
-  }, [closeFlyout, location.pathname]);
+  useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
   useEffect(() => {
     const active = groups.find((group) =>
-      group.items.some((item) => isNavigationRouteActive(location.pathname, item.to)),
+      group.items.some((item) => item.to && matchesPlatformRoute(item.to, location.pathname)),
     )?.id;
     if (!active) return;
     setExpanded((current) => (current.has(active) ? current : new Set([...current, active])));
@@ -306,8 +310,8 @@ export function PlatformAdminLayout() {
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
               : Boolean(query) || expanded.has(group.id);
-            const active = group.items.some((item) =>
-              isNavigationRouteActive(location.pathname, item.to),
+            const active = group.items.some(
+              (item) => item.to && matchesPlatformRoute(item.to, location.pathname),
             );
             return (
               <div className="member-nav-group" key={group.id}>
@@ -353,16 +357,18 @@ export function PlatformAdminLayout() {
                       <NavLink
                         key={item.label}
                         to={item.to}
+                        end
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
                         }}
                         aria-label={copy[item.label]}
                         title={isSidebarCollapsed ? copy[item.label] : undefined}
-                        className={() =>
+                        className={({ isActive }) =>
                           cn(
                             'member-nav-link',
-                            isNavigationRouteActive(location.pathname, item.to) && 'is-active',
+                            (isActive || matchesPlatformRoute(item.to!, location.pathname)) &&
+                              'is-active',
                           )
                         }
                       >
