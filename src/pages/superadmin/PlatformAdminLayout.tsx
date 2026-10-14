@@ -359,7 +359,7 @@ git fetch origin      <header className="member-mobile-header">
                       >
                         <item.icon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{copy[item.label]}</span>
-                      </NavLink>
+                        </NavLink>
                     ) : (
                       <button
                         type="button"
