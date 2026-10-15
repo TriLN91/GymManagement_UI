@@ -34,10 +34,6 @@
           "1": "Experience and schedule"
         },
         "5": {
-          "0": "Recovery",
-          "1": "Habits and privacy"
-        },
-        "6": {
           "0": "Review",
           "1": "Readiness level"
         }
@@ -57,12 +53,8 @@
           "1": "This information helps replace unsuitable exercises."
         },
         "training": {
-          "0": "Training ability and access",
-          "1": "The plan fits your actual time and equipment."
-        },
-        "recovery": {
-          "0": "Recovery and data sharing",
-          "1": "Sleep and stress directly affect training load."
+          "0": "Training experience and schedule",
+          "1": "The plan fits your actual schedule."
         },
         "review": {
           "0": "Review your profile",
@@ -82,20 +74,8 @@
         "targetDate": "Target date",
         "experience": "Training experience",
         "activityLevel": "Daily activity level",
-        "cardioDays": "Cardio days per week",
-        "cardioMinutes": "Cardio minutes per session",
-        "strengthDays": "Strength days per week",
         "availableDays": "Available training days",
         "session": "Session duration",
-        "environments": "Training locations",
-        "equipment": "Available equipment",
-        "preferred": "Preferred exercises or activities",
-        "avoided": "Exercises you dislike or want to avoid",
-        "sleep": "Average sleep",
-        "stress": "Current stress level",
-        "work": "Work pattern",
-        "smoking": "Do you smoke or use nicotine?",
-        "alcohol": "Alcoholic drinks per week",
         "goals": "Goals",
         "upperInjury": "Do you have an injury in your upper body?",
         "lowerInjury": "Do you have an injury in your lower body?",
@@ -148,21 +128,13 @@
         "rest": "You are injured in both your upper and lower body. Please take a break from training and come back once you have recovered. If needed, ask a medical professional before you start again."
       },
       "units": {
-        "days": "days",
-        "min": "min",
-        "hours": "hours"
+        "min": "min"
       }
     },
     "buildMuscle": "Build muscle",
     "loseFat": "Lose fat",
     "buildStrength": "Build strength",
     "improveMobility": "Improve mobility",
-    "bodyweight": "Bodyweight",
-    "dumbbells": "Dumbbells",
-    "barbell": "Barbell",
-    "machines": "Machines",
-    "bands": "Bands",
-    "cardioMachines": "Cardio machines",
     "beginnerUnder6Months": "Beginner · under 6 months",
     "intermediate624Months": "Intermediate · 6–24 months",
     "advancedOver2Years": "Advanced · over 2 years",
@@ -170,20 +142,6 @@
     "lightlyActive": "Lightly active",
     "moderatelyActive": "Moderately active",
     "highlyActive": "Highly active",
-    "gym": "Gym",
-    "home": "Home",
-    "outdoor": "Outdoor",
-    "recoveryStep": {
-      "0": "Very low",
-      "1": "Low",
-      "2": "Moderate",
-      "3": "High",
-      "4": "Very high"
-    },
-    "mostlySitting": "Mostly sitting",
-    "mixed": "Mixed",
-    "mostlyActive": "Mostly active",
-    "shiftWork": "Shift work",
     "itemsRecorded": "items recorded",
     "daysWeek": "days/week",
     "aIReceivesOnlyStructured": "AI receives only structured data needed for plan recommendations. A Trainer can view this profile only when assigned and permitted.",
@@ -195,10 +153,17 @@
       "pal": "Activity factor (PAL)",
       "tdee": "Maintenance calories (TDEE)",
       "range": "About {{low}} – {{high}} kcal/day",
-      "disclaimer": "This is an estimate from the Mifflin-St Jeor equation times an activity factor (FAO/WHO/UNU), not an exact measurement for you. Workout calories are already part of the activity factor, so they are not added again. It will be calibrated against your weight trend over time.",
+      "disclaimer": "This is an estimate from the Mifflin-St Jeor equation times an activity factor (calibrated to NASEM 2023), not an exact measurement for you. Workout calories are already part of the activity factor, so they are not added again. It will be calibrated against your weight trend over time.",
       "missing_input": "Enter your date of birth, sex, height, weight and activity level to see your calorie estimate.",
       "under_age": "The calorie estimate currently applies to people aged 18 and over.",
       "sex_unsupported": "The equation needs Male or Female, so an automatic calorie estimate is not available."
+    },
+    "activityNote": "Choose by your total movement across the whole day (commute, work and training), not just workout time. If unsure, pick the lower level.",
+    "activityHints": {
+      "sedentary": "Mostly sitting, only everyday activities, little or no exercise.",
+      "light": "Everyday activities plus about 60–80 minutes of brisk walking a day (or equivalent).",
+      "moderate": "Daily equivalent of about 30–50 minutes of brisk walking, 45 minutes of moderate cycling and 40 minutes of doubles tennis.",
+      "high": "Daily equivalent of about 45 minutes of cycling, 25 minutes of jogging and 60 minutes of doubles tennis, or heavy manual work."
     }
   },
   "memberProfilePages": {

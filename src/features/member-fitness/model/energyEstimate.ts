@@ -9,17 +9,25 @@ export const ENERGY_FORMULA_VERSION = 'mifflin_1990';
 export const MIN_ENERGY_AGE_YEARS = 18;
 
 /**
- * Total PAL per self-reported daily activity level. Values sit inside the FAO/WHO/UNU 2004 ranges:
- * sedentary/light 1.40-1.69, moderately active 1.70-1.99, vigorous 2.00-2.40.
+ * Total PAL per self-reported daily activity level, to be multiplied by the Mifflin-St Jeor REE.
+ *
+ * The four levels follow the NASEM 2023 PAL categories (inactive, low active, active, very active).
+ * The values are calibrated, not copied: dividing the NASEM 2023 TEE prediction equations (Table 5-5,
+ * adults 19+) by Mifflin REE over ages 20-60 and BMI 20-30 gives a stable ratio for both sexes:
+ *   inactive 1.52-1.53, low active 1.65, active 1.76, very active 1.93-1.95.
+ * The previous ladder (1.40 / 1.55 / 1.85 / 2.20) took FAO/WHO/UNU lifestyle bands for working
+ * populations: it under-estimated the lowest level by ~8% and over-estimated the highest by ~13%.
+ * energyEstimate.test.ts re-checks this calibration against the NASEM equations.
  */
 export const PAL_BY_ACTIVITY = Object.freeze({
-  sedentary: 1.4,
-  light: 1.55,
-  moderate: 1.85,
-  high: 2.2,
+  sedentary: 1.5,
+  light: 1.65,
+  moderate: 1.75,
+  high: 1.95,
 } as const);
 
-export const PAL_SOURCE = 'FAO/WHO/UNU 2004, self-reported activity level';
+export const PAL_SOURCE =
+  'NASEM 2023 Dietary Reference Intakes for Energy (PAL categories), calibrated to Mifflin-St Jeor REE; self-reported activity level';
 
 /**
  * Half-width of the displayed range. Placeholder until it is calibrated on real user data

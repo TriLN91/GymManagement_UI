@@ -39,8 +39,6 @@ describe('toTrainingInput', () => {
     experience: 'beginner' as const,
     sessionMinutes: 45 as const,
     availableDays: ['mon', 'wed', 'fri'],
-    equipment: ['dumbbell'],
-    environments: ['home'],
   };
 
   it('returns null when required answers are missing', () => {
@@ -59,7 +57,7 @@ describe('toTrainingInput', () => {
       experienceLevel: 'beginner',
       weeklyWorkoutDays: 3,
       sessionDurationMinutes: 45,
-      equipmentAccess: 'dumbbell, home',
+      equipmentAccess: 'Bodyweight',
       hasLimitations: true,
       limitationNotes: 'Lower body injury; Prefer upper body training while lower body recovers',
     });
@@ -111,8 +109,8 @@ describe('toNutritionInput PAL', () => {
         },
       }),
     );
-    expect(input).toMatchObject({ activityBaseline: 'light', palTotal: 1.55 });
-    expect(input?.palSource).toContain('FAO');
+    expect(input).toMatchObject({ activityBaseline: 'light', palTotal: 1.65 });
+    expect(input?.palSource).toContain('NASEM');
   });
 });
 

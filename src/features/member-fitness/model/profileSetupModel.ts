@@ -37,22 +37,8 @@ export interface MemberFitnessProfile {
   };
   training: {
     experience: 'beginner' | 'intermediate' | 'advanced' | '';
-    cardioDays: number | null;
-    cardioMinutes: number | null;
-    strengthDays: number | null;
     availableDays: string[];
     sessionMinutes: 30 | 45 | 60 | 75 | 90 | null;
-    environments: string[];
-    equipment: string[];
-    preferredExercises: string;
-    avoidedExercises: string;
-  };
-  recovery: {
-    sleepHours: number | null;
-    stressLevel: 1 | 2 | 3 | 4 | 5 | null;
-    workPattern: 'mostly_sitting' | 'mixed' | 'mostly_active' | 'shift_work' | '';
-    smoking: TernaryAnswer;
-    alcoholPerWeek: number | null;
   };
   consent: {
     shareWithAssignedTrainer: boolean;
@@ -94,22 +80,8 @@ export const EMPTY_PROFILE: MemberFitnessProfile = {
   },
   training: {
     experience: '',
-    cardioDays: null,
-    cardioMinutes: null,
-    strengthDays: null,
     availableDays: [],
     sessionMinutes: null,
-    environments: [],
-    equipment: [],
-    preferredExercises: '',
-    avoidedExercises: '',
-  },
-  recovery: {
-    sleepHours: null,
-    stressLevel: null,
-    workPattern: '',
-    smoking: '',
-    alcoholPerWeek: null,
   },
   consent: {
     shareWithAssignedTrainer: false,
@@ -120,7 +92,7 @@ export const EMPTY_PROFILE: MemberFitnessProfile = {
 };
 
 export function calculateProfileReadiness(profile: MemberFitnessProfile): ProfileReadiness {
-  const { identity, goals, movement, training, recovery, consent } = profile;
+  const { identity, goals, movement, training, consent } = profile;
   const reasons: string[] = [];
   let level: ProfileRiskLevel = 'ready';
   if (movement.upperBodyInjury === 'yes' || movement.lowerBodyInjury === 'yes') {
@@ -140,11 +112,6 @@ export function calculateProfileReadiness(profile: MemberFitnessProfile): Profil
     Boolean(identity.activityLevel),
     training.availableDays.length > 0,
     Boolean(training.sessionMinutes),
-    training.environments.length > 0,
-    Boolean(recovery.sleepHours),
-    Boolean(recovery.stressLevel),
-    Boolean(recovery.workPattern),
-    Boolean(recovery.smoking),
     consent.dataAccuracy,
     consent.screeningAcknowledged,
   ];
