@@ -31,8 +31,5 @@ export const assistantApi = {
     apiPost<boolean>(`${base}/${conversationId}/runs/${runId}/cancel`),
   remove: (conversationId: string) => apiDelete<void>(`${base}/${conversationId}`),
   events: (conversationId: string, runId: string, signal: AbortSignal) =>
-    openApiEventStream<AssistantRunEvent>(
-      `${base}/${conversationId}/runs/${runId}/events`,
-      signal,
-    ),
+    openApiEventStream<AssistantRunEvent>(`${base}/${conversationId}/runs/${runId}/events`, signal),
 };

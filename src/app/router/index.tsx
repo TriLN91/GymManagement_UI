@@ -469,7 +469,7 @@ const router = createBrowserRouter([
                 element: <MemberNotificationsPage />,
               },
               { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
-                { path: ROUTES.member.assistant, element: <AssistantPage /> },
+              { path: ROUTES.member.assistant, element: <AssistantPage /> },
               { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
               { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
               { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },

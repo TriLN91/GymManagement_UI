@@ -20,7 +20,10 @@ describe('AssistantInteractionRenderer', () => {
     render(
       <AssistantInteractionRenderer
         message={message({
-          version: '1', type: 'single_choice', id: 'goal', title: 'Choose a goal',
+          version: '1',
+          type: 'single_choice',
+          id: 'goal',
+          title: 'Choose a goal',
           options: [{ value: 'strength', label: 'Build strength' }],
         })}
         onSubmit={submit}
@@ -35,9 +38,19 @@ describe('AssistantInteractionRenderer', () => {
     render(
       <AssistantInteractionRenderer
         message={message({
-          version: '1', type: 'form', id: 'routine', title: 'Routine',
+          version: '1',
+          type: 'form',
+          id: 'routine',
+          title: 'Routine',
           fields: [
-            { name: 'weeklyDays', label: 'Days', inputType: 'number', required: true, min: 1, max: 7 },
+            {
+              name: 'weeklyDays',
+              label: 'Days',
+              inputType: 'number',
+              required: true,
+              min: 1,
+              max: 7,
+            },
             { name: 'equipment', label: 'Equipment', inputType: 'text', required: true },
           ],
         })}
@@ -53,7 +66,13 @@ describe('AssistantInteractionRenderer', () => {
   it('renders server data as read-only content', () => {
     render(
       <AssistantInteractionRenderer
-        message={message({ version: '1', type: 'data_card', id: 'plan', title: 'Current plan', data: { name: 'Strength A' } })}
+        message={message({
+          version: '1',
+          type: 'data_card',
+          id: 'plan',
+          title: 'Current plan',
+          data: { name: 'Strength A' },
+        })}
         onSubmit={vi.fn()}
       />,
     );

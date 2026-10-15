@@ -271,7 +271,8 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
     });
   let response = await request(tokenManager.getAccess());
   if (response.status === 401) response = await request(await tokenManager.refresh());
-  if (!response.ok || !response.body) throw new ApiError(response.status, 'Assistant stream failed');
+  if (!response.ok || !response.body)
+    throw new ApiError(response.status, 'Assistant stream failed');
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   const events: T[] = [];
@@ -284,9 +285,21 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
     while (boundary >= 0) {
       const block = buffer.slice(0, boundary);
       buffer = buffer.slice(boundary + 2);
-      const eventType = block.split('\n').find((line) => line.startsWith('event:'))?.slice(6).trim();
-      const data = block.split('\n').find((line) => line.startsWith('data:'))?.slice(5).trim();
-      const id = block.split('\n').find((line) => line.startsWith('id:'))?.slice(3).trim();
+      const eventType = block
+        .split('\n')
+        .find((line) => line.startsWith('event:'))
+        ?.slice(6)
+        .trim();
+      const data = block
+        .split('\n')
+        .find((line) => line.startsWith('data:'))
+        ?.slice(5)
+        .trim();
+      const id = block
+        .split('\n')
+        .find((line) => line.startsWith('id:'))
+        ?.slice(3)
+        .trim();
       if (data) {
         const parsed: unknown = JSON.parse(data) as unknown;
         events.push({ sequence: Number(id), type: eventType, data: parsed } as unknown as T);
