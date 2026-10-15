@@ -227,6 +227,43 @@
       "friday-lower-body": "Sep 25",
       "saturday-hiit": "Sep 26",
       "sunday-rest": "Sep 27"
+    },
+    "live": {
+      "loading": "Loading your schedule…",
+      "error": "We couldn't load your plan or schedule. Nothing has been lost.",
+      "retry": "Try again",
+      "noPlan": "No active workout plan. You can still log a free workout: it earns XP but never your scheduled-day streak.",
+      "noSchedule": "Set your training days to see which plan day is due each day.",
+      "setDays": "Set training days",
+      "day": "Day {{day}}",
+      "status": {
+        "completed": "Completed",
+        "ready": "Today's session",
+        "upcoming": "Upcoming",
+        "rest": "Rest day",
+        "missed": "Missed",
+        "paused": "Paused",
+        "pending": "Waiting for sync",
+        "none": "No plan"
+      },
+      "freeWorkout": "Log a free workout",
+      "freeTitle": "Free workout",
+      "freeSource": "Self-logged",
+      "freeHint": "Pick catalog exercises. A free workout earns XP for the day but never counts for the scheduled-day streak.",
+      "pickExercises": "Exercises",
+      "pick": "Choose at least one exercise.",
+      "review": "Review workout",
+      "mainSession": "Scheduled main session",
+      "noLogs": "Log at least one actual set before finishing.",
+      "viewProgress": "View progression",
+      "planWorkout": "Plan workout",
+      "sync": {
+        "pending": "Not saved to your account yet — it retries automatically.",
+        "synced": "Saved to your account.",
+        "rejected": "The server did not accept this workout: {{error}}",
+        "retry": "Retry now",
+        "discard": "Discard"
+      }
     }
   },
   "workoutHistory": {

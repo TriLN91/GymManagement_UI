@@ -12,7 +12,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
-import { getWorkoutDay } from '../model/demoWorkoutFlow';
+import { hasLoggedSet } from '../model/liveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import type {
   DistanceExercise,
@@ -22,6 +22,7 @@ import type {
   StrengthExercise,
   WorkoutExercise,
 } from '../model/workoutFlowTypes';
+import { useWorkoutSync } from '../model/workoutSync';
 
 import { ROUTES } from '@/shared/config/constants';
 
@@ -128,8 +129,8 @@ function StrengthTracker({
           <h2>{t('flow.execution.recordSets')}</h2>
         </div>
         <small>
-          {t('flow.detail.target')} {exercise.target.sets} × {exercise.target.reps} @{' '}
-          {exercise.target.loadKg} kg
+          {t('flow.detail.target')} {exercise.target.sets} × {exercise.target.reps}
+          {exercise.target.loadKg > 0 ? ` @ ${exercise.target.loadKg} kg` : ''}
         </small>
       </header>
       <div className="workout-set-table">
@@ -384,39 +385,44 @@ export function WorkoutExecution() {
   const { dayId = '' } = useParams();
   const navigate = useNavigate();
   const completionPath = useRef<string | null>(null);
-  const day = getWorkoutDay(dayId);
+  const sync = useWorkoutSync();
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);
   const saveExerciseLog = useWorkoutSessionStore((state) => state.saveExerciseLog);
   const goToExercise = useWorkoutSessionStore((state) => state.goToExercise);
   const finishSession = useWorkoutSessionStore((state) => state.finishSession);
-  const exercises = day?.exercises ?? [];
+  const [error, setError] = useState<string | null>(null);
+  const session = activeSession?.dayId === dayId ? activeSession : null;
+  const exercises = session?.exercises ?? [];
   const currentIndex = Math.min(
-    activeSession?.currentExerciseIndex ?? 0,
+    session?.currentExerciseIndex ?? 0,
     Math.max(0, exercises.length - 1),
   );
   const exercise = exercises[currentIndex];
-  const completedCount = useMemo(
-    () => (activeSession ? Object.keys(activeSession.logs).length : 0),
-    [activeSession],
-  );
+  const completedCount = useMemo(() => (session ? Object.keys(session.logs).length : 0), [session]);
 
-  if (!day || exercises.length === 0)
-    return <Navigate to={ROUTES.member.workoutSchedule} replace />;
-  if (!activeSession || activeSession.dayId !== day.id) {
+  if (!session) {
     if (completionPath.current) return <Navigate to={completionPath.current} replace />;
-    return <Navigate to={ROUTES.member.workoutDayPath(day.id)} replace />;
+    return <Navigate to={ROUTES.member.workoutSchedule} replace />;
   }
-  if (!exercise) return <Navigate to={ROUTES.member.workoutDayPath(day.id)} replace />;
+  if (!exercise) return <Navigate to={ROUTES.member.workoutDayPath(session.dayId)} replace />;
 
   const handleSave = (log: ExerciseLog) => {
     saveExerciseLog(exercise.id, log);
-    if (currentIndex < exercises.length - 1) goToExercise(currentIndex + 1);
-    else {
-      const completed = finishSession();
-      if (completed) {
-        completionPath.current = ROUTES.member.workoutCompletionPath(completed.id);
-        void navigate(completionPath.current);
-      }
+    if (currentIndex < exercises.length - 1) {
+      goToExercise(currentIndex + 1);
+      return;
+    }
+    const logs = { ...session.logs, [exercise.id]: log };
+    // The backend completes a session only when at least one actual set exists.
+    if (!hasLoggedSet({ exercises, logs })) {
+      setError(t('flow.live.noLogs'));
+      return;
+    }
+    const completed = finishSession();
+    if (completed) {
+      completionPath.current = ROUTES.member.workoutCompletionPath(completed.id);
+      void sync();
+      void navigate(completionPath.current);
     }
   };
 
@@ -424,11 +430,14 @@ export function WorkoutExecution() {
     <div className="workout-execution">
       <header className="workout-execution__header">
         <div>
-          <button type="button" onClick={() => navigate(ROUTES.member.workoutDayPath(day.id))}>
+          <button
+            type="button"
+            onClick={() => navigate(ROUTES.member.workoutDayPath(session.dayId))}
+          >
             <ChevronLeft size={17} /> {t('flow.execution.exit')}
           </button>
           <span>
-            {t('flow.execution.liveSession')} / {t(`flow.days.${day.id}`)}
+            {t('flow.execution.liveSession')} / {session.title}
           </span>
         </div>
         <div>
@@ -440,6 +449,11 @@ export function WorkoutExecution() {
           </div>
         </div>
       </header>
+      {error && (
+        <p className="workout-live-notice" role="alert">
+          {error}
+        </p>
+      )}
       <main className="workout-execution__main">
         <section className="workout-exercise-context">
           <span>
@@ -448,13 +462,13 @@ export function WorkoutExecution() {
               total: String(exercises.length).padStart(2, '0'),
             })}
           </span>
-          <h1>{t(`flow.exercises.${exercise.id}`)}</h1>
+          <h1>{exercise.name}</h1>
           <button
             className="workout-exercise-assessment"
             type="button"
             onClick={() =>
               navigate(ROUTES.member.aiAssessmentPath(exercise.id), {
-                state: { returnTo: ROUTES.member.workoutSessionPath(day.id) },
+                state: { returnTo: ROUTES.member.workoutSessionPath(session.dayId) },
               })
             }
           >
@@ -476,13 +490,9 @@ export function WorkoutExecution() {
             onClick={() => goToExercise(index)}
           >
             <span>
-              {activeSession.logs[item.id] ? (
-                <Check size={13} />
-              ) : (
-                String(index + 1).padStart(2, '0')
-              )}
+              {session.logs[item.id] ? <Check size={13} /> : String(index + 1).padStart(2, '0')}
             </span>
-            {t(`flow.exercises.${item.id}`)}
+            {item.name}
             {index === currentIndex && <ChevronRight size={14} />}
           </button>
         ))}

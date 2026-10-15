@@ -1,30 +1,110 @@
 {
-  "achievementTower": {
-    "achievementsPage": {
-      "title": "Thành tích",
-      "back": "Về lịch tập",
-      "tower": "Tháp chinh phục",
-      "floor": "Tầng",
+  "progression": {
+    "back": "Về lịch tập",
+    "eyebrow": "Tiến trình · {{timeZone}}",
+    "title": "Tiến trình của bạn",
+    "loading": "Đang tải tiến trình…",
+    "error": "Không tải được tiến trình. Dữ liệu của bạn không bị mất.",
+    "retry": "Thử lại",
+    "streak": "Chuỗi ngày theo lịch",
+    "best": "Cao nhất: {{count}}",
+    "today": "Hôm nay: {{status}}",
+    "noSchedule": "Chọn ngày tập để bắt đầu chuỗi.",
+    "xp": "XP đã xác nhận",
+    "xpPending": "{{amount}} XP đang xác minh (chốt lúc {{date}})",
+    "workouts": "Buổi tập hoàn thành",
+    "distance": "Quãng đường",
+    "distanceKm": "{{km}} km",
+    "distanceNone": "Chưa có quãng đường",
+    "distanceChoose": "Chọn nguồn",
+    "status": {
+      "NoPlan": "Không có plan",
+      "Rest": "Ngày nghỉ",
+      "Paused": "Tạm dừng",
+      "Completed": "Hoàn thành",
+      "Missed": "Bỏ lỡ",
+      "Pending": "Đang chờ",
+      "Upcoming": "Sắp tới"
+    },
+    "days": {
+      "title": "Các ngày theo lịch",
+      "planDay": "Ngày {{day}}",
+      "empty": "Lịch bắt đầu từ ngày sau khi bạn lưu."
+    },
+    "weekday": {
+      "1": "T2",
+      "2": "T3",
+      "3": "T4",
+      "4": "T5",
+      "5": "T6",
+      "6": "T7",
+      "7": "CN"
+    },
+    "schedule": {
+      "title": "Ngày tập",
+      "body": "Các ngày trong plan lần lượt rơi vào những thứ này; ngày còn lại là ngày nghỉ. Thay đổi áp dụng từ ngày mai, hôm nay đã khóa.",
+      "noPlan": "Cần có workout plan đang hoạt động trước khi chọn ngày tập.",
+      "current": "Hiện tại: {{days}}",
+      "upcoming": "Từ {{date}}: {{days}}",
+      "save": "Lưu ngày tập",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu ngày tập. Áp dụng từ ngày mai.",
+      "pickOne": "Chọn ít nhất một ngày."
+    },
+    "badges": {
+      "title": "Huy hiệu đã đạt",
+      "empty": "Hoàn thành buổi tập đầu tiên để nhận huy hiệu.",
+      "new": "Mới",
+      "earned": "Huy hiệu mới: {{name}} {{tier}}",
       "next": "Mốc tiếp theo",
-      "streak": "Chuỗi ngày hiện tại",
-      "weekly": "Mục tiêu tuần",
-      "shield": "Tiến độ được bảo vệ",
-      "shieldBody": "Tầng đã mở luôn được giữ lại. Ngày nghỉ có kế hoạch không xóa thành tích; người tập quay lại từ tầng gần nhất thay vì bị đưa về đầu.",
-      "unlocked": "Đã mở",
-      "sessions": "Tổng buổi tập",
-      "volume": "Tổng tải",
-      "highestLoad": "Mức tạ cao nhất",
-      "first": "Bước chân đầu tiên",
-      "week": "Nhịp tuần ổn định",
-      "sevenDays": "Ngọn lửa 7 ngày",
-      "month": "Một tháng bền bỉ",
-      "season": "Ba tháng liên tục",
-      "pr": "Thợ săn kỷ lục",
-      "year": "Kỷ luật năm",
-      "summit": "Đỉnh tháp",
-      "start": "Khởi đầu",
-      "consistency": "Duy trì",
-      "mastery": "Chinh phục"
-    }
+      "progress": "{{current}}/{{threshold}}"
+    },
+    "source": {
+      "title": "Nguồn quãng đường chính",
+      "body": "Chỉ nguồn chính được cộng quãng đường; nguồn khác dùng để đối chiếu nên một buổi chạy không bị tính hai lần.",
+      "none": "Chưa chọn",
+      "save": "Dùng nguồn này",
+      "quarantined": "{{count}} hoạt động bị tạm giữ do số liệu bất thường."
+    },
+    "recovery": {
+      "title": "Hồi phục & tạm dừng",
+      "body": "Tự khai báo, không phải chẩn đoán y khoa. Ngày tạm dừng không làm mất chuỗi.",
+      "severity": "Mức độ ảnh hưởng",
+      "Mild": "Nhẹ — chỉ vùng đó",
+      "Severe": "Nặng — ảnh hưởng việc tập chung",
+      "symptom": "Bạn đang gặp gì?",
+      "symptoms": {
+        "Soreness": "Đau nhức cơ",
+        "Fatigue": "Mệt mỏi",
+        "Pain": "Đau",
+        "Injury": "Chấn thương",
+        "Other": "Khác"
+      },
+      "bodyArea": "Vị trí (không bắt buộc)",
+      "notes": "Ghi chú (không bắt buộc)",
+      "submit": "Lưu báo cáo",
+      "submitted": "Đã lưu báo cáo hồi phục.",
+      "recent": "Báo cáo gần đây",
+      "pause": "Tạm dừng plan từ hôm nay",
+      "paused": "Plan tạm dừng từ {{date}}.",
+      "resumeFrom": "Tiếp tục từ {{date}}.",
+      "resume": "Tiếp tục từ ngày mai",
+      "resumed": "Plan sẽ tiếp tục từ ngày mai.",
+      "trainerProposal": "Huấn luyện viên đề nghị tiếp tục: {{note}}",
+      "trainerProposalEmpty": "Huấn luyện viên đề nghị tiếp tục."
+    },
+    "history": {
+      "title": "Lịch sử hoạt động (30 ngày)",
+      "empty": "Không có hoạt động trong 30 ngày qua.",
+      "summary": "{{workouts}} buổi tập · {{pt}} buổi PT · {{external}} nhập từ nguồn ngoài · {{km}} km",
+      "types": {
+        "FitFlexWorkout": "Buổi tập",
+        "PtSession": "Buổi PT",
+        "ExternalActivity": "Nhập ngoài"
+      },
+      "main": "Buổi chính",
+      "xp": "+{{amount}} XP"
+    },
+    "protection": "XP và huy hiệu đã xác nhận không bao giờ bị xóa. Bỏ lỡ một ngày chỉ đặt lại chuỗi hiện tại."
   }
 }

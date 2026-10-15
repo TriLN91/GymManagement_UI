@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 import { useAssessmentStore } from '../model/useAssessmentStore';
 
-import { getWorkoutDay } from '@/features/workout-plans/model/demoWorkoutFlow';
 import { useWorkoutSessionStore } from '@/features/workout-plans/model/useWorkoutSessionStore';
 import { ROUTES } from '@/shared/config/constants';
 
@@ -54,8 +53,7 @@ export function AIAssessmentPage() {
     [previewUrl],
   );
 
-  const day = activeSession ? getWorkoutDay(activeSession.dayId) : undefined;
-  const sessionExerciseId = day?.exercises[activeSession?.currentExerciseIndex ?? 0]?.id;
+  const sessionExerciseId = activeSession?.exercises[activeSession.currentExerciseIndex]?.id;
   const exerciseId = routeExerciseId ?? sessionExerciseId;
   const state = location.state as AssessmentLocationState | null;
   const returnTo =
@@ -64,7 +62,7 @@ export function AIAssessmentPage() {
       ? ROUTES.member.workoutSessionPath(activeSession.dayId)
       : ROUTES.member.workoutSchedule);
   const exerciseName = exerciseId
-    ? t(`flow.exercises.${exerciseId}`, { defaultValue: exerciseId })
+    ? (activeSession?.exercises.find((item) => item.id === exerciseId)?.name ?? exerciseId)
     : copy.noExercise;
 
   const handleQueue = () => {

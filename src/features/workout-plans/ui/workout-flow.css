@@ -1268,3 +1268,139 @@ a.workout-day-card.is-ready:hover {
     grid-column: 2;
   }
 }
+
+/* Live (backend) schedule states */
+.workout-day-card.is-paused,
+.workout-day-card.is-none,
+.workout-day-card.is-pending {
+  color: var(--flow-muted);
+  background: #f4f6f1;
+}
+.workout-day-card.is-missed {
+  color: var(--flow-muted);
+  box-shadow: inset 3px 0 0 hsl(var(--destructive) / 0.55);
+}
+.workout-day-card.is-completed {
+  background: var(--energy-lime-soft);
+}
+.workout-day-card.is-today {
+  outline: 2px solid var(--flow-green);
+  outline-offset: -2px;
+}
+.workout-day-card small {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.workout-live-notice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 18px 0 0;
+  border-left: 3px solid var(--flow-mint);
+  padding: 12px 16px;
+  color: var(--flow-green);
+  font-size: 13px;
+  background: #fff;
+}
+.workout-live-notice.is-quiet {
+  border-left-color: var(--flow-line);
+  color: var(--flow-muted);
+  background: transparent;
+}
+.workout-live-notice button,
+.workout-sync-notice button {
+  border: 1px solid var(--flow-green);
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: var(--flow-green);
+  font-size: 12px;
+  font-weight: 700;
+  background: #fff;
+}
+.workout-sync-notice {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+.workout-sync-notice > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--flow-line);
+  padding: 10px 14px;
+  color: var(--flow-green);
+  font-size: 13px;
+  background: #fff;
+}
+.workout-sync-notice > div.is-rejected {
+  border-color: hsl(var(--destructive) / 0.45);
+  color: hsl(var(--destructive));
+}
+.workout-sync-notice > div.is-synced {
+  background: var(--energy-lime-soft);
+}
+.workout-sync-notice button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: auto;
+}
+.workout-free-picker {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  border: 1px solid var(--flow-line);
+  padding: 20px;
+  background: #fff;
+}
+.workout-free-picker h2 {
+  margin: 0;
+  color: var(--flow-dark);
+  font-size: 20px;
+}
+.workout-free-picker p {
+  margin: 0;
+  color: var(--flow-muted);
+  font-size: 13px;
+}
+.workout-free-picker fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.workout-free-picker legend {
+  margin-bottom: 8px;
+  color: var(--flow-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.workout-free-picker label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  align-items: center;
+  border: 1px solid var(--flow-line);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.workout-free-picker label:has(input:checked) {
+  border-color: var(--flow-green);
+  background: var(--energy-lime-soft);
+}
+.workout-free-picker input {
+  accent-color: var(--flow-green);
+}
+.workout-free-picker small {
+  grid-column: 2;
+  color: var(--flow-muted);
+}
+.workout-free-picker > .workout-flow__primary {
+  justify-self: start;
+}
