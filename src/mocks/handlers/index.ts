@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 import { adminRegistrationHandlers } from './adminRegistrations';
+import { appointmentHandlers } from './appointments';
 import { assignmentHandlers } from './assignments';
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
@@ -17,6 +18,7 @@ export const handlers = [
   ...authHandlers,
   ...adminRegistrationHandlers,
   ...assignmentHandlers,
+  ...appointmentHandlers,
   ...gymOwnerHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,

@@ -1,0 +1,135 @@
+{
+  "title": {
+    "member": "My coaching sessions",
+    "trainer": "Session schedule",
+    "managed": "Trainer assignments"
+  },
+  "status": {
+    "Proposed": "Waiting for reply",
+    "Scheduled": "Confirmed",
+    "Completed": "Completed",
+    "NoShow": "No-show",
+    "Cancelled": "Cancelled",
+    "Reassigned": "Substitute Trainer pending"
+  },
+  "assignments": {
+    "heading": "Training packages",
+    "empty": "No active training package yet. Sessions can be booked once a Trainer is assigned.",
+    "period": "{{from}} – {{to}}",
+    "remaining": "{{count}} sessions left ({{used}}/{{total}} used)",
+    "unlimited": "No session limit ({{used}} used)",
+    "trainer": "Trainer: {{name}}",
+    "member": "Member: {{name}}"
+  },
+  "propose": {
+    "heading": "Propose a session",
+    "assignment": "Package",
+    "when": "Date and time",
+    "duration": "Duration (minutes)",
+    "notes": "Notes",
+    "submit": "Send proposal",
+    "sent": "Proposal sent. Waiting for the other side to confirm.",
+    "availability": "Trainer is available",
+    "noAvailability": "The Trainer has not restricted their hours.",
+    "dayShort": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    }
+  },
+  "list": {
+    "awaiting": "Needs your reply",
+    "upcoming": "Upcoming",
+    "history": "History",
+    "empty": "No sessions yet.",
+    "loading": "Loading sessions…",
+    "error": "Could not load sessions.",
+    "with": "With {{name}}",
+    "proposedBy": "Proposed by {{role}}",
+    "duration": "{{minutes}} min",
+    "charged": "Counted as a used session",
+    "free": "Not counted",
+    "substitute": "Substitute for {{name}}",
+    "cancelReason": "Reason: {{reason}}"
+  },
+  "role": { "Member": "Member", "Trainer": "Trainer" },
+  "action": {
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel session",
+    "reschedule": "Reschedule",
+    "complete": "Mark completed",
+    "noShow": "Mark no-show",
+    "withdraw": "Withdraw request",
+    "confirm": "Confirm",
+    "back": "Back",
+    "reason": "Reason",
+    "emergency": "Emergency (inside the notice window, does not count against the Member)",
+    "newTime": "New date and time"
+  },
+  "change": {
+    "pending": "Reschedule requested: {{from}} → {{to}}",
+    "reason": "Reason: {{reason}}",
+    "emergency": "Emergency",
+    "waiting": "Waiting for the other side to answer."
+  },
+  "toast": {
+    "accepted": "Session confirmed.",
+    "declined": "Proposal declined.",
+    "cancelled": "Session cancelled.",
+    "completed": "Session completed.",
+    "noShow": "No-show recorded.",
+    "rescheduleSent": "Reschedule request sent.",
+    "rescheduleAccepted": "Reschedule accepted.",
+    "rescheduleDeclined": "Reschedule declined; the original time stays.",
+    "rescheduleWithdrawn": "Reschedule request withdrawn.",
+    "failed": "Something went wrong. Please try again."
+  },
+  "availability": {
+    "heading": "Weekly availability",
+    "hint": "Members can only book inside these windows (times in Vietnam time, UTC+{{offset}}). Leave it empty for no restriction.",
+    "add": "Add window",
+    "remove": "Remove",
+    "day": "Day",
+    "start": "From",
+    "end": "To",
+    "save": "Save availability",
+    "saved": "Availability saved.",
+    "empty": "No windows yet."
+  },
+  "trainerChange": {
+    "heading": "Change Trainer",
+    "request": "Request a new Trainer",
+    "reason": "Why do you want to change?",
+    "submit": "Send request",
+    "sent": "Request sent. Your gym will suggest another Trainer.",
+    "waitingManager": "Your request is with the gym. They will suggest a new Trainer.",
+    "proposed": "The gym suggests {{name}} as your new Trainer.",
+    "accept": "Accept new Trainer",
+    "decline": "Keep current Trainer",
+    "accepted": "Your Trainer has been changed.",
+    "declined": "You kept your current Trainer.",
+    "carryOver": "Remaining sessions and future bookings move to the new Trainer."
+  },
+  "managed": {
+    "heading": "Member assignments",
+    "empty": "No assignments in your branches yet.",
+    "loading": "Loading assignments…",
+    "error": "Could not load assignments.",
+    "sessions": "{{used}}/{{total}} sessions used",
+    "unlimited": "{{used}} sessions used",
+    "memberRequested": "Member asked to change Trainer: {{reason}}",
+    "awaitingMember": "Waiting for the Member to confirm {{name}}.",
+    "change": "Change Trainer",
+    "newTrainer": "New Trainer",
+    "pick": "Choose a Trainer",
+    "reason": "Reason (optional)",
+    "submit": "Propose Trainer",
+    "proposed": "Proposal sent. Waiting for the Member to confirm.",
+    "branch": "Branch: {{name}}"
+  }
+}

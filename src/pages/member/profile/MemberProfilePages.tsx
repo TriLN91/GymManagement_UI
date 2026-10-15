@@ -15,8 +15,6 @@ import {
   EyeOff,
   HeartPulse,
   Laptop,
-  LockKeyhole,
-  MapPin,
   RefreshCw,
   ScanLine,
   ShieldCheck,
@@ -767,83 +765,6 @@ export function AssessmentDetailPage() {
           </>
         )
       )}
-    </div>
-  );
-}
-
-export function PTAppointmentsPage() {
-  const { copy, language, locale } = useProfileCopy();
-  const [selected, setSelected] = useState(trainerAppointments[0]?.id ?? '');
-  const appointment = trainerAppointments.find((item) => item.id === selected);
-  return (
-    <div className="member-profile-page">
-      <ProfileActions>
-        <span className="profile-readonly-pill">
-          <LockKeyhole size={14} />
-          {copy.readOnly}
-        </span>
-      </ProfileActions>
-      <div className="appointment-layout">
-        <section className="appointment-list">
-          <h2>{copy.upcoming}</h2>
-          {trainerAppointments.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={cn(item.id === selected && 'is-selected')}
-              onClick={() => setSelected(item.id)}
-            >
-              <time>
-                <strong>{new Date(item.startsAt).getDate()}</strong>
-                <span>
-                  {new Intl.DateTimeFormat(locale, {
-                    month: 'short',
-                  }).format(new Date(item.startsAt))}
-                </span>
-              </time>
-              <div>
-                <strong>{copy.appointmentTypes[item.type]}</strong>
-                <span>{item.trainerName}</span>
-                <small>{formatDate(item.startsAt, locale, true)}</small>
-              </div>
-              <em className={`is-${item.status}`}>
-                {item.status === 'confirmed' ? copy.confirmed : copy.waiting}
-              </em>
-            </button>
-          ))}
-        </section>
-        {appointment && (
-          <aside className="appointment-detail">
-            <Avatar name={appointment.trainerName} />
-            <span>{copy.trainerBadge}</span>
-            <h2>{appointment.trainerName}</h2>
-            <p>{appointment.note[language]}</p>
-            <dl>
-              <div>
-                <dt>
-                  <CalendarDays size={16} />
-                  {copy.appointments}
-                </dt>
-                <dd>{formatDate(appointment.startsAt, locale, true)}</dd>
-              </div>
-              <div>
-                <dt>
-                  <Clock3 size={16} />
-                  {copy.duration}
-                </dt>
-                <dd>{appointment.durationMinutes} min</dd>
-              </div>
-              <div>
-                <dt>
-                  <MapPin size={16} />
-                  Location
-                </dt>
-                <dd>{appointment.location[language]}</dd>
-              </div>
-            </dl>
-          </aside>
-        )}
-      </div>
     </div>
   );
 }

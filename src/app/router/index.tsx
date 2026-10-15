@@ -117,8 +117,13 @@ const AssessmentDetailPage = lazy(() =>
   })),
 );
 const PTAppointmentsPage = lazy(() =>
-  import('@/pages/member/profile/MemberProfilePages').then((m) => ({
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.PTAppointmentsPage,
+  })),
+);
+const TrainerAssignmentsPage = lazy(() =>
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
+    default: m.TrainerAssignmentsPage,
   })),
 );
 const WearableConnectionsPage = lazy(() =>
@@ -183,7 +188,7 @@ const TrainerMemberWorkoutPage = lazy(() =>
   })),
 );
 const TrainerAppointmentsPage = lazy(() =>
-  import('@/pages/pt/workspace/TrainerWorkspacePages').then((m) => ({
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.TrainerAppointmentsPage,
   })),
 );
@@ -214,11 +219,6 @@ const GymOwnerTrainerFormPage = lazy(() =>
 const GymOwnerTrainerDetailPage = lazy(() =>
   import('@/features/gym-owner-training').then((m) => ({
     default: m.GymOwnerTrainerDetailPage,
-  })),
-);
-const GymOwnerAssignmentExceptionsPage = lazy(() =>
-  import('@/features/gym-owner-training').then((m) => ({
-    default: m.GymOwnerAssignmentExceptionsPage,
   })),
 );
 const GymOwnerPTPackageListPage = lazy(() =>
@@ -570,7 +570,7 @@ const router = createBrowserRouter([
                   },
                   {
                     path: ROUTES.admin.trainerAssignments,
-                    element: <GymOwnerAssignmentExceptionsPage />,
+                    element: <TrainerAssignmentsPage />,
                   },
                   {
                     path: ROUTES.admin.trainerEdit,

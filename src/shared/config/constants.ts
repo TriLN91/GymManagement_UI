@@ -175,6 +175,14 @@ export const QUERY_KEYS = Object.freeze({
   ownerGyms: () => ['gym-owner', 'gyms'] as const,
   ownerTrainers: (gymId?: string) => ['gym-owner', 'trainers', { gymId: gymId ?? null }] as const,
   fitnessProfile: () => ['coaching', 'me', 'profile'] as const,
+  appointments: () => ['appointments'] as const,
+  myAppointments: (scope: string) => ['appointments', 'mine', scope] as const,
+  appointmentAssignments: () => ['appointments', 'assignments'] as const,
+  assignmentAvailability: (assignmentId: string) =>
+    ['appointments', 'availability', assignmentId] as const,
+  trainerAvailability: () => ['appointments', 'trainer-availability'] as const,
+  managedAssignments: () => ['appointments', 'managed-assignments'] as const,
+  trainerChanges: () => ['appointments', 'trainer-changes'] as const,
   myAssignments: () => ['coaching', 'me', 'assignments'] as const,
   assignedMemberProfile: (memberProfileId: string) =>
     ['coaching', 'members', memberProfileId, 'profile'] as const,

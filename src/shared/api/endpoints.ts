@@ -37,6 +37,33 @@ export const ENDPOINTS = {
     approve: (userId: string) => `/admin/registrations/gym-admins/${userId}/approve`,
     reject: (userId: string) => `/admin/registrations/gym-admins/${userId}/reject`,
   },
+  // CF04: coaching sessions, Trainer availability and change of primary Trainer (backend AppointmentsController).
+  appointments: {
+    mine: '/appointments/mine',
+    assignments: '/appointments/assignments',
+    availability: '/appointments/availability',
+    create: '/appointments',
+    detail: (id: string) => `/appointments/${id}`,
+    accept: (id: string) => `/appointments/${id}/accept`,
+    decline: (id: string) => `/appointments/${id}/decline`,
+    cancel: (id: string) => `/appointments/${id}/cancel`,
+    complete: (id: string) => `/appointments/${id}/complete`,
+    noShow: (id: string) => `/appointments/${id}/no-show`,
+    reschedule: (id: string) => `/appointments/${id}/reschedule`,
+    changeAccept: (changeId: string) => `/appointments/changes/${changeId}/accept`,
+    changeDecline: (changeId: string) => `/appointments/changes/${changeId}/decline`,
+    changeWithdraw: (changeId: string) => `/appointments/changes/${changeId}/withdraw`,
+    trainerAvailability: '/trainer/availability',
+    consentReassign: (id: string) => `/marketplace/orders/appointments/${id}/consent-reassign`,
+  },
+  trainerChanges: {
+    list: '/coaching/trainer-changes',
+    managedAssignments: '/coaching/assignments/managed',
+    request: (assignmentId: string) =>
+      `/coaching/assignments/${assignmentId}/trainer-changes/request`,
+    propose: (assignmentId: string) => `/coaching/assignments/${assignmentId}/trainer-changes`,
+    respond: (changeId: string) => `/coaching/trainer-changes/${changeId}/respond`,
+  },
   // Gym Admin creates Trainer accounts for their own Gym (backend GymOwnerController).
   gymOwner: {
     myGyms: '/gym-owner/brands/me',

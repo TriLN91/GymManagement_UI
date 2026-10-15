@@ -1,0 +1,135 @@
+{
+  "title": {
+    "member": "Buổi tập với huấn luyện viên",
+    "trainer": "Lịch buổi tập",
+    "managed": "Phân công huấn luyện viên"
+  },
+  "status": {
+    "Proposed": "Chờ phản hồi",
+    "Scheduled": "Đã xác nhận",
+    "Completed": "Đã hoàn thành",
+    "NoShow": "Vắng mặt",
+    "Cancelled": "Đã huỷ",
+    "Reassigned": "Chờ xác nhận người dạy thay"
+  },
+  "assignments": {
+    "heading": "Gói huấn luyện",
+    "empty": "Chưa có gói huấn luyện đang hoạt động. Bạn đặt lịch được sau khi có huấn luyện viên phụ trách.",
+    "period": "{{from}} – {{to}}",
+    "remaining": "Còn {{count}} buổi (đã dùng {{used}}/{{total}})",
+    "unlimited": "Không giới hạn số buổi (đã dùng {{used}})",
+    "trainer": "Huấn luyện viên: {{name}}",
+    "member": "Học viên: {{name}}"
+  },
+  "propose": {
+    "heading": "Đề xuất buổi tập",
+    "assignment": "Gói",
+    "when": "Ngày giờ",
+    "duration": "Thời lượng (phút)",
+    "notes": "Ghi chú",
+    "submit": "Gửi đề xuất",
+    "sent": "Đã gửi đề xuất. Chờ bên kia xác nhận.",
+    "availability": "Huấn luyện viên rảnh",
+    "noAvailability": "Huấn luyện viên chưa giới hạn khung giờ.",
+    "dayShort": {
+      "0": "CN",
+      "1": "T2",
+      "2": "T3",
+      "3": "T4",
+      "4": "T5",
+      "5": "T6",
+      "6": "T7"
+    }
+  },
+  "list": {
+    "awaiting": "Cần bạn phản hồi",
+    "upcoming": "Sắp tới",
+    "history": "Lịch sử",
+    "empty": "Chưa có buổi tập nào.",
+    "loading": "Đang tải buổi tập…",
+    "error": "Không tải được buổi tập.",
+    "with": "Với {{name}}",
+    "proposedBy": "{{role}} đề xuất",
+    "duration": "{{minutes}} phút",
+    "charged": "Tính vào số buổi đã dùng",
+    "free": "Không tính vào số buổi",
+    "substitute": "Dạy thay {{name}}",
+    "cancelReason": "Lý do: {{reason}}"
+  },
+  "role": { "Member": "Học viên", "Trainer": "Huấn luyện viên" },
+  "action": {
+    "accept": "Chấp nhận",
+    "decline": "Từ chối",
+    "cancel": "Huỷ buổi",
+    "reschedule": "Dời lịch",
+    "complete": "Đánh dấu hoàn thành",
+    "noShow": "Đánh dấu vắng mặt",
+    "withdraw": "Rút yêu cầu",
+    "confirm": "Xác nhận",
+    "back": "Quay lại",
+    "reason": "Lý do",
+    "emergency": "Khẩn cấp (trong thời hạn báo trước, không tính vào học viên)",
+    "newTime": "Ngày giờ mới"
+  },
+  "change": {
+    "pending": "Yêu cầu dời lịch: {{from}} → {{to}}",
+    "reason": "Lý do: {{reason}}",
+    "emergency": "Khẩn cấp",
+    "waiting": "Đang chờ bên kia trả lời."
+  },
+  "toast": {
+    "accepted": "Đã xác nhận buổi tập.",
+    "declined": "Đã từ chối đề xuất.",
+    "cancelled": "Đã huỷ buổi tập.",
+    "completed": "Đã hoàn thành buổi tập.",
+    "noShow": "Đã ghi nhận vắng mặt.",
+    "rescheduleSent": "Đã gửi yêu cầu dời lịch.",
+    "rescheduleAccepted": "Đã đồng ý dời lịch.",
+    "rescheduleDeclined": "Đã từ chối dời lịch; giữ giờ cũ.",
+    "rescheduleWithdrawn": "Đã rút yêu cầu dời lịch.",
+    "failed": "Có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "availability": {
+    "heading": "Lịch rảnh hằng tuần",
+    "hint": "Học viên chỉ đặt lịch trong các khung này (giờ Việt Nam, UTC+{{offset}}). Để trống nếu không giới hạn.",
+    "add": "Thêm khung giờ",
+    "remove": "Xoá",
+    "day": "Thứ",
+    "start": "Từ",
+    "end": "Đến",
+    "save": "Lưu lịch rảnh",
+    "saved": "Đã lưu lịch rảnh.",
+    "empty": "Chưa có khung giờ nào."
+  },
+  "trainerChange": {
+    "heading": "Đổi huấn luyện viên",
+    "request": "Yêu cầu đổi huấn luyện viên",
+    "reason": "Vì sao bạn muốn đổi?",
+    "submit": "Gửi yêu cầu",
+    "sent": "Đã gửi yêu cầu. Phòng tập sẽ đề xuất huấn luyện viên khác.",
+    "waitingManager": "Yêu cầu đang ở phòng tập. Họ sẽ đề xuất huấn luyện viên mới.",
+    "proposed": "Phòng tập đề xuất {{name}} làm huấn luyện viên mới của bạn.",
+    "accept": "Đồng ý đổi",
+    "decline": "Giữ huấn luyện viên hiện tại",
+    "accepted": "Đã đổi huấn luyện viên.",
+    "declined": "Bạn giữ huấn luyện viên hiện tại.",
+    "carryOver": "Số buổi còn lại và các buổi đã đặt sẽ chuyển sang huấn luyện viên mới."
+  },
+  "managed": {
+    "heading": "Phân công học viên",
+    "empty": "Chưa có phân công nào ở chi nhánh của bạn.",
+    "loading": "Đang tải phân công…",
+    "error": "Không tải được phân công.",
+    "sessions": "Đã dùng {{used}}/{{total}} buổi",
+    "unlimited": "Đã dùng {{used}} buổi",
+    "memberRequested": "Học viên xin đổi huấn luyện viên: {{reason}}",
+    "awaitingMember": "Đang chờ học viên xác nhận {{name}}.",
+    "change": "Đổi huấn luyện viên",
+    "newTrainer": "Huấn luyện viên mới",
+    "pick": "Chọn huấn luyện viên",
+    "reason": "Lý do (không bắt buộc)",
+    "submit": "Đề xuất huấn luyện viên",
+    "proposed": "Đã gửi đề xuất. Chờ học viên xác nhận.",
+    "branch": "Chi nhánh: {{name}}"
+  }
+}
