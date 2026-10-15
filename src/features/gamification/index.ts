@@ -1,1 +1,1 @@
-export { AchievementsPage } from './ui/AchievementTowerPage';
+export { AchievementsPage } from './ui/ProgressionPage';

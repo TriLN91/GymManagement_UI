@@ -177,6 +177,13 @@ export const QUERY_KEYS = Object.freeze({
     ['movement-reference-sets', { exerciseId: exerciseId ?? null }] as const,
   referenceSet: (referenceSetId: string) =>
     ['movement-reference-sets', 'detail', referenceSetId] as const,
+  workoutPlans: () => ['workouts', 'plans'] as const,
+  workoutExercises: () => ['workouts', 'exercises'] as const,
+  workoutSessions: () => ['workouts', 'sessions'] as const,
+  progressionState: () => ['progression', 'state'] as const,
+  progressionHistory: () => ['progression', 'history'] as const,
+  progressionSchedule: () => ['progression', 'schedule'] as const,
+  progressionRecovery: () => ['progression', 'recovery'] as const,
 });
 
 export type RouteTree = typeof ROUTES;

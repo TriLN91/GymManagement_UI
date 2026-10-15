@@ -1,30 +1,110 @@
 {
-  "achievementTower": {
-    "achievementsPage": {
-      "title": "Achievements",
-      "back": "Back to schedule",
-      "tower": "Progression tower",
-      "floor": "Floor",
-      "next": "Next milestone",
-      "streak": "Current day streak",
-      "weekly": "Weekly target",
-      "shield": "Progress is protected",
-      "shieldBody": "Unlocked floors remain permanent. Planned rest never erases achievements; members return from their nearest floor instead of starting over.",
-      "unlocked": "Unlocked",
-      "sessions": "Total sessions",
-      "volume": "Total volume",
-      "highestLoad": "Highest load",
-      "first": "First step",
-      "week": "Weekly rhythm",
-      "sevenDays": "Seven-day flame",
-      "month": "Consistent month",
-      "season": "Three-month run",
-      "pr": "Record hunter",
-      "year": "Year discipline",
-      "summit": "Tower summit",
-      "start": "Start",
-      "consistency": "Consistency",
-      "mastery": "Mastery"
-    }
+  "progression": {
+    "back": "Back to schedule",
+    "eyebrow": "Progression · {{timeZone}}",
+    "title": "Your progression",
+    "loading": "Loading your progression…",
+    "error": "We couldn't load your progression. Nothing has been lost.",
+    "retry": "Try again",
+    "streak": "Scheduled-day streak",
+    "best": "Best: {{count}}",
+    "today": "Today: {{status}}",
+    "noSchedule": "Set your training days to start a streak.",
+    "xp": "Confirmed XP",
+    "xpPending": "{{amount}} XP being verified (confirms {{date}})",
+    "workouts": "Completed workouts",
+    "distance": "Distance",
+    "distanceKm": "{{km}} km",
+    "distanceNone": "No distance yet",
+    "distanceChoose": "Choose a source",
+    "status": {
+      "NoPlan": "No plan",
+      "Rest": "Rest day",
+      "Paused": "Paused",
+      "Completed": "Completed",
+      "Missed": "Missed",
+      "Pending": "Pending",
+      "Upcoming": "Upcoming"
+    },
+    "days": {
+      "title": "Scheduled days",
+      "planDay": "Day {{day}}",
+      "empty": "Your schedule starts the day after you save it."
+    },
+    "weekday": {
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat",
+      "7": "Sun"
+    },
+    "schedule": {
+      "title": "Training days",
+      "body": "Your plan days follow these weekdays in order; other days are rest days. Changes apply from tomorrow, today stays locked.",
+      "noPlan": "You need an active workout plan before choosing training days.",
+      "current": "Current: {{days}}",
+      "upcoming": "From {{date}}: {{days}}",
+      "save": "Save training days",
+      "saving": "Saving…",
+      "saved": "Training days saved. They apply from tomorrow.",
+      "pickOne": "Choose at least one day."
+    },
+    "badges": {
+      "title": "Badges earned",
+      "empty": "Complete your first workout to earn a badge.",
+      "new": "New",
+      "earned": "New badge: {{name}} {{tier}}",
+      "next": "Next milestones",
+      "progress": "{{current}}/{{threshold}}"
+    },
+    "source": {
+      "title": "Primary distance source",
+      "body": "Only your primary source adds distance; other sources are kept for reference so the same run is not counted twice.",
+      "none": "Not chosen",
+      "save": "Use this source",
+      "quarantined": "{{count}} activity held back for implausible values."
+    },
+    "recovery": {
+      "title": "Recovery & pause",
+      "body": "Self-reported, not a medical diagnosis. Paused days never break your streak.",
+      "severity": "How much does it affect you?",
+      "Mild": "Mild — only that area",
+      "Severe": "Severe — affects training overall",
+      "symptom": "What are you feeling?",
+      "symptoms": {
+        "Soreness": "Soreness",
+        "Fatigue": "Fatigue",
+        "Pain": "Pain",
+        "Injury": "Injury",
+        "Other": "Other"
+      },
+      "bodyArea": "Body area (optional)",
+      "notes": "Notes (optional)",
+      "submit": "Save report",
+      "submitted": "Recovery report saved.",
+      "recent": "Recent reports",
+      "pause": "Pause my plan from today",
+      "paused": "Plan paused since {{date}}.",
+      "resumeFrom": "Resumes on {{date}}.",
+      "resume": "Resume from tomorrow",
+      "resumed": "Your plan resumes tomorrow.",
+      "trainerProposal": "Your trainer suggests resuming: {{note}}",
+      "trainerProposalEmpty": "Your trainer suggests resuming."
+    },
+    "history": {
+      "title": "Activity history (30 days)",
+      "empty": "No activity in the last 30 days.",
+      "summary": "{{workouts}} workouts · {{pt}} PT sessions · {{external}} imported · {{km}} km",
+      "types": {
+        "FitFlexWorkout": "Workout",
+        "PtSession": "PT session",
+        "ExternalActivity": "Imported"
+      },
+      "main": "Main session",
+      "xp": "+{{amount}} XP"
+    },
+    "protection": "Confirmed XP and badges are never removed. A missed day only resets the current streak."
   }
 }
