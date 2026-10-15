@@ -3,6 +3,10 @@ import type { PlatformApprovalKind, PlatformApprovalStatus, RejectionReason } fr
 export const platformApprovalsCopy = {
   en: {
     sample: 'Sample data',
+    loading: 'Loading…',
+    loadFailed: 'Could not load the records. Please try again.',
+    decisionFailed: 'The decision could not be saved. Please try again.',
+    noDocuments: 'No documents were submitted with this application.',
     detail: 'Detail',
     back: 'Back to queue',
     submitted: 'Submitted',
@@ -53,6 +57,10 @@ export const platformApprovalsCopy = {
   },
   vi: {
     sample: 'Dữ liệu minh họa',
+    loading: 'Đang tải…',
+    loadFailed: 'Không tải được danh sách. Vui lòng thử lại.',
+    decisionFailed: 'Không lưu được quyết định. Vui lòng thử lại.',
+    noDocuments: 'Hồ sơ này chưa kèm tài liệu nào.',
     detail: 'Xem chi tiết',
     back: 'Quay lại hàng chờ',
     submitted: 'Đã nộp',

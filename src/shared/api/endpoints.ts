@@ -19,12 +19,28 @@ export const ENDPOINTS = {
       trainingProfile: '/coaching/me/training-profile',
       nutritionProfile: '/coaching/me/nutrition-profile',
       bodyCheckins: '/coaching/me/body-checkins',
+      profile: '/coaching/me/profile',
+      assignments: '/coaching/me/assignments',
     },
+    memberProfile: (memberProfileId: string) => `/coaching/members/${memberProfileId}/profile`,
+    memberBodyCheckins: (memberId: string) => `/coaching/members/${memberId}/body-checkins`,
     plan: '/coaching/plans/current',
     planHistory: (memberId: string) => `/coaching/plans/history/${memberId}`,
     checkin: '/coaching/checkins',
     feedback: '/coaching/feedback',
     history: '/coaching/plans/history',
+  },
+  // Platform Admin review of Gym Admin self-registrations (backend AdminRegistrationsController).
+  adminRegistrations: {
+    gymAdmins: '/admin/registrations/gym-admins',
+    gymAdmin: (userId: string) => `/admin/registrations/gym-admins/${userId}`,
+    approve: (userId: string) => `/admin/registrations/gym-admins/${userId}/approve`,
+    reject: (userId: string) => `/admin/registrations/gym-admins/${userId}/reject`,
+  },
+  // Gym Admin creates Trainer accounts for their own Gym (backend GymOwnerController).
+  gymOwner: {
+    myGyms: '/gym-owner/brands/me',
+    trainers: '/gym-owner/trainers',
   },
   exercises: {
     list: '/workout/exercises',

@@ -37,3 +37,36 @@ export interface BodyInput {
   bodyFatMethod: string | null;
   notes: string | null;
 }
+
+// Read side (backend ProfileView / BodyView). Fields the wizard does not restore are omitted.
+export interface BackendProfile {
+  memberProfileId: string;
+  revision: number;
+  goal: {
+    goalType: string;
+    description: string | null;
+    targetWeightKg: number | null;
+    targetDate: string | null;
+  } | null;
+  training: {
+    experienceLevel: string;
+    weeklyWorkoutDays: number;
+    sessionDurationMinutes: number;
+    equipmentAccess: string;
+    hasLimitations: boolean;
+    limitationNotes: string | null;
+  } | null;
+  nutrition: {
+    dateOfBirth: string | null;
+    sexForEquation: 'Male' | 'Female' | null;
+    activityBaseline: string | null;
+  } | null;
+}
+
+export interface BackendBody {
+  checkedInAtUtc: string;
+  weightKg: number | null;
+  heightCm: number | null;
+  bodyFatPercentage: number | null;
+  bodyFatMethod: string | null;
+}

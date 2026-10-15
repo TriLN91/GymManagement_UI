@@ -1,3 +1,4 @@
+export { useMyGyms } from './model/useOwnerTrainers';
 export { GymOwnerAssignmentExceptionsPage } from './ui/AssignmentExceptionsPage';
 export {
   GymOwnerPTPackageDetailPage,

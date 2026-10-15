@@ -39,6 +39,7 @@ import {
 } from '@/features/member-workout-builder/model/muscleMapData';
 import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
 import {
+  AssignedMembersPanel,
   getTrainerExercise,
   getTrainerMember,
   trainerExercises,
@@ -340,6 +341,7 @@ export function TrainerMembersPage() {
   };
   return (
     <div className="trainer-workspace-page">
+      <AssignedMembersPanel />
       <section className="trainer-filter-panel">
         <label className="trainer-search">
           <Search size={16} />

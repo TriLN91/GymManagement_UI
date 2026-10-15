@@ -95,5 +95,26 @@
     "addedDays_skipped_one": "Added to {{count}} day; skipped {{skipped}} duplicate day(s).",
     "addedDays_skipped_other": "Added to {{count}} days; skipped {{skipped}} duplicate day(s).",
     "alreadyScheduled": "This exercise is already scheduled for {{day}}."
+  },
+  "assignedMembers": {
+    "title": "Members assigned to you",
+    "loading": "Loading members…",
+    "error": "The assigned members could not be loaded.",
+    "empty": "You have no assigned members yet.",
+    "current": "Active",
+    "ended": "Ended",
+    "canRead": "View fitness profile",
+    "canWorkout": "Manage workouts",
+    "canNutrition": "Manage nutrition",
+    "viewProfile": "View fitness profile",
+    "hideProfile": "Hide profile",
+    "loadingProfile": "Loading profile…",
+    "profileError": "The profile could not be loaded. The assignment may have ended or read access was removed.",
+    "goal": "Goal",
+    "training": "Training",
+    "trainingSummary": "{{level}} · {{days}} days/week · {{minutes}} min/session",
+    "limitations": "Movement limitations",
+    "yes": "Yes",
+    "none": "None"
   }
 }

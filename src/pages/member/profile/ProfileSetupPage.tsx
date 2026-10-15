@@ -24,6 +24,7 @@ import {
   calculateProfileReadiness,
   estimateEnergy,
   getInjuryAdvice,
+  useHydrateFitnessProfile,
   useProfileSetupStore,
   useSyncFitnessProfile,
   type MemberFitnessProfile,
@@ -308,6 +309,7 @@ export function ProfileSetupPage() {
   const setStep = useProfileSetupStore((state) => state.setCurrentStep);
   const completeProfile = useProfileSetupStore((state) => state.completeProfile);
   const syncProfile = useSyncFitnessProfile();
+  useHydrateFitnessProfile();
   const readiness = useMemo(() => calculateProfileReadiness(profile), [profile]);
   const setSection = <K extends keyof MemberFitnessProfile>(
     section: K,

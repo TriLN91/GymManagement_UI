@@ -35,7 +35,10 @@ const approvedOnboarding = {
 async function loginApprovedGymOwner(page: Page) {
   await page.goto('/login');
   await page.evaluate(() => {
-    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
+    {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    }
     window.sessionStorage.clear();
     window.localStorage.setItem('gmc.locale', 'en');
   });
@@ -54,33 +57,49 @@ async function loginApprovedGymOwner(page: Page) {
   }
 }
 
-test.describe('Gym Owner Trainer and PT Package management', () => {
-  test('creates a Trainer draft and submits it to Platform without owner approval', async ({
-    page,
-  }) => {
-    await loginApprovedGymOwner(page);
-    await page.goto('/admin/pts');
-    await expect(page.getByText('Pending Platform approval').first()).toBeVisible();
-    await expect(page.getByText('Suspended').first()).toBeVisible();
+// A Gym Admin whose gym a Platform Admin already approved (seeded in the MSW registry): the local
+// onboarding approval is not repeated, so the portal opens straight on the dashboard.
+async function loginOwnerWithApprovedGym(page: Page) {
+  await page.goto('/login');
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('gmc.locale', 'en');
+  });
+  await page.reload();
+  await page.getByLabel(/email/i).fill('owner@demo.gym');
+  await page.getByLabel(/mật khẩu|password/i).fill('Password1!');
+  await page.getByRole('button', { name: /sign in|đăng nhập/i }).click();
+  // The approval is detected asynchronously; the Trainer menu only exists once it is applied.
+  await expect(page.getByRole('button', { name: 'Trainers' })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin$/);
+}
 
-    await page.getByRole('link', { name: 'Create Trainer profile' }).click();
+test.describe('Gym Owner Trainer and PT Package management', () => {
+  test('creates a Trainer account that belongs to the Gym Admin gym', async ({ page }) => {
+    await loginOwnerWithApprovedGym(page);
+    await page.goto('/admin/pts');
+    await expect(page.getByText('No Trainer accounts yet.')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Create Trainer account' }).click();
+    // Short passwords are rejected before any request is sent.
     await page.getByLabel('Full name').fill('Mira Coach');
     await page.getByLabel('Email').fill('mira@fit.local');
+    await page.getByLabel('Initial password').fill('123');
+    await page.getByRole('button', { name: 'Create Trainer account' }).click();
+    await expect(page.getByRole('alert')).toContainText('password');
+
+    await page.getByLabel('Initial password').fill('Pass-12345');
     await page.getByLabel('Phone').fill('0901112233');
     await page.getByLabel('Years of experience').fill('5');
     await page.getByLabel('Professional bio').fill('Strength and movement coach.');
-    await page.getByLabel('Self-introduction').fill('Clear coaching and measurable progress.');
-    await page.getByLabel('Strength').check();
-    await page.getByRole('button', { name: 'Save profile' }).click();
+    await page.getByRole('button', { name: 'Create Trainer account' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Mira Coach' })).toBeVisible();
-    await expect(page.getByText('Draft').first()).toBeVisible();
-    await page.getByRole('button', { name: 'Submit for Platform approval' }).click();
-    await expect(page.getByRole('dialog')).toContainText('Platform');
-    await page.getByRole('dialog').getByRole('button', { name: 'Confirm submission' }).click();
-    await expect(page.getByText('Pending Platform approval').first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Edit' })).toHaveCount(0);
-    await expect(page.getByText('Gym Owner cannot approve it.')).toBeVisible();
+    await expect(page).toHaveURL(/\/admin\/pts$/);
+    const accounts = page.getByRole('region', { name: 'Gym trainers' });
+    await expect(accounts.getByText('Mira Coach')).toBeVisible();
+    await expect(accounts.getByText('mira@fit.local')).toBeVisible();
+    await expect(accounts.getByText('Demo Fitness Club')).toBeVisible();
   });
 
   test('enforces operational lifecycle and terminal Unlinked state', async ({ page }) => {

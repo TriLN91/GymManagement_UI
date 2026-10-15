@@ -19,9 +19,11 @@ import {
   type TrainerOperationalStatus,
 } from '../model/types';
 import { useGymOwnerTrainingStore } from '../model/useGymOwnerTrainingStore';
+import { useOwnerTrainers } from '../model/useOwnerTrainers';
 
 import { gymOwnerTrainingCopy } from './copy';
 import { ManagementState } from './ManagementState';
+import { TrainerAccountFormPage } from './TrainerAccountForm';
 import { ApprovalBadge, DetailRow, OperationalBadge, TrainerAvatar } from './TrainingShared';
 
 import { ROUTES } from '@/shared/config/constants';
@@ -57,6 +59,7 @@ export function GymOwnerTrainerListPage() {
   const openExceptions = useGymOwnerTrainingStore(
     (state) => state.assignmentExceptions.filter((item) => item.status === 'open').length,
   );
+  const accounts = useOwnerTrainers();
 
   return (
     <WorkspacePage width="wide" className="gym-training-page">
@@ -77,7 +80,37 @@ export function GymOwnerTrainerListPage() {
         </Button>
       </div>
 
-      <WorkspacePanel className="gym-training-list-panel">
+      <WorkspacePanel className="gym-training-list-panel" aria-label={copy.accountTrainers}>
+        <h2>{copy.accountTrainers}</h2>
+        <ManagementState
+          state={accounts.isPending ? 'loading' : accounts.isError ? 'error' : 'loaded'}
+          isEmpty={(accounts.data ?? []).length === 0}
+          loadingLabel={copy.loading}
+          emptyLabel={copy.accountTrainersEmpty}
+          errorLabel={copy.accountTrainersError}
+        >
+          <div className="gym-trainer-list">
+            {(accounts.data ?? []).map((account) => (
+              <article key={account.userId}>
+                <div className="gym-trainer-identity">
+                  <TrainerAvatar name={account.fullName} source={null} />
+                  <div>
+                    <strong>{account.fullName}</strong>
+                    <span>{account.email}</span>
+                  </div>
+                </div>
+                <div>{account.gymName}</div>
+                <div>
+                  {account.yearsOfExperience} {copy.yearsShort}
+                </div>
+              </article>
+            ))}
+          </div>
+        </ManagementState>
+      </WorkspacePanel>
+
+      <WorkspacePanel className="gym-training-list-panel" aria-label={copy.sampleTrainers}>
+        <h2>{copy.sampleTrainers}</h2>
         <div className="gym-training-list-head" aria-hidden="true">
           <span>{copy.trainers}</span>
           <span>{copy.specializations}</span>
@@ -147,6 +180,10 @@ const emptyTrainerForm: TrainerFormDraft = {
 };
 
 export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
+  return mode === 'create' ? <TrainerAccountFormPage /> : <TrainerProfileFormPage mode={mode} />;
+}
+
+function TrainerProfileFormPage({ mode }: { mode: 'create' | 'edit' }) {
   const { copy } = useTrainingCopy();
   const { trainerId = '' } = useParams();
   const navigate = useNavigate();

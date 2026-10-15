@@ -20,5 +20,6 @@ export {
   type TernaryAnswer,
   type YesNoAnswer,
 } from './model/profileSetupModel';
+export { useHydrateFitnessProfile } from './model/useHydrateFitnessProfile';
 export { useProfileSetupStore } from './model/useProfileSetupStore';
 export { useSyncFitnessProfile } from './model/useSyncFitnessProfile';

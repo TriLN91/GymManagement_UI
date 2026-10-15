@@ -2486,3 +2486,40 @@
     transform: none;
   }
 }
+
+.trainer-assigned-panel {
+  margin-bottom: 24px;
+}
+.trainer-assigned-panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.trainer-assigned-permissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+}
+.trainer-assigned-permissions li {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(21, 62, 47, 0.08);
+}
+.trainer-assigned-profile {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+.trainer-assigned-profile dt {
+  font-weight: 700;
+}
+.trainer-assigned-profile dd {
+  margin: 0;
+}

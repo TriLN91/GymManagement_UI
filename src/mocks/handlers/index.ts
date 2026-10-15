@@ -1,8 +1,11 @@
 import { http, HttpResponse } from 'msw';
 
+import { adminRegistrationHandlers } from './adminRegistrations';
+import { assignmentHandlers } from './assignments';
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
+import { gymOwnerHandlers } from './gymOwner';
 import { movementReferenceHandlers } from './movementReferences';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
@@ -12,6 +15,9 @@ const path = (p: string) => `*${p}`;
 
 export const handlers = [
   ...authHandlers,
+  ...adminRegistrationHandlers,
+  ...assignmentHandlers,
+  ...gymOwnerHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
 

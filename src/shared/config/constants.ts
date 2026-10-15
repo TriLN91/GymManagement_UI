@@ -170,6 +170,14 @@ export const QUERY_KEYS = Object.freeze({
   coachingHistory: (memberId: string) => ['coaching', 'plan', 'history', memberId] as const,
   checkIns: (memberId: string) => ['coaching', 'checkins', memberId] as const,
   exercises: () => ['exercises'] as const,
+  gymAdminRegistrations: (status: string) => ['admin-registrations', 'gym-admins', status] as const,
+  gymAdminRegistration: (userId: string) => ['admin-registrations', 'gym-admin', userId] as const,
+  ownerGyms: () => ['gym-owner', 'gyms'] as const,
+  ownerTrainers: (gymId?: string) => ['gym-owner', 'trainers', { gymId: gymId ?? null }] as const,
+  fitnessProfile: () => ['coaching', 'me', 'profile'] as const,
+  myAssignments: () => ['coaching', 'me', 'assignments'] as const,
+  assignedMemberProfile: (memberProfileId: string) =>
+    ['coaching', 'members', memberProfileId, 'profile'] as const,
   referenceSets: (exerciseId?: string) =>
     ['movement-reference-sets', { exerciseId: exerciseId ?? null }] as const,
   referenceSet: (referenceSetId: string) =>
