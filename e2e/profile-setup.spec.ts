@@ -62,16 +62,10 @@ test('collects a complete fitness profile and produces a readiness result', asyn
   await page.getByRole('button', { name: 'Beginner · under 6 months' }).click();
   await page.getByRole('button', { name: 'Mon', exact: true }).click();
   await page.getByRole('button', { name: '60 min' }).click();
-  await page.getByRole('button', { name: 'Gym', exact: true }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
 
-  await page.getByLabel('Average sleep').fill('7.5');
-  await page.getByRole('button', { name: '2 · Low' }).click();
-  await page.getByRole('button', { name: 'Mostly sitting' }).click();
-  await page.locator('.profile-feature-question').getByRole('button', { name: 'No' }).click();
   await page.getByText('I confirm this information is accurate').click();
   await page.getByText('I understand this is activity screening').click();
-  await page.getByRole('button', { name: 'Continue' }).click();
 
   await expect(page.getByRole('heading', { name: 'Ready for plan creation' })).toBeVisible();
   await expect(page.getByText('100%')).toBeVisible();
