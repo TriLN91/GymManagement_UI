@@ -1,6 +1,9 @@
 // Every URL string in the app lives here. Importing the constant is the only way to make a request.
 // Paths are relative to VITE_API_BASE_URL (the backend serves everything under /api).
 export const ENDPOINTS = {
+  assistant: {
+    conversations: '/assistant/conversations',
+  },
   auth: {
     login: '/identity/login',
     register: '/identity/register',

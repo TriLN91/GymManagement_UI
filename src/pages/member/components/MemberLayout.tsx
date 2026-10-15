@@ -86,6 +86,7 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
         icon: CalendarDays,
       },
       { labelKey: 'memberShell.aiCoaching', to: ROUTES.member.coaching, icon: Bot },
+      { labelKey: 'memberShell.assistant', to: ROUTES.member.assistant, icon: Bot },
       { labelKey: 'memberShell.workoutExecution', to: ROUTES.member.workoutExecution, icon: Play },
       { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress, icon: TrendingUp },
       { labelKey: 'memberShell.achievements', to: ROUTES.member.achievements, icon: Trophy },

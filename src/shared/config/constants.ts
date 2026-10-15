@@ -16,6 +16,7 @@ export const ROUTES = Object.freeze({
   member: Object.freeze({
     root: '/app',
     coaching: '/app/coaching',
+    assistant: '/app/assistant',
     workout: '/app/workout',
     workoutSchedule: '/app/workout/schedule',
     workoutBuilder: '/app/workout/builder',
@@ -167,6 +168,8 @@ export const STORAGE_KEYS = Object.freeze({
 export const QUERY_KEYS = Object.freeze({
   currentUser: () => ['auth', 'me'] as const,
   currentPlan: () => ['coaching', 'plan', 'current'] as const,
+  assistantConversations: () => ['assistant', 'conversations'] as const,
+  assistantConversation: (id: string) => ['assistant', 'conversation', id] as const,
   coachingHistory: (memberId: string) => ['coaching', 'plan', 'history', memberId] as const,
   checkIns: (memberId: string) => ['coaching', 'checkins', memberId] as const,
   exercises: () => ['exercises'] as const,
