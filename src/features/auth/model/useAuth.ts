@@ -4,7 +4,12 @@ import { authApi } from '../api/authApi';
 
 import { useAuthStore } from './useAuthStore';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
+import type {
+  AuthSession,
+  LoginPayload,
+  RegisterGymAdminPayload,
+  RegisterPayload,
+} from '@/entities/user';
 import { tokenManager } from '@/shared/api/client';
 
 export function useLogin() {
@@ -26,6 +31,12 @@ export function useRegister() {
       tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
       setSession(session.user);
     },
+  });
+}
+
+export function useRegisterGymAdmin() {
+  return useMutation({
+    mutationFn: (payload: RegisterGymAdminPayload) => authApi.registerGymAdmin(payload),
   });
 }
 

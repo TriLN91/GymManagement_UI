@@ -4,6 +4,7 @@ export const ENDPOINTS = {
   auth: {
     login: '/identity/login',
     register: '/identity/register',
+    registerGymAdmin: '/identity/register/gym-admin',
     refresh: '/identity/refresh',
     logout: '/identity/logout',
     // Not implemented by the backend yet (MSW only).

@@ -1,6 +1,12 @@
 import { mapAuthResponse, type AuthResponseDto } from './mappers';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
+import type {
+  AuthSession,
+  LoginPayload,
+  PendingRegistration,
+  RegisterGymAdminPayload,
+  RegisterPayload,
+} from '@/entities/user';
 import { apiPost } from '@/shared/api/client';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
@@ -12,6 +18,10 @@ export const authApi = {
     mapAuthResponse(
       await apiPost<AuthResponseDto, RegisterPayload>(ENDPOINTS.auth.register, payload),
     ),
+
+  // Returns no tokens: the account stays pending until a Platform Admin approves it.
+  registerGymAdmin: (payload: RegisterGymAdminPayload) =>
+    apiPost<PendingRegistration, RegisterGymAdminPayload>(ENDPOINTS.auth.registerGymAdmin, payload),
 
   logout: (refreshToken: string) => apiPost<void>(ENDPOINTS.auth.logout, { refreshToken }),
 

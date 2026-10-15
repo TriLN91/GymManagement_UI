@@ -34,3 +34,17 @@ export interface RegisterPayload {
   password: string;
   fullName: string;
 }
+
+/** Gym Admin self-registration; the account must be approved by a Platform Admin before sign-in. */
+export interface RegisterGymAdminPayload extends RegisterPayload {
+  gymName: string;
+}
+
+export interface PendingRegistration {
+  userId: string;
+  email: string;
+  fullName: string;
+  status: 'PendingApproval';
+  gymId: string;
+  gymName: string;
+}

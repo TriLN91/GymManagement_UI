@@ -48,6 +48,9 @@ const success = (data: unknown, status = 200) =>
 const failure = (status: number, errorCode: string, message: string) =>
   HttpResponse.json({ isSuccess: false, message, data: null, errorCode }, { status });
 
+// Gym Admin registrations waiting for a Platform Admin (mirrors backend status PendingApproval).
+const pendingGymAdmins = new Set<string>();
+
 const accountFromRefreshToken = (token: string | undefined) =>
   Object.values(accounts).find((account) => `mock-refresh-${account.userId}` === token);
 
@@ -57,6 +60,13 @@ const path = (p: string) => `*${p}`;
 export const authHandlers = [
   http.post(path(ENDPOINTS.auth.login), async ({ request }) => {
     const body = (await request.json()) as { email?: string; password?: string };
+    if (body.email && pendingGymAdmins.has(body.email) && body.password) {
+      return failure(
+        403,
+        'AccountPendingApproval',
+        '403: Tài khoản đang chờ Platform Admin duyệt; bạn chưa thể đăng nhập.',
+      );
+    }
     const account = Object.values(accounts).find((item) => item.email === body.email);
     if (!account || body.password !== DEMO_PASSWORD) {
       return failure(401, 'InvalidCredentials', '401: Đăng nhập thất bại');
@@ -80,6 +90,35 @@ export const authHandlers = [
       roles: ['User'],
     };
     return success(tokensFor(account), 201);
+  }),
+
+  http.post(path(ENDPOINTS.auth.registerGymAdmin), async ({ request }) => {
+    const body = (await request.json()) as {
+      email?: string;
+      fullName?: string;
+      gymName?: string;
+      password?: string;
+    };
+    if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
+      return failure(
+        400,
+        'Validation',
+        `400: Validation Error thất bại - Password: Mật khẩu phải có ít nhất ${MIN_PASSWORD_LENGTH} ký tự`,
+      );
+    }
+    const email = body.email ?? '';
+    if (pendingGymAdmins.has(email) || Object.values(accounts).some((a) => a.email === email)) {
+      return failure(409, 'Conflict', '409: Email đã được đăng ký.');
+    }
+    pendingGymAdmins.add(email);
+    return success({
+      userId: `u-${Date.now()}`,
+      email,
+      fullName: body.fullName ?? '',
+      status: 'PendingApproval',
+      gymId: `g-${Date.now()}`,
+      gymName: body.gymName ?? '',
+    });
   }),
 
   http.post(path(ENDPOINTS.auth.refresh), async ({ request }) => {

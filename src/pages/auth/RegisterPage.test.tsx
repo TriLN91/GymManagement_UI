@@ -46,3 +46,28 @@ describe('RegisterPage', () => {
     expect(screen.queryByText('Mật khẩu nhập lại không khớp.')).not.toBeInTheDocument();
   });
 });
+
+describe('RegisterPage roles', () => {
+  it('offers Member and Gym Admin but no Trainer self-registration', () => {
+    renderRegisterPage();
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
+    expect(screen.queryByText(/Huấn Luyện Viên/i)).not.toBeInTheDocument();
+  });
+
+  it('asks for a name and gym name only for Gym Admin', async () => {
+    renderRegisterPage();
+    expect(screen.queryByLabelText('Tên phòng gym')).not.toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('radio', { name: /Gym Admin/i }));
+    expect(screen.getByLabelText('Tên phòng gym')).toBeInTheDocument();
+    expect(screen.getByLabelText('Họ và tên')).toBeInTheDocument();
+  });
+
+  it('requires the gym name for Gym Admin before submitting', async () => {
+    renderRegisterPage();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('radio', { name: /Gym Admin/i }));
+    await submit('boss@demo.gym', '123456', '123456');
+    expect(await screen.findByText('Vui lòng nhập tên phòng gym.')).toBeInTheDocument();
+  });
+});
