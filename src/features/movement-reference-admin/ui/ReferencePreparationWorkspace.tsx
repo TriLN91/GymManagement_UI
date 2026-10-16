@@ -34,6 +34,7 @@ import { ApiErrorNotice } from './ApiErrorNotice';
 import { PresentationStateBadge } from './ExerciseReferenceLibrary';
 import { MovementStatusBadge } from './MovementStatusBadge';
 
+import { NetworkError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import { Button } from '@/shared/ui/button';
@@ -368,6 +369,24 @@ export function GeneratedReferenceCard({
           </ul>
         </details>
       ) : null}
+      <details className="mt-4 rounded-md border p-3 text-sm">
+        <summary className="cursor-pointer font-medium">
+          {t('workspace.profileTechnicalQuality')}
+        </summary>
+        <div className="mt-3 space-y-3">
+          <ScalarEvidence value={profile.qualitySummary} />
+          {warnings.length ? (
+            <ul className="list-disc space-y-1 pl-5">
+              {warnings.map((warning, index) => (
+                <li key={index}>{warning}</li>
+              ))}
+            </ul>
+          ) : null}
+          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3 text-xs">
+            {JSON.stringify(profile.qualitySummary, null, 2)}
+          </pre>
+        </div>
+      </details>
       <ApiErrorNotice error={confirm.error ?? activate.error} />
       {role === 'candidate' ? (
         <div className="mt-4 flex justify-end">
@@ -393,7 +412,9 @@ export function GeneratedReferenceCard({
       ) : null}
       <Dialog
         open={pendingAction !== null}
-        onOpenChange={(open) => !open && setPendingAction(null)}
+        onOpenChange={(open) => {
+          if (!open && !confirm.isPending && !activate.isPending) setPendingAction(null);
+        }}
       >
         <DialogContent>
           <DialogHeader>
@@ -414,13 +435,18 @@ export function GeneratedReferenceCard({
                   })}
             </DialogDescription>
           </DialogHeader>
+          <ApiErrorNotice error={confirm.error ?? activate.error} />
           {pendingAction === 'activate' && replacingLive ? (
             <p className="rounded-md bg-muted p-3 text-sm">
               {t('profileAction.replacementNotice')}
             </p>
           ) : null}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPendingAction(null)}>
+            <Button
+              variant="outline"
+              disabled={confirm.isPending || activate.isPending}
+              onClick={() => setPendingAction(null)}
+            >
               {t('actions.cancel')}
             </Button>
             <Button
@@ -468,8 +494,20 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
   const upload = useUploadReferenceSource(referenceSetId);
   const [video, setVideo] = useState<File | null>(null);
   const [validationError, setValidationError] = useState('');
+  const [previewUrl, setPreviewUrl] = useState<string>();
+  const [outcomeUncertain, setOutcomeUncertain] = useState(false);
   const [highlightedSourceId, setHighlightedSourceId] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!video) {
+      setPreviewUrl(undefined);
+      return;
+    }
+    const url = URL.createObjectURL(video);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [video]);
 
   const views = useMemo(
     () => (referenceSet.data ? getViewReferenceStates(referenceSet.data) : []),
@@ -495,12 +533,15 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
   const submitVideo = async () => {
     if (!video) return;
     try {
+      const existingIds = new Set(referenceSet.data?.sources.map((source) => source.id));
       const result = await upload.mutateAsync(video);
-      const uploaded = result.sources.at(-1);
+      const uploaded = result.sources.find((source) => !existingIds.has(source.id));
       setVideo(null);
+      if (inputRef.current) inputRef.current.value = '';
       setHighlightedSourceId(uploaded?.id);
       toast.success(t('messages.sourceUploaded'));
-    } catch {
+    } catch (error) {
+      setOutcomeUncertain(error instanceof NetworkError);
       toast.error(t('messages.sourceUploadFailed'));
     }
   };
@@ -532,6 +573,9 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
           {t('actions.back')}
         </Link>
         <ApiErrorNotice error={referenceSet.error} />
+        <Button variant="outline" onClick={() => void referenceSet.refetch()}>
+          {t('actions.refreshStatus')}
+        </Button>
       </div>
     );
   }
@@ -597,6 +641,7 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
                 className="mt-2"
                 type="file"
                 accept="video/mp4,.mp4"
+                disabled={upload.isPending || outcomeUncertain}
                 onChange={(event) => selectVideo(event.target.files?.[0] ?? null)}
               />
             </div>
@@ -605,6 +650,17 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
                 {video.name} · {(video.size / 1024 / 1024).toFixed(1)} MB
               </p>
             ) : null}
+            {previewUrl ? (
+              <video
+                className="max-h-80 w-full rounded-lg bg-black"
+                src={previewUrl}
+                controls
+                preload="metadata"
+                aria-label={t('upload.preview')}
+              >
+                <track kind="captions" />
+              </video>
+            ) : null}
             {validationError ? (
               <p className="text-sm text-destructive" role="alert">
                 {validationError}
@@ -612,7 +668,25 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
             ) : null}
             {upload.isPending ? <ProcessingStages /> : null}
             <ApiErrorNotice error={upload.error} />
-            <Button disabled={!video || upload.isPending} onClick={() => void submitVideo()}>
+            {outcomeUncertain ? (
+              <div className="space-y-3 rounded-md border border-amber-300 p-4" role="status">
+                <p className="text-sm">{t('upload.uncertain')}</p>
+                <Button
+                  variant="outline"
+                  disabled={referenceSet.isFetching}
+                  onClick={() => void referenceSet.refetch()}
+                >
+                  {t('actions.refreshStatus')}
+                </Button>
+                <Button variant="outline" onClick={() => setOutcomeUncertain(false)}>
+                  {t('upload.checkedHistory')}
+                </Button>
+              </div>
+            ) : null}
+            <Button
+              disabled={!video || upload.isPending || outcomeUncertain}
+              onClick={() => void submitVideo()}
+            >
               {upload.isPending ? t('upload.processing') : t('upload.submit')}
             </Button>
           </CardContent>

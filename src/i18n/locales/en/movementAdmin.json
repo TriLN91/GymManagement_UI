@@ -59,7 +59,8 @@
     "approveVersion": "Approve this reference version",
     "approving": "Approving…",
     "publishLive": "Publish as live",
-    "publishing": "Publishing…"
+    "publishing": "Publishing…",
+    "refreshStatus": "Refresh saved results"
   },
   "createSet": {
     "title": "Create reference set",
@@ -153,11 +154,14 @@
     "another": "Upload another GOOD reference video",
     "invalidType": "Select an MP4 video.",
     "empty": "The selected video is empty.",
-    "tooLarge": "The video exceeds the 500 MB backend limit."
+    "tooLarge": "The video exceeds the 500 MB backend limit.",
+    "preview": "Preview selected reference video",
+    "uncertain": "The connection ended before a result arrived. Processing may already have been saved. Refresh and inspect the footage list before submitting again.",
+    "checkedHistory": "I checked the saved footage; allow another upload"
   },
   "processing": {
     "title": "Preparing reference footage",
-    "description": "Analysis may take several seconds. Keep this page open while the request completes.",
+    "description": "Upload and analysis can take several minutes. This request does not expose individual stage progress. Keep this page open; saved processing records refresh automatically.",
     "stages": {
       "uploading": "Uploading video",
       "normalizing": "Normalizing if needed",

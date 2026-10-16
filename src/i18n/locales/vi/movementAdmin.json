@@ -59,7 +59,8 @@
     "approveVersion": "Phê duyệt phiên bản tham chiếu này",
     "approving": "Đang phê duyệt…",
     "publishLive": "Xuất bản để sử dụng",
-    "publishing": "Đang xuất bản…"
+    "publishing": "Đang xuất bản…",
+    "refreshStatus": "Tải lại kết quả đã lưu"
   },
   "createSet": {
     "title": "Tạo bộ tham chiếu",
@@ -153,11 +154,14 @@
     "another": "Tải thêm video tham chiếu GOOD",
     "invalidType": "Hãy chọn video MP4.",
     "empty": "Video đã chọn không có dữ liệu.",
-    "tooLarge": "Video vượt quá giới hạn 500 MB của backend."
+    "tooLarge": "Video vượt quá giới hạn 500 MB của backend.",
+    "preview": "Xem trước video tham chiếu đã chọn",
+    "uncertain": "Kết nối đã kết thúc trước khi nhận kết quả. Quá trình xử lý có thể đã được lưu. Tải lại và kiểm tra danh sách video trước khi gửi lại.",
+    "checkedHistory": "Tôi đã kiểm tra video đã lưu; cho phép tải lên lại"
   },
   "processing": {
     "title": "Đang chuẩn bị video tham chiếu",
-    "description": "Phân tích có thể mất vài giây. Giữ trang mở cho đến khi yêu cầu hoàn tất.",
+    "description": "Tải lên và phân tích có thể mất vài phút. Yêu cầu này không cung cấp tiến độ từng bước. Giữ trang mở; bản ghi đang xử lý tự động được cập nhật.",
     "stages": {
       "uploading": "Tải video lên",
       "normalizing": "Chuẩn hóa khi cần",

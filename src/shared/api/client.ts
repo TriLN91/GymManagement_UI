@@ -253,9 +253,13 @@ export async function apiDelete<T>(
   return unwrap(res);
 }
 
-export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+export async function apiPostForm<T>(
+  url: string,
+  body: FormData,
+  config?: Parameters<AxiosInstance['post']>[2],
+): Promise<T> {
   // Do not set Content-Type: the browser must add the multipart boundary.
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
