@@ -157,6 +157,29 @@ describe('ReferencePreparationWorkspace', () => {
     expect(screen.getByText('Down-weight')).toBeInTheDocument();
   });
 
+  it('explains a persisted HINGE failure without making its traceback the primary result', () => {
+    render(
+      <MemoryRouter>
+        <ReferenceFootage
+          sources={[
+            {
+              ...footage,
+              processingStatus: 'FAILED',
+              failureCode: 'UNSUPPORTED_PATTERN',
+              failureStage: 'CLASSIFICATION',
+              failureMessage:
+                'Traceback: Detected pattern HINGE has no Phase C reference processor; only SQUAT is currently supported',
+            },
+          ]}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Movement is not supported here')).toBeVisible();
+    expect(screen.getByText('No completed repetition analysis')).toBeVisible();
+    for (const diagnostic of screen.getAllByText(/Traceback: Detected pattern/))
+      expect(diagnostic).not.toBeVisible();
+  });
+
   it('uses approve wording and presents contributing footage', () => {
     render(
       <GeneratedReferenceCard

@@ -293,5 +293,95 @@
     "sourceUploadFailed": "Không thể xử lý nguồn. Hãy xem lỗi và thử video khác.",
     "profileConfirmed": "Đã phê duyệt phiên bản tham chiếu.",
     "profileActivated": "Đã xuất bản tham chiếu để sử dụng và giữ lại các phiên bản lịch sử."
+  },
+  "inspection": {
+    "failedFootage": "Video xử lý thất bại",
+    "pendingFootage": "Đang chờ phân tích",
+    "reviewExercise": "Chọn bài tập khác",
+    "nextFailure": "Chưa tạo được mẫu dùng được. Xem lỗi bên dưới trước. Kiểm tra bài tập đã chọn có thực sự là squat; quay lại danh mục nếu không phù hợp.",
+    "noRepResult": "Chưa có kết quả phân tích lần lặp",
+    "replaceVideo": "Chọn video thay thế",
+    "stale": "Video chưa có kết quả sau hơn 10 phút. Xử lý đồng bộ không tự tiếp tục khi máy chủ khởi động lại. Tải lại kết quả và nhờ hỗ trợ kiểm tra trước khi gửi lại.",
+    "duration": "Thời lượng video",
+    "resolution": "Kích thước khung hình",
+    "frameRate": "Tốc độ khung hình",
+    "usableFrames": "Khung hình dùng được",
+    "excludedUpload": "Video đã phân tích nhưng bị loại khỏi mẫu tham chiếu. Xem lý do bên dưới.",
+    "pendingUpload": "Video đã lưu; quá trình xử lý chưa hoàn tất.",
+    "nextPublish": "Phiên bản đã được xác nhận. Xem lại thông tin rồi xuất bản để Member sử dụng cho các đánh giá tiếp theo.",
+    "nextReview": "Phiên bản đề xuất đã sẵn sàng để xem xét. Kiểm tra chất lượng và các lần lặp trước khi xác nhận. Xác nhận và xuất bản là hai bước riêng.",
+    "nextProcessing": "Video đang xử lý. Tải lại kết quả để kiểm tra; không gửi trùng khi chưa rõ kết quả.",
+    "nextLive": "Đã có phiên bản xuất bản cho Member. Các video lỗi trước đây không thay thế phiên bản này. Chỉ thêm video khi chuẩn bị phiên bản mới.",
+    "nextUpload": "Chọn video squat chuẩn phù hợp với bài tập. Xem trước, tải lên rồi kiểm tra kết quả đã lưu.",
+    "autoMetadata": "Pattern và góc quay được phát hiện tự động. Luồng mẫu tổng hợp chưa hỗ trợ sửa thủ công thông tin trích xuất. Thay video bị phân loại sai; không xác nhận để bỏ qua lỗi xử lý.",
+    "notConfigured": "Chưa cấu hình",
+    "retryReadiness": "Chưa đọc được trạng thái — thử lại",
+    "memberReady": "Góc quay hỗ trợ đã xuất bản · Member sử dụng được",
+    "filterLabel": "Trạng thái mẫu tham chiếu",
+    "filters": {
+      "all": "Tất cả bài tập",
+      "published": "Có phiên bản đã xuất bản",
+      "unpublished": "Có video · chưa xuất bản",
+      "unconfigured": "Chưa có video tham chiếu"
+    },
+    "squatOnly": "Bộ xử lý hiện chỉ hỗ trợ SQUAT. Bài tập trong danh mục chưa đồng nghĩa với việc đánh giá được. Các động tác row, hinge, bridge và pattern khác chưa được hỗ trợ.",
+    "setupTitle": "Tạo mẫu tham chiếu: {{exercise}}",
+    "setupDescription": "Chỉ tạo mẫu SQUAT khi bài tập và video thực sự phù hợp. Tạo nhóm trống không khởi chạy xử lý video và chưa mở đánh giá cho Member.",
+    "setupConfirm": "Tôi xác nhận bài tập này và video dự định sử dụng là squat.",
+    "setupAction": "Tạo không gian mẫu SQUAT",
+    "reusedExercise": "Đã chọn bài tập có sẵn. Không tạo bài tập trùng.",
+    "reuseHint": "Tìm trong danh mục trước. Tên đã tồn tại sẽ được sử dụng lại.",
+    "noMatches": "Không có bài tập phù hợp",
+    "changeFilter": "Xóa tìm kiếm hoặc chọn bộ lọc khác.",
+    "phases": "Các pha chuyển động",
+    "samples": "Số điểm quỹ đạo chuẩn hóa",
+    "noPhaseEvidence": "Phiên bản này chưa cung cấp thông tin pha."
+  },
+  "processingIssues": {
+    "VIDEO_NORMALIZATION_FAILED": {
+      "title": "Không chuẩn bị được video",
+      "description": "Máy chủ không chuyển đổi được bản quay để phân tích. Chưa có căn cứ khẳng định tệp gốc bị hỏng.",
+      "recovery": "Thử xuất H.264 MP4. Nếu tiếp tục lỗi, nhờ người vận hành kiểm tra bước chuyển đổi video."
+    },
+    "PROCESSOR_UNAVAILABLE": {
+      "title": "Bộ xử lý cần được kiểm tra",
+      "description": "Máy chủ thiếu công cụ, model hoặc thư viện cần thiết. Đây là lỗi cấu hình, không phải đánh giá chất lượng video hay động tác.",
+      "recovery": "Nhờ người vận hành sửa cấu hình. Gửi lại cùng video không khắc phục được thư viện bị thiếu."
+    },
+    "UNSUPPORTED_PATTERN": {
+      "title": "Động tác chưa được hỗ trợ",
+      "description": "Động tác phát hiện không phù hợp với luồng SQUAT.",
+      "recovery": "Dùng video squat phù hợp với bài tập. Video hinge, deadlift, row hoặc pull không thể tạo mẫu SQUAT."
+    },
+    "UNSUPPORTED_VIEW": {
+      "title": "Góc quay chưa được hỗ trợ",
+      "description": "Góc quay này chưa dùng được cho mẫu squat hiện tại.",
+      "recovery": "Dùng góc ngang hoặc chéo ngang, thấy rõ hông, gối và cổ chân."
+    },
+    "INSUFFICIENT_MOVEMENT_EVIDENCE": {
+      "title": "Chưa đủ lần lặp đáng tin cậy",
+      "description": "Không trích xuất được đủ lần squat hoàn chỉnh và dùng được.",
+      "recovery": "Quay nhiều lần lặp hoàn chỉnh, đủ sáng và thấy toàn thân. Không xác nhận kết quả chưa đầy đủ."
+    },
+    "VIDEO_DECODE_FAILED": {
+      "title": "Không đọc được video",
+      "description": "Tệp bị hỏng hoặc luồng video không giải mã được.",
+      "recovery": "Chọn bản quay nguyên vẹn hoặc xuất H.264 MP4. Đổi tên tệp không chuyển đổi định dạng."
+    },
+    "PROCESSING_TIMEOUT": {
+      "title": "Xử lý quá thời gian",
+      "description": "Yêu cầu kết thúc trước khi hoàn tất xử lý trong thời gian cho phép.",
+      "recovery": "Tải lại kết quả trước. Nếu đã lỗi, dùng video ngắn hơn hoặc nhờ kiểm tra bộ xử lý."
+    },
+    "PROCESSING_CANCELLED": {
+      "title": "Xử lý bị gián đoạn",
+      "description": "Yêu cầu kết thúc trước khi có kết quả dùng được.",
+      "recovery": "Tải lại và kiểm tra video đã lưu trước khi chọn video khác."
+    },
+    "REFERENCE_PROCESSING_FAILED": {
+      "title": "Xử lý mẫu tham chiếu thất bại",
+      "description": "Video chưa tạo được kết quả dùng được. Bằng chứng hiện có chưa xác định chính xác bước lỗi.",
+      "recovery": "Nhờ hỗ trợ kiểm tra chi tiết kỹ thuật và giữ ID video. Chỉ thay video nếu nguyên nhân nằm ở bản quay."
+    }
   }
 }

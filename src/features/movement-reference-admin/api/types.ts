@@ -43,6 +43,13 @@ export interface ReferenceSetSourceDto {
   adjudication?: ReferenceSourceAdjudicationDto | null;
   warnings: string[];
   failureMessage?: string | null;
+  failureCode?: string | null;
+  failureStage?: string | null;
+  failureSummary?: string | null;
+  detectedPattern?: string | null;
+  processingSummary?: Record<string, unknown>;
+  createdAtUtc?: string;
+  processedAtUtc?: string | null;
 }
 
 export interface ReferenceSetProfileDto {

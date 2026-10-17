@@ -1,7 +1,6 @@
 import {
   AlertTriangle,
   ArrowLeft,
-  CheckCircle2,
   ChevronRight,
   FileVideo,
   History,
@@ -24,6 +23,11 @@ import {
   rollUpExerciseState,
 } from '../model/presentation';
 import {
+  processingIsStale,
+  processingIssueCode,
+  sourceEvidence,
+} from '../model/processingEvidence';
+import {
   useActivateReferenceProfile,
   useConfirmReferenceProfile,
   useReferenceSet,
@@ -34,7 +38,7 @@ import { ApiErrorNotice } from './ApiErrorNotice';
 import { PresentationStateBadge } from './ExerciseReferenceLibrary';
 import { MovementStatusBadge } from './MovementStatusBadge';
 
-import { NetworkError } from '@/shared/api/errorTypes';
+import { ApiError, NetworkError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import { Button } from '@/shared/ui/button';
@@ -106,9 +110,11 @@ function ScalarEvidence({ value }: { value: Record<string, unknown> }) {
 export function ReferenceFootage({
   sources,
   highlightedSourceId,
+  onReplaceSource,
 }: {
   sources: ReferenceSetSourceDto[];
   highlightedSourceId?: string;
+  onReplaceSource?: () => void;
 }) {
   const { t } = useTranslation('movementAdmin');
   if (sources.length === 0) {
@@ -123,9 +129,13 @@ export function ReferenceFootage({
   const groups = sources.reduce<Record<string, ReferenceSetSourceDto[]>>((result, source) => {
     const outcome = getSourceOperationalOutcome(source);
     const group =
-      outcome === 'EXCLUDED' || !source.detectedView
-        ? t('workspace.unsupportedFootage')
-        : source.detectedView;
+      outcome === 'FAILED'
+        ? t('inspection.failedFootage')
+        : outcome === 'ANALYZING'
+          ? t('inspection.pendingFootage')
+          : outcome === 'EXCLUDED'
+            ? t('workspace.unsupportedFootage')
+            : (source.detectedView ?? t('workspace.unknownView'));
     (result[group] ??= []).push(source);
     return result;
   }, {});
@@ -139,6 +149,8 @@ export function ReferenceFootage({
           </h4>
           {footage.map((source) => {
             const outcome = getSourceOperationalOutcome(source);
+            const issue = processingIssueCode(source.failureCode, source.failureMessage ?? '');
+            const evidence = sourceEvidence(source);
             return (
               <article
                 id={`source-${source.id}`}
@@ -153,21 +165,97 @@ export function ReferenceFootage({
                   <div className="min-w-0">
                     <h5 className="truncate font-semibold">{source.fileName}</h5>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {t('workspace.footageResult', {
-                        accepted: source.acceptedRepCount,
-                        rejected: source.rejectedRepCount,
-                      })}
+                      {source.processingStatus === 'PROCESSED'
+                        ? t('workspace.footageResult', {
+                            accepted: source.acceptedRepCount,
+                            rejected: source.rejectedRepCount,
+                          })
+                        : t('inspection.noRepResult')}
                     </p>
                   </div>
                   <OperationalOutcome outcome={outcome} />
                 </div>
                 <p className="mt-3 text-sm">
-                  {source.failureMessage ||
-                    source.reviewReason ||
-                    t(`sourceOutcomeDescription.${outcome}`, {
-                      view: source.detectedView ?? t('workspace.unknownView'),
-                    })}
+                  {outcome === 'FAILED'
+                    ? t(`processingIssues.${issue}.description`, {
+                        defaultValue: t('processingIssues.REFERENCE_PROCESSING_FAILED.description'),
+                      })
+                    : source.reviewReason ||
+                      t(`sourceOutcomeDescription.${outcome}`, {
+                        view: source.detectedView ?? t('workspace.unknownView'),
+                      })}
                 </p>
+                {outcome === 'FAILED' ? (
+                  <div className="mt-3 space-y-2 rounded-md bg-muted/50 p-3">
+                    <strong className="text-sm">
+                      {t(`processingIssues.${issue}.title`, {
+                        defaultValue: t('processingIssues.REFERENCE_PROCESSING_FAILED.title'),
+                      })}
+                    </strong>
+                    <p className="text-sm">
+                      {t(`processingIssues.${issue}.recovery`, {
+                        defaultValue: t('processingIssues.REFERENCE_PROCESSING_FAILED.recovery'),
+                      })}
+                    </p>
+                    {onReplaceSource && issue !== 'PROCESSOR_UNAVAILABLE' ? (
+                      <Button size="sm" variant="outline" onClick={onReplaceSource}>
+                        {t('inspection.replaceVideo')}
+                      </Button>
+                    ) : null}
+                    {issue === 'UNSUPPORTED_PATTERN' ? (
+                      <Link
+                        className="ml-3 inline-block text-sm font-medium underline underline-offset-4"
+                        to={ROUTES.superadmin.movementAssessment}
+                      >
+                        {t('inspection.reviewExercise')}
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : null}
+                {processingIsStale(source) ? (
+                  <p
+                    className="mt-3 rounded-md bg-amber-50 p-3 text-sm text-amber-900"
+                    role="status"
+                  >
+                    {t('inspection.stale')}
+                  </p>
+                ) : null}
+                {source.processingStatus === 'PROCESSED' ? (
+                  <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                    <div>
+                      <dt className="text-muted-foreground">{t('fields.pattern')}</dt>
+                      <dd>{source.detectedPattern ?? '—'}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted-foreground">{t('fields.view')}</dt>
+                      <dd>{source.detectedView ?? '—'}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted-foreground">{t('inspection.duration')}</dt>
+                      <dd>
+                        {evidence.durationSeconds === null
+                          ? '—'
+                          : `${evidence.durationSeconds.toFixed(1)} s`}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted-foreground">{t('inspection.resolution')}</dt>
+                      <dd>{evidence.resolution ?? '—'}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted-foreground">{t('inspection.frameRate')}</dt>
+                      <dd>{evidence.fps === null ? '—' : `${evidence.fps.toFixed(1)} fps`}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted-foreground">{t('inspection.usableFrames')}</dt>
+                      <dd>
+                        {evidence.usableFrames === null
+                          ? '—'
+                          : `${evidence.usableFrames} / ${evidence.totalFrames ?? '—'}`}
+                      </dd>
+                    </div>
+                  </dl>
+                ) : null}
                 {source.warnings[0] ? (
                   <p className="mt-3 flex items-start gap-2 text-sm text-amber-700">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -203,6 +291,17 @@ export function ReferenceFootage({
                         {source.action ? <MovementStatusBadge value={source.action} /> : null}
                       </div>
                       <ScalarEvidence value={source.deterministicEvidence} />
+                      {source.failureMessage ? (
+                        <div className="mt-3 space-y-2">
+                          <code className="text-xs">
+                            {source.failureCode ?? issue} · {source.failureStage ?? 'UNKNOWN'} ·{' '}
+                            {source.id}
+                          </code>
+                          <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3 text-xs">
+                            {source.failureMessage}
+                          </pre>
+                        </div>
+                      ) : null}
                       {source.adjudication ? (
                         <dl className="mt-3 grid gap-2 sm:grid-cols-2">
                           <div>
@@ -301,6 +400,13 @@ export function GeneratedReferenceCard({
   const warnings = Array.isArray(profile.qualitySummary.warnings)
     ? profile.qualitySummary.warnings.filter((item): item is string => typeof item === 'string')
     : [];
+  const phases: string[] = Array.isArray(profile.aggregateProfile.phaseDefinitions)
+    ? profile.aggregateProfile.phaseDefinitions.flatMap((phase: unknown): string[] =>
+        phase && typeof phase === 'object' && 'code' in phase && typeof phase.code === 'string'
+          ? [phase.code]
+          : [],
+      )
+    : [];
   const commitAction = async () => {
     try {
       if (pendingAction === 'activate') {
@@ -351,6 +457,26 @@ export function GeneratedReferenceCard({
           <dd className="font-semibold">{profile.acceptedRepCount}</dd>
         </div>
       </dl>
+      <div className="mt-4 space-y-2 text-sm">
+        <p>
+          <span className="text-muted-foreground">{t('inspection.phases')}: </span>
+          {phases.length
+            ? phases
+                .map((phase) =>
+                  t(`inspection.phaseLabels.${phase}`, {
+                    defaultValue: phase.replaceAll('_', ' ').toLowerCase(),
+                  }),
+                )
+                .join(' → ')
+            : t('inspection.noPhaseEvidence')}
+        </p>
+        {Array.isArray(profile.normalizedReference.trajectory) ? (
+          <p>
+            <span className="text-muted-foreground">{t('inspection.samples')}: </span>
+            {profile.normalizedReference.trajectory.length}
+          </p>
+        ) : null}
+      </div>
       {warnings[0] ? (
         <p className="mt-3 flex items-start gap-2 text-sm text-amber-700">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -382,9 +508,14 @@ export function GeneratedReferenceCard({
               ))}
             </ul>
           ) : null}
-          <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3 text-xs">
-            {JSON.stringify(profile.qualitySummary, null, 2)}
-          </pre>
+          <details>
+            <summary className="cursor-pointer text-muted-foreground">
+              {t('workspace.rawPayload')}
+            </summary>
+            <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-3 text-xs">
+              {JSON.stringify(profile.qualitySummary, null, 2)}
+            </pre>
+          </details>
         </div>
       </details>
       <ApiErrorNotice error={confirm.error ?? activate.error} />
@@ -539,9 +670,18 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
       setVideo(null);
       if (inputRef.current) inputRef.current.value = '';
       setHighlightedSourceId(uploaded?.id);
-      toast.success(t('messages.sourceUploaded'));
+      if (uploaded?.processingStatus === 'FAILED') toast.error(t('messages.sourceUploadFailed'));
+      else if (uploaded && getSourceOperationalOutcome(uploaded) === 'EXCLUDED')
+        toast.info(t('inspection.excludedUpload'));
+      else if (uploaded?.processingStatus === 'PROCESSING')
+        toast.info(t('inspection.pendingUpload'));
+      else toast.success(t('messages.sourceUploaded'));
     } catch (error) {
       setOutcomeUncertain(error instanceof NetworkError);
+      if (error instanceof ApiError && error.details && typeof error.details === 'object') {
+        const savedId = (error.details as Record<string, unknown>).resourceId;
+        if (typeof savedId === 'string') setHighlightedSourceId(savedId);
+      }
       toast.error(t('messages.sourceUploadFailed'));
     }
   };
@@ -616,7 +756,35 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
         </div>
       </header>
 
-      <section className="space-y-4">
+      <Card>
+        <CardContent className="space-y-3 p-4">
+          <h3 className="font-semibold">{t('workflow.title')}</h3>
+          <p className="text-sm">
+            {views.some((view) => view.currentCandidate?.status === 'CONFIRMED')
+              ? t('inspection.nextPublish')
+              : views.some((view) => view.currentCandidate?.status === 'REVIEW_REQUIRED')
+                ? t('inspection.nextReview')
+                : sourceCounts.analyzing > 0
+                  ? t('inspection.nextProcessing')
+                  : views.some((view) => view.liveProfile)
+                    ? t('inspection.nextLive')
+                    : sourceCounts.failed > 0
+                      ? t('inspection.nextFailure')
+                      : t('inspection.nextUpload')}
+          </p>
+          <p className="text-sm text-muted-foreground">{t('inspection.autoMetadata')}</p>
+          <div className="flex flex-wrap gap-3 text-sm">
+            <a href="#reference-footage" className="underline underline-offset-4">
+              {t('workspace.footageTitle')}
+            </a>
+            <a href="#generated-references" className="underline underline-offset-4">
+              {t('workspace.generatedTitle')}
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+
+      <section id="reference-footage" className="scroll-mt-6 space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">A</p>
@@ -691,7 +859,11 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
             </Button>
           </CardContent>
         </Card>
-        <ReferenceFootage sources={set.sources} highlightedSourceId={highlightedSourceId} />
+        <ReferenceFootage
+          sources={set.sources}
+          highlightedSourceId={highlightedSourceId}
+          onReplaceSource={() => inputRef.current?.click()}
+        />
       </section>
 
       <section className="space-y-4">
@@ -716,12 +888,14 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
       <section className="space-y-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">C</p>
-          <h3 className="text-xl font-semibold">{t('workspace.generatedTitle')}</h3>
+          <h3 id="generated-references" className="scroll-mt-6 text-xl font-semibold">
+            {t('workspace.generatedTitle')}
+          </h3>
           <p className="text-sm text-muted-foreground">{t('workspace.generatedDescription')}</p>
         </div>
         {views.every((view) => !view.liveProfile && !view.currentCandidate) ? (
           <EmptyState
-            icon={CheckCircle2}
+            icon={FileVideo}
             title={t('workspace.noProfiles')}
             description={t('workspace.noProfilesDescription')}
           />

@@ -48,6 +48,7 @@ describe('ReferenceSetList', () => {
       error: null,
     });
     createSetMutation.mockResolvedValue({ id: 'set-1' });
+    createSetMutation.mockClear();
     hooks.createSet.mockReturnValue({
       mutateAsync: createSetMutation,
       isPending: false,
@@ -57,7 +58,7 @@ describe('ReferenceSetList', () => {
     hooks.referenceSet.mockReturnValue({ data: undefined, isLoading: false, error: null });
   });
 
-  it('renders the exercise library and auto-opens or creates preparation context', async () => {
+  it('opens an existing workspace without mutating the reference catalog', () => {
     render(
       <MemoryRouter>
         <ExerciseReferenceLibrary />
@@ -66,6 +67,23 @@ describe('ReferenceSetList', () => {
     expect(screen.getByRole('heading', { name: 'Exercise Reference Library' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: /Back Squat/ })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Continue preparation/i }));
+    expect(createSetMutation).not.toHaveBeenCalled();
+  });
+
+  it('requires an explicit squat confirmation before creating a reference for an unconfigured exercise', async () => {
+    hooks.referenceSets.mockReturnValue({ data: [], error: null, isLoading: false });
+    render(
+      <MemoryRouter>
+        <ExerciseReferenceLibrary />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('cell', { name: 'Not configured' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Start preparation/i }));
+    expect(createSetMutation).not.toHaveBeenCalled();
+    const create = screen.getByRole('button', { name: 'Create SQUAT reference workspace' });
+    expect(create).toBeDisabled();
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(create);
     await waitFor(() =>
       expect(createSetMutation).toHaveBeenCalledWith({
         exerciseId: 'exercise-1',

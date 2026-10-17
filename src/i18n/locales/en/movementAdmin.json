@@ -293,5 +293,95 @@
     "sourceUploadFailed": "The source could not be processed. Inspect the failure and try another video.",
     "profileConfirmed": "Reference version approved.",
     "profileActivated": "Reference published as live. Historical versions were preserved."
+  },
+  "inspection": {
+    "failedFootage": "Processing failed",
+    "pendingFootage": "Analysis pending",
+    "reviewExercise": "Choose another exercise",
+    "nextFailure": "No usable reference was produced. Review the failure below first. Verify that the selected exercise itself is a squat; return to the catalog if it is not.",
+    "noRepResult": "No completed repetition analysis",
+    "replaceVideo": "Choose replacement video",
+    "stale": "This upload has not reported a result for more than 10 minutes. Processing is synchronous and does not resume automatically after a server restart. Refresh saved results and ask support to check the request before submitting again.",
+    "duration": "Video length",
+    "resolution": "Video size",
+    "frameRate": "Frame rate",
+    "usableFrames": "Usable frames",
+    "excludedUpload": "Video analyzed, but excluded from reference construction. Review the reason below.",
+    "pendingUpload": "Video is saved; processing has not finished.",
+    "nextPublish": "A reviewed version is approved. Inspect its details and publish it to make it available for future Member assessments.",
+    "nextReview": "A new candidate is ready for review. Inspect source quality and repetitions before approving it. Approval and publication are separate steps.",
+    "nextProcessing": "An upload is still processing. Refresh saved results to check its state; do not duplicate an uncertain submission.",
+    "nextLive": "A published version is available to Members. Failed historical uploads do not replace it. Add footage only when preparing an updated version.",
+    "nextUpload": "Choose a GOOD squat video that matches this exercise. Preview it, upload it, then inspect the saved result.",
+    "autoMetadata": "Pattern and camera view are detected automatically. This aggregate-reference workflow cannot manually edit extracted metadata. Replace incorrectly classified footage; do not approve it to bypass a processing problem.",
+    "notConfigured": "Not configured",
+    "retryReadiness": "Readiness unavailable — retry",
+    "memberReady": "Published supported view · Member available",
+    "filterLabel": "Reference availability",
+    "filters": {
+      "all": "All exercises",
+      "published": "Has a published version",
+      "unpublished": "Footage uploaded · not published",
+      "unconfigured": "No reference footage"
+    },
+    "squatOnly": "The current processor supports SQUAT only. A catalog entry alone does not make an exercise assessable. Rows, hinges, bridges and other movement types are not supported by this reference workflow.",
+    "setupTitle": "Set up reference: {{exercise}}",
+    "setupDescription": "Create a SQUAT reference only if the exercise and footage actually match. Creating an empty set does not start video processing or make this exercise available to Members.",
+    "setupConfirm": "I confirm that this exercise and its intended reference video are a squat.",
+    "setupAction": "Create SQUAT reference workspace",
+    "reusedExercise": "Existing exercise selected. No duplicate exercise was created.",
+    "reuseHint": "Search the catalog first. An existing name will be reused.",
+    "noMatches": "No exercises match this selection",
+    "changeFilter": "Clear the search or choose another reference filter.",
+    "phases": "Detected movement phases",
+    "samples": "Normalized trajectory points",
+    "noPhaseEvidence": "Phase information is unavailable for this version."
+  },
+  "processingIssues": {
+    "VIDEO_NORMALIZATION_FAILED": {
+      "title": "Video could not be prepared",
+      "description": "The server could not convert this recording for analysis. This does not establish that the original file is corrupt.",
+      "recovery": "Try an H.264 MP4 export. If the same problem repeats, ask the operator to check video normalization."
+    },
+    "PROCESSOR_UNAVAILABLE": {
+      "title": "Video processor needs attention",
+      "description": "A required server tool, model, or runtime library is missing. This is a setup failure, not a judgment of the video or movement.",
+      "recovery": "Ask the operator to repair the processor configuration. Re-uploading the same video will not fix a missing dependency."
+    },
+    "UNSUPPORTED_PATTERN": {
+      "title": "Movement is not supported here",
+      "description": "The detected movement does not match the SQUAT workflow.",
+      "recovery": "Use a squat video matching this exercise. Hinge, deadlift, row and pull videos cannot produce a SQUAT reference."
+    },
+    "UNSUPPORTED_VIEW": {
+      "title": "Camera angle is not supported",
+      "description": "This angle cannot be used for the current squat reference.",
+      "recovery": "Use a side or oblique side recording with the hip, knee and ankle visible."
+    },
+    "INSUFFICIENT_MOVEMENT_EVIDENCE": {
+      "title": "Not enough reliable repetitions",
+      "description": "No adequate set of complete, usable squat repetitions could be extracted.",
+      "recovery": "Record several complete repetitions in good light with the whole body visible. Do not approve an incomplete result."
+    },
+    "VIDEO_DECODE_FAILED": {
+      "title": "Video could not be read",
+      "description": "The file is corrupt or its video stream could not be decoded.",
+      "recovery": "Choose an intact recording or export an H.264 MP4. Changing the filename alone does not convert the video."
+    },
+    "PROCESSING_TIMEOUT": {
+      "title": "Processing took too long",
+      "description": "The request ended before processing completed within the allowed time.",
+      "recovery": "Refresh saved results first. If it failed, try a shorter recording or ask the operator to check the processor."
+    },
+    "PROCESSING_CANCELLED": {
+      "title": "Processing was interrupted",
+      "description": "The request ended before a usable result was completed.",
+      "recovery": "Refresh and check the saved footage before choosing another video."
+    },
+    "REFERENCE_PROCESSING_FAILED": {
+      "title": "Reference processing failed",
+      "description": "No usable result was completed for this upload. The exact failing stage is not established by the available evidence.",
+      "recovery": "Review the saved technical details with support. Keep the source record ID; replace the video only if the recording is the cause."
+    }
   }
 }

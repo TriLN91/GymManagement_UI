@@ -86,6 +86,13 @@ export function mapReferenceSetSource(value: unknown): ReferenceSetSourceDto {
       ? dto.warnings.filter((x): x is string => typeof x === 'string')
       : [],
     failureMessage: optionalText(dto.failureMessage),
+    failureCode: optionalText(dto.failureCode),
+    failureStage: optionalText(dto.failureStage),
+    failureSummary: optionalText(dto.failureSummary),
+    detectedPattern: optionalText(dto.detectedPattern),
+    processingSummary: object(dto.processingSummary),
+    createdAtUtc: optionalText(dto.createdAtUtc) ?? undefined,
+    processedAtUtc: optionalText(dto.processedAtUtc),
   };
 }
 
