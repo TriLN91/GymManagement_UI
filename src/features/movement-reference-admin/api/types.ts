@@ -6,6 +6,7 @@ export type SourceDecision = 'CLEAR_ACCEPT' | 'CLEAR_REJECT' | 'AMBIGUOUS' | 'RE
 export type SourceAction = 'KEEP' | 'DOWN_WEIGHT' | 'EXCLUDE' | 'REQUIRES_REVIEW';
 
 export interface ExerciseDto {
+  movementPatternCode?: string | null;
   id: string;
   name: string;
   muscleGroup?: string | null;

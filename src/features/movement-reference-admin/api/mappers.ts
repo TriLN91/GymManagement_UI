@@ -23,6 +23,7 @@ export function mapExercise(value: unknown): ExerciseDto {
   return {
     id: text(dto.id),
     name: text(dto.name),
+    movementPatternCode: optionalText(dto.movementPatternCode),
     muscleGroup: optionalText(dto.muscleGroup),
     equipment: optionalText(dto.equipment),
     difficultyLevel: optionalText(dto.difficultyLevel),
