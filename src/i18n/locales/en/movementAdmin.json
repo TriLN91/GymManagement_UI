@@ -69,7 +69,7 @@
   },
   "createExercise": {
     "title": "Add catalog exercise",
-    "description": "Create a global exercise and continue directly into reference preparation."
+    "description": "Choose the movement processor and keep each exercise variant separate."
   },
   "breadcrumbs": {
     "label": "Breadcrumb",
@@ -298,7 +298,7 @@
     "failedFootage": "Processing failed",
     "pendingFootage": "Analysis pending",
     "reviewExercise": "Choose another exercise",
-    "nextFailure": "No usable reference was produced. Review the failure below first. Verify that the selected exercise itself is a squat; return to the catalog if it is not.",
+    "nextFailure": "Review the saved failure. Check that the footage matches this exercise, selected movement and camera requirements.",
     "noRepResult": "No completed repetition analysis",
     "replaceVideo": "Choose replacement video",
     "stale": "This upload has not reported a result for more than 10 minutes. Processing is synchronous and does not resume automatically after a server restart. Refresh saved results and ask support to check the request before submitting again.",
@@ -312,7 +312,7 @@
     "nextReview": "A new candidate is ready for review. Inspect source quality and repetitions before approving it. Approval and publication are separate steps.",
     "nextProcessing": "An upload is still processing. Refresh saved results to check its state; do not duplicate an uncertain submission.",
     "nextLive": "A published version is available to Members. Failed historical uploads do not replace it. Add footage only when preparing an updated version.",
-    "nextUpload": "Choose a GOOD squat video that matches this exercise. Preview it, upload it, then inspect the saved result.",
+    "nextUpload": "Choose a GOOD video of this exact exercise variant. Read the movement guidance, preview, upload, then inspect the saved result.",
     "autoMetadata": "Pattern and camera view are detected automatically. This aggregate-reference workflow cannot manually edit extracted metadata. Replace incorrectly classified footage; do not approve it to bypass a processing problem.",
     "notConfigured": "Not configured",
     "retryReadiness": "Readiness unavailable — retry",
@@ -324,18 +324,20 @@
       "unpublished": "Footage uploaded · not published",
       "unconfigured": "No reference footage"
     },
-    "squatOnly": "The current processor supports SQUAT only. A catalog entry alone does not make an exercise assessable. Rows, hinges, bridges and other movement types are not supported by this reference workflow.",
+    "squatOnly": "Processors: SQUAT, HINGE and vertical PULL (lat pulldown). PUSH awaits suitable validation footage. Only published matching references enable Member assessment.",
     "setupTitle": "Set up reference: {{exercise}}",
-    "setupDescription": "Create a SQUAT reference only if the exercise and footage actually match. Creating an empty set does not start video processing or make this exercise available to Members.",
-    "setupConfirm": "I confirm that this exercise and its intended reference video are a squat.",
-    "setupAction": "Create SQUAT reference workspace",
+    "setupDescription": "Choose the matching movement and read its recording requirements. An empty workspace does not make this exercise assessable.",
+    "setupConfirm": "I confirm that this exercise and its intended reference video match the selected movement and supported variant.",
+    "setupAction": "Create {{pattern}} reference workspace",
     "reusedExercise": "Existing exercise selected. No duplicate exercise was created.",
     "reuseHint": "Search the catalog first. An existing name will be reused.",
     "noMatches": "No exercises match this selection",
     "changeFilter": "Clear the search or choose another reference filter.",
     "phases": "Detected movement phases",
     "samples": "Normalized trajectory points",
-    "noPhaseEvidence": "Phase information is unavailable for this version."
+    "noPhaseEvidence": "Phase information is unavailable for this version.",
+    "awaitingFootage": "Awaiting validation footage",
+    "withdrawn": "Withdrawn from new assessments"
   },
   "processingIssues": {
     "VIDEO_NORMALIZATION_FAILED": {
@@ -350,17 +352,17 @@
     },
     "UNSUPPORTED_PATTERN": {
       "title": "Movement is not supported here",
-      "description": "The detected movement does not match the SQUAT workflow.",
-      "recovery": "Use a squat video matching this exercise. Hinge, deadlift, row and pull videos cannot produce a SQUAT reference."
+      "description": "The detected movement does not match the selected reference processor or supported variant.",
+      "recovery": "Select the correct exercise and SQUAT, HINGE or vertical PULL workspace. PUSH and horizontal pulls await validation."
     },
     "UNSUPPORTED_VIEW": {
       "title": "Camera angle is not supported",
-      "description": "This angle cannot be used for the current squat reference.",
+      "description": "This camera angle cannot be used for the selected movement reference.",
       "recovery": "Use a side or oblique side recording with the hip, knee and ankle visible."
     },
     "INSUFFICIENT_MOVEMENT_EVIDENCE": {
       "title": "Not enough reliable repetitions",
-      "description": "No adequate set of complete, usable squat repetitions could be extracted.",
+      "description": "Not enough complete repetitions with reliable movement-specific landmarks could be extracted.",
       "recovery": "Record several complete repetitions in good light with the whole body visible. Do not approve an incomplete result."
     },
     "VIDEO_DECODE_FAILED": {
@@ -383,5 +385,10 @@
       "description": "No usable result was completed for this upload. The exact failing stage is not established by the available evidence.",
       "recovery": "Review the saved technical details with support. Keep the source record ID; replace the video only if the recording is the cause."
     }
+  },
+  "patternGuidance": {
+    "SQUAT": "Side or oblique-side view; show shoulders, hips, knees and ankles. Match the exact squat variant, equipment and complete repetitions.",
+    "HINGE": "Side or oblique-side view; show shoulders, hips, knees and ankles. Keep hip hinge and deficit deadlift references separate. Include several complete upright-to-upright cycles. Partial opening and closing lifts are excluded. Evidence comparison only; corrective feedback is not calibrated.",
+    "PULL": "Vertical lat pulldown only; side or oblique-side view with shoulders, elbows, wrists and hips visible, including the overhead position. Record several complete extended-arm-to-extended-arm cycles. Rows and other pulls are unvalidated. Evidence comparison only; corrective feedback is not calibrated."
   }
 }

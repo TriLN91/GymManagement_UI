@@ -36,6 +36,20 @@ test('real SuperAdmin completes the movement reference lifecycle', async ({ page
   await page.getByRole('link', { name: 'Exercise references' }).click();
   await expect(page.getByRole('heading', { name: 'Exercise Reference Library' })).toBeVisible();
 
+  const apiOrigin = [...apiOrigins][0];
+  expect(apiOrigin, 'Login must establish the actual API origin').toBeTruthy();
+  const accessToken = await page.evaluate(() => window.sessionStorage.getItem('gmc.accessToken'));
+  const isolation = await page.request.get(`${apiOrigin}/api/admin/reference-sets/test-isolation`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  expect(isolation.ok(), 'Backend isolation preflight must succeed before creating fixtures').toBe(
+    true,
+  );
+  expect(
+    (await isolation.json()).disposableDatabase,
+    'Real browser tests require the dedicated aifitness_phase_c_test database',
+  ).toBe(true);
+
   const exerciseName = `Real Browser Goblet Squat ${Date.now()}`;
   await page.getByRole('button', { name: 'Add exercise' }).click();
   await page.getByLabel('Name').fill(exerciseName);

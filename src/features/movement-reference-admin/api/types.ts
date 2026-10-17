@@ -96,5 +96,5 @@ export interface CreateExerciseInput {
 
 export interface CreateReferenceSetInput {
   exerciseId: string;
-  pattern: 'SQUAT';
+  pattern: 'SQUAT' | 'HINGE' | 'PULL';
 }

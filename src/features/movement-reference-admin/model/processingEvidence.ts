@@ -11,9 +11,17 @@ export function processingIssueCode(code?: string | null, diagnostic = ''): stri
   if (code) return aliases[code] ?? code;
   if (/libEGL|libGLES|not available at the configured path|model was not found/i.test(diagnostic))
     return 'PROCESSOR_UNAVAILABLE';
-  if (/Detected pattern.*only SQUAT|does not match reference set pattern/is.test(diagnostic))
+  if (
+    /Detected pattern.*(?:only SQUAT|no validated movement processor)|PULL variant unsupported|does not match reference set pattern/is.test(
+      diagnostic,
+    )
+  )
     return 'UNSUPPORTED_PATTERN';
-  if (/No valid SQUAT repetitions|Not enough usable SQUAT frames/i.test(diagnostic))
+  if (
+    /No valid (?:SQUAT|HINGE|PULL) repetitions|Not enough usable (?:SQUAT|HINGE|PULL) frames|trajectory span is too small/i.test(
+      diagnostic,
+    )
+  )
     return 'INSUFFICIENT_MOVEMENT_EVIDENCE';
   if (
     /corrupt|could not be decoded|No frames could be decoded|could not open video/i.test(diagnostic)

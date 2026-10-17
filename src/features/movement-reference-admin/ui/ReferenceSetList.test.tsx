@@ -91,4 +91,26 @@ describe('ReferenceSetList', () => {
       }),
     );
   });
+
+  it('requires fresh confirmation when changing the movement processor', async () => {
+    hooks.referenceSets.mockReturnValue({ data: [], error: null, isLoading: false });
+    render(
+      <MemoryRouter>
+        <ExerciseReferenceLibrary />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Start preparation/i }));
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.change(screen.getByLabelText('Pattern'), { target: { value: 'HINGE' } });
+    const create = screen.getByRole('button', { name: 'Create HINGE reference workspace' });
+    expect(create).toBeDisabled();
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(create);
+    await waitFor(() =>
+      expect(createSetMutation).toHaveBeenCalledWith({
+        exerciseId: 'exercise-1',
+        pattern: 'HINGE',
+      }),
+    );
+  });
 });

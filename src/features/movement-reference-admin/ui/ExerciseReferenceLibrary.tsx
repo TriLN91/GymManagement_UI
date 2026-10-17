@@ -147,6 +147,7 @@ export function ExerciseReferenceLibrary() {
   const [filter, setFilter] = useState('all');
   const [setupExercise, setSetupExercise] = useState<ExerciseDto | null>(null);
   const [setupConfirmed, setSetupConfirmed] = useState(false);
+  const [pattern, setPattern] = useState<'SQUAT' | 'HINGE' | 'PULL'>('SQUAT');
   const [exerciseOpen, setExerciseOpen] = useState(false);
   const [openingExerciseId, setOpeningExerciseId] = useState('');
   const exercises = useExercises();
@@ -194,7 +195,7 @@ export function ExerciseReferenceLibrary() {
     }
     setOpeningExerciseId(exerciseId);
     try {
-      const context = await createSet.mutateAsync({ exerciseId, pattern: 'SQUAT' });
+      const context = await createSet.mutateAsync({ exerciseId, pattern });
       setSetupExercise(null);
       void navigate(ROUTES.superadmin.movementReferenceSetPath(context.id));
     } catch {
@@ -337,6 +338,24 @@ export function ExerciseReferenceLibrary() {
             </DialogTitle>
             <DialogDescription>{t('inspection.setupDescription')}</DialogDescription>
           </DialogHeader>
+          <div>
+            <Label htmlFor="movement-pattern">{t('fields.pattern')}</Label>
+            <select
+              id="movement-pattern"
+              value={pattern}
+              onChange={(event) => {
+                setPattern(event.target.value as typeof pattern);
+                setSetupConfirmed(false);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background p-2"
+            >
+              <option value="SQUAT">SQUAT</option>
+              <option value="HINGE">HINGE</option>
+              <option value="PULL">PULL — Lat pulldown</option>
+              <option disabled>PUSH — {t('inspection.awaitingFootage')}</option>
+            </select>
+            <p className="mt-2 text-sm text-muted-foreground">{t(`patternGuidance.${pattern}`)}</p>
+          </div>
           <label className="flex items-start gap-3 text-sm">
             <input
               type="checkbox"
@@ -359,7 +378,7 @@ export function ExerciseReferenceLibrary() {
               disabled={!setupConfirmed || createSet.isPending}
               onClick={() => setupExercise && void openPreparation(setupExercise.id, true)}
             >
-              {t('inspection.setupAction')}
+              {t('inspection.setupAction', { pattern })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -374,6 +393,24 @@ export function ExerciseReferenceLibrary() {
           <p className="text-sm text-muted-foreground">
             {t('inspection.squatOnly')} {t('inspection.reuseHint')}
           </p>
+          <div>
+            <Label htmlFor="new-movement-pattern">{t('fields.pattern')}</Label>
+            <select
+              id="new-movement-pattern"
+              value={pattern}
+              onChange={(event) => {
+                setPattern(event.target.value as typeof pattern);
+                setSetupConfirmed(false);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background p-2"
+            >
+              <option value="SQUAT">SQUAT</option>
+              <option value="HINGE">HINGE</option>
+              <option value="PULL">PULL — Lat pulldown</option>
+              <option disabled>PUSH — {t('inspection.awaitingFootage')}</option>
+            </select>
+            <p className="mt-2 text-sm text-muted-foreground">{t(`patternGuidance.${pattern}`)}</p>
+          </div>
           <div className="space-y-4">
             <div>
               <Label htmlFor="exercise-name">{t('fields.name')}</Label>

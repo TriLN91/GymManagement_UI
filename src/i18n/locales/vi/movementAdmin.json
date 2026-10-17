@@ -69,7 +69,7 @@
   },
   "createExercise": {
     "title": "Thêm bài tập vào danh mục",
-    "description": "Tạo bài tập toàn cục và chuyển thẳng sang bước chuẩn bị tham chiếu."
+    "description": "Chọn bộ xử lý chuyển động và tạo bài tập riêng cho từng biến thể."
   },
   "breadcrumbs": {
     "label": "Đường dẫn",
@@ -298,7 +298,7 @@
     "failedFootage": "Video xử lý thất bại",
     "pendingFootage": "Đang chờ phân tích",
     "reviewExercise": "Chọn bài tập khác",
-    "nextFailure": "Chưa tạo được mẫu dùng được. Xem lỗi bên dưới trước. Kiểm tra bài tập đã chọn có thực sự là squat; quay lại danh mục nếu không phù hợp.",
+    "nextFailure": "Xem lỗi đã lưu. Kiểm tra video phù hợp bài tập, loại chuyển động và yêu cầu góc quay.",
     "noRepResult": "Chưa có kết quả phân tích lần lặp",
     "replaceVideo": "Chọn video thay thế",
     "stale": "Video chưa có kết quả sau hơn 10 phút. Xử lý đồng bộ không tự tiếp tục khi máy chủ khởi động lại. Tải lại kết quả và nhờ hỗ trợ kiểm tra trước khi gửi lại.",
@@ -312,7 +312,7 @@
     "nextReview": "Phiên bản đề xuất đã sẵn sàng để xem xét. Kiểm tra chất lượng và các lần lặp trước khi xác nhận. Xác nhận và xuất bản là hai bước riêng.",
     "nextProcessing": "Video đang xử lý. Tải lại kết quả để kiểm tra; không gửi trùng khi chưa rõ kết quả.",
     "nextLive": "Đã có phiên bản xuất bản cho Member. Các video lỗi trước đây không thay thế phiên bản này. Chỉ thêm video khi chuẩn bị phiên bản mới.",
-    "nextUpload": "Chọn video squat chuẩn phù hợp với bài tập. Xem trước, tải lên rồi kiểm tra kết quả đã lưu.",
+    "nextUpload": "Chọn video GOOD đúng biến thể bài tập. Đọc hướng dẫn, xem trước, tải lên và kiểm tra kết quả đã lưu.",
     "autoMetadata": "Pattern và góc quay được phát hiện tự động. Luồng mẫu tổng hợp chưa hỗ trợ sửa thủ công thông tin trích xuất. Thay video bị phân loại sai; không xác nhận để bỏ qua lỗi xử lý.",
     "notConfigured": "Chưa cấu hình",
     "retryReadiness": "Chưa đọc được trạng thái — thử lại",
@@ -324,18 +324,20 @@
       "unpublished": "Có video · chưa xuất bản",
       "unconfigured": "Chưa có video tham chiếu"
     },
-    "squatOnly": "Bộ xử lý hiện chỉ hỗ trợ SQUAT. Bài tập trong danh mục chưa đồng nghĩa với việc đánh giá được. Các động tác row, hinge, bridge và pattern khác chưa được hỗ trợ.",
+    "squatOnly": "Hỗ trợ SQUAT, HINGE và PULL dọc (lat pulldown). PUSH đang chờ video kiểm chứng. Thành viên chỉ đánh giá được khi có mẫu phù hợp đã xuất bản.",
     "setupTitle": "Tạo mẫu tham chiếu: {{exercise}}",
-    "setupDescription": "Chỉ tạo mẫu SQUAT khi bài tập và video thực sự phù hợp. Tạo nhóm trống không khởi chạy xử lý video và chưa mở đánh giá cho Member.",
-    "setupConfirm": "Tôi xác nhận bài tập này và video dự định sử dụng là squat.",
-    "setupAction": "Tạo không gian mẫu SQUAT",
+    "setupDescription": "Chọn chuyển động phù hợp và đọc yêu cầu quay video. Không gian làm việc trống chưa cho phép đánh giá bài tập.",
+    "setupConfirm": "Tôi xác nhận bài tập và video mẫu phù hợp với chuyển động và biến thể được hỗ trợ đã chọn.",
+    "setupAction": "Tạo không gian mẫu {{pattern}}",
     "reusedExercise": "Đã chọn bài tập có sẵn. Không tạo bài tập trùng.",
     "reuseHint": "Tìm trong danh mục trước. Tên đã tồn tại sẽ được sử dụng lại.",
     "noMatches": "Không có bài tập phù hợp",
     "changeFilter": "Xóa tìm kiếm hoặc chọn bộ lọc khác.",
     "phases": "Các pha chuyển động",
     "samples": "Số điểm quỹ đạo chuẩn hóa",
-    "noPhaseEvidence": "Phiên bản này chưa cung cấp thông tin pha."
+    "noPhaseEvidence": "Phiên bản này chưa cung cấp thông tin pha.",
+    "awaitingFootage": "Chờ video kiểm chứng",
+    "withdrawn": "Đã rút khỏi đánh giá mới"
   },
   "processingIssues": {
     "VIDEO_NORMALIZATION_FAILED": {
@@ -350,17 +352,17 @@
     },
     "UNSUPPORTED_PATTERN": {
       "title": "Động tác chưa được hỗ trợ",
-      "description": "Động tác phát hiện không phù hợp với luồng SQUAT.",
-      "recovery": "Dùng video squat phù hợp với bài tập. Video hinge, deadlift, row hoặc pull không thể tạo mẫu SQUAT."
+      "description": "Chuyển động phát hiện không phù hợp bộ xử lý hoặc biến thể được hỗ trợ đã chọn.",
+      "recovery": "Chọn đúng bài tập và không gian SQUAT, HINGE hoặc PULL dọc. PUSH và kéo ngang chưa được kiểm chứng."
     },
     "UNSUPPORTED_VIEW": {
       "title": "Góc quay chưa được hỗ trợ",
-      "description": "Góc quay này chưa dùng được cho mẫu squat hiện tại.",
+      "description": "Góc quay này không phù hợp mẫu chuyển động đã chọn.",
       "recovery": "Dùng góc ngang hoặc chéo ngang, thấy rõ hông, gối và cổ chân."
     },
     "INSUFFICIENT_MOVEMENT_EVIDENCE": {
       "title": "Chưa đủ lần lặp đáng tin cậy",
-      "description": "Không trích xuất được đủ lần squat hoàn chỉnh và dùng được.",
+      "description": "Không trích xuất đủ lần lặp hoàn chỉnh với các khớp cần thiết hiện rõ.",
       "recovery": "Quay nhiều lần lặp hoàn chỉnh, đủ sáng và thấy toàn thân. Không xác nhận kết quả chưa đầy đủ."
     },
     "VIDEO_DECODE_FAILED": {
@@ -383,5 +385,10 @@
       "description": "Video chưa tạo được kết quả dùng được. Bằng chứng hiện có chưa xác định chính xác bước lỗi.",
       "recovery": "Nhờ hỗ trợ kiểm tra chi tiết kỹ thuật và giữ ID video. Chỉ thay video nếu nguyên nhân nằm ở bản quay."
     }
+  },
+  "patternGuidance": {
+    "SQUAT": "Góc bên hoặc chếch bên; thấy rõ vai, hông, gối và cổ chân. Chọn đúng biến thể squat, dụng cụ và các lần lặp đầy đủ.",
+    "HINGE": "Góc bên hoặc chếch bên; thấy rõ vai, hông, gối và cổ chân. Tạo mẫu riêng cho hip hinge và deficit deadlift. Quay vài chu kỳ từ đứng thẳng về đứng thẳng; bỏ đoạn đầu/cuối chưa hoàn chỉnh. Chỉ so sánh số đo; chưa hiệu chuẩn phản hồi sửa động tác.",
+    "PULL": "Chỉ hỗ trợ lat pulldown dọc; góc bên hoặc chếch bên, thấy rõ vai, khuỷu, cổ tay và hông, kể cả khi tay trên đầu. Quay vài chu kỳ duỗi tay đến duỗi tay. Row và các kiểu kéo khác chưa được kiểm chứng. Chỉ so sánh số đo; chưa hiệu chuẩn phản hồi sửa động tác."
   }
 }

@@ -800,7 +800,9 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">{t('upload.description')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('upload.description')} {t(`patternGuidance.${set.pattern}`)}
+            </p>
             <div>
               <Label htmlFor="reference-video">{t('upload.file')}</Label>
               <Input
@@ -972,7 +974,13 @@ export function ReferencePreparationWorkspace({ referenceSetId }: { referenceSet
                       <TableCell>v{profile.version}</TableCell>
                       <TableCell>{profile.view}</TableCell>
                       <TableCell>
-                        <MovementStatusBadge value={profile.status} />
+                        {typeof profile.qualitySummary.withdrawnReason === 'string' ? (
+                          <p className="text-sm text-destructive">
+                            {t('inspection.withdrawn')}: {profile.qualitySummary.withdrawnReason}
+                          </p>
+                        ) : (
+                          <MovementStatusBadge value={profile.status} />
+                        )}
                       </TableCell>
                       <TableCell>{profile.sourceVideoCount}</TableCell>
                       <TableCell>{profile.acceptedRepCount}</TableCell>
