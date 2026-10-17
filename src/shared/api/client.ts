@@ -259,4 +259,55 @@ export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
   return unwrap(res);
 }
 
+export async function openApiEventStream<T extends { sequence?: number; type?: string }>(
+  url: string,
+  signal: AbortSignal,
+): Promise<T[]> {
+  const request = async (token: string | null) =>
+    fetch(`${env.VITE_API_BASE_URL}${url}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      cache: 'no-store',
+      signal,
+    });
+  let response = await request(tokenManager.getAccess());
+  if (response.status === 401) response = await request(await tokenManager.refresh());
+  if (!response.ok || !response.body)
+    throw new ApiError(response.status, 'Assistant stream failed');
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const events: T[] = [];
+  let buffer = '';
+  while (true) {
+    const chunk = await reader.read();
+    if (chunk.done) break;
+    buffer += decoder.decode(chunk.value, { stream: true }).replace(/\r\n/g, '\n');
+    let boundary = buffer.indexOf('\n\n');
+    while (boundary >= 0) {
+      const block = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      const eventType = block
+        .split('\n')
+        .find((line) => line.startsWith('event:'))
+        ?.slice(6)
+        .trim();
+      const data = block
+        .split('\n')
+        .find((line) => line.startsWith('data:'))
+        ?.slice(5)
+        .trim();
+      const id = block
+        .split('\n')
+        .find((line) => line.startsWith('id:'))
+        ?.slice(3)
+        .trim();
+      if (data) {
+        const parsed: unknown = JSON.parse(data) as unknown;
+        events.push({ sequence: Number(id), type: eventType, data: parsed } as unknown as T);
+      }
+      boundary = buffer.indexOf('\n\n');
+    }
+  }
+  return events;
+}
+
 export type { UnwrapEnvelope };

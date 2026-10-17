@@ -226,6 +226,43 @@
       "friday-lower-body": "25 Thg 9",
       "saturday-hiit": "26 Thg 9",
       "sunday-rest": "27 Thg 9"
+    },
+    "live": {
+      "loading": "Đang tải lịch tập…",
+      "error": "Không tải được plan hoặc lịch tập. Dữ liệu của bạn không bị mất.",
+      "retry": "Thử lại",
+      "noPlan": "Chưa có workout plan đang hoạt động. Bạn vẫn có thể ghi buổi tập tự do: có XP nhưng không tính vào chuỗi ngày theo lịch.",
+      "noSchedule": "Chọn ngày tập để biết mỗi ngày cần tập ngày nào của plan.",
+      "setDays": "Chọn ngày tập",
+      "day": "Ngày {{day}}",
+      "status": {
+        "completed": "Hoàn thành",
+        "ready": "Buổi hôm nay",
+        "upcoming": "Sắp tới",
+        "rest": "Ngày nghỉ",
+        "missed": "Bỏ lỡ",
+        "paused": "Tạm dừng",
+        "pending": "Đang chờ đồng bộ",
+        "none": "Không có plan"
+      },
+      "freeWorkout": "Ghi buổi tập tự do",
+      "freeTitle": "Buổi tập tự do",
+      "freeSource": "Tự ghi",
+      "freeHint": "Chọn bài tập trong danh mục. Buổi tự do có XP của ngày nhưng không bao giờ tính vào chuỗi ngày theo lịch.",
+      "pickExercises": "Bài tập",
+      "pick": "Chọn ít nhất một bài tập.",
+      "review": "Xem lại buổi tập",
+      "mainSession": "Buổi chính theo lịch",
+      "noLogs": "Ghi ít nhất một set thực tế trước khi hoàn tất.",
+      "viewProgress": "Xem tiến trình",
+      "planWorkout": "Buổi theo plan",
+      "sync": {
+        "pending": "Chưa lưu vào tài khoản — ứng dụng sẽ tự thử lại.",
+        "synced": "Đã lưu vào tài khoản.",
+        "rejected": "Máy chủ không chấp nhận buổi tập này: {{error}}",
+        "retry": "Thử lại ngay",
+        "discard": "Bỏ"
+      }
     }
   },
   "workoutHistory": {

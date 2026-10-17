@@ -1,100 +1,88 @@
-import type { TFunction } from 'i18next';
-import { ChevronDown, Clock3, Dumbbell, History, MapPin, Repeat2 } from 'lucide-react';
+import { ChevronDown, Clock3, Dumbbell, History } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { getWorkoutDay } from '../model/demoWorkoutFlow';
-import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
-import type { ExerciseLog } from '../model/workoutFlowTypes';
+import { serverSessionTotals } from '../model/liveWorkout';
+import { useExerciseCatalog, useWorkoutSessions } from '../model/useLiveWorkout';
+import { useWorkoutSync } from '../model/workoutSync';
 
+import { PendingSyncNotice } from './PendingSyncNotice';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { ROUTES } from '@/shared/config/constants';
 
-function summarize(log: ExerciseLog, t: TFunction) {
-  if (log.trackingType === 'strength') {
-    const sets = log.sets.filter((set) => set.completed);
-    const volume = sets.reduce((sum, set) => sum + set.reps * set.loadKg, 0);
-    return `${sets.length} ${t('workout:workoutHistory.sets')} · ${volume.toLocaleString()} kg`;
-  }
-  if (log.trackingType === 'duration') {
-    const seconds = log.sets.reduce((sum, set) => sum + set.durationSeconds, 0);
-    return `${log.sets.length} ${t('workout:workoutHistory.sets')} · ${Math.round(seconds / 60)} min`;
-  }
-  if (log.trackingType === 'distance')
-    return `${log.distanceKm.toFixed(2)} km · ${Math.round(log.durationSeconds / 60)} min`;
-  return `${log.completedRounds} ${t('workout:workoutHistory.rounds')}`;
-}
-
 export function WorkoutHistory() {
   const { i18n, t } = useTranslation('workout');
-  const sessions = useWorkoutSessionStore((state) => state.completedSessions);
-  const [expanded, setExpanded] = useState<string | null>(sessions[0]?.id ?? null);
+  useWorkoutSync();
+  const sessions = useWorkoutSessions();
+  const { catalog } = useExerciseCatalog();
+  const completed = (sessions.data ?? []).filter((session) => session.status === 'Completed');
+  const [expanded, setExpanded] = useState<string | null>(null);
   const copy = {
-    title: t('workout:workoutHistory.workoutHistory.title'),
     back: t('workout:workoutHistory.workoutHistory.back'),
     empty: t('workout:workoutHistory.workoutHistory.empty'),
     exercises: t('workout:workoutHistory.workoutHistory.exercises'),
-    volume: t('workout:workoutHistory.workoutHistory.volume'),
-    duration: t('workout:workoutHistory.workoutHistory.duration'),
-    distance: t('workout:workoutHistory.workoutHistory.distance'),
-    rounds: t('workout:workoutHistory.workoutHistory.rounds'),
   };
 
   return (
     <WorkoutFlowShell backTo={ROUTES.member.workoutSchedule} backLabel={copy.back}>
-      {sessions.length === 0 ? (
+      <PendingSyncNotice />
+      {sessions.isPending ? (
+        <p className="workout-live-notice" role="status">
+          {t('flow.live.loading')}
+        </p>
+      ) : sessions.isError ? (
+        <div className="workout-live-notice" role="alert">
+          <span>{t('flow.live.error')}</span>
+          <button type="button" onClick={() => void sessions.refetch()}>
+            {t('flow.live.retry')}
+          </button>
+        </div>
+      ) : completed.length === 0 ? (
         <section className="workout-history__empty">
           <History size={32} />
           <span>{copy.empty}</span>
         </section>
       ) : (
         <section className="workout-history__list">
-          {sessions.map((session) => {
-            const day = getWorkoutDay(session.dayId);
-            const isOpen = expanded === session.id;
+          {completed.map((session) => {
+            const totals = serverSessionTotals(session);
+            const isOpen = (expanded ?? completed[0]?.id) === session.id;
             return (
               <article key={session.id}>
                 <button
                   type="button"
                   className="workout-history__summary"
                   aria-expanded={isOpen}
-                  onClick={() => setExpanded(isOpen ? null : session.id)}
+                  onClick={() => setExpanded(isOpen ? '' : session.id)}
                 >
                   <div>
                     <span>
-                      {new Date(session.completedAt).toLocaleDateString(
+                      {new Date(session.completedAtUtc ?? session.scheduledAtUtc).toLocaleString(
                         i18n.resolvedLanguage ?? i18n.language,
+                        { timeZone: 'Asia/Ho_Chi_Minh' },
                       )}
                     </span>
-                    <h2>{day ? t(`flow.days.${day.id}`) : session.dayId}</h2>
+                    <h2>
+                      {session.workoutPlanVersionId
+                        ? t('flow.live.planWorkout')
+                        : t('flow.live.freeTitle')}
+                    </h2>
                     <small>
-                      {Object.keys(session.logs).length} {copy.exercises}
+                      {session.exercises.length} {copy.exercises}
                     </small>
                   </div>
                   <div className="workout-history__totals">
-                    {session.totals.totalVolumeKg > 0 && (
+                    {totals.volumeKg > 0 && (
                       <span>
                         <Dumbbell size={13} />
-                        {session.totals.totalVolumeKg.toLocaleString()} kg
+                        {totals.volumeKg.toLocaleString()} kg
                       </span>
                     )}
-                    {session.totals.totalDurationSeconds > 0 && (
+                    {totals.durationSeconds > 0 && (
                       <span>
                         <Clock3 size={13} />
-                        {Math.round(session.totals.totalDurationSeconds / 60)} min
-                      </span>
-                    )}
-                    {session.totals.totalDistanceKm > 0 && (
-                      <span>
-                        <MapPin size={13} />
-                        {session.totals.totalDistanceKm.toFixed(1)} km
-                      </span>
-                    )}
-                    {session.totals.completedRounds > 0 && (
-                      <span>
-                        <Repeat2 size={13} />
-                        {session.totals.completedRounds}
+                        {Math.round(totals.durationSeconds / 60)} min
                       </span>
                     )}
                     <ChevronDown className={isOpen ? 'is-open' : ''} size={18} />
@@ -102,13 +90,21 @@ export function WorkoutHistory() {
                 </button>
                 {isOpen && (
                   <div className="workout-history__details">
-                    {Object.entries(session.logs).map(([exerciseId, log], index) => (
-                      <div key={exerciseId}>
+                    {session.exercises.map((exercise, index) => (
+                      <div key={exercise.id}>
                         <span>{String(index + 1).padStart(2, '0')}</span>
                         <strong>
-                          {t(`flow.exercises.${exerciseId}`, { defaultValue: exerciseId })}
+                          {catalog.get(exercise.exerciseId)?.name ?? exercise.exerciseId}
                         </strong>
-                        <small>{summarize(log, t)}</small>
+                        <small>
+                          {exercise.logs
+                            .map((log) =>
+                              log.repsCompleted !== null
+                                ? `${log.repsCompleted} × ${log.weightKg ?? 0} kg`
+                                : `${log.durationSeconds ?? 0}s`,
+                            )
+                            .join(' · ') || t('flow.completion.noData')}
+                        </small>
                       </div>
                     ))}
                   </div>

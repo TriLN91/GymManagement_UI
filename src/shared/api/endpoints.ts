@@ -1,6 +1,9 @@
 // Every URL string in the app lives here. Importing the constant is the only way to make a request.
 // Paths are relative to VITE_API_BASE_URL (the backend serves everything under /api).
 export const ENDPOINTS = {
+  assistant: {
+    conversations: '/assistant/conversations',
+  },
   auth: {
     login: '/identity/login',
     register: '/identity/register',
@@ -21,6 +24,7 @@ export const ENDPOINTS = {
       bodyCheckins: '/coaching/me/body-checkins',
       profile: '/coaching/me/profile',
       assignments: '/coaching/me/assignments',
+      plans: '/coaching/me/plans',
     },
     memberProfile: (memberProfileId: string) => `/coaching/members/${memberProfileId}/profile`,
     memberBodyCheckins: (memberId: string) => `/coaching/members/${memberId}/body-checkins`,
@@ -68,6 +72,24 @@ export const ENDPOINTS = {
   gymOwner: {
     myGyms: '/gym-owner/brands/me',
     trainers: '/gym-owner/trainers',
+  },
+  // CF01 workout sessions (backend WorkoutController, route api/workouts).
+  workouts: {
+    exercises: '/workouts/exercises',
+    sessions: '/workouts/me/sessions',
+    complete: (sessionId: string) => `/workouts/me/sessions/${sessionId}/complete`,
+  },
+  // CF05 Fitness Progression (backend ProgressionController). Member-only gamification.
+  progression: {
+    state: '/progression/me/state',
+    history: '/progression/me/history',
+    schedule: '/progression/me/schedule',
+    badgeSeen: (awardId: string) => `/progression/me/badges/${awardId}/seen`,
+    primaryDistanceSource: '/progression/me/primary-distance-source',
+    recovery: '/progression/me/recovery',
+    recoveryDetail: (reportId: string) => `/progression/me/recovery/${reportId}`,
+    pause: '/progression/me/pause',
+    resume: '/progression/me/resume',
   },
   exercises: {
     list: '/workout/exercises',

@@ -2,7 +2,6 @@ export { demoWorkoutPlans, featuredWorkout } from './model/demoWorkoutPlans';
 export type { WorkoutPlanFilter, WorkoutPlanPreview, WorkoutPlansViewState } from './model/types';
 export { WorkoutPlans } from './ui/WorkoutPlans';
 
-export { currentWorkoutWeek, getWorkoutDay } from './model/demoWorkoutFlow';
 export { useWorkoutSessionStore } from './model/useWorkoutSessionStore';
 export type { ExerciseLog, TrackingType, WorkoutExercise } from './model/workoutFlowTypes';
 export { TrainingDayDetail } from './ui/TrainingDayDetail';
