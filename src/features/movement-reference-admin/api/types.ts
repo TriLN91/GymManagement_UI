@@ -54,6 +54,7 @@ export interface ReferenceSetSourceDto {
 }
 
 export interface ReferenceSetProfileDto {
+  sourceReferenceIds?: string[];
   id: string;
   version: number;
   view: string;

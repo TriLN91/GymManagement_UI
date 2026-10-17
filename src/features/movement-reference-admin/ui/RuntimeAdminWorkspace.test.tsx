@@ -1,28 +1,14 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, expect, it, vi } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
-import type { RuntimeConfiguration } from '../api/runtimeTypes';
+import type { RuntimeConfiguration, RuntimeVersion } from '../api/runtimeTypes';
 
-import { RuntimeAdminWorkspace } from './RuntimeAdminWorkspace';
+import { ConfigurationReview } from './ConfigurationReview';
 
-const mocks = vi.hoisted(() => ({
-  get: vi.fn(),
-  post: vi.fn(),
-  put: vi.fn(),
-  list: vi.fn(),
-  detail: vi.fn(),
-}));
-vi.mock('@/shared/api/client', () => ({
-  apiGet: mocks.get,
-  apiPost: mocks.post,
-  apiPut: mocks.put,
-}));
-vi.mock('../api/movementReferenceApi', () => ({
-  movementReferenceApi: { listReferenceSets: mocks.list, getReferenceSet: mocks.detail },
-}));
+import i18n from '@/i18n';
 
-beforeEach(() => vi.clearAllMocks());
-it('keeps canonical publication separate from live approval and persists selected rule corrections', async () => {
+it('requires a saved review before publication and persists the supported cue choices', async () => {
+  await i18n.changeLanguage('en');
   const configuration: RuntimeConfiguration = {
     schemaVersion: 'movement-runtime-v1',
     exerciseId: 'exercise',
@@ -87,57 +73,74 @@ it('keeps canonical publication separate from live approval and persists selecte
       },
     ],
   };
-  const exercise = {
-    id: 'exercise',
-    name: 'Hip hinge',
-    isActive: true,
-    movementPatternCode: 'HINGE',
+
+  const chosen: RuntimeVersion = {
+    id: 'config',
+    exerciseId: 'exercise',
+    referenceProfileId: 'profile',
+    version: 1,
+    view: 'SIDE_LEFT',
+    status: 'DRAFT',
+    configuration,
   };
-  const summary = { id: 'reference', exerciseId: 'exercise', pattern: 'HINGE', status: 'ACTIVE' };
-  mocks.list.mockResolvedValue([summary]);
-  mocks.detail.mockResolvedValue({
-    ...summary,
-    sources: [],
-    profiles: [
-      {
-        id: 'profile',
-        version: 1,
-        view: 'SIDE_LEFT',
-        status: 'ACTIVE',
-        qualitySummary: {},
-        acceptedRepCount: 4,
-        acceptedVideoCount: 1,
-      },
-    ],
+  const save = vi.fn().mockResolvedValue(undefined),
+    publish = vi.fn();
+  const reference = {
+    id: 'profile',
+    version: 1,
+    view: 'SIDE_LEFT',
+    status: 'ACTIVE' as const,
+    sourceVideoCount: 1,
+    acceptedVideoCount: 1,
+    acceptedRepCount: 4,
+    aggregateProfile: {},
+    normalizedReference: {},
+    qualitySummary: {},
+  };
+  const props = {
+    chosen,
+    reference,
+    evidenceReady: true,
+    busy: false,
+    canPublish: true,
+    isAvailable: false,
+    onDirty: vi.fn(),
+    onInspect: vi.fn(),
+    onSave: save,
+    onPublish: publish,
+    onReject: vi.fn(),
+    onNewDraft: vi.fn(),
+  };
+  const { rerender } = render(<ConfigurationReview {...props} />);
+  expect(screen.getByRole('button', { name: 'Review & publish' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' }));
+  fireEvent.change(screen.getByRole('textbox', { name: /Review note/ }), {
+    target: { value: 'Verified the supplied GOOD footage; reference target only.' },
   });
-  mocks.get.mockImplementation((path: string) => {
-    if (path.endsWith('/exercises')) return Promise.resolve([exercise]);
-    if (path.endsWith('/configurations'))
-      return Promise.resolve([{ id: 'config', version: 1, status: 'DRAFT', configuration }]);
-    return Promise.resolve([]);
-  });
-  mocks.put.mockResolvedValue({});
-  render(<RuntimeAdminWorkspace />);
-  fireEvent.click(await screen.findByRole('button', { name: /Hip hinge HINGE/ }));
-  const publish = await screen.findByRole('button', { name: 'Publish live configuration' });
-  expect(publish).toBeDisabled();
-  expect(screen.getByText(/ACTIVE/)).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('checkbox', { name: /Observed envelope/ }));
-  fireEvent.change(screen.getByRole('textbox', { name: 'Visual review note' }), {
-    target: {
-      value: 'Verified body regions against the supplied GOOD footage; reference target only.',
-    },
-  });
-  fireEvent.click(screen.getByRole('button', { name: 'Confirm reviewed configuration' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save reviewed configuration' }));
   await waitFor(() =>
-    expect(mocks.put).toHaveBeenCalledWith(
-      '/admin/movement-runtime/configurations/config/review',
-      expect.objectContaining({
-        features: ['hipAngleDeg'],
-        enabledRules: ['TARGET'],
-        regions: ['HIPS'],
-      }),
+    expect(save).toHaveBeenCalledWith(
+      ['hipAngleDeg'],
+      ['TARGET'],
+      'Verified the supplied GOOD footage; reference target only.',
     ),
   );
-  expect(mocks.post).not.toHaveBeenCalled();
+  expect(publish).not.toHaveBeenCalled();
+  rerender(
+    <ConfigurationReview
+      {...props}
+      chosen={{
+        ...chosen,
+        reviewNote: 'Verified the supplied GOOD footage; reference target only.',
+        configuration: {
+          ...configuration,
+          reviewRequired: false,
+          rules: configuration.rules.map((rule) => ({ ...rule, enabled: true })),
+        },
+      }}
+    />,
+  );
+  expect(screen.getByRole('button', { name: 'Review & publish' })).toBeEnabled();
+  fireEvent.click(screen.getByRole('button', { name: 'Review & publish' }));
+  expect(publish).toHaveBeenCalledOnce();
 });

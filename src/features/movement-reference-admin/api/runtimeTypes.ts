@@ -62,6 +62,7 @@ export type RuntimeConfiguration = {
   limitations: string;
 };
 export type RuntimeVersion = {
+  referenceSetId?: string;
   id: string;
   exerciseId: string;
   referenceProfileId: string;
