@@ -3,11 +3,14 @@ import { http, HttpResponse } from 'msw';
 import { adminRegistrationHandlers } from './adminRegistrations';
 import { appointmentHandlers } from './appointments';
 import { assignmentHandlers } from './assignments';
+import { assistantHandlers } from './assistant';
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
 import { gymOwnerHandlers } from './gymOwner';
 import { movementReferenceHandlers } from './movementReferences';
+import { progressionHandlers } from './progression';
+import { workoutHandlers } from './workouts';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
@@ -22,6 +25,9 @@ export const handlers = [
   ...gymOwnerHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
+  ...workoutHandlers,
+  ...progressionHandlers,
+  ...assistantHandlers,
 
   http.get(path(ENDPOINTS.coaching.plan), () => HttpResponse.json({ data: sampleCoachingPlan })),
 

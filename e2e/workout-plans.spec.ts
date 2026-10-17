@@ -59,13 +59,15 @@ test.describe('Member workout plans', () => {
 
     await page.getByRole('link', { name: /Xem lịch tập tuần/i }).click();
     await expect(page.getByRole('heading', { name: 'Lịch Tập Trong Tuần' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Lưng và xô' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Ngày nghỉ' })).toHaveCount(2);
+    // Today's plan day comes from the MSW schedule; its title is localised.
+    const today = page.getByRole('link', { name: /Ngày 1.*Buổi hôm nay/i });
+    await expect(today).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Ngày nghỉ' }).first()).toBeVisible();
 
-    await page.getByRole('link', { name: /Thứ Ba.*Lưng và xô/i }).click();
-    await expect(page.getByText('Kéo tạ đòn gập người')).toBeVisible();
+    await today.click();
+    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
     await page.getByRole('button', { name: 'Bắt đầu buổi tập' }).click();
-    await expect(page.getByRole('heading', { name: 'Kéo tạ đòn gập người' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Ghi kết quả thực tế' })).toBeVisible();
     await expect(page.getByRole('img', { name: 'Video hướng dẫn bài tập' })).toBeVisible();
   });

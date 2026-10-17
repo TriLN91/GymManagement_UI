@@ -19,18 +19,19 @@ async function openAsMember(page: Page, path: string) {
   await page.goto(path);
 }
 
+// The plan, catalog, schedule and sessions come from the MSW handlers (workouts.ts, progression.ts).
 test.describe('Member workout vertical slice', () => {
-  test('records all four tracking types and persists completion locally', async ({ page }) => {
+  test('logs a scheduled plan day, syncs it and shows it in history and progress', async ({
+    page,
+  }) => {
     await openAsMember(page, '/app/workout');
 
     await page.getByRole('link', { name: /view weekly schedule/i }).click();
     await expect(page).toHaveURL(/\/app\/workout\/schedule$/);
-    await expect(page.getByRole('heading', { name: 'Weekly Schedule' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Rest Day' })).toHaveCount(2);
 
-    await page.getByRole('link', { name: /Tuesday.*Back & Lats/i }).click();
-    await expect(page.getByText('Bent-over barbell row')).toBeVisible();
-    await expect(page.getByText('Tabata row')).toBeVisible();
+    await page.getByRole('link', { name: /Day 1.*Today's session/i }).click();
+    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dead hang' })).toBeVisible();
 
     await page.getByRole('button', { name: /start session/i }).click();
     await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
@@ -44,31 +45,17 @@ test.describe('Member workout vertical slice', () => {
     await page.getByLabel('Set 1 duration').fill('52');
     await page.getByRole('button', { name: /save actual & continue/i }).click();
 
-    await expect(page.getByRole('heading', { name: 'Ergometer row' })).toBeVisible();
-    await page.getByLabel('Actual distance (km)').fill('2.2');
-    await expect(page.getByText(/\/km$/)).toBeVisible();
-    await page.getByRole('button', { name: /save actual & continue/i }).click();
-
-    await expect(page.getByRole('heading', { name: 'Tabata row' })).toBeVisible();
-    await page.getByRole('button', { name: /save actual & finish/i }).click();
-
     await expect(page).toHaveURL(/\/app\/workout\/complete\//);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await expect(page.getByText('2.20 km', { exact: true })).toBeVisible();
+    await expect(page.getByText('Saved to your account.')).toBeVisible();
     await expect(page.getByText(/kg volume/)).toBeVisible();
     await expect(page.getByText('No actual data')).toHaveCount(0);
 
-    const completionUrl = page.url();
-    await page.reload();
-    await expect(page).toHaveURL(completionUrl);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await page.goto('/app/workout/history');
-    await expect(page.getByRole('heading', { name: 'Workout history' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await expect(page.getByText('2.20 km')).toBeVisible();
+    // MSW state lives in the page, so move around in-app (no reload) to read what was stored.
+    await page.getByRole('link', { name: 'History' }).first().click();
+    await expect(page).toHaveURL(/\/app\/workout\/history$/);
+    await expect(page.getByText('Plan workout')).toBeVisible();
 
-    await page.goto('/app/progress');
-    await expect(page.getByRole('heading', { name: 'Workout progress' })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Progress' }).first().click();
     await expect(page.getByText('Completed sessions')).toBeVisible();
   });
 });
