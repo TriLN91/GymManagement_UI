@@ -1,5 +1,11 @@
 export type RuntimeRule = {
   code: string;
+  delivery?: 'LIVE_AND_REVIEW' | 'REVIEW_ONLY';
+  reviewEnabled?: boolean;
+  reviewPhases?: string[];
+  priority?: number;
+  cueBelow?: string;
+  cueAbove?: string;
   feature: string;
   enabled: boolean;
   lower: number;
@@ -10,7 +16,17 @@ export type RuntimeRule = {
   evidence: string;
 };
 export type RuntimeConfiguration = {
-  schemaVersion: 'movement-runtime-v1';
+  schemaVersion: 'movement-runtime-v1' | 'movement-runtime-v2';
+  assessmentPlan?: {
+    version: 'focused-assessment-v1';
+    availableFeatures: string[];
+    trackingFeatures: string[];
+    requiredJoints: string[];
+    requiredRegions: string[];
+    referenceAspectRatio: number;
+    viewStabilityMs: number;
+    featureRoles: { feature: string; roles: string[] }[];
+  };
   id: string;
   version: number;
   exerciseId: string;

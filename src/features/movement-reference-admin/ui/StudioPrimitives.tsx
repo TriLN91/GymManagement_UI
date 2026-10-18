@@ -26,25 +26,32 @@ export function StudioError({ error }: { error: unknown }) {
   if (!error) return null;
   const message = error instanceof Error ? error.message : '';
   const status = error instanceof ApiError ? error.status : 0;
-  const key = /STUDIO_VIDEO_PREVIEW/.test(message)
-    ? 'preview'
-    : /already exists|duplicate/i.test(message)
-      ? 'duplicate'
-      : /classification changed/i.test(message)
-        ? 'classification'
-        : /visual.*evidence|video-aligned evidence/i.test(message)
-          ? 'visual'
-          : /concurrent/i.test(message)
-            ? 'concurrent'
-            : /canonical reference.*first/i.test(message)
-              ? 'reference'
-              : /review.*before publication/i.test(message)
-                ? 'approval'
-                : status === 403
-                  ? 'forbidden'
-                  : status === 404
-                    ? 'missing'
-                    : 'generic';
+  const key =
+    /source image dimensions|source image|mixed legacy normalized geometry|Reference image dimensions/i.test(
+      message,
+    )
+      ? 'geometry'
+      : /recorded review, not live correction/i.test(message)
+        ? 'reviewOnly'
+        : /STUDIO_VIDEO_PREVIEW/.test(message)
+          ? 'preview'
+          : /already exists|duplicate/i.test(message)
+            ? 'duplicate'
+            : /classification changed/i.test(message)
+              ? 'classification'
+              : /visual.*evidence|video-aligned evidence/i.test(message)
+                ? 'visual'
+                : /concurrent/i.test(message)
+                  ? 'concurrent'
+                  : /canonical reference.*first/i.test(message)
+                    ? 'reference'
+                    : /review.*before publication/i.test(message)
+                      ? 'approval'
+                      : status === 403
+                        ? 'forbidden'
+                        : status === 404
+                          ? 'missing'
+                          : 'generic';
   return (
     <div className="studio-alert is-error" role="alert">
       <AlertTriangle aria-hidden className="h-5 w-5 shrink-0" />

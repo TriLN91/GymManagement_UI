@@ -37,9 +37,11 @@ export function MobilePreview({
         })}
       </p>
       <div className="studio-preview-regions">
-        {configuration.selectedRegions.map((region) => (
-          <span key={region}>{t(`regions.${region}`, { defaultValue: region })}</span>
-        ))}
+        {(configuration.assessmentPlan?.requiredRegions ?? configuration.selectedRegions).map(
+          (region) => (
+            <span key={region}>{t(`regions.${region}`, { defaultValue: region })}</span>
+          ),
+        )}
       </div>
       <ul>
         <li>{t('mobileMeasurements', { count: features.length })}</li>
@@ -53,6 +55,9 @@ export function MobilePreview({
         })}
       </p>
       <p className="studio-caption">{t('mobilePreviewHelp')}</p>
+      <p className="studio-caption">
+        {t(configuration.assessmentPlan ? 'focusedPlanHelp' : 'legacyPlanHelp')}
+      </p>
     </div>
   );
 }
@@ -225,7 +230,10 @@ export function ConfigurationReview({
             <h3>{t('features')}</h3>
             <p className="studio-muted">{t('measureHelp')}</p>
             <fieldset>
-              {Object.keys(configuration.capability.featureGeometry).map((code) => (
+              {(
+                configuration.assessmentPlan?.availableFeatures ??
+                Object.keys(configuration.capability.featureGeometry)
+              ).map((code) => (
                 <div className="studio-feature-option" key={code}>
                   <label>
                     <input
@@ -246,6 +254,17 @@ export function ConfigurationReview({
                     />
                     <span>
                       <strong>{name(code)}</strong>
+                      {configuration.assessmentPlan ? (
+                        <small>
+                          {(
+                            configuration.assessmentPlan.featureRoles.find(
+                              (item) => item.feature === code,
+                            )?.roles ?? []
+                          )
+                            .map((role) => t('featureRoles.' + role))
+                            .join(' · ')}
+                        </small>
+                      ) : null}
                       <small>
                         {code === configuration.segmentation.driver
                           ? t('driver')
@@ -266,8 +285,11 @@ export function ConfigurationReview({
             </fieldset>
           </section>
           <section className="studio-config-section">
-            <h3>{t('rules')}</h3>
+            <h3>{t(configuration.assessmentPlan ? 'observationsAndCues' : 'rules')}</h3>
             <p className="studio-muted">{t('rulesHelp')}</p>
+            {configuration.assessmentPlan ? (
+              <p className="studio-caption">{t('phasePurposeHelp')}</p>
+            ) : null}
             <div className="studio-inline-warning">{t('referenceOnly')}</div>
             <fieldset className="studio-rule-list">
               {configuration.rules.map((rule) => (
@@ -280,20 +302,34 @@ export function ConfigurationReview({
                       <strong>{name(rule.feature)}</strong>
                       <small>
                         {t('during', {
-                          phases: rule.phases
+                          phases: (rule.delivery === 'REVIEW_ONLY'
+                            ? (rule.reviewPhases ?? rule.phases)
+                            : rule.phases
+                          )
                             .map((phase) => t(`phases.${phase}`, { defaultValue: phase }))
                             .join(', '),
                         })}
                       </small>
                     </span>
                     <span className="studio-switch-label">
-                      {t(effectiveRules.includes(rule.code) ? 'enabled' : 'disabled')}
+                      {t(
+                        rule.delivery === 'REVIEW_ONLY'
+                          ? 'reviewOnly'
+                          : effectiveRules.includes(rule.code)
+                            ? 'enabled'
+                            : 'disabled',
+                      )}
                       <input
                         type="checkbox"
                         role="switch"
                         aria-label={`${t('rules')}: ${name(rule.feature)}`}
                         checked={effectiveRules.includes(rule.code)}
-                        disabled={!draft || busy || !features.includes(rule.feature)}
+                        disabled={
+                          !draft ||
+                          busy ||
+                          !features.includes(rule.feature) ||
+                          rule.delivery === 'REVIEW_ONLY'
+                        }
                         onChange={() => toggle(rule.code, rules, setRules)}
                       />
                     </span>
@@ -308,9 +344,21 @@ export function ConfigurationReview({
                       {t('showEvidence')}
                     </button>
                   </div>
-                  <p className="studio-cue">
-                    <span>{t('cue')}</span>“{rule.cue}”
-                  </p>
+                  {rule.delivery === 'REVIEW_ONLY' ? (
+                    <p className="studio-caption">{t('reviewObservationHelp')}</p>
+                  ) : (
+                    <p className="studio-cue">
+                      <span>{t('cue')}</span>
+                      {rule.cueBelow && rule.cueAbove ? (
+                        <>
+                          {t('belowRange')}: “{rule.cueBelow}”<br />
+                          {t('aboveRange')}: “{rule.cueAbove}”
+                        </>
+                      ) : (
+                        <>“{rule.cue}”</>
+                      )}
+                    </p>
+                  )}
                 </div>
               ))}
             </fieldset>

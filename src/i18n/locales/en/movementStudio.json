@@ -316,6 +316,22 @@
     "reference": "Publish the exact reference measurements before publishing the Mobile configuration.",
     "approval": "Save the reviewed configuration before publication.",
     "forbidden": "This action requires Platform Admin access.",
-    "missing": "This record is unavailable. Return to the library and refresh."
-  }
+    "missing": "This record is unavailable. Return to the library and refresh.",
+    "geometry": "Reference image geometry is missing or inconsistent. Prepare footage with known, consistent image dimensions before creating a comparable runtime draft.",
+    "reviewOnly": "This measurement supports recorded review, not live correction. Keep it for review and choose an eligible live cue."
+  },
+  "focusedPlanHelp": "Tracking uses the repetition driver and camera-view joints. Other selected features are measured when visible; missing optional evidence does not block counting. Full trajectories remain in the canonical reference.",
+  "legacyPlanHelp": "Legacy published contract: all selected measurements contribute to readiness. Prepare and review a new draft to adopt focused tracking; this version is unchanged.",
+  "observationsAndCues": "Recorded observations & optional live cues",
+  "reviewOnly": "Review only",
+  "reviewObservationHelp": "Retained for recorded review when measured. This observation does not issue live instructions; a reference envelope alone is not a validated form rule.",
+  "belowRange": "Below reference range",
+  "aboveRange": "Above reference range",
+  "featureRoles": {
+    "TRACKING": "Required tracking",
+    "REP_PHASE": "Rep / phase detection",
+    "RECORDED_REVIEW": "Recorded review",
+    "LIVE_OPTION": "Optional live coaching"
+  },
+  "phasePurposeHelp": "Live cues apply only during the listed actionable phases. Recorded observations also cover the transition phase."
 }

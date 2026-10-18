@@ -308,6 +308,22 @@
     "reference": "Phát hành đúng số đo tham chiếu trước khi phát hành cấu hình Mobile.",
     "approval": "Lưu cấu hình đã duyệt trước khi phát hành.",
     "forbidden": "Thao tác này cần quyền Quản trị viên nền tảng.",
-    "missing": "Không tìm thấy bản ghi. Quay lại thư viện và làm mới."
-  }
+    "missing": "Không tìm thấy bản ghi. Quay lại thư viện và làm mới.",
+    "geometry": "Thiếu hoặc không nhất quán thông tin kích thước hình ảnh tham chiếu. Hãy chuẩn bị video có kích thước xác định, nhất quán trước khi tạo bản nháp đánh giá.",
+    "reviewOnly": "Số đo này dùng cho xem lại bản ghi, không dùng để hướng dẫn trực tiếp. Giữ số đo để xem lại và chọn gợi ý trực tiếp được hỗ trợ."
+  },
+  "focusedPlanHelp": "Theo dõi dùng đặc trưng đếm lần lặp và các khớp xác định góc quay. Các đặc trưng khác được đo khi nhìn rõ; thiếu bằng chứng tùy chọn không chặn đếm lần lặp. Đường biểu diễn đầy đủ vẫn được giữ trong tham chiếu gốc.",
+  "legacyPlanHelp": "Hợp đồng đã phát hành cũ: mọi số đo đã chọn đều tham gia kiểm tra sẵn sàng. Chuẩn bị và duyệt bản nháp mới để dùng theo dõi tập trung; phiên bản này được giữ nguyên.",
+  "observationsAndCues": "Quan sát sau ghi hình và gợi ý trực tiếp tùy chọn",
+  "reviewOnly": "Chỉ xem lại",
+  "reviewObservationHelp": "Giữ lại cho phần xem lại khi đo được. Quan sát này không phát hướng dẫn trực tiếp; khoảng số đo tham chiếu chưa phải quy tắc lỗi tư thế đã được xác minh.",
+  "belowRange": "Dưới khoảng tham chiếu",
+  "aboveRange": "Trên khoảng tham chiếu",
+  "featureRoles": {
+    "TRACKING": "Theo dõi bắt buộc",
+    "REP_PHASE": "Đếm lần lặp / nhận diện pha",
+    "RECORDED_REVIEW": "Xem lại bản ghi",
+    "LIVE_OPTION": "Gợi ý trực tiếp tùy chọn"
+  },
+  "phasePurposeHelp": "Lời nhắc trực tiếp chỉ áp dụng trong các giai đoạn còn có thể điều chỉnh được liệt kê. Quan sát sau ghi hình cũng bao gồm giai đoạn chuyển tiếp."
 }

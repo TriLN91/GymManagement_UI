@@ -111,7 +111,7 @@ it('requires a saved review before publication and persists the supported cue ch
     onReject: vi.fn(),
     onNewDraft: vi.fn(),
   };
-  const { rerender } = render(<ConfigurationReview {...props} />);
+  const { rerender, unmount } = render(<ConfigurationReview {...props} />);
   expect(screen.getByRole('button', { name: 'Review & publish' })).toBeDisabled();
   fireEvent.click(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' }));
   fireEvent.change(screen.getByRole('textbox', { name: /Review note/ }), {
@@ -143,4 +143,38 @@ it('requires a saved review before publication and persists the supported cue ch
   expect(screen.getByRole('button', { name: 'Review & publish' })).toBeEnabled();
   fireEvent.click(screen.getByRole('button', { name: 'Review & publish' }));
   expect(publish).toHaveBeenCalledOnce();
+  unmount();
+  render(
+    <ConfigurationReview
+      {...props}
+      chosen={{
+        ...chosen,
+        configuration: {
+          ...configuration,
+          schemaVersion: 'movement-runtime-v2',
+          assessmentPlan: {
+            version: 'focused-assessment-v1',
+            availableFeatures: ['hipAngleDeg'],
+            trackingFeatures: ['hipAngleDeg'],
+            requiredJoints: ['Shoulder', 'Hip', 'Knee'],
+            requiredRegions: ['SHOULDERS', 'HIPS', 'KNEES'],
+            referenceAspectRatio: 16 / 9,
+            viewStabilityMs: 500,
+            featureRoles: [
+              { feature: 'hipAngleDeg', roles: ['TRACKING', 'REP_PHASE', 'RECORDED_REVIEW'] },
+            ],
+          },
+          rules: configuration.rules.map((rule) => ({
+            ...rule,
+            delivery: 'REVIEW_ONLY',
+            reviewEnabled: true,
+          })),
+        },
+      }}
+    />,
+  );
+  expect(screen.getByText('Recorded observations & optional live cues')).toBeInTheDocument();
+  expect(screen.getByText('Review only')).toBeInTheDocument();
+  expect(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' })).toBeDisabled();
+  expect(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' })).not.toBeChecked();
 });
