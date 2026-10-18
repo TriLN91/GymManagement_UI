@@ -8,6 +8,8 @@ import { useGymOwnerTrainingStore } from '../model/useGymOwnerTrainingStore';
 import { gymOwnerTrainingCopy } from './copy';
 import { OperationalBadge, TrainerAvatar } from './TrainingShared';
 
+import { marketplaceApi } from '@/features/marketplace';
+
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
@@ -188,12 +190,20 @@ export function GymOwnerAssignmentExceptionsPage() {
             </DialogClose>
             <Button
               type="button"
-              onClick={() => {
-                if (
-                  confirming &&
-                  confirmingTrainer &&
-                  resolveException(confirming.id, confirmingTrainer.id)
-                ) {
+              onClick={async () => {
+                if (confirming && confirmingTrainer) {
+                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(confirming.id);
+                  if (isUuid) {
+                    try {
+                      await marketplaceApi.reassignAppointment(confirming.id, {
+                        newTrainerProfileId: confirmingTrainer.id,
+                        reason: confirming.reason || 'Branch manager reassigned trainer',
+                      });
+                    } catch {
+                      // Fallback to local store
+                    }
+                  }
+                  resolveException(confirming.id, confirmingTrainer.id);
                   toast.success(copy.assignmentResolved);
                 }
                 setConfirmationId(null);

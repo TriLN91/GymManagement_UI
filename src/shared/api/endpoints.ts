@@ -61,6 +61,42 @@ export const ENDPOINTS = {
     activate: (referenceSetId: string, profileId: string) =>
       `/admin/reference-sets/${referenceSetId}/profiles/${profileId}/activate`,
   },
+  // CF03 Gym Marketplace, Gym Owner & Branch Manager
+  marketplace: {
+    branches: '/marketplace/branches',
+    branchDetail: (id: string) => `/marketplace/branches/${id}`,
+    brandBranches: (brandId: string) => `/marketplace/brands/${brandId}/branches`,
+    offers: '/marketplace/offers',
+    orders: {
+      checkout: '/marketplace/orders/checkout',
+      detail: (id: string) => `/marketplace/orders/${id}`,
+      me: '/marketplace/orders/me',
+      cancel: (id: string) => `/marketplace/orders/${id}/cancel`,
+      consentReassign: (appointmentId: string) =>
+        `/marketplace/orders/appointments/${appointmentId}/consent-reassign`,
+    },
+  },
+  gymOwner: {
+    brands: '/gym-owner/brands',
+    myBrands: '/gym-owner/brands/me',
+    brandDetail: (brandId: string) => `/gym-owner/brands/${brandId}`,
+    createBranch: (brandId: string) => `/gym-owner/brands/${brandId}/branches`,
+    updateBranch: (branchId: string) => `/gym-owner/branches/${branchId}`,
+    assignManager: (branchId: string) => `/gym-owner/branches/${branchId}/manager`,
+    assignTrainer: (branchId: string) => `/gym-owner/branches/${branchId}/trainers`,
+    removeTrainer: (branchId: string, trainerProfileId: string) =>
+      `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
+    brandDashboard: (brandId: string) => `/gym-owner/brands/${brandId}/dashboard`,
+    branchDashboard: (branchId: string) => `/gym-owner/branches/${branchId}/dashboard`,
+  },
+  branchManager: {
+    branchOffers: (branchId: string) => `/branch-manager/branches/${branchId}/offers`,
+    updateOffer: (offerId: string) => `/branch-manager/offers/${offerId}`,
+    appointments: (branchId: string) => `/branch-manager/branches/${branchId}/appointments`,
+    reassignAppointment: (appointmentId: string) =>
+      `/branch-manager/appointments/${appointmentId}/reassign`,
+    trainersKpi: (branchId: string) => `/branch-manager/branches/${branchId}/trainers/kpi`,
+  },
 } as const;
 
 export type EndpointGroup = keyof typeof ENDPOINTS;

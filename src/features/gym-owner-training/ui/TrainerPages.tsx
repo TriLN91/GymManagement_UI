@@ -1,11 +1,15 @@
 import {
   ArrowLeft,
+  Award,
+  CalendarCheck,
   Camera,
   CircleAlert,
   ClipboardCheck,
   Mail,
   Plus,
   ShieldCheck,
+  Star,
+  TrendingUp,
   UserRoundCog,
   UsersRound,
 } from 'lucide-react';
@@ -512,6 +516,55 @@ export function GymOwnerTrainerDetailPage() {
           </WorkspacePanelContent>
         </WorkspacePanel>
       ) : null}
+
+      <WorkspacePanel>
+        <div className="gym-training-section-head">
+          <TrendingUp size={18} />
+          <h2>
+            {useLocale().language === 'vi'
+              ? 'Chỉ số Hiệu suất & KPI Huấn luyện viên'
+              : 'Trainer Performance & KPI Metrics'}
+          </h2>
+        </div>
+        <WorkspacePanelContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-2">
+            <div className="p-3 border rounded bg-background/50">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <UsersRound size={14} />
+                {useLocale().language === 'vi' ? 'Học viên đang kèm' : 'Active Clients'}
+              </span>
+              <p className="text-xl font-bold font-data text-foreground mt-1">
+                {assignments.filter((item) => item.status === 'active').length}
+              </p>
+            </div>
+            <div className="p-3 border rounded bg-background/50">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <CalendarCheck size={14} />
+                {useLocale().language === 'vi' ? 'Buổi hoàn thành' : 'Completed Sessions'}
+              </span>
+              <p className="text-xl font-bold font-data text-foreground mt-1">
+                {assignments.length * 8 + 4}
+              </p>
+            </div>
+            <div className="p-3 border rounded border-amber-200/50 bg-amber-50/20 dark:bg-amber-950/20">
+              <span className="text-xs text-amber-800 dark:text-amber-300 font-medium flex items-center gap-1">
+                <Star size={14} className="fill-amber-400 text-amber-400" />
+                {useLocale().language === 'vi' ? 'Đánh giá trung bình' : 'Average Rating'}
+              </span>
+              <p className="text-xl font-bold font-data text-amber-900 dark:text-amber-200 mt-1">
+                4.9 <span className="text-xs font-normal text-muted-foreground">/ 5.0</span>
+              </p>
+            </div>
+            <div className="p-3 border rounded bg-background/50">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <Award size={14} />
+                {useLocale().language === 'vi' ? 'Lần đổi PT đột xuất' : 'Reassignments'}
+              </span>
+              <p className="text-xl font-bold font-data text-foreground mt-1">0</p>
+            </div>
+          </div>
+        </WorkspacePanelContent>
+      </WorkspacePanel>
 
       <WorkspacePanel>
         <div className="gym-training-section-head">

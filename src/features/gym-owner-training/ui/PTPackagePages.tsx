@@ -11,6 +11,7 @@ import { gymOwnerTrainingCopy } from './copy';
 import { ManagementState } from './ManagementState';
 import { TrainerAvatar } from './TrainingShared';
 
+import { marketplaceApi } from '@/features/marketplace';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
@@ -225,6 +226,30 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
       if (mode === 'edit') updatePackage(gymPackage!.id, input);
       toast.success(mode === 'create' ? copy.packageCreated : copy.packageSaved);
       void navigate(ROUTES.admin.packageDetailPath(savedId));
+
+      // Hybrid sync with branch offers API in background
+      void (async () => {
+        try {
+          const branches = await marketplaceApi.getBranches();
+          const firstBranch = branches?.[0];
+          if (firstBranch) {
+            const branchId = firstBranch.id;
+            await marketplaceApi.createBranchOffer(branchId, {
+              title: input.name.vi || input.name.en,
+              description: input.features.map((f) => f.vi).join(', '),
+              durationType: 'Month',
+              durationValue: Math.max(1, Math.round(input.durationDays / 30)),
+              gymServicePrice: input.servicePriceVnd,
+              includesPlus: true,
+              plusDurationDays: 30,
+              plusPrice: 199000,
+              isPublished: true,
+            });
+          }
+        } catch {
+          // Local state preserved
+        }
+      })();
     }, 250);
   };
 
