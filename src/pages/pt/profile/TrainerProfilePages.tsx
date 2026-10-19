@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next';
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
@@ -7,6 +8,7 @@ import {
   Camera,
   Check,
   Dumbbell,
+  KeyRound,
   LockKeyhole,
   Mail,
   MapPin,
@@ -15,12 +17,14 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react';
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { ChangePasswordDialog } from '@/features/auth/ui/ChangePasswordDialog';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
+import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
 import { getGym } from '@/features/marketplace/model/marketplaceData';
 import { useTrainerProfileStore } from '@/features/trainer-profile';
 import { translateTrainerText } from '@/features/trainer-workspace';
@@ -127,6 +131,7 @@ export function TrainerProfilePage() {
   const profile = useTrainerProfileStore((state) => state.profile);
   const gym = getGym('fit-district-thao-dien');
   const name = user?.fullName ?? 'Trainer';
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const completeness = useMemo(() => {
     const checks = [
       user?.fullName,
@@ -141,12 +146,25 @@ export function TrainerProfilePage() {
   }, [profile, user]);
   return (
     <div className="trainer-profile-page">
-      <div className="trainer-profile-tools">
+      <div className="trainer-profile-tools gap-3">
+        <button
+          type="button"
+          onClick={() => setIsChangePasswordOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+        >
+          <KeyRound size={14} />
+          Đổi mật khẩu
+        </button>
         <Link className="trainer-profile-primary" to={ROUTES.pt.profileEdit}>
           {copy.edit}
           <ArrowRight size={16} />
         </Link>
       </div>
+
+      <ChangePasswordDialog
+        open={isChangePasswordOpen}
+        onOpenChange={setIsChangePasswordOpen}
+      />
       <section className="trainer-profile-hero">
         <TrainerAvatar name={name} source={profile.avatarDataUrl ?? user?.avatarUrl} large />
         <div>
@@ -261,13 +279,35 @@ export function EditTrainerProfilePage() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
   const profile = useTrainerProfileStore((state) => state.profile);
+  const isProfileComplete = useTrainerProfileStore((state) => state.isProfileComplete);
   const updateProfile = useTrainerProfileStore((state) => state.updateProfile);
+  const setIsProfileComplete = useTrainerProfileStore((state) => state.setIsProfileComplete);
   const [form, setForm] = useState({
     fullName: user?.fullName ?? '',
     email: user?.email ?? '',
     ...profile,
   });
-  const save = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    marketplaceApi.getTrainerProfileStatus()
+      .then((status) => {
+        if (status) {
+          setIsProfileComplete(status.isProfileComplete);
+          setForm((prev) => ({
+            ...prev,
+            fullName: status.fullName || prev.fullName,
+            email: status.email || prev.email,
+            phone: status.phoneNumber || prev.phone,
+            bio: status.bio || prev.bio,
+            experienceYears: status.yearsOfExperience > 0 ? status.yearsOfExperience : prev.experienceYears,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [setIsProfileComplete]);
+
+  const save = async () => {
     if (
       !form.fullName.trim() ||
       !form.email.trim() ||
@@ -278,6 +318,22 @@ export function EditTrainerProfilePage() {
       toast.error(copy.required);
       return;
     }
+    setIsSaving(true);
+    try {
+      await marketplaceApi.updateTrainerSelfProfile({
+        fullName: form.fullName.trim(),
+        phoneNumber: form.phone.trim(),
+        bio: form.bio.trim(),
+        yearsOfExperience: form.experienceYears,
+        certificationSummary: form.specializations.join(', '),
+      });
+      setIsProfileComplete(true);
+    } catch (err) {
+      console.warn('Backend sync warning:', err);
+    } finally {
+      setIsSaving(false);
+    }
+
     updateUser({
       fullName: form.fullName.trim(),
       email: form.email.trim(),
@@ -296,6 +352,20 @@ export function EditTrainerProfilePage() {
   };
   return (
     <div className="trainer-profile-page">
+      {!isProfileComplete && (
+        <div className="mb-6 p-4 rounded-xl border border-amber-500/50 bg-amber-500/10 flex items-start gap-3 text-amber-900 dark:text-amber-200">
+          <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={20} />
+          <div>
+            <strong className="block text-sm font-semibold">
+              Yêu cầu hoàn tất hồ sơ cá nhân (Bắt buộc cho PT mới)
+            </strong>
+            <p className="text-xs mt-1 text-muted-foreground">
+              Tài khoản của bạn đã được chủ phòng gym tạo. Vui lòng hoàn thành các thông tin chuyên môn
+              (Số điện thoại, Số năm kinh nghiệm, Giới thiệu bản thân) để được phân bổ học viên và mở khóa lịch làm việc.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="trainer-edit-layout">
         <aside className="trainer-avatar-editor">
           <TrainerAvatar
@@ -420,9 +490,9 @@ export function EditTrainerProfilePage() {
             <button type="button" onClick={() => navigate(ROUTES.pt.profile)}>
               {copy.cancel}
             </button>
-            <button type="button" className="is-primary" onClick={save}>
+            <button type="button" className="is-primary" onClick={save} disabled={isSaving}>
               <Save size={16} />
-              {copy.save}
+              {isSaving ? 'Đang lưu...' : copy.save}
             </button>
           </footer>
         </section>

@@ -54,12 +54,21 @@ export function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       // The design collects no name yet, but the backend requires one.
+      const backendRole = role === 'gym_admin' ? 'GymAdmin' : role === 'pt' ? 'Trainer' : 'Member';
       await register.mutateAsync({
         email: values.email,
         password: values.password,
-        fullName: 'New User',
+        fullName: values.email.split('@')[0] || 'User',
+        role: backendRole,
       });
-      void navigate(ROUTES.member.profileSetup, { replace: true });
+
+      if (role === 'gym_admin') {
+        void navigate(ROUTES.admin.onboarding, { replace: true });
+      } else if (role === 'pt') {
+        void navigate(ROUTES.pt.root, { replace: true });
+      } else {
+        void navigate(ROUTES.member.profileSetup, { replace: true });
+      }
     } catch (error) {
       if (error instanceof ValidationError) {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {

@@ -197,6 +197,79 @@ export interface TrainerKpiDto {
   reassignmentsCount: number;
 }
 
+export interface CreateGymTrainerRequest {
+  email: string;
+  fullName: string;
+  branchId: string;
+  additionalBranchIds?: string[];
+}
+
+export interface CreateGymTrainerResponse {
+  trainerProfileId: string;
+  userId: string;
+  email: string;
+  fullName: string;
+  temporaryPassword: string;
+  primaryBranchName: string;
+  assignedBranchIds: string[];
+}
+
+export interface BranchBriefDto {
+  branchId: string;
+  branchName: string;
+}
+
+export interface GymTrainerOverviewDto {
+  trainerProfileId: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phoneNumber?: string | null;
+  avatarUrl?: string | null;
+  bio?: string | null;
+  yearsOfExperience: number;
+  isActive: boolean;
+  isProfileComplete: boolean;
+  averageRating: number;
+  activeClientsCount: number;
+  completedSessionsCount: number;
+  scheduledSessionsCount: number;
+  assignedBranches: BranchBriefDto[];
+}
+
+export interface GymTrainersLeaderboardDto {
+  topBookedTrainer?: GymTrainerOverviewDto | null;
+  totalTrainers: number;
+  activeTrainers: number;
+  incompleteProfilesCount: number;
+  trainers: GymTrainerOverviewDto[];
+}
+
+export interface TrainerProfileStatusDto {
+  trainerProfileId: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phoneNumber?: string | null;
+  bio?: string | null;
+  yearsOfExperience: number;
+  certificationSummary?: string | null;
+  hourlyRate?: number | null;
+  isProfileComplete: boolean;
+  gymOrganizationId?: string | null;
+  gymBrandName?: string | null;
+}
+
+export interface UpdateTrainerSelfProfileRequest {
+  fullName: string;
+  phoneNumber?: string | null;
+  bio: string;
+  yearsOfExperience: number;
+  certificationSummary?: string | null;
+  hourlyRate?: number | null;
+}
+
+
 export interface CreateGymBrandRequest {
   name: string;
   legalName?: string | null;
@@ -290,6 +363,10 @@ export const marketplaceApi = {
     return apiGet<GymBranchDetailView>(ENDPOINTS.marketplace.branchDetail(branchId));
   },
 
+  async getBrandBranches(brandId: string): Promise<GymBranchCardView[]> {
+    return apiGet<GymBranchCardView[]>(ENDPOINTS.marketplace.brandBranches(brandId));
+  },
+
   async getOffers(): Promise<GymOfferView[]> {
     return apiGet<GymOfferView[]>(ENDPOINTS.marketplace.offers);
   },
@@ -364,6 +441,40 @@ export const marketplaceApi = {
 
   async removeTrainerFromBranch(branchId: string, trainerProfileId: string): Promise<void> {
     return apiDelete<void>(ENDPOINTS.gymOwner.removeTrainer(branchId, trainerProfileId));
+  },
+
+  async createGymTrainer(req: CreateGymTrainerRequest): Promise<CreateGymTrainerResponse> {
+    return apiPost<CreateGymTrainerResponse, CreateGymTrainerRequest>(
+      ENDPOINTS.gymOwner.trainers,
+      req,
+    );
+  },
+
+  async getGymTrainersOverview(): Promise<GymTrainersLeaderboardDto> {
+    return apiGet<GymTrainersLeaderboardDto>(ENDPOINTS.gymOwner.trainersOverview);
+  },
+
+  async updateTrainerStatus(trainerProfileId: string, isActive: boolean): Promise<boolean> {
+    return apiPut<boolean>(ENDPOINTS.gymOwner.updateTrainerStatus(trainerProfileId), { isActive });
+  },
+
+  async updateTrainerBranches(trainerProfileId: string, branchIds: string[]): Promise<boolean> {
+    return apiPut<boolean>(ENDPOINTS.gymOwner.updateTrainerBranches(trainerProfileId), { branchIds });
+  },
+
+  async unlinkTrainer(trainerProfileId: string): Promise<boolean> {
+    return apiDelete<boolean>(ENDPOINTS.gymOwner.deleteTrainer(trainerProfileId));
+  },
+
+  async getTrainerProfileStatus(): Promise<TrainerProfileStatusDto> {
+    return apiGet<TrainerProfileStatusDto>(ENDPOINTS.trainer.profileStatus);
+  },
+
+  async updateTrainerSelfProfile(req: UpdateTrainerSelfProfileRequest): Promise<TrainerProfileStatusDto> {
+    return apiPut<TrainerProfileStatusDto, UpdateTrainerSelfProfileRequest>(
+      ENDPOINTS.trainer.updateProfile,
+      req,
+    );
   },
 
   async getBrandDashboard(brandId: string): Promise<BrandRevenueSummaryDto> {

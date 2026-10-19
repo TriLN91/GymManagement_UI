@@ -18,6 +18,7 @@ const ROLE_MAP: Readonly<Record<string, Role>> = {
   trainer: 'pt',
   gymadmin: 'gym_admin',
   gymowner: 'gym_admin',
+  branchmanager: 'gym_admin',
   platformadmin: 'super_admin',
   superadmin: 'super_admin',
 };

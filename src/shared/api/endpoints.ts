@@ -9,9 +9,10 @@ export const ENDPOINTS = {
     register: '/identity/register',
     refresh: '/identity/refresh',
     logout: '/identity/logout',
-    // Not implemented by the backend yet (MSW only).
     forgotPassword: '/identity/forgot-password',
+    verifyOtp: '/identity/verify-otp',
     resetPassword: '/identity/reset-password',
+    changePassword: '/identity/change-password',
   },
   // `me.*` are CF01 member endpoints (backend CoachingController); the rest is mock-only
   // until the backend exposes a FE-shaped coaching API (AI work is deferred).
@@ -86,8 +87,17 @@ export const ENDPOINTS = {
     assignTrainer: (branchId: string) => `/gym-owner/branches/${branchId}/trainers`,
     removeTrainer: (branchId: string, trainerProfileId: string) =>
       `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
+    trainers: '/gym-owner/trainers',
+    trainersOverview: '/gym-owner/trainers/overview',
+    updateTrainerStatus: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/status`,
+    updateTrainerBranches: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/branches`,
+    deleteTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}`,
     brandDashboard: (brandId: string) => `/gym-owner/brands/${brandId}/dashboard`,
     branchDashboard: (branchId: string) => `/gym-owner/branches/${branchId}/dashboard`,
+  },
+  trainer: {
+    profileStatus: '/trainer/profile/status',
+    updateProfile: '/trainer/profile/me',
   },
   branchManager: {
     branchOffers: (branchId: string) => `/branch-manager/branches/${branchId}/offers`,

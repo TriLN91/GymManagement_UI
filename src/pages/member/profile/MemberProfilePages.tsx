@@ -30,6 +30,7 @@ import { toast } from 'sonner';
 
 import { completedAssessments, trainerAppointments } from './memberProfileData';
 
+import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
@@ -485,18 +486,35 @@ export function AccountSecurityPage() {
   const recordPasswordChange = useMemberProfileStore((state) => state.recordPasswordChange);
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [show, setShow] = useState(false);
-  const updatePassword = () => {
-    if (passwords.next.length < 8) {
-      toast.error(copy.passwordLength);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const updatePassword = async () => {
+    if (passwords.next.length < 6) {
+      toast.error(copy.passwordLength || 'Mật khẩu phải có ít nhất 6 ký tự.');
       return;
     }
     if (passwords.next !== passwords.confirm) {
-      toast.error(copy.passwordMismatch);
+      toast.error(copy.passwordMismatch || 'Mật khẩu xác nhận không khớp.');
       return;
     }
-    recordPasswordChange();
-    setPasswords({ current: '', next: '', confirm: '' });
-    toast.success(copy.passwordUpdated);
+    if (passwords.current === passwords.next) {
+      toast.error('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
+      return;
+    }
+    setIsUpdating(true);
+    try {
+      await authApi.changePassword({
+        currentPassword: passwords.current,
+        newPassword: passwords.next,
+      });
+      recordPasswordChange();
+      setPasswords({ current: '', next: '', confirm: '' });
+      toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
+    } catch (err: any) {
+      toast.error(err?.message || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+    } finally {
+      setIsUpdating(false);
+    }
   };
   return (
     <div className="member-profile-page">
@@ -553,10 +571,10 @@ export function AccountSecurityPage() {
           <button
             className="profile-action-button"
             type="button"
-            disabled={!passwords.current || !passwords.next || !passwords.confirm}
-            onClick={updatePassword}
+            disabled={isUpdating || !passwords.current || !passwords.next || !passwords.confirm}
+            onClick={() => void updatePassword()}
           >
-            {copy.updatePassword}
+            {isUpdating ? 'Đang cập nhật...' : copy.updatePassword}
             <ArrowRight size={15} />
           </button>
         </section>
@@ -873,7 +891,8 @@ export function PTAppointmentsPage() {
             </dl>
 
             {/* CF03 Reassignment Consent Flow */}
-            {appointment.id === 'appointment-linh-02' && (
+            {(appointment.id === 'appointment-linh-02' ||
+              Boolean((appointment as unknown as { isReassigned?: boolean }).isReassigned)) && (
               <div
                 style={{
                   marginTop: 16,
@@ -884,11 +903,15 @@ export function PTAppointmentsPage() {
                 }}
               >
                 <strong style={{ display: 'block', marginBottom: 4, color: 'var(--brand)' }}>
-                  ⚠️ Đề xuất đổi Huấn luyện viên
+                  ⚠️ Đề xuất đổi Huấn luyện viên (CF03)
                 </strong>
                 <p style={{ fontSize: '0.875rem', marginBottom: 12 }}>
                   HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển sang{' '}
-                  <strong>HLV Minh Trần (Rating 4.9⭐)</strong> tiếp quản buổi tập này.
+                  <strong>
+                    {(appointment as unknown as { currentTrainerName?: string }).currentTrainerName ||
+                      'HLV Minh Trần (Rating 4.9⭐)'}
+                  </strong>{' '}
+                  tiếp quản buổi tập này.
                 </p>
                 {reassignStatus[appointment.id] ? (
                   <span

@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
+  AlertTriangle,
   Building2,
   CalendarDays,
   ChevronDown,
@@ -26,6 +27,8 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
+import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
+import { useTrainerProfileStore } from '@/features/trainer-profile';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -194,6 +197,30 @@ export function TrainerLayout() {
   const userName = user?.fullName || 'Trainer';
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'T';
   const query = sidebarQuery.trim();
+
+  const isProfileComplete = useTrainerProfileStore((state) => state.isProfileComplete);
+  const setIsProfileComplete = useTrainerProfileStore((state) => state.setIsProfileComplete);
+
+  useEffect(() => {
+    marketplaceApi
+      .getTrainerProfileStatus()
+      .then((status) => {
+        if (status) setIsProfileComplete(status.isProfileComplete);
+      })
+      .catch(() => {});
+  }, [setIsProfileComplete]);
+
+  useEffect(() => {
+    if (
+      !isProfileComplete &&
+      location.pathname !== ROUTES.pt.profileEdit &&
+      location.pathname !== ROUTES.pt.profile &&
+      location.pathname !== ROUTES.pt.gymInfo
+    ) {
+      navigate(ROUTES.pt.profileEdit, { replace: true });
+    }
+  }, [isProfileComplete, location.pathname, navigate]);
+
   const visibleGroups = navGroups
     .map((group) => ({
       ...group,
@@ -391,6 +418,28 @@ export function TrainerLayout() {
             </div>
           </div>
         </header>
+
+        {!isProfileComplete && (
+          <aside
+            role="alert"
+            className="bg-amber-500/15 border-b border-amber-500/30 px-6 py-3 flex items-center justify-between text-amber-900 dark:text-amber-200"
+          >
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <AlertTriangle className="text-amber-500 shrink-0" size={18} />
+              <span>
+                {isVi
+                  ? 'Hồ sơ chưa hoàn thiện: Vui lòng điền đầy đủ thông tin chuyên môn trước khi nhận học viên.'
+                  : 'Incomplete Profile: Please complete your profile before receiving clients.'}
+              </span>
+            </div>
+            <NavLink
+              to={ROUTES.pt.profileEdit}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-black hover:bg-amber-400 transition"
+            >
+              {isVi ? 'Hoàn tất hồ sơ ngay' : 'Complete Profile Now'}
+            </NavLink>
+          </aside>
+        )}
 
         <main className="member-content">
           <Suspense

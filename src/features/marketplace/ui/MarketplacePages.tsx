@@ -410,6 +410,24 @@ export function MarketplaceHome() {
   const [apiBranches, setApiBranches] = useState<GymBranchCardView[]>([]);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
 
+  const requestLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          toast.success(
+            `Đã định vị: ${pos.coords.latitude.toFixed(2)}, ${pos.coords.longitude.toFixed(2)}`,
+          );
+        },
+        () => {
+          toast.error('Không thể truy cập GPS, hiển thị kết quả theo điểm đánh giá');
+          setCoords(null);
+        },
+        { timeout: 6000 },
+      );
+    }
+  };
+
   // Request browser location on mount
   useEffect(() => {
     if ('geolocation' in navigator) {
@@ -503,6 +521,28 @@ export function MarketplaceHome() {
             <option value="full-service">{copy.fullService}</option>
           </select>
         </label>
+        <button
+          type="button"
+          onClick={requestLocation}
+          title="Định vị chi nhánh gần tôi"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 14px',
+            borderRadius: '8px',
+            border: '1px solid var(--border)',
+            background: coords ? '#e6f4ea' : 'transparent',
+            color: coords ? '#137333' : 'inherit',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <MapPin size={15} />
+          <span>{coords ? 'GPS Bật' : 'Gần tôi'}</span>
+        </button>
       </section>
       <div className="marketplace-result-count">
         <strong>{count}</strong> {copy.results}
@@ -1083,9 +1123,29 @@ export function MarketplacePaymentResultPage() {
             </>
           )}
         </dl>
-        <Link to={ROUTES.member.marketplace}>
-          {copy.continueMarketplace} <ArrowRight size={15} />
-        </Link>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '16px' }}>
+          <Link to={ROUTES.member.marketplace}>
+            {copy.continueMarketplace} <ArrowRight size={15} />
+          </Link>
+          <Link
+            to={ROUTES.member.profileAppointments}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '10px 18px',
+              borderRadius: '8px',
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              color: 'var(--foreground)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+            }}
+          >
+            Quản lý lịch hẹn PT <ChevronRight size={15} />
+          </Link>
+        </div>
       </section>
     </div>
   );
