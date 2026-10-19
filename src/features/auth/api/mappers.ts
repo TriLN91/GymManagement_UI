@@ -1,14 +1,7 @@
 import type { AuthSession, Role } from '@/entities/user';
+import type { AuthResponseDto } from './types';
 
-/** Response of POST /api/identity/{login,register,refresh} (AuthResponseDto). */
-export interface AuthResponseDto {
-  userId: string;
-  fullName: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  roles: string[];
-}
+export type { AuthResponseDto };
 
 // Backend role names (case-insensitive) -> FE roles. "User" is the SRS name for a member.
 const ROLE_MAP: Readonly<Record<string, Role>> = {
