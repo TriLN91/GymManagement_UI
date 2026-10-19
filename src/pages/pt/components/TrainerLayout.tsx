@@ -8,7 +8,6 @@ import {
   CircleDollarSign,
   ClipboardList,
   Dumbbell,
-  Grid2X2,
   History,
   Languages,
   LayoutDashboard,
@@ -52,18 +51,17 @@ interface TrainerNavGroup {
   id: 'dashboard' | 'members' | 'workout' | 'history' | 'profile';
   labelKey: string;
   icon: LucideIcon;
+  to?: string;
   items: ReadonlyArray<TrainerNavItem>;
 }
 
 const navGroups: ReadonlyArray<TrainerNavGroup> = [
   {
     id: 'dashboard',
-    labelKey: 'trainerShell.dashboardGroup',
+    labelKey: 'trainerShell.overview',
     icon: LayoutDashboard,
-    items: [
-      { labelKey: 'trainerShell.overview', to: ROUTES.pt.root, icon: Grid2X2 },
-      { labelKey: 'trainerShell.memberData', to: ROUTES.pt.memberData, icon: Activity },
-    ],
+    to: ROUTES.pt.root,
+    items: [],
   },
   {
     id: 'members',
@@ -72,6 +70,7 @@ const navGroups: ReadonlyArray<TrainerNavGroup> = [
     items: [
       { labelKey: 'trainerShell.members', to: ROUTES.pt.members, icon: UserRound },
       { labelKey: 'trainerShell.appointments', to: ROUTES.pt.appointments, icon: CalendarDays },
+      { labelKey: 'trainerShell.memberData', to: ROUTES.pt.memberData, icon: Activity },
     ],
   },
   {
@@ -303,6 +302,35 @@ export function TrainerLayout() {
           <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
           {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
+
+            // Direct link trigger for single destination items
+            if (group.to && (!group.items || group.items.length === 0)) {
+              const active = matchesTrainerRoute({ to: group.to, labelKey: group.labelKey }, location.pathname);
+              return (
+                <div className="member-nav-group" key={group.id}>
+                  <NavLink
+                    to={group.to}
+                    end={group.to === ROUTES.pt.root}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      closeFlyout();
+                    }}
+                    aria-label={t(group.labelKey)}
+                    title={isSidebarCollapsed ? t(group.labelKey) : undefined}
+                    className={cn(
+                      'member-nav-group__trigger is-direct-link',
+                      active && 'is-active',
+                    )}
+                  >
+                    <span>
+                      <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                      <span className="member-nav-group__label">{t(group.labelKey)}</span>
+                    </span>
+                  </NavLink>
+                </div>
+              );
+            }
+
             const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
@@ -316,6 +344,7 @@ export function TrainerLayout() {
                   type="button"
                   className={cn(
                     'member-nav-group__trigger',
+                    isExpanded && 'is-expanded',
                     hasActiveChild && 'has-active-child',
                     isFlyoutOpen && 'is-flyout-open',
                   )}

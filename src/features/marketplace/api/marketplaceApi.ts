@@ -466,6 +466,10 @@ export const marketplaceApi = {
     return apiDelete<boolean>(ENDPOINTS.gymOwner.deleteTrainer(trainerProfileId));
   },
 
+  async relinkTrainer(trainerProfileId: string): Promise<boolean> {
+    return apiPost<boolean>(ENDPOINTS.gymOwner.relinkTrainer(trainerProfileId));
+  },
+
   async getTrainerProfileStatus(): Promise<TrainerProfileStatusDto> {
     return apiGet<TrainerProfileStatusDto>(ENDPOINTS.trainer.profileStatus);
   },

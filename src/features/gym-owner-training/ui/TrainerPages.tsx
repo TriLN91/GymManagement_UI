@@ -43,6 +43,7 @@ import {
   type GymTrainersLeaderboardDto,
 } from '@/features/marketplace/api/marketplaceApi';
 import { ROUTES } from '@/shared/config/constants';
+import { useActionRollback } from '@/shared/hooks/useActionRollback';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
@@ -69,6 +70,7 @@ function useTrainingCopy() {
 
 export function GymOwnerTrainerListPage() {
   const { copy, isVi } = useTrainingCopy();
+  const { executeWithRollback } = useActionRollback();
   const openExceptions = useGymOwnerTrainingStore(
     (state) => state.assignmentExceptions.filter((item) => item.status === 'open').length,
   );
@@ -183,15 +185,31 @@ export function GymOwnerTrainerListPage() {
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  // Toggle Trainer Active Status
+  // Toggle Trainer Active Status (with Rollback mechanism)
   const handleToggleStatus = async (trainer: GymTrainerOverviewDto) => {
+    const previousStatus = trainer.isActive;
+    const nextStatus = !previousStatus;
     try {
-      await marketplaceApi.updateTrainerStatus(trainer.trainerProfileId, !trainer.isActive);
-      toast.success(
-        trainer.isActive
-          ? (isVi ? `Đã tạm ngưng hoạt động của PT ${trainer.fullName}` : `Suspended ${trainer.fullName}`)
-          : (isVi ? `Đã kích hoạt hoạt động của PT ${trainer.fullName}` : `Activated ${trainer.fullName}`),
-      );
+      await executeWithRollback({
+        actionName: isVi
+          ? `${nextStatus ? 'Kích hoạt' : 'Tạm dừng'} PT ${trainer.fullName}`
+          : `${nextStatus ? 'Activate' : 'Suspend'} PT ${trainer.fullName}`,
+        execute: async () => {
+          await marketplaceApi.updateTrainerStatus(trainer.trainerProfileId, nextStatus);
+        },
+        rollback: async () => {
+          await marketplaceApi.updateTrainerStatus(trainer.trainerProfileId, previousStatus);
+        },
+        successMessage: nextStatus
+          ? (isVi ? `Đã kích hoạt hoạt động của PT ${trainer.fullName}` : `Activated ${trainer.fullName}`)
+          : (isVi ? `Đã tạm ngưng hoạt động của PT ${trainer.fullName}` : `Suspended ${trainer.fullName}`),
+        rollbackSuccessMessage: isVi
+          ? `Đã hoàn tác: Khôi phục trạng thái hoạt động của PT ${trainer.fullName}!`
+          : `Restored status for ${trainer.fullName}!`,
+        onAfterRollback: () => {
+          void loadData();
+        },
+      });
       void loadData();
     } catch (err: any) {
       toast.error(err?.message || (isVi ? 'Không thể cập nhật trạng thái.' : 'Failed to update status.'));
@@ -204,17 +222,37 @@ export function GymOwnerTrainerListPage() {
     setSelectedBranchIds(trainer.assignedBranches.map((b) => b.branchId));
   };
 
-  // Save Branch Assignment
+  // Save Branch Assignment (with Rollback mechanism)
   const handleSaveBranches = async () => {
     if (!branchModalTrainer) return;
     if (selectedBranchIds.length === 0) {
       toast.error(isVi ? 'Huấn luyện viên phải trực thuộc ít nhất 1 chi nhánh.' : 'Trainer must belong to at least 1 branch.');
       return;
     }
+    const targetTrainer = branchModalTrainer;
+    const previousBranchIds = targetTrainer.assignedBranches.map((b) => b.branchId);
+    const newBranchIds = [...selectedBranchIds];
+
     setIsSavingBranches(true);
     try {
-      await marketplaceApi.updateTrainerBranches(branchModalTrainer.trainerProfileId, selectedBranchIds);
-      toast.success(isVi ? 'Đã cập nhật phân bổ chi nhánh thành công!' : 'Branches updated successfully!');
+      await executeWithRollback({
+        actionName: isVi
+          ? `Phân bổ chi nhánh cho PT ${targetTrainer.fullName}`
+          : `Reassign branches for ${targetTrainer.fullName}`,
+        execute: async () => {
+          await marketplaceApi.updateTrainerBranches(targetTrainer.trainerProfileId, newBranchIds);
+        },
+        rollback: async () => {
+          await marketplaceApi.updateTrainerBranches(targetTrainer.trainerProfileId, previousBranchIds);
+        },
+        successMessage: isVi ? 'Đã cập nhật phân bổ chi nhánh thành công!' : 'Branches updated successfully!',
+        rollbackSuccessMessage: isVi
+          ? `Đã hoàn tác: Khôi phục phân bổ chi nhánh cũ cho PT ${targetTrainer.fullName}!`
+          : `Restored branch assignments for ${targetTrainer.fullName}!`,
+        onAfterRollback: () => {
+          void loadData();
+        },
+      });
       setBranchModalTrainer(null);
       void loadData();
     } catch (err: any) {
@@ -224,14 +262,33 @@ export function GymOwnerTrainerListPage() {
     }
   };
 
-  // Execute Safe Unlink
+  // Execute Safe Unlink (with Rollback mechanism)
   const handleExecuteUnlink = async () => {
     if (!unlinkTarget) return;
+    const targetTrainer = unlinkTarget;
     setIsUnlinking(true);
     setUnlinkError(null);
     try {
-      await marketplaceApi.unlinkTrainer(unlinkTarget.trainerProfileId);
-      toast.success(isVi ? `Đã hủy liên kết PT ${unlinkTarget.fullName} khỏi thương hiệu gym.` : `Unlinked ${unlinkTarget.fullName}.`);
+      await executeWithRollback({
+        actionName: isVi
+          ? `Hủy liên kết PT ${targetTrainer.fullName}`
+          : `Unlink PT ${targetTrainer.fullName}`,
+        execute: async () => {
+          await marketplaceApi.unlinkTrainer(targetTrainer.trainerProfileId);
+        },
+        rollback: async () => {
+          await marketplaceApi.relinkTrainer(targetTrainer.trainerProfileId);
+        },
+        successMessage: isVi
+          ? `Đã hủy liên kết PT ${targetTrainer.fullName} khỏi thương hiệu gym.`
+          : `Unlinked ${targetTrainer.fullName}.`,
+        rollbackSuccessMessage: isVi
+          ? `Đã hoàn tác: Khôi phục liên kết PT ${targetTrainer.fullName} thành công!`
+          : `Restored link for ${targetTrainer.fullName}!`,
+        onAfterRollback: () => {
+          void loadData();
+        },
+      });
       setUnlinkTarget(null);
       void loadData();
     } catch (err: any) {
@@ -1027,7 +1084,8 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
 
 
 export function GymOwnerTrainerDetailPage() {
-  const { copy } = useTrainingCopy();
+  const { copy, isVi } = useTrainingCopy();
+  const { executeWithRollback } = useActionRollback();
   const { trainerId = '' } = useParams();
   const trainer = useGymOwnerTrainingStore((state) =>
     state.trainers.find((item) => item.id === trainerId),
@@ -1298,11 +1356,30 @@ export function GymOwnerTrainerDetailPage() {
             </DialogClose>
             <Button
               variant={statusTarget === 'unlinked' ? 'destructive' : 'default'}
-              onClick={() => {
-                if (statusTarget && setTrainerOperationalStatus(trainer.id, statusTarget)) {
-                  toast.success(copy.statusUpdated);
+              onClick={async () => {
+                if (statusTarget) {
+                  const target = statusTarget;
+                  const prev = trainer.operationalStatus;
+                  const prevLabel = prev ? (copy.operational[prev] || prev) : '';
+                  setStatusTarget(null);
+                  await executeWithRollback({
+                    actionName: isVi
+                      ? `Đổi trạng thái vận hành của ${trainer.fullName} sang "${copy.operational[target] || target}"`
+                      : `Set operational status of ${trainer.fullName} to "${copy.operational[target] || target}"`,
+                    execute: async () => {
+                      setTrainerOperationalStatus(trainer.id, target);
+                    },
+                    rollback: async () => {
+                      if (prev) {
+                        setTrainerOperationalStatus(trainer.id, prev);
+                      }
+                    },
+                    successMessage: copy.statusUpdated,
+                    rollbackSuccessMessage: isVi
+                      ? `Đã hoàn tác: Khôi phục trạng thái "${prevLabel}"!`
+                      : `Restored operational status!`,
+                  });
                 }
-                setStatusTarget(null);
               }}
             >
               {copy.confirm}

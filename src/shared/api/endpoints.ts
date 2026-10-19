@@ -92,6 +92,7 @@ export const ENDPOINTS = {
     updateTrainerStatus: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/status`,
     updateTrainerBranches: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/branches`,
     deleteTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}`,
+    relinkTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/relink`,
     brandDashboard: (brandId: string) => `/gym-owner/brands/${brandId}/dashboard`,
     branchDashboard: (branchId: string) => `/gym-owner/branches/${branchId}/dashboard`,
   },

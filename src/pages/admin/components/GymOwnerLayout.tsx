@@ -6,12 +6,10 @@ import {
   ChevronDown,
   ClipboardCheck,
   FileCheck2,
-  KeyRound,
   Landmark,
   Languages,
   LayoutDashboard,
   LineChart,
-  List,
   ListChecks,
   Loader2,
   LogOut,
@@ -50,20 +48,25 @@ interface OwnerNavItem {
   to: string;
 }
 
+interface OwnerNavItem {
+  label: string;
+  icon?: LucideIcon;
+  to: string;
+}
+
 interface OwnerNavGroup {
   id:
     | 'dashboard'
     | 'profile'
     | 'trainers'
-    | 'packages'
-    | 'customers'
-    | 'orders'
+    | 'business'
     | 'analytics'
     | 'notifications'
     | 'security'
     | 'onboarding';
   label: string;
   icon: LucideIcon;
+  to?: string;
   items: ReadonlyArray<OwnerNavItem>;
 }
 
@@ -105,7 +108,8 @@ export function GymOwnerLayout() {
         id: 'dashboard',
         label: t('shell.nav.dashboard'),
         icon: LayoutDashboard,
-        items: [{ label: t('shell.nav.dashboardOverview'), to: ROUTES.admin.root }],
+        to: ROUTES.admin.root,
+        items: [],
       });
       groups.push({
         id: 'profile',
@@ -147,8 +151,8 @@ export function GymOwnerLayout() {
         ],
       });
       groups.push({
-        id: 'packages',
-        label: t('shell.nav.packages'),
+        id: 'business',
+        label: isVi ? 'Kinh doanh & Hội viên' : 'Business & Members',
         icon: PackageCheck,
         items: [
           {
@@ -156,25 +160,11 @@ export function GymOwnerLayout() {
             to: ROUTES.admin.packages,
             icon: PackageCheck,
           },
-        ],
-      });
-      groups.push({
-        id: 'customers',
-        label: isVi ? 'Khách hàng / Người mua' : 'Customers / Purchasers',
-        icon: ShoppingBag,
-        items: [
           {
-            label: t('shell.nav.customerList'),
+            label: isVi ? 'Hội viên & Khách hàng' : 'Members & Customers',
             to: ROUTES.admin.customers,
-            icon: List,
+            icon: ShoppingBag,
           },
-        ],
-      });
-      groups.push({
-        id: 'orders',
-        label: isVi ? 'Đơn hàng & đối soát' : 'Orders & Settlement',
-        icon: ReceiptText,
-        items: [
           {
             label: t('shell.nav.orderList'),
             to: ROUTES.admin.orders,
@@ -191,71 +181,60 @@ export function GymOwnerLayout() {
         id: 'analytics',
         label: t('shell.nav.analytics'),
         icon: LineChart,
-        items: [
-          {
-            label: t('shell.nav.analyticsOps'),
-            to: ROUTES.admin.analytics,
-            icon: LineChart,
-          },
-        ],
+        to: ROUTES.admin.analytics,
+        items: [],
       });
       groups.push({
         id: 'notifications',
         label: t('shell.nav.notifications'),
         icon: Bell,
-        items: [
-          {
-            label: t('shell.nav.notificationsSystem'),
-            to: ROUTES.admin.notifications,
-            icon: Bell,
-          },
-        ],
+        to: ROUTES.admin.notifications,
+        items: [],
       });
       groups.push({
         id: 'security',
         label: t('shell.nav.security'),
-        icon: KeyRound,
+        icon: ShieldCheck,
+        to: ROUTES.admin.accountSecurity,
+        items: [],
+      });
+    }
+
+    // Only display onboarding steps if gym owner is not yet approved
+    if (status !== 'approved') {
+      groups.push({
+        id: 'onboarding',
+        label: t('shell.nav.onboarding'),
+        icon: ClipboardCheck,
         items: [
           {
-            label: t('shell.nav.securityVerification'),
-            to: ROUTES.admin.accountSecurity,
+            label: t('shell.nav.onboardingOverview'),
+            to: ROUTES.admin.onboarding,
+            icon: ClipboardCheck,
+          },
+          {
+            label: t('shell.nav.onboardingBrand'),
+            to: ROUTES.admin.onboardingProfile,
+            icon: Building2,
+          },
+          {
+            label: t('shell.nav.onboardingLicense'),
+            to: ROUTES.admin.onboardingLicense,
+            icon: FileCheck2,
+          },
+          {
+            label: t('shell.nav.onboardingReview'),
+            to: ROUTES.admin.onboardingReview,
             icon: ShieldCheck,
+          },
+          {
+            label: t('shell.nav.onboardingStatus'),
+            to: ROUTES.admin.onboardingStatus,
+            icon: BadgeCheck,
           },
         ],
       });
     }
-    groups.push({
-      id: 'onboarding',
-      label: t('shell.nav.onboarding'),
-      icon: ClipboardCheck,
-      items: [
-        {
-          label: t('shell.nav.onboardingOverview'),
-          to: ROUTES.admin.onboarding,
-          icon: ClipboardCheck,
-        },
-        {
-          label: t('shell.nav.onboardingBrand'),
-          to: ROUTES.admin.onboardingProfile,
-          icon: Building2,
-        },
-        {
-          label: t('shell.nav.onboardingLicense'),
-          to: ROUTES.admin.onboardingLicense,
-          icon: FileCheck2,
-        },
-        {
-          label: t('shell.nav.onboardingReview'),
-          to: ROUTES.admin.onboardingReview,
-          icon: ShieldCheck,
-        },
-        {
-          label: t('shell.nav.onboardingStatus'),
-          to: ROUTES.admin.onboardingStatus,
-          icon: BadgeCheck,
-        },
-      ],
-    });
     return groups;
   }, [isVi, status, t]);
 
@@ -315,10 +294,11 @@ export function GymOwnerLayout() {
 
   const mobileItems = navGroups
     .flatMap((group) => {
+      if (group.to) return [{ label: group.label, to: group.to, icon: group.icon }];
       const [item] = group.items;
-      return item ? [item] : [];
+      return item ? [{ label: group.label, to: item.to, icon: group.icon }] : [];
     })
-    .slice(0, 4);
+    .slice(0, 5);
 
   return (
     <div className={cn('member-shell owner-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>
@@ -372,6 +352,35 @@ export function GymOwnerLayout() {
           <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
           {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
+
+            // Direct link trigger for single destination items
+            if (group.to && (!group.items || group.items.length === 0)) {
+              const active = matchesRoute(group.to, location.pathname);
+              return (
+                <div className="member-nav-group" key={group.id}>
+                  <NavLink
+                    to={group.to}
+                    end={group.to === ROUTES.admin.root || END_ROUTES.has(group.to)}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      closeFlyout();
+                    }}
+                    aria-label={group.label}
+                    title={isSidebarCollapsed ? group.label : undefined}
+                    className={cn(
+                      'member-nav-group__trigger is-direct-link',
+                      active && 'is-active',
+                    )}
+                  >
+                    <span>
+                      <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                      <span className="member-nav-group__label">{group.label}</span>
+                    </span>
+                  </NavLink>
+                </div>
+              );
+            }
+
             const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
@@ -385,6 +394,7 @@ export function GymOwnerLayout() {
                   type="button"
                   className={cn(
                     'member-nav-group__trigger',
+                    isExpanded && 'is-expanded',
                     hasActiveChild && 'has-active-child',
                     isFlyoutOpen && 'is-flyout-open',
                   )}
@@ -424,18 +434,7 @@ export function GymOwnerLayout() {
                       <NavLink
                         key={item.to}
                         to={item.to}
-                        end={
-                          item.to === ROUTES.admin.root ||
-                          item.to === ROUTES.admin.onboarding ||
-                          item.to === ROUTES.admin.pts ||
-                          item.to === ROUTES.admin.packages ||
-                          item.to === ROUTES.admin.customers ||
-                          item.to === ROUTES.admin.orders ||
-                          item.to === ROUTES.admin.settlements ||
-                          item.to === ROUTES.admin.analytics ||
-                          item.to === ROUTES.admin.notifications ||
-                          item.to === ROUTES.admin.accountSecurity
-                        }
+                        end={END_ROUTES.has(item.to)}
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
