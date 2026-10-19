@@ -61,6 +61,13 @@ export function MobilePreview({
         </p>
       </details>
       <p className="studio-caption">{t('mobilePreviewHelp')}</p>
+      {configuration.assessmentPolicy ? (
+        <p className="studio-caption">
+          {t('motionComparisonHelp', {
+            coverage: Math.round(configuration.assessmentPolicy.minimumComparisonRatio * 100),
+          })}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -298,6 +305,20 @@ export function ConfigurationReview({
                             {t('showEvidence')}
                           </button>
                         </div>
+                        {configuration.assessmentPolicy ? (
+                          <p className="studio-caption">
+                            {t('descriptiveEvidenceHelp', {
+                              clips:
+                                configuration.referenceSupport?.acceptedVideoCount ??
+                                reference?.acceptedVideoCount ??
+                                0,
+                              reps:
+                                configuration.referenceSupport?.acceptedRepCount ??
+                                reference?.acceptedRepCount ??
+                                0,
+                            })}
+                          </p>
+                        ) : null}
                         <p className="studio-caption">
                           {t(
                             !measured

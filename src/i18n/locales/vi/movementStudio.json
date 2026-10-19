@@ -351,5 +351,7 @@
   "resolveSave": "Lưu các lựa chọn trước khi xuất bản.",
   "saveBeforeExercise": "Lưu lựa chọn duyệt trước khi sửa thông tin bài tập.",
   "regionTracking": "Theo dõi",
-  "regionOptional": "Tùy chọn"
+  "regionOptional": "Tùy chọn",
+  "motionComparisonHelp": "Chu kỳ chuyển động hoàn chỉnh vẫn được đếm khi góc máy chưa chắc chắn. So sánh mẫu cần góc máy phù hợp trong ít nhất {{coverage}}% thời gian của lượt. Hướng dẫn tạm dừng khi góc máy chưa chắc chắn.",
+  "descriptiveEvidenceHelp": "Quan sát từ {{clips}} video GOOD và {{reps}} chu kỳ mẫu. Đây là phạm vi mô tả, không phải ngưỡng lỗi đã được kiểm chứng. Chỉ bật hướng dẫn trực tiếp khi ghi chú duyệt giải thích vì sao phạm vi này hữu ích cho bài tập."
 }

@@ -359,5 +359,7 @@
   "resolveSave": "Save these choices before publishing.",
   "saveBeforeExercise": "Save your review choices before editing exercise metadata.",
   "regionTracking": "Tracking",
-  "regionOptional": "Optional"
+  "regionOptional": "Optional",
+  "motionComparisonHelp": "Complete motion cycles remain counted when the camera view is uncertain. Reference comparison requires a matching view for at least {{coverage}}% of the attempt duration. Coaching pauses when the view is uncertain.",
+  "descriptiveEvidenceHelp": "Observed across {{clips}} GOOD clips and {{reps}} reference cycles. These are descriptive ranges, not validated fault boundaries. Enable live guidance only when your review note explains why matching this range is useful for this exercise."
 }

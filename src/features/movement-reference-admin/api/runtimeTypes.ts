@@ -14,9 +14,23 @@ export type RuntimeRule = {
   cue: string;
   scope: string;
   evidence: string;
+  confirmationNote?: string;
 };
 export type RuntimeConfiguration = {
-  schemaVersion: 'movement-runtime-v1' | 'movement-runtime-v2';
+  schemaVersion: 'movement-runtime-v1' | 'movement-runtime-v2' | 'movement-runtime-v3';
+  referenceSupport?: {
+    acceptedVideoCount: number;
+    acceptedRepCount: number;
+    featureDefinitionsVersion: string;
+    meaning: string;
+  };
+  assessmentPolicy?: {
+    version: 'motion-comparison-v1';
+    minimumComparisonRatio: number;
+    coverageUnit: 'ELAPSED_TIME';
+    referenceMeaning: 'DESCRIPTIVE_ENVELOPE';
+    biomechanicalFaultDetection: false;
+  };
   assessmentPlan?: {
     version: 'focused-assessment-v1';
     availableFeatures: string[];

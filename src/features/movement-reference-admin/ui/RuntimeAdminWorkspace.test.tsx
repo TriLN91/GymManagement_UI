@@ -151,7 +151,20 @@ it('requires a saved review before publication and persists the supported cue ch
         ...chosen,
         configuration: {
           ...configuration,
-          schemaVersion: 'movement-runtime-v2',
+          schemaVersion: 'movement-runtime-v3',
+          assessmentPolicy: {
+            version: 'motion-comparison-v1',
+            coverageUnit: 'ELAPSED_TIME',
+            minimumComparisonRatio: 0.8,
+            referenceMeaning: 'DESCRIPTIVE_ENVELOPE',
+            biomechanicalFaultDetection: false,
+          },
+          referenceSupport: {
+            acceptedVideoCount: 1,
+            acceptedRepCount: 4,
+            featureDefinitionsVersion: 'hinge-geometry-v1',
+            meaning: 'DESCRIPTIVE_GOOD_REFERENCE_NOT_VALIDATED_FAULT_BOUNDARIES',
+          },
           assessmentPlan: {
             version: 'focused-assessment-v1',
             availableFeatures: ['hipAngleDeg'],
@@ -179,6 +192,10 @@ it('requires a saved review before publication and persists the supported cue ch
     screen.queryByRole('switch', { name: 'Live feedback cues: Hip angle' }),
   ).not.toBeInTheDocument();
   expect(screen.getByText(/cannot be disabled/)).toBeInTheDocument();
+  expect(
+    screen.getByText(/Observed across 1 GOOD clips and 4 reference cycles/),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/Complete motion cycles remain counted/)).toHaveTextContent('80%');
   v2.unmount();
   render(<ConfigurationReview {...props} evidenceReady={false} />);
   expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
