@@ -196,6 +196,36 @@ it('requires a saved review before publication and persists the supported cue ch
     screen.getByText(/Observed across 1 GOOD clips and 4 reference cycles/),
   ).toBeInTheDocument();
   expect(screen.getByText(/Complete motion cycles remain counted/)).toHaveTextContent('80%');
+  save.mockClear();
+  fireEvent.change(screen.getByRole('textbox', { name: /Review note/ }), {
+    target: { value: 'Approved reference comparisons and Mobile support.' },
+  });
+  expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('checkbox', { name: /target Mobile build supports/ }));
+  const expectation = screen.getByRole('textbox', { name: /Exercise expectation/ });
+  fireEvent.change(expectation, { target: { value: '' } });
+  expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
+  fireEvent.change(expectation, {
+    target: { value: 'Use this approved hinge reference as a descriptive comparison.' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Save reviewed configuration' }));
+  await waitFor(() =>
+    expect(save).toHaveBeenCalledWith(
+      ['hipAngleDeg'],
+      [],
+      'Approved reference comparisons and Mobile support.',
+      [
+        {
+          code: 'TARGET',
+          expectation: 'Use this approved hinge reference as a descriptive comparison.',
+          cueBelow: 'Match the reference target',
+          cueAbove: 'Match the reference target',
+        },
+      ],
+      'movement-runtime-v3',
+    ),
+  );
+  expect(screen.getByRole('button', { name: 'Review & publish' })).toBeDisabled();
   v2.unmount();
   render(<ConfigurationReview {...props} evidenceReady={false} />);
   expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();

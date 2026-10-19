@@ -2,6 +2,7 @@ import { CheckCircle2, Eye, LockKeyhole, Smartphone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { CriterionReview } from '../api/runtimeTypes';
 import type { RuntimeConfiguration, RuntimeVersion } from '../api/runtimeTypes';
 import type { ReferenceSetProfileDto } from '../api/types';
 
@@ -162,7 +163,13 @@ export function ConfigurationReview({
   onDirty: (value: boolean) => void;
   onInspect: (feature?: string) => void;
   onEditExercise?: () => void;
-  onSave: (features: string[], rules: string[], note: string) => Promise<void>;
+  onSave: (
+    features: string[],
+    rules: string[],
+    note: string,
+    criteria?: CriterionReview[],
+    mobileRuntimeSchema?: string,
+  ) => Promise<void>;
   onPublish: () => void;
   onReject: () => void;
   onNewDraft: () => void;
@@ -174,6 +181,19 @@ export function ConfigurationReview({
     configuration.rules.filter((rule) => rule.enabled).map((rule) => rule.code),
   );
   const [note, setNote] = useState(chosen.reviewNote ?? '');
+  const needsDefinition = configuration.schemaVersion === 'movement-runtime-v3';
+  const initialCriteria = configuration.rules.map((rule) => ({
+    code: rule.code,
+    expectation: rule.expectation ?? 'Compare this exercise with the approved reference range.',
+    cueBelow: rule.cueBelow ?? rule.cue,
+    cueAbove: rule.cueAbove ?? rule.cue,
+  }));
+  const [criteria, setCriteria] = useState<CriterionReview[]>(initialCriteria);
+  const [mobileCompatible, setMobileCompatible] = useState(
+    configuration.assessmentDefinition?.mobileRuntimeSchema === 'movement-runtime-v3',
+  );
+  const definitionReady =
+    !needsDefinition || configuration.assessmentDefinition?.status === 'REVIEWED';
   const [compare, setCompare] = useState(false);
   const noteInput = useRef<HTMLTextAreaElement>(null);
   const draft = chosen.status === 'DRAFT';
@@ -182,7 +202,11 @@ export function ConfigurationReview({
   );
   const dirty =
     draft &&
-    (!same(features, configuration.selectedFeatures) ||
+    ((needsDefinition && JSON.stringify(criteria) !== JSON.stringify(initialCriteria)) ||
+      (needsDefinition &&
+        mobileCompatible !==
+          (configuration.assessmentDefinition?.mobileRuntimeSchema === 'movement-runtime-v3')) ||
+      !same(features, configuration.selectedFeatures) ||
       !same(
         effectiveRules,
         configuration.rules.filter((rule) => rule.enabled).map((rule) => rule.code),
@@ -367,6 +391,43 @@ export function ConfigurationReview({
                             ) : null}
                           </>
                         )}
+                        {needsDefinition ? (
+                          <div className="studio-form">
+                            <strong>{t('referenceCriterion')}</strong>
+                            <p className="studio-caption">{t('referenceCriterionHelp')}</p>
+                            {(['expectation', 'cueBelow', 'cueAbove'] as const).map((field) => (
+                              <label key={field}>
+                                {t(field)} · {name(code)}
+                                <textarea
+                                  rows={2}
+                                  maxLength={400}
+                                  disabled={!draft || busy || !measured}
+                                  value={
+                                    criteria.find((item) => item.code === rule.code)?.[field] ?? ''
+                                  }
+                                  onChange={(event) =>
+                                    setCriteria((items) =>
+                                      items.map((item) =>
+                                        item.code === rule.code
+                                          ? { ...item, [field]: event.target.value }
+                                          : item,
+                                      ),
+                                    )
+                                  }
+                                />
+                              </label>
+                            ))}
+                            <p className="studio-caption">
+                              {t('requiredEvidence')}:{' '}
+                              {(
+                                rule.requiredJoints ??
+                                configuration.capability.featureGeometry[code]?.joints ??
+                                []
+                              ).join(', ')}
+                              . {t('criterionValidity')}
+                            </p>
+                          </div>
+                        ) : null}
                         <details className="studio-purpose-details">
                           <summary>{t('whenMeasured')}</summary>
                           <p>
@@ -394,6 +455,16 @@ export function ConfigurationReview({
               })}
             </div>
           </section>
+          {configuration.assessmentDefinition ? (
+            <section className="studio-config-section">
+              <h3>{t('unsupportedCriteria')}</h3>
+              {configuration.assessmentDefinition.unsupportedCriteria.map((item) => (
+                <p key={item.code}>
+                  <strong>{item.code.replaceAll('_', ' ')}</strong>: {item.reason}
+                </p>
+              ))}
+            </section>
+          ) : null}
         </div>
         <aside className="studio-publication-panel">
           {draft ? (
@@ -411,10 +482,50 @@ export function ConfigurationReview({
                   disabled={busy}
                 />
               </label>
+              {needsDefinition ? (
+                <label className="studio-live-choice">
+                  <input
+                    type="checkbox"
+                    checked={mobileCompatible}
+                    disabled={busy}
+                    onChange={(e) => setMobileCompatible(e.target.checked)}
+                  />
+                  <span>{t('confirmMobileCompatibility')}</span>
+                </label>
+              ) : null}
               <div className="studio-review-save">
                 <Button
-                  disabled={busy || !note.trim() || !evidenceReady}
-                  onClick={() => void onSave(features, effectiveRules, note)}
+                  disabled={
+                    busy ||
+                    !note.trim() ||
+                    !evidenceReady ||
+                    (needsDefinition &&
+                      (!mobileCompatible ||
+                        criteria.some(
+                          (item) =>
+                            configuration.rules.some(
+                              (rule) => rule.code === item.code && features.includes(rule.feature),
+                            ) &&
+                            (!item.expectation.trim() ||
+                              !item.cueBelow.trim() ||
+                              !item.cueAbove.trim()),
+                        )))
+                  }
+                  onClick={() => {
+                    if (needsDefinition)
+                      void onSave(
+                        features,
+                        effectiveRules,
+                        note,
+                        criteria.filter((item) =>
+                          configuration.rules.some(
+                            (rule) => rule.code === item.code && features.includes(rule.feature),
+                          ),
+                        ),
+                        'movement-runtime-v3',
+                      );
+                    else void onSave(features, effectiveRules, note);
+                  }}
                 >
                   {t('saveReview')}
                 </Button>
@@ -474,6 +585,7 @@ export function ConfigurationReview({
                   busy ||
                   dirty ||
                   configuration.reviewRequired ||
+                  !definitionReady ||
                   reference?.status !== 'ACTIVE' ||
                   !canPublish
                 }

@@ -1,4 +1,14 @@
+export type CriterionReview = {
+  code: string;
+  expectation: string;
+  cueBelow: string;
+  cueAbove: string;
+};
 export type RuntimeRule = {
+  criterionKind?: 'REFERENCE_COMPARISON';
+  technicalCorrectionSupported?: boolean;
+  expectation?: string;
+  requiredJoints?: string[];
   code: string;
   delivery?: 'LIVE_AND_REVIEW' | 'REVIEW_ONLY';
   reviewEnabled?: boolean;
@@ -17,6 +27,14 @@ export type RuntimeRule = {
   confirmationNote?: string;
 };
 export type RuntimeConfiguration = {
+  targetMuscles?: { code: string; role: 'PRIMARY' | 'SECONDARY' }[];
+  assessmentDefinition?: {
+    version: string;
+    status: 'DRAFT' | 'REVIEWED';
+    mobileRuntimeSchema?: string;
+    meaning: string;
+    unsupportedCriteria: { code: string; reason: string }[];
+  };
   schemaVersion: 'movement-runtime-v1' | 'movement-runtime-v2' | 'movement-runtime-v3';
   referenceSupport?: {
     acceptedVideoCount: number;

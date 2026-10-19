@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+
 import type { ExerciseInput, ExerciseMetadataCatalog } from '../api/movementRuntimeApi';
 import type { ExerciseDto } from '../api/types';
 import { patterns } from '../model/studio';
 
+import { ExerciseMuscleTargets } from './ExerciseMuscleTargets';
 import { StudioError } from './StudioPrimitives';
 
 import { Button } from '@/shared/ui/button';
@@ -43,6 +45,8 @@ export function ExerciseEditor({
     instructions: exercise?.instructions ?? '',
     pattern: pattern && patterns.some((item) => item === pattern) ? pattern : 'OTHER',
     isActive: exercise?.isActive ?? true,
+    targetMuscles: exercise?.targetMuscles ?? [],
+    metadataRevision: exercise?.metadataRevision ?? 0,
   });
   const [error, setError] = useState<unknown>();
   return (
@@ -127,6 +131,11 @@ export function ExerciseEditor({
             ))}
           </div>
           <p className="studio-caption">{t('catalogHelp')}</p>
+          <ExerciseMuscleTargets
+            value={value.targetMuscles ?? []}
+            disabled={busy}
+            onChange={(targetMuscles) => setValue({ ...value, targetMuscles })}
+          />
           <label>
             {t('fields.instructions')}
             <textarea
@@ -140,7 +149,17 @@ export function ExerciseEditor({
             <Button type="button" variant="outline" disabled={busy} onClick={onClose}>
               {t('cancel')}
             </Button>
-            <Button type="submit" disabled={busy || !value.name.trim()}>
+            <Button
+              type="submit"
+              disabled={
+                busy ||
+                !value.name.trim() ||
+                Boolean(
+                  value.targetMuscles?.length &&
+                  !value.targetMuscles.some((m) => m.role === 'PRIMARY'),
+                )
+              }
+            >
               {t(busy ? 'loading' : exercise ? 'save' : 'create')}
             </Button>
           </DialogFooter>

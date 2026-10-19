@@ -35,6 +35,7 @@ export function ReferenceInspector({
   focusFeature,
   context,
   onReady,
+  onReprocessed,
 }: {
   source: ReferenceSetSourceDto;
   capability?: RuntimeConfiguration['capability'];
@@ -42,6 +43,7 @@ export function ReferenceInspector({
   focusFeature?: string;
   context?: React.ReactNode;
   onReady: (sourceId: string, version: string) => void;
+  onReprocessed?: (result: { referenceSetId: string; sourceId?: string }) => Promise<void>;
 }) {
   const { t } = useTranslation('movementStudio');
   const { t: technical } = useTranslation('movementAdmin');
@@ -425,12 +427,15 @@ export function ReferenceInspector({
                   }
                   setBusy(true);
                   setEvidenceError(undefined);
-                  void apiPost(`${runtimeBase}/sources/${source.id}/visual-review`, undefined, {
-                    timeout: 330000,
-                  })
-                    .then(() => {
-                      setRevision((value) => value + 1);
-                      setLoading(true);
+                  void apiPost<{ referenceSetId: string; sourceId?: string }>(
+                    `${runtimeBase}/sources/${source.id}/reprocess`,
+                    undefined,
+                    {
+                      timeout: 330000,
+                    },
+                  )
+                    .then(async (result) => {
+                      await onReprocessed?.(result);
                     })
                     .catch(setEvidenceError)
                     .finally(() => setBusy(false));
@@ -528,12 +533,15 @@ export function ReferenceInspector({
             onClick={() => {
               setBusy(true);
               setEvidenceError(undefined);
-              void apiPost(`${runtimeBase}/sources/${source.id}/visual-review`, undefined, {
-                timeout: 330000,
-              })
-                .then(() => {
-                  setRevision((value) => value + 1);
-                  setLoading(true);
+              void apiPost<{ referenceSetId: string; sourceId?: string }>(
+                `${runtimeBase}/sources/${source.id}/reprocess`,
+                undefined,
+                {
+                  timeout: 330000,
+                },
+              )
+                .then(async (result) => {
+                  await onReprocessed?.(result);
                 })
                 .catch(setEvidenceError)
                 .finally(() => setBusy(false));

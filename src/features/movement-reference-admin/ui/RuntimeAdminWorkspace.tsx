@@ -622,6 +622,16 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                             </div>
                           </div>
                         }
+                        onReprocessed={async (result) => {
+                          await reload();
+                          const updated = await movementReferenceApi.getReferenceSet(
+                            result.referenceSetId,
+                          );
+                          setReference(updated);
+                          setSourceId(result.sourceId ?? '');
+                          setProfileId(updated.profiles.at(-1)?.id ?? '');
+                          setNotice(t('reprocessCreated'));
+                        }}
                         onReady={onEvidence}
                       />
                     </>
@@ -679,7 +689,7 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                     onDirty={onDirty}
                     onInspect={inspect}
                     onEditExercise={() => setEditor('edit')}
-                    onSave={async (features, rules, note) => {
+                    onSave={async (features, rules, note, criteria, mobileRuntimeSchema) => {
                       await act(
                         () =>
                           movementRuntimeApi.review(chosen.id, {
@@ -687,6 +697,8 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                             features,
                             enabledRules: rules,
                             note,
+                            criteria,
+                            mobileRuntimeSchema,
                           }),
                         'reviewSaved',
                       );

@@ -1,4 +1,4 @@
-import type { RuntimeConfiguration, RuntimeVersion } from './runtimeTypes';
+import type { CriterionReview, RuntimeConfiguration, RuntimeVersion } from './runtimeTypes';
 import type { ExerciseDto } from './types';
 
 import { apiGet, apiPost, apiPut } from '@/shared/api/client';
@@ -30,6 +30,8 @@ export type ExerciseInput = {
   instructions: string;
   pattern: string;
   isActive: boolean;
+  targetMuscles?: { code: string; role: 'PRIMARY' | 'SECONDARY' }[];
+  metadataRevision?: number;
 };
 export type ExerciseMetadataCatalog = { equipment: string[]; muscleGroups: string[] };
 export const movementRuntimeApi = {
@@ -47,7 +49,14 @@ export const movementRuntimeApi = {
   propose: (profileId: string) => apiPost<RuntimeVersion>(`${runtimeBase}/proposals/${profileId}`),
   review: (
     id: string,
-    input: { regions: string[]; features: string[]; enabledRules: string[]; note: string },
+    input: {
+      regions: string[];
+      features: string[];
+      enabledRules: string[];
+      note: string;
+      criteria?: CriterionReview[];
+      mobileRuntimeSchema?: string;
+    },
   ) => apiPut<RuntimeVersion>(`${runtimeBase}/configurations/${id}/review`, input),
   transition: (id: string, action: 'publish' | 'reject') =>
     apiPost<RuntimeVersion>(`${runtimeBase}/configurations/${id}/${action}`),
