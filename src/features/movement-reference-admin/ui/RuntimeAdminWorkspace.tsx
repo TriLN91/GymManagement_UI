@@ -16,6 +16,7 @@ import { movementReferenceApi } from '../api/movementReferenceApi';
 import {
   movementRuntimeApi,
   type Capability,
+  type ExerciseMetadataCatalog,
   type ExerciseRevision,
   type Readiness,
 } from '../api/movementRuntimeApi';
@@ -44,6 +45,10 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
   const [sets, setSets] = useState<ReferenceSetSummaryDto[]>([]);
   const [readiness, setReadiness] = useState<Readiness[]>([]);
   const [capabilities, setCapabilities] = useState<Capability[]>([]);
+  const [metadataCatalog, setMetadataCatalog] = useState<ExerciseMetadataCatalog>({
+    equipment: [],
+    muscleGroups: [],
+  });
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [reference, setReference] = useState<ReferenceSetDto>();
@@ -149,16 +154,18 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
     [],
   );
   const reload = useCallback(async () => {
-    const [catalog, collections, statuses, supported] = await Promise.all([
+    const [catalog, collections, statuses, supported, metadata] = await Promise.all([
       movementRuntimeApi.exercises(),
       movementReferenceApi.listReferenceSets(),
       movementRuntimeApi.readiness(),
       movementRuntimeApi.capabilities(),
+      movementRuntimeApi.metadataCatalog(),
     ]);
     setExercises(catalog);
     setSets(collections);
     setReadiness(statuses);
     setCapabilities(supported);
+    setMetadataCatalog(metadata);
   }, []);
   useEffect(() => {
     void reload()
@@ -247,6 +254,11 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
       collection: versions.find((item) => item.id === id)?.referenceSetId ?? summaryId,
     });
   const inspect = (feature?: string) => {
+    if (tab === 'configure' && configReference) {
+      setProfileId(configReference.id);
+      if (configReference.sourceReferenceIds?.[0])
+        setSourceId(configReference.sourceReferenceIds[0]);
+    }
     setFocusFeature(feature);
     navigate({ tab: 'inspect' });
   };
@@ -666,6 +678,7 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                     isAvailable={readiness.some((item) => item.id === chosen.id && item.available)}
                     onDirty={onDirty}
                     onInspect={inspect}
+                    onEditExercise={() => setEditor('edit')}
                     onSave={async (features, rules, note) => {
                       await act(
                         () =>
@@ -760,6 +773,7 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
       ) : null}
       {editor ? (
         <ExerciseEditor
+          catalog={metadataCatalog}
           key={`${editor}-${exercise?.id ?? 'new'}`}
           exercise={editor === 'edit' ? exercise : undefined}
           pattern={editor === 'edit' ? classification : undefined}

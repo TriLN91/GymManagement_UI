@@ -144,7 +144,7 @@ it('requires a saved review before publication and persists the supported cue ch
   fireEvent.click(screen.getByRole('button', { name: 'Review & publish' }));
   expect(publish).toHaveBeenCalledOnce();
   unmount();
-  render(
+  const v2 = render(
     <ConfigurationReview
       {...props}
       chosen={{
@@ -173,8 +173,17 @@ it('requires a saved review before publication and persists the supported cue ch
       }}
     />,
   );
-  expect(screen.getByText('Recorded observations & optional live cues')).toBeInTheDocument();
+  expect(screen.getByText('Measurements & coaching')).toBeInTheDocument();
   expect(screen.getByText('Review only')).toBeInTheDocument();
-  expect(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' })).toBeDisabled();
-  expect(screen.getByRole('switch', { name: 'Live feedback cues: Hip angle' })).not.toBeChecked();
+  expect(
+    screen.queryByRole('switch', { name: 'Live feedback cues: Hip angle' }),
+  ).not.toBeInTheDocument();
+  expect(screen.getByText(/cannot be disabled/)).toBeInTheDocument();
+  v2.unmount();
+  render(<ConfigurationReview {...props} evidenceReady={false} />);
+  expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('button', { name: /Inspect contributing footage/ }));
+  expect(props.onInspect).toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: /Add a review note/ }));
+  expect(screen.getByRole('textbox', { name: /Review note/ })).toHaveFocus();
 });

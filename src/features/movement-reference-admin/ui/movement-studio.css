@@ -11,6 +11,100 @@
   font-size: 14px;
   line-height: 1.6;
 }
+.studio-measurement-cards {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+.studio-measurement-card {
+  border: 1px solid var(--studio-line);
+  border-radius: 14px;
+  padding: 18px;
+  background: hsl(var(--background));
+}
+.studio-measurement-card.is-measured {
+  border-left: 3px solid var(--studio-accent);
+}
+.studio-measurement-heading,
+.studio-live-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.studio-measurement-heading label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+.studio-measurement-heading input {
+  margin-top: 5px;
+}
+.studio-measurement-heading strong {
+  font-size: 17px;
+}
+.studio-measurement-heading small,
+.studio-live-choice small {
+  display: block;
+  line-height: 1.5;
+}
+.studio-measurement-card > .studio-caption {
+  margin: 10px 0 14px;
+}
+.studio-measurement-purpose {
+  border-top: 1px solid var(--studio-line);
+  padding-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+.studio-live-choice {
+  padding: 10px 0;
+}
+.studio-live-choice input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--studio-accent);
+}
+.studio-review-only {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--studio-muted);
+  font-size: 12px;
+}
+.studio-review-only svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.studio-purpose-details {
+  font-size: 12px;
+  color: var(--studio-muted);
+}
+.studio-purpose-details summary {
+  cursor: pointer;
+}
+.studio-purpose-details p {
+  margin-top: 8px;
+}
+.studio-review-prerequisites {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--studio-line);
+  padding-top: 14px;
+  margin-top: 14px;
+  font-size: 12px;
+}
+.studio-review-prerequisites button {
+  text-align: left;
+  color: var(--studio-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.studio-review-prerequisites > span {
+  color: var(--studio-muted);
+}
 .movement-studio h1,
 .movement-studio h2,
 .movement-studio h3,

@@ -152,7 +152,17 @@ export function ReferenceInspector({
     setTime(next);
   };
   const featureName = (code: string) => t(`featureNames.${code}`, { defaultValue: code });
-  const regions = capability?.requiredRegions ?? [];
+  const trackingRegions =
+    configuration?.assessmentPlan?.requiredRegions ?? capability?.requiredRegions ?? [];
+  const trackingIndices = new Set(trackingRegions.flatMap((code) => regionJoints[code] ?? []));
+  const regions = [
+    ...new Set([
+      ...trackingRegions,
+      ...(capability?.requiredRegions ?? []).filter((code) =>
+        (regionJoints[code] ?? []).some((index) => !trackingIndices.has(index)),
+      ),
+    ]),
+  ];
   const missingEvidence = evidenceError instanceof ApiError && evidenceError.status === 409;
   return (
     <div className="studio-inspection-grid">
@@ -474,7 +484,8 @@ export function ReferenceInspector({
               >
                 <span>{t(`regions.${code}`, { defaultValue: code })}</span>
                 <small>
-                  {visible}/{indices.length}
+                  {visible}/{indices.length} ·{' '}
+                  {t(trackingRegions.includes(code) ? 'regionTracking' : 'regionOptional')}
                 </small>
               </button>
             );

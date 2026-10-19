@@ -31,7 +31,9 @@ export type ExerciseInput = {
   pattern: string;
   isActive: boolean;
 };
+export type ExerciseMetadataCatalog = { equipment: string[]; muscleGroups: string[] };
 export const movementRuntimeApi = {
+  metadataCatalog: () => apiGet<ExerciseMetadataCatalog>(`${runtimeBase}/metadata-catalog`),
   exercises: () => apiGet<ExerciseDto[]>(`${runtimeBase}/exercises`),
   capabilities: () => apiGet<Capability[]>(`${runtimeBase}/capabilities`),
   readiness: () => apiGet<Readiness[]>(`${runtimeBase}/readiness`),

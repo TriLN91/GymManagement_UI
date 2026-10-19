@@ -1,5 +1,5 @@
-import { ArrowRight, CheckCircle2, Eye, LockKeyhole, Smartphone } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { CheckCircle2, Eye, LockKeyhole, Smartphone } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { RuntimeConfiguration, RuntimeVersion } from '../api/runtimeTypes';
@@ -48,16 +48,19 @@ export function MobilePreview({
         <li>{t('mobileRules', { count: rules.length })}</li>
         <li>{t('readinessGates')}</li>
       </ul>
-      <p className="studio-caption">
-        {t('timing', {
-          dwell: configuration.cuePolicy.dwellMs,
-          cooldown: configuration.cuePolicy.cooldownMs / 1000,
-        })}
-      </p>
+      <details className="studio-purpose-details">
+        <summary>{t('technicalDetails')}</summary>
+        <p className="studio-caption">
+          {t('timing', {
+            dwell: configuration.cuePolicy.dwellMs,
+            cooldown: configuration.cuePolicy.cooldownMs / 1000,
+          })}
+        </p>
+        <p className="studio-caption">
+          {t(configuration.assessmentPlan ? 'focusedPlanHelp' : 'legacyPlanHelp')}
+        </p>
+      </details>
       <p className="studio-caption">{t('mobilePreviewHelp')}</p>
-      <p className="studio-caption">
-        {t(configuration.assessmentPlan ? 'focusedPlanHelp' : 'legacyPlanHelp')}
-      </p>
     </div>
   );
 }
@@ -136,6 +139,7 @@ export function ConfigurationReview({
   isAvailable,
   onDirty,
   onInspect,
+  onEditExercise,
   onSave,
   onPublish,
   onReject,
@@ -150,6 +154,7 @@ export function ConfigurationReview({
   isAvailable: boolean;
   onDirty: (value: boolean) => void;
   onInspect: (feature?: string) => void;
+  onEditExercise?: () => void;
   onSave: (features: string[], rules: string[], note: string) => Promise<void>;
   onPublish: () => void;
   onReject: () => void;
@@ -163,6 +168,7 @@ export function ConfigurationReview({
   );
   const [note, setNote] = useState(chosen.reviewNote ?? '');
   const [compare, setCompare] = useState(false);
+  const noteInput = useRef<HTMLTextAreaElement>(null);
   const draft = chosen.status === 'DRAFT';
   const effectiveRules = rules.filter((code) =>
     features.includes(configuration.rules.find((rule) => rule.code === code)?.feature ?? ''),
@@ -227,150 +233,155 @@ export function ConfigurationReview({
       <div className="studio-configuration-grid">
         <div className="studio-configuration-fields">
           <section className="studio-config-section">
-            <h3>{t('features')}</h3>
-            <p className="studio-muted">{t('measureHelp')}</p>
-            <fieldset>
+            <h3>{t('measurementCoaching')}</h3>
+            <p className="studio-muted">{t('measurementCoachingHelp')}</p>
+            {!configuration.assessmentPlan ? (
+              <p className="studio-inline-warning">{t('legacyPlanHelp')}</p>
+            ) : null}
+            <p className="studio-inline-warning">{t('referenceOnly')}</p>
+            <div className="studio-measurement-cards">
               {(
                 configuration.assessmentPlan?.availableFeatures ??
                 Object.keys(configuration.capability.featureGeometry)
-              ).map((code) => (
-                <div className="studio-feature-option" key={code}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={features.includes(code)}
-                      disabled={!draft || busy || code === configuration.segmentation.driver}
-                      onChange={() => {
-                        toggle(code, features, setFeatures);
-                        if (features.includes(code))
-                          setRules(
-                            rules.filter(
-                              (item) =>
-                                configuration.rules.find((rule) => rule.code === item)?.feature !==
-                                code,
-                            ),
-                          );
-                      }}
-                    />
-                    <span>
-                      <strong>{name(code)}</strong>
-                      {configuration.assessmentPlan ? (
-                        <small>
-                          {(
-                            configuration.assessmentPlan.featureRoles.find(
-                              (item) => item.feature === code,
-                            )?.roles ?? []
-                          )
-                            .map((role) => t('featureRoles.' + role))
-                            .join(' · ')}
-                        </small>
-                      ) : null}
-                      <small>
-                        {code === configuration.segmentation.driver
-                          ? t('driver')
-                          : t(`featureDescriptions.${code}`, { defaultValue: '' })}
-                      </small>
-                    </span>
-                  </label>
-                  <button
-                    type="button"
-                    className="studio-evidence-link"
-                    onClick={() => onInspect(code)}
-                    aria-label={`${t('showEvidence')}: ${name(code)}`}
+              ).map((code) => {
+                const required = code === configuration.segmentation.driver;
+                const measured = features.includes(code);
+                const featureRules = configuration.rules.filter((rule) => rule.feature === code);
+                return (
+                  <article
+                    key={code}
+                    className={'studio-measurement-card ' + (measured ? 'is-measured' : '')}
                   >
-                    <Eye size={17} aria-hidden />
-                  </button>
-                </div>
-              ))}
-            </fieldset>
-          </section>
-          <section className="studio-config-section">
-            <h3>{t(configuration.assessmentPlan ? 'observationsAndCues' : 'rules')}</h3>
-            <p className="studio-muted">{t('rulesHelp')}</p>
-            {configuration.assessmentPlan ? (
-              <p className="studio-caption">{t('phasePurposeHelp')}</p>
-            ) : null}
-            <div className="studio-inline-warning">{t('referenceOnly')}</div>
-            <fieldset className="studio-rule-list">
-              {configuration.rules.map((rule) => (
-                <div
-                  className={`studio-rule ${effectiveRules.includes(rule.code) ? 'is-enabled' : ''}`}
-                  key={rule.code}
-                >
-                  <label>
-                    <span>
-                      <strong>{name(rule.feature)}</strong>
-                      <small>
-                        {t('during', {
-                          phases: (rule.delivery === 'REVIEW_ONLY'
-                            ? (rule.reviewPhases ?? rule.phases)
-                            : rule.phases
-                          )
-                            .map((phase) => t(`phases.${phase}`, { defaultValue: phase }))
-                            .join(', '),
-                        })}
-                      </small>
-                    </span>
-                    <span className="studio-switch-label">
-                      {t(
-                        rule.delivery === 'REVIEW_ONLY'
-                          ? 'reviewOnly'
-                          : effectiveRules.includes(rule.code)
-                            ? 'enabled'
-                            : 'disabled',
-                      )}
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        aria-label={`${t('rules')}: ${name(rule.feature)}`}
-                        checked={effectiveRules.includes(rule.code)}
-                        disabled={
-                          !draft ||
-                          busy ||
-                          !features.includes(rule.feature) ||
-                          rule.delivery === 'REVIEW_ONLY'
-                        }
-                        onChange={() => toggle(rule.code, rules, setRules)}
-                      />
-                    </span>
-                  </label>
-                  <div className="studio-rule-range">
-                    <span>{t('range')}</span>
-                    <strong>
-                      {rule.lower.toFixed(1)}° <ArrowRight size={14} aria-hidden />{' '}
-                      {rule.upper.toFixed(1)}°
-                    </strong>
-                    <button type="button" onClick={() => onInspect(rule.feature)}>
-                      {t('showEvidence')}
-                    </button>
-                  </div>
-                  {rule.delivery === 'REVIEW_ONLY' ? (
-                    <p className="studio-caption">{t('reviewObservationHelp')}</p>
-                  ) : (
-                    <p className="studio-cue">
-                      <span>{t('cue')}</span>
-                      {rule.cueBelow && rule.cueAbove ? (
-                        <>
-                          {t('belowRange')}: “{rule.cueBelow}”<br />
-                          {t('aboveRange')}: “{rule.cueAbove}”
-                        </>
-                      ) : (
-                        <>“{rule.cue}”</>
-                      )}
+                    <div className="studio-measurement-heading">
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={measured}
+                          disabled={!draft || busy || required}
+                          onChange={() => {
+                            toggle(code, features, setFeatures);
+                            if (measured)
+                              setRules(
+                                rules.filter(
+                                  (item) =>
+                                    configuration.rules.find((rule) => rule.code === item)
+                                      ?.feature !== code,
+                                ),
+                              );
+                          }}
+                        />
+                        <span>
+                          <strong>{name(code)}</strong>
+                          <small>{t(required ? 'trackingRequired' : 'optionalMeasurement')}</small>
+                        </span>
+                      </label>
+                      <button
+                        type="button"
+                        className="studio-evidence-link"
+                        aria-label={t('showEvidence') + ': ' + name(code)}
+                        onClick={() => onInspect(code)}
+                      >
+                        <Eye size={17} aria-hidden />
+                      </button>
+                    </div>
+                    <p className="studio-caption">
+                      {t(required ? 'trackingLockedHelp' : 'optionalMeasurementHelp')}
                     </p>
-                  )}
-                </div>
-              ))}
-            </fieldset>
-            {!configuration.rules.length ? <p className="studio-muted">{t('noRules')}</p> : null}
-            <p className="studio-caption">{t('cueLanguage')}</p>
+                    {featureRules.map((rule) => (
+                      <div className="studio-measurement-purpose" key={rule.code}>
+                        <div className="studio-rule-range">
+                          <span>{t('range')}</span>
+                          <strong>
+                            {rule.lower.toFixed(1)}°–{rule.upper.toFixed(1)}°
+                          </strong>
+                          <button type="button" onClick={() => onInspect(code)}>
+                            {t('showEvidence')}
+                          </button>
+                        </div>
+                        <p className="studio-caption">
+                          {t(
+                            !measured
+                              ? 'measurementExcluded'
+                              : rule.reviewEnabled || configuration.assessmentPlan
+                                ? 'recordedWithMeasurement'
+                                : effectiveRules.includes(rule.code)
+                                  ? 'recordedWithMeasurement'
+                                  : 'legacyMeasurementOnly',
+                          )}
+                        </p>
+                        {rule.delivery === 'REVIEW_ONLY' ? (
+                          <div className="studio-review-only">
+                            <LockKeyhole size={15} aria-hidden />
+                            <span>
+                              <strong>{t('reviewOnly')}</strong> · {t('reviewObservationHelp')}
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <label className="studio-live-choice">
+                              <span>
+                                <strong>{t('liveCueChoice')}</strong>
+                                <small>{t('liveCueChoiceHelp')}</small>
+                              </span>
+                              <input
+                                type="checkbox"
+                                role="switch"
+                                aria-label={t('rules') + ': ' + name(code)}
+                                checked={effectiveRules.includes(rule.code)}
+                                disabled={!draft || busy || !measured}
+                                onChange={() => toggle(rule.code, rules, setRules)}
+                              />
+                            </label>
+                            {effectiveRules.includes(rule.code) ? (
+                              <p className="studio-cue">
+                                {rule.cueBelow && rule.cueAbove ? (
+                                  <>
+                                    {t('belowRange')}: “{rule.cueBelow}”<br />
+                                    {t('aboveRange')}: “{rule.cueAbove}”
+                                  </>
+                                ) : (
+                                  <>“{rule.cue}”</>
+                                )}
+                              </p>
+                            ) : null}
+                          </>
+                        )}
+                        <details className="studio-purpose-details">
+                          <summary>{t('whenMeasured')}</summary>
+                          <p>
+                            {t('during', {
+                              phases: (rule.reviewPhases ?? rule.phases)
+                                .map((phase) => t('phases.' + phase, { defaultValue: phase }))
+                                .join(', '),
+                            })}
+                          </p>
+                          {rule.delivery !== 'REVIEW_ONLY' ? (
+                            <p>
+                              {t('liveDuring', {
+                                phases: rule.phases
+                                  .map((phase) => t('phases.' + phase, { defaultValue: phase }))
+                                  .join(', '),
+                              })}
+                            </p>
+                          ) : null}
+                          <p>{t('cueLanguage')}</p>
+                        </details>
+                      </div>
+                    ))}
+                  </article>
+                );
+              })}
+            </div>
           </section>
+        </div>
+        <aside className="studio-publication-panel">
           {draft ? (
             <section className="studio-config-section">
               <label className="studio-review-note">
                 <strong>{t('reviewNote')}</strong>
                 <span>{t('reviewNoteHelp')}</span>
                 <textarea
+                  ref={noteInput}
                   rows={3}
                   maxLength={2000}
                   value={note}
@@ -379,14 +390,6 @@ export function ConfigurationReview({
                   disabled={busy}
                 />
               </label>
-              {!evidenceReady ? (
-                <div className="studio-inline-warning">
-                  <p>{t('inspectBeforeReview')}</p>
-                  <Button variant="outline" size="sm" onClick={() => onInspect()}>
-                    {t('showEvidence')}
-                  </Button>
-                </div>
-              ) : null}
               <div className="studio-review-save">
                 <Button
                   disabled={busy || !note.trim() || !evidenceReady}
@@ -407,6 +410,35 @@ export function ConfigurationReview({
                   )}
                 </span>
               </div>
+              <div className="studio-review-prerequisites" aria-label={t('reviewRequirements')}>
+                <strong>{t('reviewRequirements')}</strong>
+                {!evidenceReady ? (
+                  <button onClick={() => onInspect()}>{t('resolveEvidence')}</button>
+                ) : (
+                  <span>✓ {t('evidenceInspected')}</span>
+                )}
+                {!note.trim() ? (
+                  <button onClick={() => noteInput.current?.focus()}>{t('resolveNote')}</button>
+                ) : (
+                  <span>✓ {t('noteReady')}</span>
+                )}
+                {reference?.status !== 'ACTIVE' ? (
+                  <button onClick={() => onInspect()}>{t('resolveReference')}</button>
+                ) : (
+                  <span>✓ {t('referenceReady')}</span>
+                )}
+                {!canPublish && !dirty ? (
+                  <button onClick={onEditExercise ?? (() => onInspect())}>
+                    {t('resolveExercise')}
+                  </button>
+                ) : null}
+                {!canPublish && dirty ? <span>{t('saveBeforeExercise')}</span> : null}
+                {dirty || configuration.reviewRequired ? (
+                  <span>{t('resolveSave')}</span>
+                ) : (
+                  <span>✓ {t('reviewed')}</span>
+                )}
+              </div>
             </section>
           ) : chosen.reviewNote ? (
             <section className="studio-config-section">
@@ -414,8 +446,36 @@ export function ConfigurationReview({
               <p className="whitespace-pre-wrap">{chosen.reviewNote}</p>
             </section>
           ) : null}
-        </div>
-        <aside className="studio-publication-panel">
+          {draft ? (
+            <div className="studio-publish-actions">
+              <Button
+                disabled={
+                  busy ||
+                  dirty ||
+                  configuration.reviewRequired ||
+                  reference?.status !== 'ACTIVE' ||
+                  !canPublish
+                }
+                onClick={onPublish}
+              >
+                {t('publish')}
+              </Button>
+              <p>
+                {dirty
+                  ? t('saveFirst')
+                  : configuration.reviewRequired
+                    ? t('unreviewed')
+                    : reference?.status !== 'ACTIVE'
+                      ? t('errors.reference')
+                      : !canPublish
+                        ? t('notPublishedHelp')
+                        : t('publishHelp')}
+              </p>
+              <Button variant="ghost" disabled={busy} onClick={onReject}>
+                {t('reject')}
+              </Button>
+            </div>
+          ) : null}
           <MobilePreview configuration={configuration} features={features} rules={effectiveRules} />
           <StageCard
             done={reference?.status === 'ACTIVE'}
@@ -475,36 +535,6 @@ export function ConfigurationReview({
             </div>
           ) : draft ? (
             <p className="studio-caption">{t('noCurrent')}</p>
-          ) : null}
-          {draft ? (
-            <div className="studio-publish-actions">
-              <Button
-                disabled={
-                  busy ||
-                  dirty ||
-                  configuration.reviewRequired ||
-                  reference?.status !== 'ACTIVE' ||
-                  !canPublish
-                }
-                onClick={onPublish}
-              >
-                {t('publish')}
-              </Button>
-              <p>
-                {dirty
-                  ? t('saveFirst')
-                  : configuration.reviewRequired
-                    ? t('unreviewed')
-                    : reference?.status !== 'ACTIVE'
-                      ? t('errors.reference')
-                      : !canPublish
-                        ? t('notPublishedHelp')
-                        : t('publishHelp')}
-              </p>
-              <Button variant="ghost" disabled={busy} onClick={onReject}>
-                {t('reject')}
-              </Button>
-            </div>
           ) : null}
         </aside>
       </div>

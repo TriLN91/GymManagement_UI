@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { ExerciseInput } from '../api/movementRuntimeApi';
+import type { ExerciseInput, ExerciseMetadataCatalog } from '../api/movementRuntimeApi';
 import type { ExerciseDto } from '../api/types';
 import { patterns } from '../model/studio';
 
@@ -20,6 +20,7 @@ import { Input } from '@/shared/ui/input';
 
 export function ExerciseEditor({
   exercise,
+  catalog,
   pattern,
   busy,
   error: requestError,
@@ -27,6 +28,7 @@ export function ExerciseEditor({
   onSave,
 }: {
   exercise?: ExerciseDto;
+  catalog: ExerciseMetadataCatalog;
   pattern?: string;
   busy: boolean;
   error?: unknown;
@@ -105,14 +107,26 @@ export function ExerciseEditor({
             {(['equipment', 'muscleGroup'] as const).map((key) => (
               <label key={key}>
                 {t(`fields.${key}`)}
-                <Input
-                  maxLength={200}
+                <select
                   value={value[key]}
                   onChange={(event) => setValue({ ...value, [key]: event.target.value })}
-                />
+                >
+                  <option value="">{t('unspecified')}</option>
+                  {[
+                    ...new Set([
+                      ...(key === 'equipment' ? catalog.equipment : catalog.muscleGroups),
+                      ...(value[key] ? [value[key]] : []),
+                    ]),
+                  ].map((label) => (
+                    <option key={label} value={label}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
               </label>
             ))}
           </div>
+          <p className="studio-caption">{t('catalogHelp')}</p>
           <label>
             {t('fields.instructions')}
             <textarea
