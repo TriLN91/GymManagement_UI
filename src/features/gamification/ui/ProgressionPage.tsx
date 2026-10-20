@@ -134,7 +134,9 @@ function ProgressionContent({ state, locale }: { state: ProgressionState; locale
         <ShieldCheck aria-hidden size={22} />
         <div>
           <strong>Progress is protected</strong>
-          <span>Your hard-earned milestones will not reset when taking scheduled recovery days.</span>
+          <span>
+            Your hard-earned milestones will not reset when taking scheduled recovery days.
+          </span>
         </div>
       </section>
 

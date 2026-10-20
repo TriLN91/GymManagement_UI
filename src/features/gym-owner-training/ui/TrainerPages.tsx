@@ -565,174 +565,182 @@ export function GymOwnerTrainerListPage() {
         >
           {trainersList.length > 0 ? (
             <div className="divide-y divide-border">
-            {trainersList.map((trainer) => (
-              <article
-                key={trainer.trainerProfileId}
-                className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
-              >
-                {/* Identity */}
-                <div className="flex min-w-[240px] items-center gap-3">
-                  <TrainerAvatar name={trainer.fullName} source={trainer.avatarUrl} />
-                  <div>
-                    <strong className="block text-sm font-semibold text-foreground">
-                      {trainer.fullName}
-                    </strong>
-                    <span className="block text-xs text-muted-foreground">{trainer.email}</span>
-                    {trainer.phoneNumber ? (
-                      <span className="text-xs text-muted-foreground">{trainer.phoneNumber}</span>
-                    ) : (
-                      <span className="text-[11px] italic text-amber-600">
-                        {isVi ? 'Chưa cập nhật SĐT' : 'No phone'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Branches */}
-                <div className="min-w-[200px] flex-1">
-                  <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {isVi ? 'Cơ sở phân bổ' : 'Assigned Branches'}
-                  </span>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {trainer.assignedBranches.length > 0 ? (
-                      trainer.assignedBranches.map((b) => (
-                        <span
-                          key={b.branchId}
-                          className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
-                        >
-                          <Building2 size={12} className="text-muted-foreground" />
-                          {b.branchName}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs italic text-amber-600">
-                        {isVi ? 'Chưa phân cơ sở' : 'Unassigned'}
-                      </span>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 px-1.5 text-xs text-primary hover:text-primary"
-                      onClick={() => openBranchModal(trainer)}
-                    >
-                      <GitBranch size={12} className="mr-1" />
-                      {isVi ? 'Đổi chi nhánh' : 'Change'}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Profile Completion */}
-                <div className="min-w-[130px]">
-                  <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {isVi ? 'Hồ sơ chuyên môn' : 'Profile Status'}
-                  </span>
-                  {trainer.isProfileComplete ? (
-                    <Badge
-                      variant="neutral"
-                      className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600"
-                    >
-                      <Check size={12} className="mr-1" />
-                      {isVi ? 'Đã hoàn tất' : 'Complete'}
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="neutral"
-                      className="border-amber-500/30 bg-amber-500/10 text-xs text-amber-600"
-                    >
-                      <AlertTriangle size={12} className="mr-1" />
-                      {isVi ? 'Chưa hoàn tất (Ép điền)' : 'Incomplete'}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Status Toggle & Metrics */}
-                <div className="flex min-w-[120px] items-center gap-4">
-                  <div>
-                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      {isVi ? 'Vận hành' : 'Status'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => void handleToggleStatus(trainer)}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition ${
-                        trainer.isActive
-                          ? 'bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300'
-                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                      }`}
-                    >
-                      <span
-                        className={`h-2 w-2 rounded-full ${trainer.isActive ? 'bg-emerald-500' : 'bg-muted-foreground'}`}
-                      />
-                      {trainer.isActive
-                        ? isVi
-                          ? 'Hoạt động'
-                          : 'Active'
-                        : isVi
-                          ? 'Tạm dừng'
-                          : 'Disabled'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Action Controls */}
-                <div className="flex items-center justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                    onClick={() => {
-                      setUnlinkTarget(trainer);
-                      setUnlinkError(null);
-                    }}
-                  >
-                    <Trash2 size={14} className="mr-1" />
-                    {isVi ? 'Hủy liên kết' : 'Unlink'}
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="gym-trainer-list">
-            {storeTrainers.map((trainer) => {
-              const assignedCount = assignments.filter(
-                (assignment) =>
-                  assignment.trainerId === trainer.id && assignment.status === 'active',
-              ).length;
-              return (
-                <article key={trainer.id} className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center">
+              {trainersList.map((trainer) => (
+                <article
+                  key={trainer.trainerProfileId}
+                  className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
+                >
+                  {/* Identity */}
                   <div className="flex min-w-[240px] items-center gap-3">
-                    <TrainerAvatar name={trainer.fullName} source={trainer.avatarDataUrl} />
+                    <TrainerAvatar name={trainer.fullName} source={trainer.avatarUrl} />
                     <div>
-                      <strong className="block text-sm font-semibold text-foreground">{trainer.fullName}</strong>
+                      <strong className="block text-sm font-semibold text-foreground">
+                        {trainer.fullName}
+                      </strong>
                       <span className="block text-xs text-muted-foreground">{trainer.email}</span>
+                      {trainer.phoneNumber ? (
+                        <span className="text-xs text-muted-foreground">{trainer.phoneNumber}</span>
+                      ) : (
+                        <span className="text-[11px] italic text-amber-600">
+                          {isVi ? 'Chưa cập nhật SĐT' : 'No phone'}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <div className="gym-training-chip-list">
-                    {trainer.specializations.slice(0, 2).map((specialization) => (
-                      <span key={specialization} className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                        {copy.specializationsMap[specialization]}
+
+                  {/* Branches */}
+                  <div className="min-w-[200px] flex-1">
+                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {isVi ? 'Cơ sở phân bổ' : 'Assigned Branches'}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {trainer.assignedBranches.length > 0 ? (
+                        trainer.assignedBranches.map((b) => (
+                          <span
+                            key={b.branchId}
+                            className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                          >
+                            <Building2 size={12} className="text-muted-foreground" />
+                            {b.branchName}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs italic text-amber-600">
+                          {isVi ? 'Chưa phân cơ sở' : 'Unassigned'}
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-1.5 text-xs text-primary hover:text-primary"
+                        onClick={() => openBranchModal(trainer)}
+                      >
+                        <GitBranch size={12} className="mr-1" />
+                        {isVi ? 'Đổi chi nhánh' : 'Change'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Profile Completion */}
+                  <div className="min-w-[130px]">
+                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {isVi ? 'Hồ sơ chuyên môn' : 'Profile Status'}
+                    </span>
+                    {trainer.isProfileComplete ? (
+                      <Badge
+                        variant="neutral"
+                        className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600"
+                      >
+                        <Check size={12} className="mr-1" />
+                        {isVi ? 'Đã hoàn tất' : 'Complete'}
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="neutral"
+                        className="border-amber-500/30 bg-amber-500/10 text-xs text-amber-600"
+                      >
+                        <AlertTriangle size={12} className="mr-1" />
+                        {isVi ? 'Chưa hoàn tất (Ép điền)' : 'Incomplete'}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Status Toggle & Metrics */}
+                  <div className="flex min-w-[120px] items-center gap-4">
+                    <div>
+                      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {isVi ? 'Vận hành' : 'Status'}
                       </span>
-                    ))}
+                      <button
+                        type="button"
+                        onClick={() => void handleToggleStatus(trainer)}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+                          trainer.isActive
+                            ? 'bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                        }`}
+                      >
+                        <span
+                          className={`h-2 w-2 rounded-full ${trainer.isActive ? 'bg-emerald-500' : 'bg-muted-foreground'}`}
+                        />
+                        {trainer.isActive
+                          ? isVi
+                            ? 'Hoạt động'
+                            : 'Active'
+                          : isVi
+                            ? 'Tạm dừng'
+                            : 'Disabled'}
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <ApprovalBadge status={trainer.approvalStatus} copy={copy} />
+
+                  {/* Action Controls */}
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => {
+                        setUnlinkTarget(trainer);
+                        setUnlinkError(null);
+                      }}
+                    >
+                      <Trash2 size={14} className="mr-1" />
+                      {isVi ? 'Hủy liên kết' : 'Unlink'}
+                    </Button>
                   </div>
-                  <div>
-                    <OperationalBadge status={trainer.operationalStatus} copy={copy} />
-                  </div>
-                  <strong className="gym-training-assignment-count text-xs">{assignedCount}</strong>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link to={ROUTES.admin.trainerDetailPath(trainer.id)}>
-                      {copy.viewDetail}
-                    </Link>
-                  </Button>
                 </article>
-              );
-            })}
-          </div>
-        )}
-      </ManagementState>
+              ))}
+            </div>
+          ) : (
+            <div className="gym-trainer-list">
+              {storeTrainers.map((trainer) => {
+                const assignedCount = assignments.filter(
+                  (assignment) =>
+                    assignment.trainerId === trainer.id && assignment.status === 'active',
+                ).length;
+                return (
+                  <article
+                    key={trainer.id}
+                    className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
+                  >
+                    <div className="flex min-w-[240px] items-center gap-3">
+                      <TrainerAvatar name={trainer.fullName} source={trainer.avatarDataUrl} />
+                      <div>
+                        <strong className="block text-sm font-semibold text-foreground">
+                          {trainer.fullName}
+                        </strong>
+                        <span className="block text-xs text-muted-foreground">{trainer.email}</span>
+                      </div>
+                    </div>
+                    <div className="gym-training-chip-list">
+                      {trainer.specializations.slice(0, 2).map((specialization) => (
+                        <span
+                          key={specialization}
+                          className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                        >
+                          {copy.specializationsMap[specialization]}
+                        </span>
+                      ))}
+                    </div>
+                    <div>
+                      <ApprovalBadge status={trainer.approvalStatus} copy={copy} />
+                    </div>
+                    <div>
+                      <OperationalBadge status={trainer.operationalStatus} copy={copy} />
+                    </div>
+                    <strong className="gym-training-assignment-count text-xs">
+                      {assignedCount}
+                    </strong>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link to={ROUTES.admin.trainerDetailPath(trainer.id)}>{copy.viewDetail}</Link>
+                    </Button>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </ManagementState>
       </WorkspacePanel>
 
       {/* ── Modal 1: Quick Create PT ────────────────────────────────────────── */}

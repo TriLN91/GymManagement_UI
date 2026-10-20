@@ -75,15 +75,11 @@ export function TrainingDayDetail() {
   return (
     <DayOverview
       dayId={day.id}
-      title={
-        t(`flow.days.${day.id}`, {
-          defaultValue:
-            day.title ??
-            (day.dayNumber !== null
-              ? t('flow.live.day', { day: day.dayNumber })
-              : day.id),
-        })
-      }
+      title={t(`flow.days.${day.id}`, {
+        defaultValue:
+          day.title ??
+          (day.dayNumber !== null ? t('flow.live.day', { day: day.dayNumber }) : day.id),
+      })}
       subtitle={t('flow.live.mainSession')}
       durationMinutes={day.durationMinutes}
       exercises={day.exercises}
@@ -171,7 +167,11 @@ function DayOverview({
         <div>
           <Layers3 />
           <span>{t('flow.detail.day')}</span>
-          <strong>{dayId === FREE_DAY_ID ? title : t(`flow.days.${dayId}`, { defaultValue: formatBusinessDate(dayId, locale) })}</strong>
+          <strong>
+            {dayId === FREE_DAY_ID
+              ? title
+              : t(`flow.days.${dayId}`, { defaultValue: formatBusinessDate(dayId, locale) })}
+          </strong>
         </div>
         <div>
           <Gauge />
@@ -265,7 +265,7 @@ function FreeWorkoutPicker({ live }: { live: ReturnType<typeof useLiveWorkoutWee
             const checked = selected.includes(exercise.id);
             return (
               <label
-                className={`workout-free-card${checked ? ' is-selected' : ''}`}
+                className={`workout-free-card${checked ? 'is-selected' : ''}`}
                 key={exercise.id}
               >
                 <input
@@ -280,7 +280,9 @@ function FreeWorkoutPicker({ live }: { live: ReturnType<typeof useLiveWorkoutWee
                   }
                 />
                 <div className="workout-free-card__body">
-                  <strong>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</strong>
+                  <strong>
+                    {t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}
+                  </strong>
                   <span>
                     {exercise.muscleGroup} · {exercise.equipment}
                   </span>

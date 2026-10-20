@@ -75,7 +75,7 @@ export function DashboardCustomizationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gym-dashboard-customization max-w-[calc(100vw-2rem)] w-[calc(100vw-2rem)] sm:max-w-[620px]">
+      <DialogContent className="gym-dashboard-customization w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-[620px]">
         <DialogHeader>
           <DialogTitle>{copy.customization.title}</DialogTitle>
           <DialogDescription>{copy.customization.description}</DialogDescription>

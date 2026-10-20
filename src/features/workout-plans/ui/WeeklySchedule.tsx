@@ -56,7 +56,9 @@ export function WeeklySchedule() {
       }
     >
       <PendingSyncNotice />
-      {!isDemo && !live.hasActivePlan && <p className="workout-live-notice">{t('flow.live.noPlan')}</p>}
+      {!isDemo && !live.hasActivePlan && (
+        <p className="workout-live-notice">{t('flow.live.noPlan')}</p>
+      )}
       {!isDemo && live.hasActivePlan && !live.scheduleConfigured && (
         <p className="workout-live-notice">
           {t('flow.live.noSchedule')}{' '}
@@ -137,7 +139,9 @@ export function WeeklySchedule() {
               </div>
               <div>
                 <h2>{dayTitle}</h2>
-                {day.dayNumber !== null && !isDemo && <small>{t(`flow.live.status.${day.status}`)}</small>}
+                {day.dayNumber !== null && !isDemo && (
+                  <small>{t(`flow.live.status.${day.status}`)}</small>
+                )}
               </div>
               <div className="workout-day-card__meta">
                 {day.durationMinutes > 0 && (

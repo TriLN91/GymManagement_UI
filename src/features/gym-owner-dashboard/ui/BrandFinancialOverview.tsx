@@ -137,7 +137,7 @@ export function BrandFinancialOverview() {
   };
 
   return (
-    <WorkspacePanel className="gym-financial-panel mb-5 max-w-full overflow-hidden rounded-lg border bg-card p-4 sm:p-5 text-card-foreground shadow-sm">
+    <WorkspacePanel className="gym-financial-panel mb-5 max-w-full overflow-hidden rounded-lg border bg-card p-4 text-card-foreground shadow-sm sm:p-5">
       <div className="flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
         <div>
           <div className="flex flex-wrap items-center gap-2">

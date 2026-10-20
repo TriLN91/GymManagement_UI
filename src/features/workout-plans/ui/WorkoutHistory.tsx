@@ -71,9 +71,7 @@ export function WorkoutHistory() {
       const totals = serverSessionTotals(session);
       return {
         id: session.id,
-        title: session.workoutPlanVersionId
-          ? t('flow.live.planWorkout')
-          : t('flow.live.freeTitle'),
+        title: session.workoutPlanVersionId ? t('flow.live.planWorkout') : t('flow.live.freeTitle'),
         completedAt: session.completedAtUtc ?? session.scheduledAtUtc,
         exerciseCount: session.exercises.length,
         totals: {
