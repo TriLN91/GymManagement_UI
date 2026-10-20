@@ -82,6 +82,38 @@ export const authHandlers = [
     return success(tokensFor(account), 201);
   }),
 
+  http.post(path(ENDPOINTS.auth.registerSendOtp), async ({ request }) => {
+    const body = (await request.json()) as { email?: string; password?: string };
+    if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
+      return failure(
+        400,
+        'Validation',
+        `400: Validation Error thất bại - Password: Mật khẩu phải có ít nhất ${MIN_PASSWORD_LENGTH} ký tự`,
+      );
+    }
+    return success({
+      email: body.email,
+      expiryMinutes: 15,
+      message: 'Mã OTP xác thực đã được gửi về email của bạn.',
+      isEmailSent: true,
+      debugOtpCode: '123456',
+    });
+  }),
+
+  http.post(path(ENDPOINTS.auth.registerVerifyOtp), async ({ request }) => {
+    const body = (await request.json()) as { email?: string; otpCode?: string };
+    if (body.otpCode !== '123456' && body.otpCode !== '888888') {
+      return failure(400, 'InvalidOtp', 'Mã OTP không chính xác. Vui lòng kiểm tra lại.');
+    }
+    const account: MockAccount = {
+      userId: `u-${Date.now()}`,
+      email: body.email ?? '',
+      fullName: (body.email ?? '').split('@')[0] || 'User',
+      roles: ['User'],
+    };
+    return success(tokensFor(account), 201);
+  }),
+
   http.post(path(ENDPOINTS.auth.refresh), async ({ request }) => {
     const body = (await request.json()) as { refreshToken?: string };
     const account = accountFromRefreshToken(body.refreshToken);

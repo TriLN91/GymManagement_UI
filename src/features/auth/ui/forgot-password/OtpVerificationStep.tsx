@@ -1,5 +1,5 @@
 import { AlertCircle, ArrowLeft, KeyRound, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { authApi } from '../../api/authApi';
@@ -25,16 +25,19 @@ export function OtpVerificationStep({
   onBackToEmail,
   onSuccess,
 }: OtpVerificationStepProps) {
+  const isSubmittingRef = useRef(false);
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
 
   const onVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isVerifyingOtp) return;
     if (!otpCode.trim() || otpCode.trim().length < 4) {
       setOtpError('Vui lòng nhập đầy đủ mã OTP 6 số.');
       return;
     }
+    isSubmittingRef.current = true;
     setOtpError('');
     setIsVerifyingOtp(true);
     try {
@@ -48,6 +51,7 @@ export function OtpVerificationStep({
     } catch (err: any) {
       setOtpError(err?.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
     } finally {
+      isSubmittingRef.current = false;
       setIsVerifyingOtp(false);
     }
   };

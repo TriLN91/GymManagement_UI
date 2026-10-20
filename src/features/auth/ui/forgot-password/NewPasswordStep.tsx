@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Lock, RefreshCw, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -30,6 +30,7 @@ export interface NewPasswordStepProps {
 }
 
 export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordStepProps) {
+  const isSubmittingRef = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -39,6 +40,8 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
+    if (isSubmittingRef.current || form.formState.isSubmitting) return;
+    isSubmittingRef.current = true;
     try {
       await authApi.resetPassword({
         email,
@@ -49,6 +52,8 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
       toast.success('Đặt lại mật khẩu thành công!');
     } catch (err: any) {
       toast.error(err?.message || 'Không thể đặt lại mật khẩu.');
+    } finally {
+      isSubmittingRef.current = false;
     }
   });
 

@@ -29,6 +29,17 @@ export function useRegister() {
   });
 }
 
+export function useVerifyRegisterOtp() {
+  const setSession = useAuthStore((s) => s.setSession);
+  return useMutation({
+    mutationFn: (payload: { email: string; otpCode: string }) => authApi.verifyRegisterOtp(payload),
+    onSuccess: (session: AuthSession) => {
+      tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
+      setSession(session.user);
+    },
+  });
+}
+
 export function useLogout() {
   const clear = useAuthStore((s) => s.clear);
   const queryClient = useQueryClient();

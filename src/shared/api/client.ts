@@ -135,9 +135,12 @@ class TokenManager {
 
 export const tokenManager = new TokenManager();
 
+// Default timeout for standard interactive API requests to prevent hanging requests.
+const DEFAULT_API_TIMEOUT_MS = 20_000;
+
 const instance: AxiosInstance = axios.create({
   baseURL: env.VITE_API_BASE_URL,
-  timeout: env.VITE_API_TIMEOUT_MS,
+  timeout: DEFAULT_API_TIMEOUT_MS,
 });
 
 instance.interceptors.request.use((config) => {
@@ -146,6 +149,16 @@ instance.interceptors.request.use((config) => {
 
   const tenantId = sessionStorage.getItem(STORAGE_KEYS.tenantId);
   if (tenantId) config.headers.set('X-Tenant-Id', tenantId);
+
+  // Allow long-running endpoints (like video analysis) to use extended timeout
+  if (!config.timeout || config.timeout === DEFAULT_API_TIMEOUT_MS) {
+    const isLongRunning =
+      config.url &&
+      (config.url.includes('/reference-sets') ||
+        config.url.includes('/analyze') ||
+        config.url.includes('/video'));
+    config.timeout = isLongRunning ? env.VITE_API_TIMEOUT_MS : DEFAULT_API_TIMEOUT_MS;
+  }
 
   // FR: idempotency for mutating requests — interceptor owns this, callers do not.
   if (config.method && MUTATING_METHODS.has(config.method.toLowerCase())) {
@@ -159,12 +172,25 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response: AxiosResponse<ApiEnvelope<unknown>>) => response,
   async (error: AxiosError<ApiEnvelope<unknown>>) => {
-    if (!error.response) throw new NetworkError(error.message);
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
+        throw new NetworkError('Yêu cầu đã hết thời gian chờ (Server Timeout). Vui lòng thử lại sau.');
+      }
+      if (typeof window !== 'undefined' && !window.navigator.onLine) {
+        throw new NetworkError('Mất kết nối Internet. Vui lòng kiểm tra lại đường truyền mạng.');
+      }
+      throw new NetworkError(error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
+    }
 
     const { status, data } = error.response;
     const body = data as { message?: string; errorCode?: string; code?: string } | undefined;
     const message = body?.message ?? error.message;
     const code = body?.errorCode ?? body?.code;
+
+    // Handle Idempotency in-flight conflicts
+    if (status === 409 && (code === 'IdempotencyInFlight' || code === 'Conflict')) {
+      throw new ApiError(status, message || 'Thao tác đang được xử lý, vui lòng không gửi lại liên tục.', code, data);
+    }
 
     // Credential errors on login/register/refresh must not trigger a refresh or a sign-out.
     if (status === 401 && isAuthRequest(error.config?.url)) {
@@ -210,6 +236,51 @@ function unwrap<T>(response: AxiosResponse<ApiEnvelope<T> | T>): T {
   return unwrapApiResponse(response.data);
 }
 
+// In-flight mutation cache: prevents duplicate rapid triggers from firing duplicate HTTP network calls.
+const inFlightMutations = new Map<string, Promise<unknown>>();
+
+function getMutationKey(method: string, url: string, body?: unknown): string {
+  try {
+    return `${method.toLowerCase()}:${url}:${JSON.stringify(body ?? {})}`;
+  } catch {
+    return `${method.toLowerCase()}:${url}`;
+  }
+}
+
+async function executeMutatingRequest<T>(
+  method: 'post' | 'put' | 'patch' | 'delete',
+  url: string,
+  body?: unknown,
+  config?: any,
+): Promise<T> {
+  const key = getMutationKey(method, url, body);
+  const existing = inFlightMutations.get(key);
+  if (existing) {
+    return existing as Promise<T>;
+  }
+
+  const executionPromise = (async () => {
+    try {
+      let res: AxiosResponse<ApiEnvelope<T> | T>;
+      if (method === 'post') {
+        res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'put') {
+        res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'patch') {
+        res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
+      } else {
+        res = await instance.delete<ApiEnvelope<T> | T>(url, config);
+      }
+      return unwrap(res);
+    } finally {
+      inFlightMutations.delete(key);
+    }
+  })();
+
+  inFlightMutations.set(key, executionPromise);
+  return executionPromise;
+}
+
 export async function apiGet<T>(
   url: string,
   config?: Parameters<AxiosInstance['get']>[1],
@@ -223,8 +294,7 @@ export async function apiPost<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['post']>[2],
 ): Promise<T> {
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('post', url, body, config);
 }
 
 export async function apiPut<T, B = unknown>(
@@ -232,8 +302,7 @@ export async function apiPut<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['put']>[2],
 ): Promise<T> {
-  const res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('put', url, body, config);
 }
 
 export async function apiPatch<T, B = unknown>(
@@ -241,16 +310,14 @@ export async function apiPatch<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['patch']>[2],
 ): Promise<T> {
-  const res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('patch', url, body, config);
 }
 
 export async function apiDelete<T>(
   url: string,
   config?: Parameters<AxiosInstance['delete']>[1],
 ): Promise<T> {
-  const res = await instance.delete<ApiEnvelope<T> | T>(url, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('delete', url, undefined, config);
 }
 
 export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {

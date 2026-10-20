@@ -7,6 +7,8 @@ export const ENDPOINTS = {
   auth: {
     login: '/identity/login',
     register: '/identity/register',
+    registerSendOtp: '/identity/register/send-otp',
+    registerVerifyOtp: '/identity/register/verify-otp',
     refresh: '/identity/refresh',
     logout: '/identity/logout',
     forgotPassword: '/identity/forgot-password',
