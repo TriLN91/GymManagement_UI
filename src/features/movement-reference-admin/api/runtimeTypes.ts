@@ -1,4 +1,5 @@
 export type CriterionReview = {
+  observationEnabled?: boolean;
   code: string;
   reviewExplanation?: string;
   coachingPriority?: 'P1' | 'P2' | 'P3';
@@ -7,6 +8,14 @@ export type CriterionReview = {
   cueAbove: string;
 };
 export type RuntimeRule = {
+  criterionPhase?: string;
+  cueOrigin?: string;
+  referenceEvidence?: {
+    phase: string;
+    sampleCount: number;
+    sourceVideoCount: number;
+    acceptedRepCount: number;
+  };
   reviewExplanation?: string;
   coachingPriority?: 'P1' | 'P2' | 'P3';
   criterionKind?: 'REFERENCE_COMPARISON';
@@ -31,6 +40,14 @@ export type RuntimeRule = {
   confirmationNote?: string;
 };
 export type RuntimeConfiguration = {
+  referenceComparison?: {
+    version: 'phase-envelope-v1';
+    alignment: string;
+    interpolation: string;
+    toleranceDeg: number;
+    observationDwellMs: number;
+    meaning: string;
+  };
   coachingPolicyVersion?: 'criterion-priority-v1';
   targetMuscles?: { code: string; role: 'PRIMARY' | 'SECONDARY' }[];
   assessmentDefinition?: {

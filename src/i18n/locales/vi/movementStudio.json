@@ -432,5 +432,22 @@
     "COMPLETED": "Sẵn sàng duyệt",
     "FAILED": "Xử lý lỗi",
     "NEEDS_FOOTAGE": "Cần video thay thế"
-  }
+  },
+  "measurementRelationship": "Điều gì quyết định phép đánh giá?",
+  "measurementRelationshipHelp": "Cơ mục tiêu mô tả bài tập. Capability của chuyển động quyết định khớp tracking và hình học đo được. Chọn cơ không đổi MediaPipe và không đo kích hoạt cơ.",
+  "alwaysActiveDetection": "Luôn bật · Nhận diện rep/pha",
+  "phaseEnvelopeHelp": "Mỗi tiêu chí dùng mẫu GOOD quan sát được trong cùng pha do runtime xác định. Đây là khoảng theo pha, không phải so khớp quỹ đạo theo thời gian. Chỉ dùng bảo vệ sai số tính toán 0,000001°; chưa có dung sai chuyển động hoặc ngưỡng lỗi kỹ thuật được kiểm chứng. Quan sát ngắn được lưu; phát cue vẫn cần bằng chứng duy trì đủ lâu.",
+  "legacyEnvelopeHelp": "Phiên bản này dùng khoảng tham chiếu của cả chu kỳ. Lịch sử được giữ nguyên. Chuẩn bị bản nháp theo pha cho lần acceptance mới.",
+  "updatedPhaseDraft": "Chuẩn bị bản nháp theo pha mới",
+  "phaseEvidence": "{{lower}}°–{{upper}}° trong {{sampleCount}} mẫu · {{acceptedRepCount}} chu kỳ · {{sourceVideoCount}} video của pha này.",
+  "recordPhaseObservation": "Lưu quan sát so sánh của pha này",
+  "observationChoiceHelp": "Tắt: không tạo finding so sánh cho pha này. Phép đo nhận diện vẫn bật. Coaching realtime cũng tắt.",
+  "templateReferenceCue": "Mẫu theo pattern, chưa phải chỉ dẫn riêng cho bài tập đã kiểm chứng. Realtime mặc định tắt. Câu chữ đã kiểm tra hướng góc được cố định; chỉ duyệt nếu phù hợp bài tập và pha này.",
+  "approvedReferenceCue": "Hướng dẫn tương đối với tham chiếu đã được Admin duyệt cho pha này; không phải bộ phát hiện lỗi kỹ thuật đã kiểm chứng.",
+  "featureSemantics": {
+    "kneeAngleDeg": "Góc trong hông–gối–cổ chân: nhỏ hơn = gập gối nhiều hơn; lớn hơn = gối thẳng hơn. Thấp hơn tham chiếu thì cần giảm gập để tiến gần tham chiếu.",
+    "hipAngleDeg": "Góc trong vai–hông–gối: nhỏ hơn = gập hông nhiều hơn; lớn hơn = hông mở hơn. Luôn đo để nhận diện hinge, độc lập với bật/tắt quan sát review.",
+    "torsoInclinationDeg": "Đường vai–hông so với phương đứng: lớn hơn = nghiêng xa phương đứng; nhỏ hơn = gần thẳng đứng. Không đo tính trung lập cột sống."
+  },
+  "phaseObservationOff": "Đã tắt finding so sánh của pha này. Nhận diện rep/pha vẫn bật."
 }

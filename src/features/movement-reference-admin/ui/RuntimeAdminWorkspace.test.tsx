@@ -217,6 +217,7 @@ it('requires a saved review before publication and persists the supported cue ch
       [
         {
           code: 'TARGET',
+          observationEnabled: true,
           coachingPriority: 'P3',
           reviewExplanation: configuration.rules[0]!.evidence,
           expectation: 'Use this approved hinge reference as a descriptive comparison.',

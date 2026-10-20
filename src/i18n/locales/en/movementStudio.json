@@ -440,5 +440,22 @@
     "COMPLETED": "Ready for review",
     "FAILED": "Processing failed",
     "NEEDS_FOOTAGE": "Needs replacement footage"
-  }
+  },
+  "measurementRelationship": "What determines this assessment?",
+  "measurementRelationshipHelp": "Target muscles describe the exercise. The selected movement capability determines tracked joints and measurable geometry. Selecting muscles does not change MediaPipe detection or measure muscle activation.",
+  "alwaysActiveDetection": "Always active · Rep/phase detection",
+  "phaseEnvelopeHelp": "Each criterion uses usable GOOD samples from the same runtime-defined phase. This is a phase envelope, not time-aligned trajectory matching. Only a 0.000001° floating-point guard is used; no calibrated movement tolerance or validated fault threshold is added. Brief observations remain in review; speech still requires sustained evidence.",
+  "legacyEnvelopeHelp": "This saved version uses a legacy whole-cycle reference envelope. Its history is preserved. Prepare an updated phase-aware draft for new acceptance.",
+  "updatedPhaseDraft": "Prepare updated phase-aware draft",
+  "phaseEvidence": "{{lower}}°–{{upper}}° observed in {{sampleCount}} samples · {{acceptedRepCount}} accepted cycles · {{sourceVideoCount}} video(s) for this phase.",
+  "recordPhaseObservation": "Record this phase observation",
+  "observationChoiceHelp": "Off: do not produce comparison findings for this phase. Detection measurements remain active. Realtime coaching also turns off.",
+  "templateReferenceCue": "Pattern template, not validated exercise-specific instruction. Realtime is off by default. Direction-checked wording is fixed; approve only if useful for this exact exercise and phase.",
+  "approvedReferenceCue": "Admin-approved reference guidance for this phase; not a validated technique-fault detector.",
+  "featureSemantics": {
+    "kneeAngleDeg": "Hip–knee–ankle internal angle: smaller = more knee bend; larger = straighter knee. Below reference would require less bend to approach it.",
+    "hipAngleDeg": "Shoulder–hip–knee internal angle: smaller = more hip fold; larger = more open hip. It is always measured for hinge detection, independently of review observations.",
+    "torsoInclinationDeg": "Shoulder-to-hip line relative to upright: larger = farther from vertical; smaller = closer to upright. It does not measure spinal neutrality."
+  },
+  "phaseObservationOff": "Comparison findings are off for this phase. Rep/phase recognition remains active."
 }

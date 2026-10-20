@@ -183,6 +183,7 @@ export function ConfigurationReview({
   const needsDefinition = configuration.schemaVersion === 'movement-runtime-v3';
   const initialCriteria = configuration.rules.map((rule) => ({
     code: rule.code,
+    observationEnabled: rule.reviewEnabled ?? true,
     reviewExplanation: rule.reviewExplanation ?? rule.evidence,
     coachingPriority: rule.coachingPriority ?? ((rule.enabled ? 'P2' : 'P3') as 'P1' | 'P2' | 'P3'),
     expectation: rule.expectation ?? 'Compare this exercise with the approved reference range.',
@@ -251,6 +252,16 @@ export function ConfigurationReview({
           {t('showEvidence')}
         </Button>
       </div>
+      <section className="studio-config-section">
+        <h3>{t('measurementRelationship')}</h3>
+        <p>{t('measurementRelationshipHelp')}</p>
+        <p>{t(configuration.referenceComparison ? 'phaseEnvelopeHelp' : 'legacyEnvelopeHelp')}</p>
+        {draft && !configuration.referenceComparison ? (
+          <Button variant="outline" disabled={busy || dirty} onClick={onNewDraft}>
+            {t('updatedPhaseDraft')}
+          </Button>
+        ) : null}
+      </section>
       {!draft ? (
         <div className="studio-readonly">
           <LockKeyhole size={18} aria-hidden />
@@ -285,39 +296,47 @@ export function ConfigurationReview({
                     className={'studio-measurement-card ' + (measured ? 'is-measured' : '')}
                   >
                     <div className="studio-measurement-heading">
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={measured}
-                          disabled={!draft || busy || required}
-                          onChange={() => {
-                            toggle(code, features, setFeatures);
-                            if (measured) {
-                              setRules(
-                                rules.filter(
-                                  (item) =>
-                                    configuration.rules.find((rule) => rule.code === item)
-                                      ?.feature !== code,
-                                ),
-                              );
-                              setCriteria((items) =>
-                                items.map((item) =>
-                                  configuration.rules.find((rule) => rule.code === item.code)
-                                    ?.feature === code
-                                    ? { ...item, coachingPriority: 'P3' }
-                                    : item,
-                                ),
-                              );
-                            }
-                          }}
-                        />
+                      <div>
+                        {!required ? (
+                          <label>
+                            <input
+                              type="checkbox"
+                              aria-label={t(`criterionNames.${code}`, { defaultValue: name(code) })}
+                              checked={measured}
+                              disabled={!draft || busy || required}
+                              onChange={() => {
+                                toggle(code, features, setFeatures);
+                                if (measured) {
+                                  setRules(
+                                    rules.filter(
+                                      (item) =>
+                                        configuration.rules.find((rule) => rule.code === item)
+                                          ?.feature !== code,
+                                    ),
+                                  );
+                                  setCriteria((items) =>
+                                    items.map((item) =>
+                                      configuration.rules.find((rule) => rule.code === item.code)
+                                        ?.feature === code
+                                        ? { ...item, coachingPriority: 'P3' }
+                                        : item,
+                                    ),
+                                  );
+                                }
+                              }}
+                            />
+                            {t('optionalMeasurement')}
+                          </label>
+                        ) : (
+                          <span className="studio-status">{t('alwaysActiveDetection')}</span>
+                        )}
                         <span>
                           <strong>
                             {t(`criterionNames.${code}`, { defaultValue: name(code) })}
                           </strong>
                           <small>{t(required ? 'trackingRequired' : 'optionalMeasurement')}</small>
                         </span>
-                      </label>
+                      </div>
                       <button
                         type="button"
                         className="studio-evidence-link"
@@ -330,20 +349,66 @@ export function ConfigurationReview({
                     <p className="studio-caption">
                       {t(required ? 'trackingLockedHelp' : 'optionalMeasurementHelp')}
                     </p>
+                    <p className="studio-caption">
+                      {t(`featureSemantics.${code}`, { defaultValue: t('referenceOnly') })}
+                    </p>
                     {featureRules.map((rule) => (
                       <div className="studio-measurement-purpose" key={rule.code}>
-                        <details className="studio-purpose-details">
-                          <summary>{t('technicalDetails')}</summary>
-                          <div className="studio-rule-range">
-                            <span>{t('range')}</span>
-                            <strong>
-                              {rule.lower.toFixed(1)}°–{rule.upper.toFixed(1)}°
-                            </strong>
-                            <button type="button" onClick={() => onInspect(code)}>
-                              {t('showEvidence')}
-                            </button>
-                          </div>
-                        </details>
+                        <h4>
+                          {t('during', {
+                            phases: rule.phases
+                              .map((phase) => t('phases.' + phase, { defaultValue: phase }))
+                              .join(', '),
+                          })}
+                        </h4>
+                        {rule.referenceEvidence ? (
+                          <p>
+                            {t('phaseEvidence', {
+                              ...rule.referenceEvidence,
+                              lower: rule.lower.toFixed(1),
+                              upper: rule.upper.toFixed(1),
+                            })}
+                          </p>
+                        ) : null}
+                        {needsDefinition ? (
+                          <label className="studio-live-choice">
+                            <span>{t('recordPhaseObservation')}</span>
+                            <input
+                              type="checkbox"
+                              aria-label={
+                                t('recordPhaseObservation') +
+                                ': ' +
+                                name(code) +
+                                ' — ' +
+                                rule.phases
+                                  .map((phase) => t(`phases.${phase}`, { defaultValue: phase }))
+                                  .join(', ')
+                              }
+                              disabled={!draft || busy || !measured}
+                              checked={
+                                criteria.find((item) => item.code === rule.code)
+                                  ?.observationEnabled ?? true
+                              }
+                              onChange={(event) => {
+                                const enabled = event.target.checked;
+                                setCriteria((items) =>
+                                  items.map((item) =>
+                                    item.code === rule.code
+                                      ? {
+                                          ...item,
+                                          observationEnabled: enabled,
+                                          coachingPriority: enabled ? item.coachingPriority : 'P3',
+                                        }
+                                      : item,
+                                  ),
+                                );
+                                if (!enabled)
+                                  setRules((items) => items.filter((code) => code !== rule.code));
+                              }}
+                            />
+                          </label>
+                        ) : null}
+                        <p className="studio-caption">{t('observationChoiceHelp')}</p>
                         {configuration.assessmentPolicy ? (
                           <p className="studio-caption">
                             {t('descriptiveEvidenceHelp', {
@@ -360,13 +425,16 @@ export function ConfigurationReview({
                         ) : null}
                         <p className="studio-caption">
                           {t(
-                            !measured
-                              ? 'measurementExcluded'
-                              : rule.reviewEnabled || configuration.assessmentPlan
-                                ? 'recordedWithMeasurement'
-                                : effectiveRules.includes(rule.code)
+                            criteria.find((item) => item.code === rule.code)?.observationEnabled ===
+                              false
+                              ? 'phaseObservationOff'
+                              : !measured
+                                ? 'measurementExcluded'
+                                : rule.reviewEnabled || configuration.assessmentPlan
                                   ? 'recordedWithMeasurement'
-                                  : 'legacyMeasurementOnly',
+                                  : effectiveRules.includes(rule.code)
+                                    ? 'recordedWithMeasurement'
+                                    : 'legacyMeasurementOnly',
                           )}
                         </p>
                         {rule.delivery === 'REVIEW_ONLY' ? (
@@ -386,9 +454,25 @@ export function ConfigurationReview({
                               <input
                                 type="checkbox"
                                 role="switch"
-                                aria-label={t('rules') + ': ' + name(code)}
+                                aria-label={
+                                  t('rules') +
+                                  ': ' +
+                                  name(code) +
+                                  (rule.criterionPhase
+                                    ? ' — ' +
+                                      t(`phases.${rule.criterionPhase}`, {
+                                        defaultValue: rule.criterionPhase,
+                                      })
+                                    : '')
+                                }
                                 checked={effectiveRules.includes(rule.code)}
-                                disabled={!draft || busy || !measured}
+                                disabled={
+                                  !draft ||
+                                  busy ||
+                                  !measured ||
+                                  criteria.find((item) => item.code === rule.code)
+                                    ?.observationEnabled === false
+                                }
                                 onChange={() => {
                                   toggle(rule.code, rules, setRules);
                                   setCriteria((items) =>
@@ -410,8 +494,14 @@ export function ConfigurationReview({
                               <p className="studio-cue">
                                 {rule.cueBelow && rule.cueAbove ? (
                                   <>
-                                    {t('belowRange')}: “{rule.cueBelow}”<br />
-                                    {t('aboveRange')}: “{rule.cueAbove}”
+                                    {t('belowRange')}: “
+                                    {criteria.find((item) => item.code === rule.code)?.cueBelow ??
+                                      rule.cueBelow}
+                                    ”<br />
+                                    {t('aboveRange')}: “
+                                    {criteria.find((item) => item.code === rule.code)?.cueAbove ??
+                                      rule.cueAbove}
+                                    ”
                                   </>
                                 ) : (
                                   <>“{rule.cue}”</>
@@ -423,6 +513,13 @@ export function ConfigurationReview({
                         {needsDefinition ? (
                           <div className="studio-form">
                             <strong>{t('referenceCriterion')}</strong>
+                            <p className="studio-caption">
+                              {t(
+                                rule.cueOrigin === 'ADMIN_APPROVED_REFERENCE_GUIDANCE'
+                                  ? 'approvedReferenceCue'
+                                  : 'templateReferenceCue',
+                              )}
+                            </p>
                             <p>
                               {t('during', {
                                 phases: rule.phases
@@ -434,7 +531,24 @@ export function ConfigurationReview({
                             <label>
                               {t('coachingPriority')}
                               <select
-                                disabled={!draft || busy || !measured}
+                                aria-label={
+                                  t('coachingPriority') +
+                                  ': ' +
+                                  name(code) +
+                                  (rule.criterionPhase
+                                    ? ' — ' +
+                                      t(`phases.${rule.criterionPhase}`, {
+                                        defaultValue: rule.criterionPhase,
+                                      })
+                                    : '')
+                                }
+                                disabled={
+                                  !draft ||
+                                  busy ||
+                                  !measured ||
+                                  criteria.find((item) => item.code === rule.code)
+                                    ?.observationEnabled === false
+                                }
                                 value={
                                   criteria.find((item) => item.code === rule.code)
                                     ?.coachingPriority ?? 'P3'
@@ -481,7 +595,17 @@ export function ConfigurationReview({
                                   maxLength={
                                     field === 'cueBelow' || field === 'cueAbove' ? 160 : 400
                                   }
-                                  disabled={!draft || busy || !measured}
+                                  readOnly={Boolean(
+                                    configuration.referenceComparison &&
+                                    (field === 'cueBelow' || field === 'cueAbove'),
+                                  )}
+                                  disabled={
+                                    !draft ||
+                                    busy ||
+                                    !measured ||
+                                    criteria.find((item) => item.code === rule.code)
+                                      ?.observationEnabled === false
+                                  }
                                   value={
                                     criteria.find((item) => item.code === rule.code)?.[field] ?? ''
                                   }
@@ -499,6 +623,9 @@ export function ConfigurationReview({
                             ))}
                             <details className="studio-purpose-details">
                               <summary>{t('technicalDetails')}</summary>
+                              <p>
+                                {rule.lower.toFixed(1)}°–{rule.upper.toFixed(1)}° · {rule.evidence}
+                              </p>
                               <p className="studio-caption">
                                 {t('requiredEvidence')}:{' '}
                                 {(

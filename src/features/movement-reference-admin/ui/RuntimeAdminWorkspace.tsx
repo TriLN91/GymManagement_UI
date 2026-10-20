@@ -318,7 +318,10 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
   const makeDraft = async () => {
     if (!profile) return;
     const existing = versions.find(
-      (item) => item.status === 'DRAFT' && item.referenceProfileId === profile.id,
+      (item) =>
+        item.status === 'DRAFT' &&
+        item.referenceProfileId === profile.id &&
+        item.configuration.referenceComparison?.version === 'phase-envelope-v1',
     );
     if (existing) {
       openVersion(existing.id);
