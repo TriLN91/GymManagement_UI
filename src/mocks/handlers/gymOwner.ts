@@ -7,26 +7,7 @@ const path = (p: string) => `*${p}`;
 export const gymOwnerHandlers = [
   http.get(path(ENDPOINTS.gymOwner.myBrands), () =>
     HttpResponse.json({
-      data: [
-        {
-          id: 'b0000000-0000-0000-0000-000000000001',
-          name: 'Fit Central',
-          description: 'A verified training space for members.',
-          logoUrl: null,
-          branches: [
-            {
-              id: 'branch-main',
-              name: 'Fit Central District 1',
-              city: 'Ho Chi Minh City',
-              area: 'District 1',
-              address: '12 Nguyen Hue',
-              contactPhone: '0907654321',
-              operatingHours: '06:00 - 22:00',
-              facilities: ['free-weights', 'cardio'],
-            },
-          ],
-        },
-      ],
+      data: [],
     }),
   ),
 
