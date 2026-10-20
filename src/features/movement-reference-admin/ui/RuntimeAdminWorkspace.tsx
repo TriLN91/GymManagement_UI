@@ -22,6 +22,7 @@ import {
 } from '../api/movementRuntimeApi';
 import type { RuntimeVersion } from '../api/runtimeTypes';
 import type { ExerciseDto, ReferenceSetDto, ReferenceSetSummaryDto } from '../api/types';
+import { submitCreationFootage } from '../model/creationUpload';
 import { capabilityFor, patternOf, readinessOf, type StudioTab } from '../model/studio';
 
 import { AssessmentVersionHistory } from './AssessmentVersionHistory';
@@ -65,6 +66,9 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
   const inFlight = useRef(false);
   const workspace = useRef<HTMLDivElement>(null);
   const [dirty, setDirty] = useState(false);
+  const creation = useRef<{ exercise: ExerciseDto; collectionId?: string; footage?: File } | null>(
+    null,
+  );
   const [editor, setEditor] = useState<'create' | 'edit'>();
   const [upload, setUpload] = useState(false);
   const [confirmation, setConfirmation] = useState<'publish' | 'reject' | 'retire' | 'reference'>();
@@ -786,22 +790,51 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
       {editor ? (
         <ExerciseEditor
           catalog={metadataCatalog}
-          key={`${editor}-${exercise?.id ?? 'new'}`}
+          supportedPatterns={capabilities.filter((c) => c.available).map((c) => c.pattern)}
+          creationSaved={editor === 'create' && Boolean(creation.current)}
+          key={editor === 'create' ? 'new' : `edit-${exercise?.id}`}
           exercise={editor === 'edit' ? exercise : undefined}
           pattern={editor === 'edit' ? classification : undefined}
           busy={busy}
           error={error}
-          onClose={() => setEditor(undefined)}
-          onSave={async (input) => {
+          onClose={() => {
+            creation.current = null;
+            setEditor(undefined);
+          }}
+          onSave={async (input, footage) => {
             const saved = await act(
-              () =>
-                editor === 'edit' && exercise
-                  ? movementRuntimeApi.updateExercise(exercise.id, input)
-                  : movementRuntimeApi.createExercise(input),
+              async () => {
+                if (editor === 'edit' && exercise)
+                  return movementRuntimeApi.updateExercise(exercise.id, input);
+                if (!creation.current)
+                  creation.current = { exercise: await movementRuntimeApi.createExercise(input) };
+                const saved = creation.current;
+                if (footage) {
+                  if (!saved.collectionId)
+                    saved.collectionId = (
+                      await movementReferenceApi.createReferenceSet({
+                        exerciseId: saved.exercise.id,
+                        pattern: input.pattern as 'SQUAT' | 'HINGE' | 'PULL',
+                      })
+                    ).id;
+                  const retry = saved.footage === footage;
+                  saved.footage = footage;
+                  await submitCreationFootage(saved.collectionId, footage, retry);
+                }
+                return saved.exercise;
+              },
               editor === 'edit' ? 'updated' : 'created',
             );
             if (saved) {
               openExercise(saved.id, true);
+              if (creation.current?.collectionId)
+                navigate({
+                  exercise: saved.id,
+                  collection: creation.current.collectionId,
+                  tab: undefined,
+                  version: undefined,
+                });
+              creation.current = null;
               return true;
             }
             return false;

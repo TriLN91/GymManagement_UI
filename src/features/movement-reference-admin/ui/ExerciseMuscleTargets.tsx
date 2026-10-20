@@ -24,16 +24,24 @@ export function ExerciseMuscleTargets({
   const label = (id: MuscleId) => MUSCLES[id].name[locale];
   const choose = (id: MuscleId, role: string) => {
     if (disabled) return;
-    onChange([
+    const next = [
       ...value.filter((m) => m.code !== id),
       ...(role ? [{ code: id, role: role as TargetMuscle['role'] }] : []),
-    ]);
+    ];
+    if (
+      next.length > 3 ||
+      next.filter((m) => m.role === 'PRIMARY').length > 2 ||
+      next.filter((m) => m.role === 'SECONDARY').length > 2
+    )
+      return;
+    onChange(next);
   };
   return (
     <fieldset disabled={disabled} className="studio-config-section">
       <legend>{t('muscleTargets')}</legend>
       <p className="studio-caption">{t('muscleTargetsHelp')}</p>
       <MaleAnatomyMuscleMap
+        showVolumeLegend={false}
         selected={selected}
         activeMuscles={new Set(value.map((m) => m.code as MuscleId))}
         locale={locale}
@@ -62,8 +70,24 @@ export function ExerciseMuscleTargets({
             onChange={(e) => choose(selected, e.target.value)}
           >
             <option value="">{t('notTargeted')}</option>
-            <option value="PRIMARY">{t('primaryTarget')}</option>
-            <option value="SECONDARY">{t('secondaryTarget')}</option>
+            <option
+              disabled={
+                value.filter((m) => m.role === 'PRIMARY' && m.code !== selected).length >= 2 ||
+                (value.length >= 3 && !value.some((m) => m.code === selected))
+              }
+              value="PRIMARY"
+            >
+              {t('primaryTarget')}
+            </option>
+            <option
+              disabled={
+                value.filter((m) => m.role === 'SECONDARY' && m.code !== selected).length >= 2 ||
+                (value.length >= 3 && !value.some((m) => m.code === selected))
+              }
+              value="SECONDARY"
+            >
+              {t('secondaryTarget')}
+            </option>
           </select>
         </label>
       ) : null}
@@ -75,7 +99,7 @@ export function ExerciseMuscleTargets({
           </li>
         ))}
       </ul>
-      {value.length > 0 && !value.some((m) => m.role === 'PRIMARY') ? (
+      {!value.some((m) => m.role === 'PRIMARY') ? (
         <p role="alert">{t('primaryTargetRequired')}</p>
       ) : null}
     </fieldset>

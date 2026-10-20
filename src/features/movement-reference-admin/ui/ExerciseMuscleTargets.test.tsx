@@ -35,3 +35,26 @@ it('edits controlled target roles independently and requires a primary target', 
   expect(changed).toHaveBeenLastCalledWith([]);
   view.unmount();
 });
+
+it('prevents more than three groups or more than two primary groups', async () => {
+  await i18n.changeLanguage('en');
+  const change = vi.fn();
+  const view = render(
+    <ExerciseMuscleTargets
+      value={[
+        { code: 'hamstrings', role: 'PRIMARY' },
+        { code: 'gluteus_maximus', role: 'PRIMARY' },
+        { code: 'lower_back', role: 'SECONDARY' },
+      ]}
+      onChange={change}
+    />,
+  );
+  fireEvent.change(screen.getByRole('combobox', { name: 'Inspect a muscle' }), {
+    target: { value: 'quadriceps' },
+  });
+  fireEvent.change(screen.getAllByRole('combobox')[1]!, { target: { value: 'PRIMARY' } });
+  expect(change).not.toHaveBeenCalled();
+  fireEvent.change(screen.getAllByRole('combobox')[1]!, { target: { value: 'SECONDARY' } });
+  expect(change).not.toHaveBeenCalled();
+  view.unmount();
+});

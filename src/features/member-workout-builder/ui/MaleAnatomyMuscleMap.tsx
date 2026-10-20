@@ -18,6 +18,7 @@ interface MaleAnatomyMuscleMapProps {
   label: (muscle: MuscleId) => string;
   onSelect: (muscle: MuscleId) => void;
   zoomed?: boolean;
+  showVolumeLegend?: boolean;
 }
 
 const imageUrl = `${import.meta.env.BASE_URL}male-anatomy-map.png`;
@@ -30,6 +31,7 @@ export function MaleAnatomyMuscleMap({
   label,
   onSelect,
   zoomed = false,
+  showVolumeLegend = true,
 }: MaleAnatomyMuscleMapProps) {
   const { t } = useTranslation();
   const [hovered, setHovered] = useState<MuscleId | null>(null);
@@ -137,11 +139,13 @@ export function MaleAnatomyMuscleMap({
             </figure>
           ))}
         </div>
-        <div className="muscle-map__legend" aria-hidden="true">
-          <span>{t('workout:maleAnatomyMuscleMap.low')}</span>
-          <i />
-          <span>{t('workout:maleAnatomyMuscleMap.highVolume')}</span>
-        </div>
+        {showVolumeLegend ? (
+          <div className="muscle-map__legend" aria-hidden="true">
+            <span>{t('workout:maleAnatomyMuscleMap.low')}</span>
+            <i />
+            <span>{t('workout:maleAnatomyMuscleMap.highVolume')}</span>
+          </div>
+        ) : null}
         {hovered && (
           <span className="muscle-map__tooltip" role="status">
             {label(hovered)}
@@ -166,6 +170,7 @@ export function MaleAnatomyMuscleMap({
               selected={selected}
               activeMuscles={activeMuscles}
               volumeByMuscle={volumeByMuscle}
+              showVolumeLegend={showVolumeLegend}
               locale={locale}
               label={label}
               onSelect={(muscle) => {

@@ -2,8 +2,7 @@ import { CheckCircle2, Eye, LockKeyhole, Smartphone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { CriterionReview } from '../api/runtimeTypes';
-import type { RuntimeConfiguration, RuntimeVersion } from '../api/runtimeTypes';
+import type { CriterionReview, RuntimeConfiguration, RuntimeVersion } from '../api/runtimeTypes';
 import type { ReferenceSetProfileDto } from '../api/types';
 
 import { StageCard, StudioStatus } from './StudioPrimitives';
@@ -184,6 +183,8 @@ export function ConfigurationReview({
   const needsDefinition = configuration.schemaVersion === 'movement-runtime-v3';
   const initialCriteria = configuration.rules.map((rule) => ({
     code: rule.code,
+    reviewExplanation: rule.reviewExplanation ?? rule.evidence,
+    coachingPriority: rule.coachingPriority ?? ((rule.enabled ? 'P2' : 'P3') as 'P1' | 'P2' | 'P3'),
     expectation: rule.expectation ?? 'Compare this exercise with the approved reference range.',
     cueBelow: rule.cueBelow ?? rule.cue,
     cueAbove: rule.cueAbove ?? rule.cue,
@@ -302,7 +303,9 @@ export function ConfigurationReview({
                           }}
                         />
                         <span>
-                          <strong>{name(code)}</strong>
+                          <strong>
+                            {t(`criterionNames.${code}`, { defaultValue: name(code) })}
+                          </strong>
                           <small>{t(required ? 'trackingRequired' : 'optionalMeasurement')}</small>
                         </span>
                       </label>
@@ -320,15 +323,18 @@ export function ConfigurationReview({
                     </p>
                     {featureRules.map((rule) => (
                       <div className="studio-measurement-purpose" key={rule.code}>
-                        <div className="studio-rule-range">
-                          <span>{t('range')}</span>
-                          <strong>
-                            {rule.lower.toFixed(1)}°–{rule.upper.toFixed(1)}°
-                          </strong>
-                          <button type="button" onClick={() => onInspect(code)}>
-                            {t('showEvidence')}
-                          </button>
-                        </div>
+                        <details className="studio-purpose-details">
+                          <summary>{t('technicalDetails')}</summary>
+                          <div className="studio-rule-range">
+                            <span>{t('range')}</span>
+                            <strong>
+                              {rule.lower.toFixed(1)}°–{rule.upper.toFixed(1)}°
+                            </strong>
+                            <button type="button" onClick={() => onInspect(code)}>
+                              {t('showEvidence')}
+                            </button>
+                          </div>
+                        </details>
                         {configuration.assessmentPolicy ? (
                           <p className="studio-caption">
                             {t('descriptiveEvidenceHelp', {
@@ -374,7 +380,21 @@ export function ConfigurationReview({
                                 aria-label={t('rules') + ': ' + name(code)}
                                 checked={effectiveRules.includes(rule.code)}
                                 disabled={!draft || busy || !measured}
-                                onChange={() => toggle(rule.code, rules, setRules)}
+                                onChange={() => {
+                                  toggle(rule.code, rules, setRules);
+                                  setCriteria((items) =>
+                                    items.map((item) =>
+                                      item.code === rule.code
+                                        ? {
+                                            ...item,
+                                            coachingPriority: effectiveRules.includes(rule.code)
+                                              ? 'P3'
+                                              : 'P2',
+                                          }
+                                        : item,
+                                    ),
+                                  );
+                                }}
                               />
                             </label>
                             {effectiveRules.includes(rule.code) ? (
@@ -394,13 +414,64 @@ export function ConfigurationReview({
                         {needsDefinition ? (
                           <div className="studio-form">
                             <strong>{t('referenceCriterion')}</strong>
+                            <p>
+                              {t('during', {
+                                phases: rule.phases
+                                  .map((phase) => t(`phases.${phase}`, { defaultValue: phase }))
+                                  .join(', '),
+                              })}
+                            </p>
                             <p className="studio-caption">{t('referenceCriterionHelp')}</p>
-                            {(['expectation', 'cueBelow', 'cueAbove'] as const).map((field) => (
+                            <label>
+                              {t('coachingPriority')}
+                              <select
+                                disabled={!draft || busy || !measured}
+                                value={
+                                  criteria.find((item) => item.code === rule.code)
+                                    ?.coachingPriority ?? 'P3'
+                                }
+                                onChange={(event) => {
+                                  const coachingPriority = event.target.value as 'P1' | 'P2' | 'P3';
+                                  setCriteria((items) =>
+                                    items.map((item) =>
+                                      item.code === rule.code
+                                        ? { ...item, coachingPriority }
+                                        : item,
+                                    ),
+                                  );
+                                  setRules((items) =>
+                                    coachingPriority === 'P3'
+                                      ? items.filter((code) => code !== rule.code)
+                                      : [...new Set([...items, rule.code])],
+                                  );
+                                }}
+                              >
+                                <option value="P3">{t('priorityP3')}</option>
+                                <option value="P2" disabled={rule.delivery === 'REVIEW_ONLY'}>
+                                  {t('priorityP2')}
+                                </option>
+                                <option value="P1" disabled={rule.delivery === 'REVIEW_ONLY'}>
+                                  {t('priorityP1')}
+                                </option>
+                              </select>
+                            </label>
+                            <p className="studio-caption">{t('priorityMeaning')}</p>
+                            {(
+                              [
+                                'expectation',
+                                'reviewExplanation',
+                                ...(effectiveRules.includes(rule.code)
+                                  ? (['cueBelow', 'cueAbove'] as const)
+                                  : []),
+                              ] as const
+                            ).map((field) => (
                               <label key={field}>
                                 {t(field)} · {name(code)}
                                 <textarea
                                   rows={2}
-                                  maxLength={400}
+                                  maxLength={
+                                    field === 'cueBelow' || field === 'cueAbove' ? 160 : 400
+                                  }
                                   disabled={!draft || busy || !measured}
                                   value={
                                     criteria.find((item) => item.code === rule.code)?.[field] ?? ''
@@ -417,15 +488,18 @@ export function ConfigurationReview({
                                 />
                               </label>
                             ))}
-                            <p className="studio-caption">
-                              {t('requiredEvidence')}:{' '}
-                              {(
-                                rule.requiredJoints ??
-                                configuration.capability.featureGeometry[code]?.joints ??
-                                []
-                              ).join(', ')}
-                              . {t('criterionValidity')}
-                            </p>
+                            <details className="studio-purpose-details">
+                              <summary>{t('technicalDetails')}</summary>
+                              <p className="studio-caption">
+                                {t('requiredEvidence')}:{' '}
+                                {(
+                                  rule.requiredJoints ??
+                                  configuration.capability.featureGeometry[code]?.joints ??
+                                  []
+                                ).join(', ')}
+                                . {t('criterionValidity')}
+                              </p>
+                            </details>
                           </div>
                         ) : null}
                         <details className="studio-purpose-details">
@@ -436,6 +510,9 @@ export function ConfigurationReview({
                                 .map((phase) => t('phases.' + phase, { defaultValue: phase }))
                                 .join(', '),
                             })}
+                          </p>
+                          <p>
+                            {t('supportedFeature')}: {name(code)}
                           </p>
                           {rule.delivery !== 'REVIEW_ONLY' ? (
                             <p>
@@ -507,8 +584,9 @@ export function ConfigurationReview({
                               (rule) => rule.code === item.code && features.includes(rule.feature),
                             ) &&
                             (!item.expectation.trim() ||
-                              !item.cueBelow.trim() ||
-                              !item.cueAbove.trim()),
+                              !item.reviewExplanation?.trim() ||
+                              (effectiveRules.includes(item.code) &&
+                                (!item.cueBelow.trim() || !item.cueAbove.trim()))),
                         )))
                   }
                   onClick={() => {

@@ -186,7 +186,7 @@ it('requires a saved review before publication and persists the supported cue ch
       }}
     />,
   );
-  expect(screen.getByText('Measurements & coaching')).toBeInTheDocument();
+  expect(screen.getByText('Assessment criteria')).toBeInTheDocument();
   expect(screen.getByText('Review only')).toBeInTheDocument();
   expect(
     screen.queryByRole('switch', { name: 'Live feedback cues: Hip angle' }),
@@ -202,7 +202,7 @@ it('requires a saved review before publication and persists the supported cue ch
   });
   expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
   fireEvent.click(screen.getByRole('checkbox', { name: /target Mobile build supports/ }));
-  const expectation = screen.getByRole('textbox', { name: /Exercise expectation/ });
+  const expectation = screen.getByRole('textbox', { name: /Criterion expectation/ });
   fireEvent.change(expectation, { target: { value: '' } });
   expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
   fireEvent.change(expectation, {
@@ -217,6 +217,8 @@ it('requires a saved review before publication and persists the supported cue ch
       [
         {
           code: 'TARGET',
+          coachingPriority: 'P3',
+          reviewExplanation: configuration.rules[0]!.evidence,
           expectation: 'Use this approved hinge reference as a descriptive comparison.',
           cueBelow: 'Match the reference target',
           cueAbove: 'Match the reference target',

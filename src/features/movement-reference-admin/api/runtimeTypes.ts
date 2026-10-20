@@ -1,10 +1,14 @@
 export type CriterionReview = {
   code: string;
+  reviewExplanation?: string;
+  coachingPriority?: 'P1' | 'P2' | 'P3';
   expectation: string;
   cueBelow: string;
   cueAbove: string;
 };
 export type RuntimeRule = {
+  reviewExplanation?: string;
+  coachingPriority?: 'P1' | 'P2' | 'P3';
   criterionKind?: 'REFERENCE_COMPARISON';
   technicalCorrectionSupported?: boolean;
   expectation?: string;
@@ -27,6 +31,7 @@ export type RuntimeRule = {
   confirmationNote?: string;
 };
 export type RuntimeConfiguration = {
+  coachingPolicyVersion?: 'criterion-priority-v1';
   targetMuscles?: { code: string; role: 'PRIMARY' | 'SECONDARY' }[];
   assessmentDefinition?: {
     version: string;
