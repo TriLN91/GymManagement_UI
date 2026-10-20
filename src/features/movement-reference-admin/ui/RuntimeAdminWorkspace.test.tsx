@@ -229,10 +229,50 @@ it('requires a saved review before publication and persists the supported cue ch
   );
   expect(screen.getByRole('button', { name: 'Review & publish' })).toBeDisabled();
   v2.unmount();
-  render(<ConfigurationReview {...props} evidenceReady={false} />);
+  const noEvidence = render(<ConfigurationReview {...props} evidenceReady={false} />);
   expect(screen.getByRole('button', { name: 'Save reviewed configuration' })).toBeDisabled();
   fireEvent.click(screen.getByRole('button', { name: /Inspect contributing footage/ }));
   expect(props.onInspect).toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: /Add a review note/ }));
   expect(screen.getByRole('textbox', { name: /Review note/ })).toHaveFocus();
+  noEvidence.unmount();
+  render(
+    <ConfigurationReview
+      {...props}
+      chosen={{
+        ...chosen,
+        configuration: {
+          ...configuration,
+          schemaVersion: 'movement-runtime-v3',
+          selectedFeatures: ['hipAngleDeg', 'kneeAngleDeg'],
+          assessmentPlan: {
+            version: 'focused-assessment-v1',
+            availableFeatures: ['hipAngleDeg', 'kneeAngleDeg'],
+            trackingFeatures: ['hipAngleDeg'],
+            requiredJoints: ['Hip'],
+            requiredRegions: ['HIPS'],
+            referenceAspectRatio: 1,
+            viewStabilityMs: 500,
+            featureRoles: [],
+          },
+          rules: [
+            configuration.rules[0]!,
+            {
+              ...configuration.rules[0]!,
+              code: 'KNEE',
+              feature: 'kneeAngleDeg',
+              enabled: true,
+              delivery: 'LIVE_AND_REVIEW',
+              coachingPriority: 'P1',
+            },
+          ],
+        },
+      }}
+    />,
+  );
+  const optional = screen.getByRole('checkbox', { name: /Knee bend relative/ });
+  fireEvent.click(optional);
+  fireEvent.click(optional);
+  expect(screen.getByRole('switch', { name: 'Live feedback cues: Knee angle' })).not.toBeChecked();
+  expect(screen.getAllByRole('combobox', { name: /Coaching priority/ }).at(-1)).toHaveValue('P3');
 });

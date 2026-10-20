@@ -292,7 +292,7 @@ export function ConfigurationReview({
                           disabled={!draft || busy || required}
                           onChange={() => {
                             toggle(code, features, setFeatures);
-                            if (measured)
+                            if (measured) {
                               setRules(
                                 rules.filter(
                                   (item) =>
@@ -300,6 +300,15 @@ export function ConfigurationReview({
                                       ?.feature !== code,
                                 ),
                               );
+                              setCriteria((items) =>
+                                items.map((item) =>
+                                  configuration.rules.find((rule) => rule.code === item.code)
+                                    ?.feature === code
+                                    ? { ...item, coachingPriority: 'P3' }
+                                    : item,
+                                ),
+                              );
+                            }
                           }}
                         />
                         <span>
