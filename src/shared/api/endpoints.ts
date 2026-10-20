@@ -10,9 +10,10 @@ export const ENDPOINTS = {
     registerGymAdmin: '/identity/register/gym-admin',
     refresh: '/identity/refresh',
     logout: '/identity/logout',
-    // Not implemented by the backend yet (MSW only).
     forgotPassword: '/identity/forgot-password',
+    verifyOtp: '/identity/verify-otp',
     resetPassword: '/identity/reset-password',
+    changePassword: '/identity/change-password',
   },
   // `me.*` are CF01 member endpoints (backend CoachingController); the rest is mock-only
   // until the backend exposes a FE-shaped coaching API (AI work is deferred).
@@ -68,11 +69,6 @@ export const ENDPOINTS = {
     propose: (assignmentId: string) => `/coaching/assignments/${assignmentId}/trainer-changes`,
     respond: (changeId: string) => `/coaching/trainer-changes/${changeId}/respond`,
   },
-  // Gym Admin creates Trainer accounts for their own Gym (backend GymOwnerController).
-  gymOwner: {
-    myGyms: '/gym-owner/brands/me',
-    trainers: '/gym-owner/trainers',
-  },
   // CF01 workout sessions (backend WorkoutController, route api/workouts).
   workouts: {
     exercises: '/workouts/exercises',
@@ -104,6 +100,53 @@ export const ENDPOINTS = {
       `/admin/reference-sets/${referenceSetId}/profiles/${profileId}/confirm`,
     activate: (referenceSetId: string, profileId: string) =>
       `/admin/reference-sets/${referenceSetId}/profiles/${profileId}/activate`,
+  },
+  // CF03 Gym Marketplace, Gym Owner & Branch Manager
+  marketplace: {
+    branches: '/marketplace/branches',
+    branchDetail: (id: string) => `/marketplace/branches/${id}`,
+    brandBranches: (brandId: string) => `/marketplace/brands/${brandId}/branches`,
+    offers: '/marketplace/offers',
+    orders: {
+      checkout: '/marketplace/orders/checkout',
+      detail: (id: string) => `/marketplace/orders/${id}`,
+      me: '/marketplace/orders/me',
+      cancel: (id: string) => `/marketplace/orders/${id}/cancel`,
+      consentReassign: (appointmentId: string) =>
+        `/marketplace/orders/appointments/${appointmentId}/consent-reassign`,
+    },
+  },
+  gymOwner: {
+    brands: '/gym-owner/brands',
+    myBrands: '/gym-owner/brands/me',
+    myGyms: '/gym-owner/brands/me',
+    brandDetail: (brandId: string) => `/gym-owner/brands/${brandId}`,
+    createBranch: (brandId: string) => `/gym-owner/brands/${brandId}/branches`,
+    updateBranch: (branchId: string) => `/gym-owner/branches/${branchId}`,
+    assignManager: (branchId: string) => `/gym-owner/branches/${branchId}/manager`,
+    assignTrainer: (branchId: string) => `/gym-owner/branches/${branchId}/trainers`,
+    removeTrainer: (branchId: string, trainerProfileId: string) =>
+      `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
+    trainers: '/gym-owner/trainers',
+    trainersOverview: '/gym-owner/trainers/overview',
+    updateTrainerStatus: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/status`,
+    updateTrainerBranches: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/branches`,
+    deleteTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}`,
+    relinkTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/relink`,
+    brandDashboard: (brandId: string) => `/gym-owner/brands/${brandId}/dashboard`,
+    branchDashboard: (branchId: string) => `/gym-owner/branches/${branchId}/dashboard`,
+  },
+  trainer: {
+    profileStatus: '/trainer/profile/status',
+    updateProfile: '/trainer/profile/me',
+  },
+  branchManager: {
+    branchOffers: (branchId: string) => `/branch-manager/branches/${branchId}/offers`,
+    updateOffer: (offerId: string) => `/branch-manager/offers/${offerId}`,
+    appointments: (branchId: string) => `/branch-manager/branches/${branchId}/appointments`,
+    reassignAppointment: (appointmentId: string) =>
+      `/branch-manager/appointments/${appointmentId}/reassign`,
+    trainersKpi: (branchId: string) => `/branch-manager/branches/${branchId}/trainers/kpi`,
   },
 } as const;
 

@@ -8,3 +8,5 @@ export {
   TrainerDetailPage,
   TrainerDiscoveryPage,
 } from './ui/MarketplacePages';
+
+export * from './api/marketplaceApi';

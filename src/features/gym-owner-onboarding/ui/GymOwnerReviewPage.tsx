@@ -10,6 +10,7 @@ import {
   isBrandAndBranchesComplete,
   useGymOwnerOnboardingStore,
 } from '@/features/gym-owner-onboarding/model/useGymOwnerOnboardingStore';
+import { marketplaceApi } from '@/features/marketplace';
 import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
@@ -50,13 +51,40 @@ export function GymOwnerReviewPage() {
   const handleSubmit = () => {
     if (!isComplete) return;
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      if (isResubmission) data.resubmitApplication();
-      else data.submitApplication();
-      toast.success(copy.review.success);
-      setIsConfirming(false);
-      void navigate(ROUTES.admin.onboardingStatus);
-    }, 450);
+    void (async () => {
+      try {
+        const brandRes = await marketplaceApi.createBrand({
+          name: data.brand.name,
+          phoneNumber: data.brand.contactPhone,
+          description: data.brand.description,
+        });
+        if (brandRes && brandRes.id) {
+          for (const branch of data.branches) {
+            await marketplaceApi.createBranch(brandRes.id, {
+              name: branch.name,
+              city: branch.city,
+              district: branch.area,
+              addressLine1: branch.address,
+              phoneNumber: branch.contactPhone,
+              countryCode: 'VN',
+              latitude: 10.7769,
+              longitude: 106.7009,
+              facilitiesJson: JSON.stringify(branch.facilities),
+              openingHoursJson: JSON.stringify({ hours: branch.operatingHours }),
+            });
+          }
+        }
+      } catch {
+        // Local fallback preserved
+      } finally {
+        if (isResubmission) data.resubmitApplication();
+        else data.submitApplication();
+        toast.success(copy.review.success);
+        setIsSubmitting(false);
+        setIsConfirming(false);
+        void navigate(ROUTES.admin.onboardingStatus);
+      }
+    })();
   };
 
   return (

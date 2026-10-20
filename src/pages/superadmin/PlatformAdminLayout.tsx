@@ -20,7 +20,6 @@ import {
   ReceiptText,
   ShieldCheck,
   SlidersHorizontal,
-  Store,
   Tag,
   TriangleAlert,
   UserRound,
@@ -89,6 +88,7 @@ interface NavItem {
 interface NavGroup {
   id: GroupKey;
   icon: LucideIcon;
+  to?: string;
   items: ReadonlyArray<NavItem>;
 }
 
@@ -113,19 +113,13 @@ const groups: ReadonlyArray<NavGroup> = [
     ],
   },
   {
-    id: 'marketplace',
-    icon: Store,
-    items: [{ label: 'listings', to: ROUTES.superadmin.listings, icon: List }],
-  },
-  {
     id: 'commercial',
     icon: SlidersHorizontal,
-    items: [{ label: 'pricing', to: ROUTES.superadmin.commercial, icon: Tag }],
-  },
-  {
-    id: 'campaigns',
-    icon: Megaphone,
-    items: [{ label: 'campaignsList', to: ROUTES.superadmin.campaigns, icon: Megaphone }],
+    items: [
+      { label: 'listings', to: ROUTES.superadmin.listings, icon: List },
+      { label: 'pricing', to: ROUTES.superadmin.commercial, icon: Tag },
+      { label: 'campaignsList', to: ROUTES.superadmin.campaigns, icon: Megaphone },
+    ],
   },
   {
     id: 'transactions',
@@ -155,13 +149,8 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'movement',
     icon: Dumbbell,
-    items: [
-      {
-        label: 'movementAssessment',
-        to: ROUTES.superadmin.movementAssessment,
-        icon: ClipboardCheck,
-      },
-    ],
+    to: ROUTES.superadmin.movementAssessment,
+    items: [],
   },
   {
     id: 'security',
@@ -306,6 +295,35 @@ export function PlatformAdminLayout() {
           />
           {visibleGroups.map((group) => {
             const Icon = group.icon;
+
+            // Direct link trigger for single destination items
+            if (group.to && (!group.items || group.items.length === 0)) {
+              const active = matchesPlatformRoute(group.to, location.pathname);
+              return (
+                <div className="member-nav-group" key={group.id}>
+                  <NavLink
+                    to={group.to}
+                    end={group.to === ROUTES.superadmin.root}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      closeFlyout();
+                    }}
+                    aria-label={copy[group.id]}
+                    title={isSidebarCollapsed ? copy[group.id] : undefined}
+                    className={cn(
+                      'member-nav-group__trigger is-direct-link',
+                      active && 'is-active',
+                    )}
+                  >
+                    <span>
+                      <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
+                      <span className="member-nav-group__label">{copy[group.id]}</span>
+                    </span>
+                  </NavLink>
+                </div>
+              );
+            }
+
             const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
@@ -319,6 +337,7 @@ export function PlatformAdminLayout() {
                   type="button"
                   className={cn(
                     'member-nav-group__trigger',
+                    isExpanded && 'is-expanded',
                     active && 'has-active-child',
                     isFlyoutOpen && 'is-flyout-open',
                   )}

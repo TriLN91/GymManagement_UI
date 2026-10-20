@@ -26,6 +26,7 @@ import type {
 } from '../model/types';
 import { useGymOwnerDashboardPreferences } from '../model/useGymOwnerDashboardPreferences';
 
+import { BrandFinancialOverview } from './BrandFinancialOverview';
 import { gymOwnerDashboardCopy, type GymOwnerDashboardCopy } from './copy';
 import { DashboardCustomizationDialog } from './DashboardCustomizationDialog';
 import { DashboardWidgetState } from './DashboardWidgetState';
@@ -377,6 +378,8 @@ export function GymOwnerDashboardPage() {
           {copy.customize}
         </Button>
       </div>
+
+      <BrandFinancialOverview />
 
       {visibleWidgets.length > 0 ? (
         <div className="gym-dashboard-grid">

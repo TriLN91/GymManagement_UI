@@ -33,6 +33,7 @@ export interface RegisterPayload {
   email: string;
   password: string;
   fullName: string;
+  role?: string;
 }
 
 /** Gym Admin self-registration; the account must be approved by a Platform Admin before sign-in. */
