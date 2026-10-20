@@ -43,7 +43,12 @@ export const movementRuntimeApi = {
     apiGet<RuntimeVersion[]>(`${runtimeBase}/configurations`, { params: { exerciseId } }),
   history: (exerciseId: string) =>
     apiGet<ExerciseRevision[]>(`${runtimeBase}/exercises/${exerciseId}/history`),
-  createExercise: (input: ExerciseInput) => apiPost<ExerciseDto>(`${runtimeBase}/exercises`, input),
+  createExercise: (input: ExerciseInput, key?: string) =>
+    apiPost<ExerciseDto>(
+      `${runtimeBase}/exercises`,
+      input,
+      key ? { headers: { 'Idempotency-Key': key } } : undefined,
+    ),
   updateExercise: (id: string, input: ExerciseInput) =>
     apiPut<ExerciseDto>(`${runtimeBase}/exercises/${id}`, input),
   propose: (profileId: string) => apiPost<RuntimeVersion>(`${runtimeBase}/proposals/${profileId}`),

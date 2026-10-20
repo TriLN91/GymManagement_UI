@@ -22,12 +22,14 @@ export function ReferenceUpload({
   error,
   onClose,
   onUpload,
+  uploadProgress,
 }: {
   capability: Capability;
   busy: boolean;
   error: unknown;
   onClose: () => void;
   onUpload: (file: File) => Promise<boolean>;
+  uploadProgress?: { loaded: number; total: number };
 }) {
   const { t } = useTranslation('movementStudio');
   const [file, setFile] = useState<File>();
@@ -101,7 +103,12 @@ export function ReferenceUpload({
         ) : null}
         {busy ? (
           <p role="status" className="studio-inline-warning">
-            {t('processing')}
+            {uploadProgress
+              ? t('uploadBytes', {
+                  loaded: (uploadProgress.loaded / 1e6).toFixed(1),
+                  total: (uploadProgress.total / 1e6).toFixed(1),
+                })
+              : t('savingSubmission')}
           </p>
         ) : null}
         <DialogFooter>

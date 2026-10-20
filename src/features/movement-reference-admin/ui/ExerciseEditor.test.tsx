@@ -27,18 +27,25 @@ it('submits identity, controlled muscles and GOOD footage together and retains t
     target: { value: 'Hinge — bodyweight' },
   });
   fireEvent.change(screen.getAllByRole('combobox')[0]!, { target: { value: 'HINGE' } });
-  fireEvent.change(screen.getByRole('combobox', { name: 'Inspect a muscle' }), {
-    target: { value: 'hamstrings' },
-  });
-  fireEvent.change(screen.getAllByRole('combobox').at(-1)!, { target: { value: 'PRIMARY' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Hamstrings' }));
   const video = new File(['sample'], 'good.mp4', { type: 'video/mp4' });
   fireEvent.change(screen.getByLabelText('Choose an MP4 video'), { target: { files: [video] } });
-  fireEvent.click(screen.getByRole('button', { name: 'Create & process GOOD footage' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Create & Process' }));
   await waitFor(() => expect(save).toHaveBeenCalledOnce());
   expect(save.mock.calls[0]![0].targetMuscles).toEqual([{ code: 'hamstrings', role: 'PRIMARY' }]);
   expect(save.mock.calls[0]![1]).toBe(video);
   expect(close).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole('button', { name: 'Create & process GOOD footage' }));
+  view.rerender(
+    <ExerciseEditor
+      catalog={{ equipment: ['Bodyweight'], muscleGroups: [] }}
+      supportedPatterns={['HINGE']}
+      creationSaved
+      busy={false}
+      onClose={close}
+      onSave={save}
+    />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Resume submission' }));
   await waitFor(() => expect(close).toHaveBeenCalledOnce());
   expect(save.mock.calls[1]![1]).toBe(video);
   view.unmount();
@@ -63,16 +70,13 @@ it('keeps catalog-only creation available after changing to a pattern without as
   });
   const pattern = screen.getAllByRole('combobox')[0]!;
   fireEvent.change(pattern, { target: { value: 'HINGE' } });
-  fireEvent.change(screen.getByRole('combobox', { name: 'Inspect a muscle' }), {
-    target: { value: 'hamstrings' },
-  });
-  fireEvent.change(screen.getAllByRole('combobox').at(-1)!, { target: { value: 'PRIMARY' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Hamstrings' }));
   fireEvent.change(screen.getByLabelText('Choose an MP4 video'), {
     target: { files: [new File(['sample'], 'good.mp4', { type: 'video/mp4' })] },
   });
   fireEvent.change(pattern, { target: { value: 'OTHER' } });
-  expect(screen.getByRole('button', { name: 'Create catalog exercise' })).toBeEnabled();
-  fireEvent.click(screen.getByRole('button', { name: 'Create catalog exercise' }));
+  expect(screen.getByRole('button', { name: 'Save catalog only' })).toBeEnabled();
+  fireEvent.click(screen.getByRole('button', { name: 'Save catalog only' }));
   await waitFor(() => expect(save).toHaveBeenCalledOnce());
   expect(save.mock.calls[0]![1]).toBeUndefined();
   view.unmount();

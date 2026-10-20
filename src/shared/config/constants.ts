@@ -162,6 +162,8 @@ export const STORAGE_KEYS = Object.freeze({
   gymOwnerOnboarding: 'gmc.gymOwnerOnboarding',
   gymOwnerDashboardPreferences: 'gmc.gymOwnerDashboardPreferences',
   gymOwnerTrainingManagement: 'gmc.gymOwnerTrainingManagement',
+  assessmentCreation: 'gmc.assessmentCreation',
+  assessmentJobs: 'gmc.assessmentJobs',
 });
 
 export const QUERY_KEYS = Object.freeze({

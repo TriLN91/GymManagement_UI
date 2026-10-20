@@ -1,14 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import {
-  MUSCLES,
-  MUSCLE_IDS,
-  type MuscleId,
-} from '@/features/member-workout-builder/model/muscleMapData';
+import { MUSCLES, type MuscleId } from '@/features/member-workout-builder/model/muscleMapData';
 import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
 export type TargetMuscle = { code: string; role: 'PRIMARY' | 'SECONDARY' };
-
+const canonicalMuscle = (code: string) => MUSCLES[code as MuscleId]?.parent ?? code;
 export function ExerciseMuscleTargets({
   value,
   onChange,
@@ -19,86 +15,79 @@ export function ExerciseMuscleTargets({
   disabled?: boolean;
 }) {
   const { t, i18n } = useTranslation('movementStudio');
-  const [selected, setSelected] = useState<MuscleId | null>(null);
+  const [error, setError] = useState('');
   const locale = i18n.language.startsWith('vi') ? 'vi' : 'en';
-  const label = (id: MuscleId) => MUSCLES[id].name[locale];
-  const choose = (id: MuscleId, role: string) => {
+  const label = (id: MuscleId) => MUSCLES[id]?.name[locale] ?? id;
+  const update = (next: TargetMuscle[]) => {
     if (disabled) return;
-    const next = [
-      ...value.filter((m) => m.code !== id),
-      ...(role ? [{ code: id, role: role as TargetMuscle['role'] }] : []),
-    ];
     if (
       next.length > 3 ||
       next.filter((m) => m.role === 'PRIMARY').length > 2 ||
       next.filter((m) => m.role === 'SECONDARY').length > 2
-    )
+    ) {
+      setError(t('muscleLimit'));
       return;
+    }
+    setError('');
     onChange(next);
   };
   return (
-    <fieldset disabled={disabled} className="studio-config-section">
-      <legend>{t('muscleTargets')}</legend>
-      <p className="studio-caption">{t('muscleTargetsHelp')}</p>
+    <fieldset disabled={disabled} className="studio-config-section studio-targets">
+      <legend>
+        {t('muscleTargets')} · {value.length}/3
+      </legend>
+      <p>{t('muscleTargetsHelp')}</p>
+      <p className="studio-caption">{t('mapToggleHelp')}</p>
       <MaleAnatomyMuscleMap
+        selected={null}
+        selectionMode
         showVolumeLegend={false}
-        selected={selected}
-        activeMuscles={new Set(value.map((m) => m.code as MuscleId))}
+        activeMuscles={new Set(value.map((m) => canonicalMuscle(m.code) as MuscleId))}
         locale={locale}
         label={label}
-        onSelect={setSelected}
+        onSelect={(id) => {
+          const code = canonicalMuscle(id);
+          update(
+            value.some((m) => canonicalMuscle(m.code) === code)
+              ? value.filter((m) => canonicalMuscle(m.code) !== code)
+              : [
+                  ...value,
+                  { code, role: value.some((m) => m.role === 'PRIMARY') ? 'SECONDARY' : 'PRIMARY' },
+                ],
+          );
+        }}
       />
-      <label>
-        {t('chooseTargetMuscle')}
-        <select
-          value={selected ?? ''}
-          onChange={(e) => setSelected((e.target.value as MuscleId) || null)}
-        >
-          <option value="">{t('unspecified')}</option>
-          {MUSCLE_IDS.map((id) => (
-            <option key={id} value={id}>
-              {label(id)}
-            </option>
-          ))}
-        </select>
-      </label>
-      {selected ? (
-        <label>
-          {label(selected)}
-          <select
-            value={value.find((m) => m.code === selected)?.role ?? ''}
-            onChange={(e) => choose(selected, e.target.value)}
-          >
-            <option value="">{t('notTargeted')}</option>
-            <option
-              disabled={
-                value.filter((m) => m.role === 'PRIMARY' && m.code !== selected).length >= 2 ||
-                (value.length >= 3 && !value.some((m) => m.code === selected))
-              }
-              value="PRIMARY"
-            >
-              {t('primaryTarget')}
-            </option>
-            <option
-              disabled={
-                value.filter((m) => m.role === 'SECONDARY' && m.code !== selected).length >= 2 ||
-                (value.length >= 3 && !value.some((m) => m.code === selected))
-              }
-              value="SECONDARY"
-            >
-              {t('secondaryTarget')}
-            </option>
-          </select>
-        </label>
-      ) : null}
-      <ul>
+      <ul className="studio-target-list">
         {value.map((m) => (
           <li key={m.code}>
-            {label(m.code as MuscleId)} ·{' '}
-            {t(m.role === 'PRIMARY' ? 'primaryTarget' : 'secondaryTarget')}
+            <strong>{label(m.code as MuscleId)}</strong>
+            <select
+              aria-label={t('muscleRole', { name: label(m.code as MuscleId) })}
+              value={m.role}
+              onChange={(e) =>
+                update(
+                  value.map((item) =>
+                    item.code === m.code
+                      ? { ...item, role: e.target.value as TargetMuscle['role'] }
+                      : item,
+                  ),
+                )
+              }
+            >
+              <option value="PRIMARY">{t('primaryTarget')}</option>
+              <option value="SECONDARY">{t('secondaryTarget')}</option>
+            </select>
+            <button
+              type="button"
+              aria-label={t('removeMuscle', { name: label(m.code as MuscleId) })}
+              onClick={() => update(value.filter((item) => item.code !== m.code))}
+            >
+              {t('remove')}
+            </button>
           </li>
         ))}
       </ul>
+      {error ? <p role="alert">{error}</p> : null}
       {!value.some((m) => m.role === 'PRIMARY') ? (
         <p role="alert">{t('primaryTargetRequired')}</p>
       ) : null}

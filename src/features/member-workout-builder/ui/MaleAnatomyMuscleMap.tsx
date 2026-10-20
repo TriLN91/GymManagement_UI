@@ -19,6 +19,7 @@ interface MaleAnatomyMuscleMapProps {
   onSelect: (muscle: MuscleId) => void;
   zoomed?: boolean;
   showVolumeLegend?: boolean;
+  selectionMode?: boolean;
 }
 
 const imageUrl = `${import.meta.env.BASE_URL}male-anatomy-map.png`;
@@ -32,6 +33,7 @@ export function MaleAnatomyMuscleMap({
   onSelect,
   zoomed = false,
   showVolumeLegend = true,
+  selectionMode = false,
 }: MaleAnatomyMuscleMapProps) {
   const { t } = useTranslation();
   const [hovered, setHovered] = useState<MuscleId | null>(null);
@@ -60,7 +62,7 @@ export function MaleAnatomyMuscleMap({
               <svg
                 className="muscle-map muscle-map--anatomy"
                 viewBox={view === 'front' ? '100 0 480 835' : '660 0 480 835'}
-                role="img"
+                role={selectionMode ? 'group' : 'img'}
                 aria-label={
                   view === 'front'
                     ? t('workout:maleAnatomyMuscleMap.viewLabelFront')
@@ -74,9 +76,10 @@ export function MaleAnatomyMuscleMap({
                     volumeByMuscle?.[id] ?? (parent ? volumeByMuscle?.[parent] : 0) ?? 0;
                   const isActive =
                     activeMuscles.has(id) || Boolean(parent && activeMuscles.has(parent));
+                  const isSelected = selectionMode ? isActive : selected === id;
                   const className = [
                     'muscle-map__region',
-                    selected === id ? 'is-selected' : '',
+                    isSelected ? 'is-selected' : '',
                     volume > 0 ? 'has-volume' : '',
                     isActive ? 'has-exercises' : '',
                   ]
@@ -94,7 +97,7 @@ export function MaleAnatomyMuscleMap({
                       role="button"
                       tabIndex={0}
                       aria-label={label(id)}
-                      aria-pressed={selected === id}
+                      aria-pressed={isSelected}
                       style={style}
                       key={id}
                       onClick={() => onSelect(id)}
@@ -114,7 +117,7 @@ export function MaleAnatomyMuscleMap({
                         <path
                           d={path}
                           fill={
-                            selected === id
+                            isSelected
                               ? 'rgba(229, 247, 150, 0.82)'
                               : hovered === id
                                 ? 'rgba(167, 240, 221, 0.65)'
@@ -122,8 +125,8 @@ export function MaleAnatomyMuscleMap({
                                   ? `rgba(229, 247, 150, ${Math.min(0.76, 0.2 + (volume / maxVolume) * 0.56)})`
                                   : 'transparent'
                           }
-                          stroke={selected === id || hovered === id ? '#173917' : 'transparent'}
-                          strokeWidth={selected === id ? 5 : hovered === id ? 4 : 0}
+                          stroke={isSelected || hovered === id ? '#173917' : 'transparent'}
+                          strokeWidth={isSelected ? 5 : hovered === id ? 4 : 0}
                           key={index}
                         />
                       ))}
@@ -171,6 +174,7 @@ export function MaleAnatomyMuscleMap({
               activeMuscles={activeMuscles}
               volumeByMuscle={volumeByMuscle}
               showVolumeLegend={showVolumeLegend}
+              selectionMode={selectionMode}
               locale={locale}
               label={label}
               onSelect={(muscle) => {

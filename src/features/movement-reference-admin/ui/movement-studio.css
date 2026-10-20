@@ -1912,3 +1912,158 @@
     align-items: flex-start;
   }
 }
+
+/* Creation keeps metadata and footage together; only the body scrolls. */
+.studio-create-dialog {
+  width: min(1080px, calc(100vw - 24px));
+  max-width: 1080px !important;
+  max-height: 94dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  padding: 24px;
+}
+.studio-create-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 12px;
+}
+.studio-create-body {
+  overflow-y: auto;
+  min-height: 0;
+  padding: 2px 6px 12px 2px;
+}
+.studio-create-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.studio-upload-card {
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  padding: 18px;
+  background: hsl(var(--muted));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: start;
+  overflow-wrap: anywhere;
+}
+.studio-upload-card h3 {
+  font-weight: 650;
+  font-size: 18px;
+}
+.studio-upload-card input {
+  max-width: 100%;
+  display: block;
+  padding: 12px 0;
+}
+.studio-create-footer {
+  flex-shrink: 0;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 14px;
+  flex-wrap: wrap;
+}
+.studio-targets .muscle-map__canvas {
+  max-width: 480px;
+  margin: 12px auto;
+}
+.studio-target-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.studio-target-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+}
+.studio-target-list li strong {
+  flex: 1;
+}
+.studio-target-list select {
+  width: auto;
+}
+.studio-upload-status {
+  padding: 10px;
+  background: hsl(var(--muted));
+}
+.studio-upload-status progress {
+  width: 100%;
+}
+.studio-job {
+  padding: 20px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  margin: 18px 0;
+  background: hsl(var(--muted));
+  display: grid;
+  gap: 10px;
+}
+.studio-job-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .studio-create-dialog {
+    padding: 16px;
+  }
+  .studio-create-top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .studio-create-footer > button {
+    flex: 1;
+    white-space: normal;
+    height: auto;
+    min-height: 40px;
+  }
+  .studio-target-list li {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 640px) {
+  .studio-create-top .studio-upload-card {
+    order: -1;
+  }
+}
+
+.studio-create-dialog .energy-dialog-header {
+  margin: 0;
+  padding: 0 24px 12px 0;
+}
+.studio-create-dialog fieldset,
+.studio-create-dialog label,
+.studio-create-top > *,
+.studio-create-body {
+  min-width: 0;
+  max-width: 100%;
+}
+.studio-create-dialog .studio-upload-card {
+  font-size: 14px;
+}
+.studio-create-dialog {
+  border-radius: 16px;
+}
+.studio-job {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.studio-job > button {
+  display: flex;
+  width: 100%;
+  white-space: normal;
+  height: auto;
+  min-height: 40px;
+  max-width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  margin-top: 8px;
+}

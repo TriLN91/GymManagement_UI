@@ -20,9 +20,17 @@ import {
   type ExerciseRevision,
   type Readiness,
 } from '../api/movementRuntimeApi';
+import { referenceJobsApi, type ReferenceJob } from '../api/referenceJobsApi';
 import type { RuntimeVersion } from '../api/runtimeTypes';
 import type { ExerciseDto, ReferenceSetDto, ReferenceSetSummaryDto } from '../api/types';
-import { submitCreationFootage } from '../model/creationUpload';
+import {
+  clearCreation,
+  footageSubmissionKey,
+  readCreation,
+  recentJobs,
+  rememberJob,
+  submitCreation,
+} from '../model/creationSession';
 import { capabilityFor, patternOf, readinessOf, type StudioTab } from '../model/studio';
 
 import { AssessmentVersionHistory } from './AssessmentVersionHistory';
@@ -30,10 +38,12 @@ import { ConfigurationReview, MobilePreview, ReferenceApproval } from './Configu
 import { ExerciseEditor } from './ExerciseEditor';
 import { ExerciseLibrary } from './ExerciseLibrary';
 import { ReferenceInspector } from './ReferenceInspector';
+import { ReferenceJobProgress } from './ReferenceJobProgress';
 import { ReferenceUpload } from './ReferenceUpload';
 import { StudioConfirm } from './StudioConfirm';
 import { StudioError, StudioLoading, StudioStatus } from './StudioPrimitives';
 
+import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { Button } from '@/shared/ui/button';
 import './movement-studio.css';
 
@@ -66,9 +76,13 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
   const inFlight = useRef(false);
   const workspace = useRef<HTMLDivElement>(null);
   const [dirty, setDirty] = useState(false);
-  const creation = useRef<{ exercise: ExerciseDto; collectionId?: string; footage?: File } | null>(
-    null,
-  );
+  const owner = useAuthStore((state) => state.user?.id) ?? 'anonymous';
+  const [pendingCreation, setPendingCreation] = useState(() => readCreation(owner));
+  const [savedJobs, setSavedJobs] = useState(() => recentJobs(owner));
+  useEffect(() => {
+    setPendingCreation(readCreation(owner));
+  }, [owner]);
+  const [uploadProgress, setUploadProgress] = useState<{ loaded: number; total: number }>();
   const [editor, setEditor] = useState<'create' | 'edit'>();
   const [upload, setUpload] = useState(false);
   const [confirmation, setConfirmation] = useState<'publish' | 'reject' | 'retire' | 'reference'>();
@@ -114,7 +128,7 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
     (item) => item.id === chosen?.referenceProfileId,
   );
   const source =
-    reference?.sources.find((item) => item.id === sourceId) ??
+    reference?.sources.find((item) => item.id === (sourceId || params.get('source'))) ??
     reference?.sources.find((item) => profile?.sourceReferenceIds?.includes(item.id)) ??
     reference?.sources.find((item) => item.processingStatus === 'PROCESSED') ??
     reference?.sources[0];
@@ -158,18 +172,20 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
     [],
   );
   const reload = useCallback(async () => {
-    const [catalog, collections, statuses, supported, metadata] = await Promise.all([
+    const [catalog, collections, statuses, supported, metadata, jobs] = await Promise.all([
       movementRuntimeApi.exercises(),
       movementReferenceApi.listReferenceSets(),
       movementRuntimeApi.readiness(),
       movementRuntimeApi.capabilities(),
       movementRuntimeApi.metadataCatalog(),
+      referenceJobsApi.list(),
     ]);
     setExercises(catalog);
     setSets(collections);
     setReadiness(statuses);
     setCapabilities(supported);
     setMetadataCatalog(metadata);
+    setSavedJobs(jobs);
   }, []);
   useEffect(() => {
     void reload()
@@ -218,7 +234,14 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
   const back = () => {
     if (referenceSetId) void navigatePage('/superadmin/movement-assessment');
     else
-      navigate({ exercise: undefined, tab: undefined, version: undefined, collection: undefined });
+      navigate({
+        exercise: undefined,
+        tab: undefined,
+        version: undefined,
+        collection: undefined,
+        job: undefined,
+        source: undefined,
+      });
   };
   const act = async <T,>(work: () => Promise<T>, message: string): Promise<T | undefined> => {
     if (inFlight.current) return undefined;
@@ -249,7 +272,33 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
     if (!keepNotice) setNotice('');
     setError(undefined);
     setFocusFeature(undefined);
-    navigate({ exercise: id, tab: undefined, version: undefined, collection: undefined });
+    navigate({
+      exercise: id,
+      tab: undefined,
+      version: undefined,
+      collection: undefined,
+      job: undefined,
+      source: undefined,
+    });
+  };
+  const openJob = (job: ReferenceJob) => {
+    setSourceId(job.id);
+    navigate({
+      exercise: job.exerciseId,
+      collection: job.referenceSetId,
+      job: job.id,
+      source: job.id,
+      tab: 'inspect',
+      version: undefined,
+    });
+    void reload()
+      .then(() => setRefresh((value) => value + 1))
+      .catch(setError);
+  };
+  const jobReady = () => {
+    void reload()
+      .then(() => setRefresh((value) => value + 1))
+      .catch(setError);
   };
   const openVersion = (id: string) =>
     navigate({
@@ -358,6 +407,52 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
           <CheckCircle2 size={18} aria-hidden />
           {t(notice)}
         </div>
+      ) : null}
+      {!exerciseId && pendingCreation ? (
+        <div className="studio-job">
+          <p>{t('resumeCreationHelp', { name: pendingCreation.input.name })}</p>
+          <Button onClick={() => setEditor('create')}>{t('resumeCreation')}</Button>
+          {pendingCreation.exerciseId ? (
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                void act(async () => {
+                  const job = await referenceJobsApi.byClient(`video:${pendingCreation.key}`);
+                  clearCreation(owner);
+                  setPendingCreation(undefined);
+                  if (job) {
+                    rememberJob(owner, job);
+                    openJob(job);
+                  } else openExercise(pendingCreation.exerciseId!);
+                  return true;
+                }, 'updated')
+              }
+            >
+              {t('keepCatalogOnly')}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+      {!exerciseId && savedJobs.length ? (
+        <details className="studio-job">
+          <summary>{t('recentProcessing')}</summary>
+          {savedJobs.map((job) => (
+            <Button key={job.id} variant="outline" onClick={() => openJob(job)}>
+              {exercises.find((item) => item.id === job.exerciseId)?.name ?? job.fileName} ·{' '}
+              {t(`jobLabels.${job.state}`)} · {t('openProgress')}
+            </Button>
+          ))}
+        </details>
+      ) : null}
+      {params.get('job') && exerciseId ? (
+        <ReferenceJobProgress
+          key={params.get('job')}
+          id={params.get('job')!}
+          owner={owner}
+          onReady={jobReady}
+          onOpen={openJob}
+        />
       ) : null}
       {!loading && !exerciseId ? (
         <ExerciseLibrary
@@ -527,7 +622,11 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                       ))}
                     </div>
                   ) : null}
-                  {source ? (
+                  {source?.processingStatus === 'PROCESSING' ? (
+                    <p role="status" className="studio-job">
+                      {t('jobStates.PROCESSING')}
+                    </p>
+                  ) : source ? (
                     <>
                       {source.processingStatus === 'FAILED' ? (
                         <div className="studio-source-failure" role="alert">
@@ -566,78 +665,80 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                       {!sourceMatches ? (
                         <div className="studio-inline-warning">{t('sourceMismatch')}</div>
                       ) : null}
-                      <ReferenceInspector
-                        key={source.id}
-                        source={source}
-                        capability={selectedCapability}
-                        configuration={inspectionConfiguration}
-                        focusFeature={focusFeature}
-                        context={
-                          <div className="studio-evidence-context">
-                            <div>
-                              <span>{t('intended')}</span>
-                              <strong>
-                                {t(`patterns.${reference?.pattern ?? classification}`)}
-                              </strong>
-                            </div>
-                            <div>
-                              <span>{t('detected')}</span>
-                              <strong>
-                                {source.detectedPattern
-                                  ? t(`patterns.${source.detectedPattern}`, {
-                                      defaultValue: source.detectedPattern,
-                                    })
-                                  : t('unavailable')}
-                              </strong>
-                            </div>
-                            <div>
-                              <span>{t('camera')}</span>
-                              <strong>
-                                {t(`views.${source.detectedView ?? 'UNKNOWN'}`, {
-                                  defaultValue: source.detectedView ?? t('unavailable'),
-                                })}
-                              </strong>
-                              {typeof source.detectedViewConfidence === 'number' ? (
-                                <small>
-                                  {t('confidence', {
-                                    value: Math.round(source.detectedViewConfidence * 100),
+                      {!(params.get('job') && source.processingStatus === 'FAILED') ? (
+                        <ReferenceInspector
+                          key={source.id}
+                          source={source}
+                          capability={selectedCapability}
+                          configuration={inspectionConfiguration}
+                          focusFeature={focusFeature}
+                          context={
+                            <div className="studio-evidence-context">
+                              <div>
+                                <span>{t('intended')}</span>
+                                <strong>
+                                  {t(`patterns.${reference?.pattern ?? classification}`)}
+                                </strong>
+                              </div>
+                              <div>
+                                <span>{t('detected')}</span>
+                                <strong>
+                                  {source.detectedPattern
+                                    ? t(`patterns.${source.detectedPattern}`, {
+                                        defaultValue: source.detectedPattern,
+                                      })
+                                    : t('unavailable')}
+                                </strong>
+                              </div>
+                              <div>
+                                <span>{t('camera')}</span>
+                                <strong>
+                                  {t(`views.${source.detectedView ?? 'UNKNOWN'}`, {
+                                    defaultValue: source.detectedView ?? t('unavailable'),
                                   })}
+                                </strong>
+                                {typeof source.detectedViewConfidence === 'number' ? (
+                                  <small>
+                                    {t('confidence', {
+                                      value: Math.round(source.detectedViewConfidence * 100),
+                                    })}
+                                  </small>
+                                ) : null}
+                              </div>
+                              <div>
+                                <span>{t('quality')}</span>
+                                <strong>
+                                  {t(
+                                    source.processingStatus === 'FAILED'
+                                      ? 'status.FAILED'
+                                      : source.action === 'EXCLUDE'
+                                        ? 'excluded'
+                                        : source.action === 'REQUIRES_REVIEW' ||
+                                            source.action === 'DOWN_WEIGHT'
+                                          ? 'questionable'
+                                          : 'included',
+                                  )}
+                                </strong>
+                                <small>
+                                  {t('accepted', { count: source.acceptedRepCount })} ·{' '}
+                                  {t('rejected', { count: source.rejectedRepCount })}
                                 </small>
-                              ) : null}
+                              </div>
                             </div>
-                            <div>
-                              <span>{t('quality')}</span>
-                              <strong>
-                                {t(
-                                  source.processingStatus === 'FAILED'
-                                    ? 'status.FAILED'
-                                    : source.action === 'EXCLUDE'
-                                      ? 'excluded'
-                                      : source.action === 'REQUIRES_REVIEW' ||
-                                          source.action === 'DOWN_WEIGHT'
-                                        ? 'questionable'
-                                        : 'included',
-                                )}
-                              </strong>
-                              <small>
-                                {t('accepted', { count: source.acceptedRepCount })} ·{' '}
-                                {t('rejected', { count: source.rejectedRepCount })}
-                              </small>
-                            </div>
-                          </div>
-                        }
-                        onReprocessed={async (result) => {
-                          await reload();
-                          const updated = await movementReferenceApi.getReferenceSet(
-                            result.referenceSetId,
-                          );
-                          setReference(updated);
-                          setSourceId(result.sourceId ?? '');
-                          setProfileId(updated.profiles.at(-1)?.id ?? '');
-                          setNotice(t('reprocessCreated'));
-                        }}
-                        onReady={onEvidence}
-                      />
+                          }
+                          onReprocessed={async (result) => {
+                            await reload();
+                            const updated = await movementReferenceApi.getReferenceSet(
+                              result.referenceSetId,
+                            );
+                            setReference(updated);
+                            setSourceId(result.sourceId ?? '');
+                            setProfileId(updated.profiles.at(-1)?.id ?? '');
+                            setNotice(t('reprocessCreated'));
+                          }}
+                          onReady={onEvidence}
+                        />
+                      ) : null}
                     </>
                   ) : capability ? (
                     <div className="studio-first-reference">
@@ -791,53 +892,42 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
         <ExerciseEditor
           catalog={metadataCatalog}
           supportedPatterns={capabilities.filter((c) => c.available).map((c) => c.pattern)}
-          creationSaved={editor === 'create' && Boolean(creation.current)}
+          creationSaved={editor === 'create' && Boolean(pendingCreation)}
+          initialInput={editor === 'create' ? pendingCreation?.input : undefined}
+          uploadProgress={uploadProgress}
           key={editor === 'create' ? 'new' : `edit-${exercise?.id}`}
           exercise={editor === 'edit' ? exercise : undefined}
           pattern={editor === 'edit' ? classification : undefined}
           busy={busy}
           error={error}
           onClose={() => {
-            creation.current = null;
+            setPendingCreation(readCreation(owner));
             setEditor(undefined);
           }}
           onSave={async (input, footage) => {
-            const saved = await act(
-              async () => {
-                if (editor === 'edit' && exercise)
-                  return movementRuntimeApi.updateExercise(exercise.id, input);
-                if (!creation.current)
-                  creation.current = { exercise: await movementRuntimeApi.createExercise(input) };
-                const saved = creation.current;
-                if (footage) {
-                  if (!saved.collectionId)
-                    saved.collectionId = (
-                      await movementReferenceApi.createReferenceSet({
-                        exerciseId: saved.exercise.id,
-                        pattern: input.pattern as 'SQUAT' | 'HINGE' | 'PULL',
-                      })
-                    ).id;
-                  const retry = saved.footage === footage;
-                  saved.footage = footage;
-                  await submitCreationFootage(saved.collectionId, footage, retry);
-                }
-                return saved.exercise;
-              },
-              editor === 'edit' ? 'updated' : 'created',
-            );
-            if (saved) {
-              openExercise(saved.id, true);
-              if (creation.current?.collectionId)
-                navigate({
-                  exercise: saved.id,
-                  collection: creation.current.collectionId,
-                  tab: undefined,
-                  version: undefined,
-                });
-              creation.current = null;
-              return true;
+            if (editor === 'edit' && exercise) {
+              const saved = await act(
+                () => movementRuntimeApi.updateExercise(exercise.id, input),
+                'updated',
+              );
+              return Boolean(saved);
             }
-            return false;
+            setUploadProgress(undefined);
+            const result = await act(
+              () =>
+                submitCreation(owner, input, footage, (loaded, total) =>
+                  setUploadProgress({ loaded, total }),
+                ),
+              'created',
+            );
+            setPendingCreation(readCreation(owner));
+            setUploadProgress(undefined);
+            if (!result) return false;
+            if (result.job) {
+              setNotice('jobAccepted');
+              openJob(result.job);
+            } else openExercise(result.exerciseId, true);
+            return true;
           }}
         />
       ) : null}
@@ -847,6 +937,7 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
           busy={busy}
           error={error}
           onClose={() => setUpload(false)}
+          uploadProgress={uploadProgress}
           onUpload={async (file) => {
             const saved = await act(async () => {
               let collectionId = sets.find(
@@ -859,10 +950,18 @@ export function RuntimeAdminWorkspace({ referenceSetId }: { referenceSetId?: str
                     pattern: classification as 'SQUAT' | 'HINGE' | 'PULL',
                   })
                 ).id;
-              return movementReferenceApi.uploadSource(collectionId, file);
+              const key = await footageSubmissionKey(exerciseId, file);
+              const existing = await referenceJobsApi.byClient(key);
+              return (
+                existing ??
+                referenceJobsApi.queue(collectionId, file, key, (loaded, total) =>
+                  setUploadProgress({ loaded, total }),
+                )
+              );
             }, 'uploadSaved');
             if (saved) {
-              navigate({ collection: saved.id, tab: undefined });
+              openJob(saved);
+              setUploadProgress(undefined);
               return true;
             }
             await reload().catch(() => undefined);
