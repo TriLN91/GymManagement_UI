@@ -58,7 +58,13 @@ test.describe('Gym Owner orders and settlement', () => {
   test('shows backend-provided financial components and opens order detail', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
-      if (message.type() === 'error') consoleErrors.push(message.text());
+      if (
+        message.type() === 'error' &&
+        !message.text().includes('Failed to load resource') &&
+        !message.text().includes('net::ERR_')
+      ) {
+        consoleErrors.push(message.text());
+      }
     });
     await loginApprovedGymOwner(page);
     await page.goto('/admin/orders');

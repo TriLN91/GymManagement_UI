@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
+import { gymOwnerHandlers } from './gymOwner';
 import { movementReferenceHandlers } from './movementReferences';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
@@ -14,6 +15,7 @@ export const handlers = [
   ...authHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
+  ...gymOwnerHandlers,
 
   http.get(path(ENDPOINTS.coaching.plan), () => HttpResponse.json({ data: sampleCoachingPlan })),
 
