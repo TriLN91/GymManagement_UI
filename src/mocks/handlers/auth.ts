@@ -125,4 +125,5 @@ export const authHandlers = [
 
   http.post(path(ENDPOINTS.auth.forgotPassword), () => success(null)),
   http.post(path(ENDPOINTS.auth.resetPassword), () => success(null)),
+  http.post(path(ENDPOINTS.auth.changePassword), () => success(true)),
 ];

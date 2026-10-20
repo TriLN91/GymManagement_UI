@@ -16,12 +16,17 @@ export function isoWeekdayOf(value: string): number {
 }
 
 export function formatBusinessDate(value: string, locale: string): string {
-  const { year, month, day } = parseBusinessDate(value);
-  return new Intl.DateTimeFormat(locale, {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, month - 1, day)));
+  try {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const { year, month, day } = parseBusinessDate(value);
+    return new Intl.DateTimeFormat(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      timeZone: 'UTC',
+    }).format(new Date(Date.UTC(year, month - 1, day)));
+  } catch {
+    return value;
+  }
 }
 
 export function toggleWeekday(selected: ReadonlyArray<number>, weekday: number): number[] {

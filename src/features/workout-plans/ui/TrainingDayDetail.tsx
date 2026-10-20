@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
+import { getWorkoutDay } from '../model/demoWorkoutFlow';
 import { freeWorkoutExercises } from '../model/liveWorkout';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
@@ -11,6 +12,13 @@ import type { WorkoutExercise, WorkoutSource } from '../model/workoutFlowTypes';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { formatBusinessDate } from '@/features/gamification/model/presentation';
+import {
+  memberExerciseCatalog,
+  useMemberWorkoutBuilderStore,
+  type BuilderExercise,
+  type ExerciseCatalogItem,
+  type Weekday,
+} from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 
@@ -25,12 +33,22 @@ function targetLabel(exercise: WorkoutExercise) {
   return `${exercise.target.rounds} rounds`;
 }
 
+function optionalTargetLabel(exercise: BuilderExercise, item: ExerciseCatalogItem) {
+  if (item.trackingType === 'strength')
+    return `${exercise.sets} × ${exercise.reps} @ ${exercise.loadKg} kg`;
+  if (item.trackingType === 'duration') return `${exercise.sets} × ${exercise.durationSeconds} sec`;
+  if (item.trackingType === 'distance') return `${exercise.distanceKm} km`;
+  return `${exercise.rounds} rounds · ${exercise.workSeconds}s / ${exercise.restSeconds}s`;
+}
+
 export function TrainingDayDetail() {
   const { t } = useTranslation('workout');
   const { dayId = '' } = useParams();
   const live = useLiveWorkoutWeek();
 
-  if (live.isPending)
+  const demoDay = getWorkoutDay(dayId);
+
+  if (live.isPending && !demoDay)
     return (
       <WorkoutFlowShell
         backTo={ROUTES.member.workoutSchedule}
@@ -41,33 +59,43 @@ export function TrainingDayDetail() {
         </p>
       </WorkoutFlowShell>
     );
-  if (live.isError) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+
   if (dayId === FREE_DAY_ID) return <FreeWorkoutPicker live={live} />;
 
-  const day = live.week.find((item) => item.id === dayId);
-  // Only today's scheduled main session can be started: past days are locked and future days are not open yet.
+  const liveDay = live.week.find((item) => item.id === dayId);
+  const day = liveDay ?? demoDay;
+
+  if (!day) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
   if (
-    !day ||
-    !day.isToday ||
-    day.status !== 'ready' ||
-    day.exercises.length === 0 ||
-    !day.versionId
+    liveDay &&
+    (!day.isToday || day.status !== 'ready' || day.exercises.length === 0 || !day.versionId)
   )
     return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+
   return (
     <DayOverview
       dayId={day.id}
-      title={t('flow.live.day', { day: day.dayNumber })}
+      title={
+        t(`flow.days.${day.id}`, {
+          defaultValue:
+            day.title ??
+            (day.dayNumber !== null
+              ? t('flow.live.day', { day: day.dayNumber })
+              : day.id),
+        })
+      }
       subtitle={t('flow.live.mainSession')}
       durationMinutes={day.durationMinutes}
       exercises={day.exercises}
       start={{
-        source: {
-          kind: 'plan',
-          versionId: day.versionId,
-          planDayNumber: day.dayNumber ?? 0,
-          businessDate: day.id,
-        },
+        source: day.versionId
+          ? {
+              kind: 'plan',
+              versionId: day.versionId,
+              planDayNumber: day.dayNumber ?? 0,
+              businessDate: day.id,
+            }
+          : { kind: 'free' },
       }}
     />
   );
@@ -88,25 +116,45 @@ function DayOverview({
   exercises: ReadonlyArray<WorkoutExercise>;
   start: { source: WorkoutSource };
 }) {
+  const { language } = useLocale();
   const { t } = useTranslation('workout');
   const { locale } = useLocale();
   const navigate = useNavigate();
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);
   const startSession = useWorkoutSessionStore((state) => state.startSession);
+  const optionalAddons = useMemberWorkoutBuilderStore((state) => state.optionalAddons);
+  const day = getWorkoutDay(dayId);
+  const dayKey = day?.weekday.toLowerCase() as Weekday | undefined;
+  const optionalExercises = dayKey
+    ? optionalAddons.flatMap((addon) =>
+        addon.exercises
+          .filter((exercise) => exercise.days.includes(dayKey))
+          .flatMap((exercise) => {
+            const item = memberExerciseCatalog.find(
+              (candidate) => candidate.id === exercise.exerciseId,
+            );
+            return item ? [{ addon, exercise, item }] : [];
+          }),
+      )
+    : [];
+
   const hasCurrentSession = activeSession?.dayId === dayId;
   const handleStart = () => {
     startSession({ dayId, source: start.source, title, exercises });
     void navigate(ROUTES.member.workoutSessionPath(dayId));
   };
+
   return (
     <WorkoutFlowShell
       backTo={ROUTES.member.workoutSchedule}
       backLabel={t('flow.detail.weeklySchedule')}
       actions={
-        <button className="workout-flow__primary" type="button" onClick={handleStart}>
-          {hasCurrentSession ? t('flow.detail.continue') : t('flow.detail.start')}{' '}
-          <ArrowRight size={16} />
-        </button>
+        exercises.length > 0 ? (
+          <button className="workout-flow__primary" type="button" onClick={handleStart}>
+            {hasCurrentSession ? t('flow.detail.continue') : t('flow.detail.start')}{' '}
+            <ArrowRight size={16} />
+          </button>
+        ) : undefined
       }
     >
       <section className="workout-day-overview">
@@ -123,7 +171,7 @@ function DayOverview({
         <div>
           <Layers3 />
           <span>{t('flow.detail.day')}</span>
-          <strong>{dayId === FREE_DAY_ID ? title : formatBusinessDate(dayId, locale)}</strong>
+          <strong>{dayId === FREE_DAY_ID ? title : t(`flow.days.${dayId}`, { defaultValue: formatBusinessDate(dayId, locale) })}</strong>
         </div>
         <div>
           <Gauge />
@@ -141,7 +189,7 @@ function DayOverview({
           <article className="workout-station" key={exercise.id}>
             <span className="workout-station__number">{String(index + 1).padStart(2, '0')}</span>
             <div className="workout-station__copy">
-              <h2>{exercise.name}</h2>
+              <h2>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</h2>
             </div>
             <div className="workout-station__target">
               <small>{t('flow.detail.target')}</small>
@@ -150,6 +198,26 @@ function DayOverview({
           </article>
         ))}
       </section>
+      {optionalExercises.length > 0 && (
+        <section className="workout-stations is-optional" aria-label={t('flow.detail.optional')}>
+          <header>
+            <span>{t('flow.detail.optional')}</span>
+            <span>{t('flow.detail.optionalProtected')}</span>
+          </header>
+          {optionalExercises.map(({ addon, exercise, item }, index) => (
+            <article className="workout-station" key={`${addon.id}-${exercise.uid}`}>
+              <span className="workout-station__number">+{String(index + 1).padStart(2, '0')}</span>
+              <div className="workout-station__copy">
+                <h2>{item.name[language]}</h2>
+              </div>
+              <div className="workout-station__target">
+                <small>{t('flow.detail.target')}</small>
+                <strong>{optionalTargetLabel(exercise, item)}</strong>
+              </div>
+            </article>
+          ))}
+        </section>
+      )}
     </WorkoutFlowShell>
   );
 }
@@ -179,41 +247,48 @@ function FreeWorkoutPicker({ live }: { live: ReturnType<typeof useLiveWorkoutWee
     <WorkoutFlowShell
       backTo={ROUTES.member.workoutSchedule}
       backLabel={t('flow.detail.weeklySchedule')}
-    >
-      <section className="workout-free-picker" aria-labelledby="free-workout-title">
-        <h2 id="free-workout-title">{t('flow.live.freeTitle')}</h2>
-        <p>{t('flow.live.freeHint')}</p>
-        <fieldset>
-          <legend>{t('flow.live.pickExercises')}</legend>
-          {live.exercises.map((exercise) => (
-            <label key={exercise.id}>
-              <input
-                type="checkbox"
-                checked={selected.includes(exercise.id)}
-                onChange={() =>
-                  setSelected((current) =>
-                    current.includes(exercise.id)
-                      ? current.filter((id) => id !== exercise.id)
-                      : [...current, exercise.id],
-                  )
-                }
-              />
-              <span>{exercise.name}</span>
-              {exercise.equipment && <small>{exercise.equipment}</small>}
-            </label>
-          ))}
-        </fieldset>
-        {selected.length === 0 && (
-          <p className="workout-live-notice is-quiet">{t('flow.live.pick')}</p>
-        )}
+      actions={
         <button
           className="workout-flow__primary"
           type="button"
           disabled={selected.length === 0}
           onClick={() => setConfirmed(true)}
         >
-          {t('flow.live.review')} <ArrowRight size={16} />
+          {t('flow.live.startFree')} <ArrowRight size={16} />
         </button>
+      }
+    >
+      <section className="workout-free-picker" aria-label={t('flow.live.freePicker')}>
+        <p>{t('flow.live.freeHint')}</p>
+        <div className="workout-free-picker__grid">
+          {live.exercises.map((exercise) => {
+            const checked = selected.includes(exercise.id);
+            return (
+              <label
+                className={`workout-free-card${checked ? ' is-selected' : ''}`}
+                key={exercise.id}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(event) =>
+                    setSelected((prev) =>
+                      event.target.checked
+                        ? [...prev, exercise.id]
+                        : prev.filter((id) => id !== exercise.id),
+                    )
+                  }
+                />
+                <div className="workout-free-card__body">
+                  <strong>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</strong>
+                  <span>
+                    {exercise.muscleGroup} · {exercise.equipment}
+                  </span>
+                </div>
+              </label>
+            );
+          })}
+        </div>
       </section>
     </WorkoutFlowShell>
   );

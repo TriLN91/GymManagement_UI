@@ -149,8 +149,13 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'movement',
     icon: Dumbbell,
-    to: ROUTES.superadmin.movementAssessment,
-    items: [],
+    items: [
+      {
+        label: 'movementAssessment',
+        to: ROUTES.superadmin.movementAssessment,
+        icon: ClipboardCheck,
+      },
+    ],
   },
   {
     id: 'security',

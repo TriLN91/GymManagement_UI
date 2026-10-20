@@ -462,7 +462,7 @@ export function WorkoutExecution() {
               total: String(exercises.length).padStart(2, '0'),
             })}
           </span>
-          <h1>{exercise.name}</h1>
+          <h1>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</h1>
           <button
             className="workout-exercise-assessment"
             type="button"

@@ -49,6 +49,9 @@ export interface WorkoutDayPlan {
   durationMinutes: number;
   status: WorkoutDayStatus;
   exercises: ReadonlyArray<WorkoutExercise>;
+  title?: string;
+  focus?: string;
+  dateLabel?: string;
 }
 
 export type WorkoutSource =

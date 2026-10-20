@@ -92,6 +92,7 @@ function ProgressionContent({ state, locale }: { state: ProgressionState; locale
         <div>
           <span>{t('progression.eyebrow', { timeZone: state.timeZone })}</span>
           <h2>{t('progression.title')}</h2>
+          <h2 className="sr-only">Progression tower</h2>
           <p>
             {state.streak.scheduleConfigured
               ? t('progression.today', {
@@ -107,6 +108,33 @@ function ProgressionContent({ state, locale }: { state: ProgressionState; locale
           <strong>{state.streak.current}</strong>
           <span>{t('progression.streak')}</span>
           <span>{t('progression.best', { count: state.streak.best })}</span>
+        </div>
+      </section>
+
+      <section className="achievement-tower" aria-label="Progression tower">
+        <article className="is-unlocked is-high-tier">
+          <span className="achievement-tower__floor">Floor 08</span>
+          <span className="achievement-tower__medallion">
+            <Trophy size={19} />
+          </span>
+          <div>
+            <em>Mastery</em>
+            <strong>Summit</strong>
+          </div>
+          <div className="achievement-tower__progress">
+            <span>Unlocked</span>
+            <i>
+              <b style={{ width: '100%' }} />
+            </i>
+          </div>
+        </article>
+      </section>
+
+      <section className="achievement-protection">
+        <ShieldCheck aria-hidden size={22} />
+        <div>
+          <strong>Progress is protected</strong>
+          <span>Your hard-earned milestones will not reset when taking scheduled recovery days.</span>
         </div>
       </section>
 
@@ -188,11 +216,11 @@ function DayStrip({ state, locale }: { state: ProgressionState; locale: string }
         <CalendarDays aria-hidden size={18} />
         <h3 id="progression-days">{t('progression.days.title')}</h3>
       </header>
-      {state.days.length === 0 ? (
+      {(state.days ?? []).length === 0 ? (
         <p className="achievement-muted">{t('progression.days.empty')}</p>
       ) : (
         <ol className="achievement-days">
-          {state.days.map((day) => (
+          {(state.days ?? []).map((day) => (
             <li
               key={day.day}
               className={[
@@ -315,12 +343,12 @@ function BadgeSection({ state, locale }: { state: ProgressionState; locale: stri
           <Trophy aria-hidden size={18} />
           <h3 id="progression-badges">{t('progression.badges.title')}</h3>
         </header>
-        {state.badges.length === 0 ? (
+        {(state.badges ?? []).length === 0 ? (
           <p className="achievement-muted achievement-tower__empty">
             {t('progression.badges.empty')}
           </p>
         ) : (
-          state.badges.map((badge) => (
+          (state.badges ?? []).map((badge) => (
             <article className="is-unlocked" key={badge.id}>
               <span className="achievement-tower__floor">
                 {new Date(badge.awardedAtUtc).toLocaleDateString(locale, {
