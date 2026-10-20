@@ -35,7 +35,10 @@ const approvedOnboarding = {
 async function startGymOwnerLogin(page: Page) {
   await page.goto('/login');
   await page.evaluate(() => {
-    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
+    {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    }
     window.sessionStorage.clear();
     window.localStorage.setItem('gmc.locale', 'en');
   });
@@ -76,7 +79,7 @@ test.describe('Gym Owner notifications and account security', () => {
     await expect(orderNotification).toHaveAttribute('href', '/admin/orders/FIT-2026-1048');
     await orderNotification.click();
     await expect(page).toHaveURL(/\/admin\/orders\/FIT-2026-1048$/);
-    await expect(page.getByRole('button', { name: 'Orders & Settlement' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Business & Members' })).toHaveAttribute(
       'aria-expanded',
       'true',
     );
@@ -112,10 +115,11 @@ test.describe('Gym Owner notifications and account security', () => {
     await expect(page.locator('body')).toHaveJSProperty('scrollWidth', 390);
     await expect(page.getByLabel('In-system notifications')).toBeVisible();
     await expect(page.locator('.member-bottom-nav a')).toHaveText([
-      'Overview',
-      'Profile overview',
-      'Trainer list',
-      'Package management',
+      'Dashboard',
+      'Gym profile',
+      'Trainers',
+      'Business & Members',
+      'Analytics',
     ]);
 
     await page.goto('/admin/account-security');

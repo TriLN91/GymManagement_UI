@@ -129,7 +129,9 @@ export function GymOwnerBranchesPage() {
               facilitiesJson: JSON.stringify(normalized.facilities),
               openingHoursJson: JSON.stringify({ hours: normalized.operatingHours }),
             };
-            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(normalized.id);
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              normalized.id,
+            );
             if (alreadyExists && isUuid) {
               await marketplaceApi.updateBranch(normalized.id, req);
             } else {

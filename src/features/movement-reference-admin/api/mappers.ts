@@ -100,7 +100,9 @@ export function mapReferenceSetSource(value: unknown): ReferenceSetSourceDto {
 export function mapReferenceSetProfile(value: unknown): ReferenceSetProfileDto {
   const dto = object(value);
   return {
-    sourceReferenceIds: Array.isArray(dto.sourceReferenceIds) ? dto.sourceReferenceIds.filter((id): id is string => typeof id === 'string') : undefined,
+    sourceReferenceIds: Array.isArray(dto.sourceReferenceIds)
+      ? dto.sourceReferenceIds.filter((id): id is string => typeof id === 'string')
+      : undefined,
     id: text(dto.id),
     version: number(dto.version),
     view: text(dto.view),

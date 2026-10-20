@@ -33,12 +33,13 @@ import { completedAssessments, trainerAppointments } from './memberProfileData';
 import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
+import { marketplaceApi } from '@/features/marketplace';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { useMemberProfileStore } from '@/features/member-profile';
-import { marketplaceApi } from '@/features/marketplace';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
+import { errorMessage } from '@/shared/lib/errorMessage';
 
 import './member-profile.css';
 
@@ -510,8 +511,10 @@ export function AccountSecurityPage() {
       recordPasswordChange();
       setPasswords({ current: '', next: '', confirm: '' });
       toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+    } catch (err: unknown) {
+      toast.error(
+        errorMessage(err) || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.',
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -906,10 +909,11 @@ export function PTAppointmentsPage() {
                   ⚠️ Đề xuất đổi Huấn luyện viên (CF03)
                 </strong>
                 <p style={{ fontSize: '0.875rem', marginBottom: 12 }}>
-                  HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển sang{' '}
+                  HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển
+                  sang{' '}
                   <strong>
-                    {(appointment as unknown as { currentTrainerName?: string }).currentTrainerName ||
-                      'HLV Minh Trần (Rating 4.9⭐)'}
+                    {(appointment as unknown as { currentTrainerName?: string })
+                      .currentTrainerName || 'HLV Minh Trần (Rating 4.9⭐)'}
                   </strong>{' '}
                   tiếp quản buổi tập này.
                 </p>

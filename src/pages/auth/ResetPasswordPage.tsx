@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { authApi } from '@/features/auth/api/authApi';
 import { ROUTES } from '@/shared/config/constants';
+import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
@@ -60,15 +61,15 @@ export function ResetPasswordPage() {
       });
       setDone(true);
       toast.success('Đặt lại mật khẩu thành công!');
-    } catch (err: any) {
-      setError('root', { message: err?.message || 'Không thể đặt lại mật khẩu.' });
+    } catch (err: unknown) {
+      setError('root', { message: errorMessage(err) || 'Không thể đặt lại mật khẩu.' });
     }
   });
 
   if (!token || !emailParam) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md text-center p-4">
+        <Card className="w-full max-w-md p-4 text-center">
           <CardHeader>
             <CardTitle>Yêu cầu mã xác thực OTP</CardTitle>
             <CardDescription>
@@ -79,7 +80,10 @@ export function ResetPasswordPage() {
             <Button asChild className="w-full">
               <Link to={ROUTES.public.forgotPassword}>Đến trang nhận mã OTP</Link>
             </Button>
-            <Link to={ROUTES.public.login} className="text-xs text-muted-foreground hover:underline block">
+            <Link
+              to={ROUTES.public.login}
+              className="block text-xs text-muted-foreground hover:underline"
+            >
               Quay lại Đăng nhập
             </Link>
           </CardContent>
@@ -90,15 +94,15 @@ export function ResetPasswordPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md shadow-xl border-border/60">
+      <Card className="w-full max-w-md border-border/60 shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-xl font-bold">Đặt lại mật khẩu mới</CardTitle>
           <CardDescription>Tài khoản: {emailParam}</CardDescription>
         </CardHeader>
         <CardContent>
           {done ? (
-            <div className="text-center space-y-4 py-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="space-y-4 py-3 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
                 <CheckCircle2 size={28} />
               </div>
               <p className="text-sm font-medium text-foreground">
@@ -158,9 +162,7 @@ export function ResetPasswordPage() {
                 )}
               </div>
 
-              {errors.root && (
-                <p className="text-xs text-destructive">{errors.root.message}</p>
-              )}
+              {errors.root && <p className="text-xs text-destructive">{errors.root.message}</p>}
 
               <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
                 <Sparkles size={16} />

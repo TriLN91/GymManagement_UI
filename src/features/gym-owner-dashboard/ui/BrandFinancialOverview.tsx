@@ -128,26 +128,28 @@ export function BrandFinancialOverview() {
     platformFee: isVi ? 'Phí sàn FitFlex (10%)' : 'Platform Fee (10%)',
     netPayout: isVi ? 'Thực nhận Gym (90%)' : 'Net Gym Payout (90%)',
     orders: isVi ? 'Tổng đơn hàng' : 'Total Orders',
-    branchBreakdown: isVi ? 'Phân bổ doanh thu theo từng chi nhánh' : 'Multi-branch Revenue Breakdown',
+    branchBreakdown: isVi
+      ? 'Phân bổ doanh thu theo từng chi nhánh'
+      : 'Multi-branch Revenue Breakdown',
     branchName: isVi ? 'Chi nhánh' : 'Branch',
     orderCount: isVi ? 'Số đơn' : 'Orders',
     selectBrand: isVi ? 'Chọn thương hiệu:' : 'Select brand:',
   };
 
   return (
-    <WorkspacePanel className="gym-financial-panel p-5 mb-5 border rounded-lg bg-card text-card-foreground shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b">
+    <WorkspacePanel className="gym-financial-panel mb-5 rounded-lg border bg-card p-5 text-card-foreground shadow-sm">
+      <div className="flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span className="rounded bg-emerald-100 p-2 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
               <Landmark size={20} />
             </span>
-            <h2 className="text-lg font-bold font-display">{copy.title}</h2>
+            <h2 className="font-display text-lg font-bold">{copy.title}</h2>
             <Badge variant="accent" className="ml-1 text-xs">
               {dashboard.brandName || 'FitFlex Partner'}
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">{copy.subtitle}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{copy.subtitle}</p>
         </div>
 
         {brands.length > 1 && (
@@ -159,7 +161,7 @@ export function BrandFinancialOverview() {
               id="brand-select"
               value={selectedBrandId || ''}
               onChange={(e) => handleBrandChange(e.target.value)}
-              className="text-xs border rounded px-2.5 py-1.5 bg-background text-foreground"
+              className="rounded border bg-background px-2.5 py-1.5 text-xs text-foreground"
             >
               {brands.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -172,69 +174,69 @@ export function BrandFinancialOverview() {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-5">
-        <div className="p-4 rounded-md border bg-background/50 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
+      <div className="my-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col justify-between rounded-md border bg-background/50 p-4">
+          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>{copy.gross}</span>
             <CircleDollarSign size={16} />
           </div>
           <div className="mt-2">
-            <p className="text-xl font-bold font-data text-foreground">
+            <p className="font-data text-xl font-bold text-foreground">
               {formatVnd(dashboard.totalGross, locale)}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               100% {isVi ? 'tổng giá trị dịch vụ' : 'total service value'}
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-md border border-amber-200/60 dark:border-amber-900/60 bg-amber-50/30 dark:bg-amber-950/20 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-amber-800 dark:text-amber-300 text-xs font-semibold">
+        <div className="flex flex-col justify-between rounded-md border border-amber-200/60 bg-amber-50/30 p-4 dark:border-amber-900/60 dark:bg-amber-950/20">
+          <div className="flex items-center justify-between text-xs font-semibold text-amber-800 dark:text-amber-300">
             <span>{copy.platformFee}</span>
-            <span className="text-[10px] bg-amber-200/80 dark:bg-amber-900/80 px-1.5 py-0.5 rounded font-mono font-bold">
+            <span className="rounded bg-amber-200/80 px-1.5 py-0.5 font-mono text-[10px] font-bold dark:bg-amber-900/80">
               10%
             </span>
           </div>
           <div className="mt-2">
-            <p className="text-xl font-bold font-data text-amber-900 dark:text-amber-200">
+            <p className="font-data text-xl font-bold text-amber-900 dark:text-amber-200">
               {formatVnd(dashboard.totalPlatformFee, locale)}
             </p>
-            <p className="text-[11px] text-amber-700/80 dark:text-amber-400 mt-0.5">
+            <p className="mt-0.5 text-[11px] text-amber-700/80 dark:text-amber-400">
               {isVi ? 'Chiết khấu nền tảng sàn' : 'FitFlex platform fee'}
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-md border border-emerald-300/70 dark:border-emerald-800/70 bg-emerald-50/40 dark:bg-emerald-950/30 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-emerald-800 dark:text-emerald-300 text-xs font-semibold">
+        <div className="flex flex-col justify-between rounded-md border border-emerald-300/70 bg-emerald-50/40 p-4 dark:border-emerald-800/70 dark:bg-emerald-950/30">
+          <div className="flex items-center justify-between text-xs font-semibold text-emerald-800 dark:text-emerald-300">
             <span>{copy.netPayout}</span>
-            <span className="text-[10px] bg-emerald-200/80 dark:bg-emerald-900/80 px-1.5 py-0.5 rounded font-mono font-bold">
+            <span className="rounded bg-emerald-200/80 px-1.5 py-0.5 font-mono text-[10px] font-bold dark:bg-emerald-900/80">
               90% Net
             </span>
           </div>
           <div className="mt-2">
-            <p className="text-xl font-bold font-data text-emerald-900 dark:text-emerald-200">
+            <p className="font-data text-xl font-bold text-emerald-900 dark:text-emerald-200">
               {formatVnd(dashboard.totalNetPayout, locale)}
             </p>
-            <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
+            <p className="mt-0.5 text-[11px] text-emerald-700/80 dark:text-emerald-400">
               {isVi ? 'Thực nhận đối soát định kỳ' : 'Settlement payout to gym'}
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-md border bg-background/50 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
+        <div className="flex flex-col justify-between rounded-md border bg-background/50 p-4">
+          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>{copy.orders}</span>
             <TrendingUp size={16} />
           </div>
           <div className="mt-2">
-            <p className="text-xl font-bold font-data text-foreground">
+            <p className="font-data text-xl font-bold text-foreground">
               {dashboard.totalOrders}{' '}
               <span className="text-xs font-normal text-muted-foreground">
                 {isVi ? 'đơn' : 'orders'}
               </span>
             </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               {dashboard.branchBreakdown.length} {isVi ? 'chi nhánh hoạt động' : 'active branches'}
             </p>
           </div>
@@ -242,8 +244,8 @@ export function BrandFinancialOverview() {
       </div>
 
       {/* Multi-Branch Drilldown Table */}
-      <div className="mt-4 pt-4 border-t">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+      <div className="mt-4 border-t pt-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           <Building2 size={14} />
           {copy.branchBreakdown}
         </h3>
@@ -253,7 +255,7 @@ export function BrandFinancialOverview() {
             <TableHeader>
               <TableRow className="bg-muted/40">
                 <TableHead>{copy.branchName}</TableHead>
-                <TableHead className="text-center w-24">{copy.orderCount}</TableHead>
+                <TableHead className="w-24 text-center">{copy.orderCount}</TableHead>
                 <TableHead className="text-right">{copy.gross}</TableHead>
                 <TableHead className="text-right">{copy.platformFee}</TableHead>
                 <TableHead className="text-right font-bold text-foreground">

@@ -9,7 +9,6 @@ import { gymOwnerTrainingCopy } from './copy';
 import { OperationalBadge, TrainerAvatar } from './TrainingShared';
 
 import { marketplaceApi } from '@/features/marketplace';
-
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
@@ -192,7 +191,10 @@ export function GymOwnerAssignmentExceptionsPage() {
               type="button"
               onClick={async () => {
                 if (confirming && confirmingTrainer) {
-                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(confirming.id);
+                  const isUuid =
+                    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                      confirming.id,
+                    );
                   if (isUuid) {
                     try {
                       await marketplaceApi.reassignAppointment(confirming.id, {

@@ -91,6 +91,27 @@ export const authHandlers = [
 
   http.post(path(ENDPOINTS.auth.logout), () => success(null)),
 
+  http.post(path(ENDPOINTS.auth.changePassword), async ({ request }) => {
+    if (!request.headers.get('Authorization')?.startsWith('Bearer ')) {
+      return failure(401, 'Unauthorized', 'Sign in to change your password.');
+    }
+    const body = (await request.json()) as { currentPassword?: string; newPassword?: string };
+    if (body.currentPassword !== DEMO_PASSWORD) {
+      return failure(400, 'PasswordMismatch', 'The current password is incorrect.');
+    }
+    if (
+      (body.newPassword ?? '').length < MIN_PASSWORD_LENGTH ||
+      body.newPassword === body.currentPassword
+    ) {
+      return failure(
+        400,
+        'Validation',
+        'Choose a different password with at least six characters.',
+      );
+    }
+    return success(true);
+  }),
+
   http.post(path(ENDPOINTS.auth.forgotPassword), () => success(null)),
   http.post(path(ENDPOINTS.auth.resetPassword), () => success(null)),
 ];

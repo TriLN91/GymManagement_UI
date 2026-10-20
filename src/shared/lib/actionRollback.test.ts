@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { actionRollbackManager } from './actionRollback';
 
 describe('actionRollbackManager', () => {
@@ -11,10 +12,11 @@ describe('actionRollbackManager', () => {
 
     await actionRollbackManager.executeWithRollback({
       actionName: 'Thay đổi trạng thái',
-      execute: async () => {
+      execute: () => {
         state = 'updated';
+        return Promise.resolve();
       },
-      rollback: async () => {
+      rollback: () => {
         state = 'initial';
       },
       showToast: false,

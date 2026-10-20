@@ -43,4 +43,3 @@ export const useTrainerProfileStore = create<TrainerProfileState>()(
     { name: 'fit:trainer-profile:v2', version: 2 },
   ),
 );
-

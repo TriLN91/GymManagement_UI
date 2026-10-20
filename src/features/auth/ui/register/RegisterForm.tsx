@@ -119,10 +119,7 @@ export function RegisterForm() {
 
       <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
         <div className="space-y-1.5">
-          <Label
-            htmlFor="email"
-            className="text-xs font-bold uppercase tracking-wider text-forest"
-          >
+          <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-forest">
             {t('auth:register.email')}
           </Label>
           <Input

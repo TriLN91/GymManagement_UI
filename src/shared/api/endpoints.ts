@@ -89,8 +89,10 @@ export const ENDPOINTS = {
       `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
     trainers: '/gym-owner/trainers',
     trainersOverview: '/gym-owner/trainers/overview',
-    updateTrainerStatus: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/status`,
-    updateTrainerBranches: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/branches`,
+    updateTrainerStatus: (trainerProfileId: string) =>
+      `/gym-owner/trainers/${trainerProfileId}/status`,
+    updateTrainerBranches: (trainerProfileId: string) =>
+      `/gym-owner/trainers/${trainerProfileId}/branches`,
     deleteTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}`,
     relinkTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/relink`,
     brandDashboard: (brandId: string) => `/gym-owner/brands/${brandId}/dashboard`,

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { authApi } from '@/features/auth/api/authApi';
+import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import {
   Dialog,
@@ -70,8 +71,10 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
       toast.success('Đổi mật khẩu thành công!');
       reset();
       onOpenChange(false);
-    } catch (err: any) {
-      setServerError(err?.message || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+    } catch (err: unknown) {
+      setServerError(
+        errorMessage(err) || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.',
+      );
     }
   });
 
@@ -174,7 +177,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
           </div>
 
           {serverError && (
-            <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive font-medium">
+            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-2.5 text-xs font-medium text-destructive">
               {serverError}
             </div>
           )}
