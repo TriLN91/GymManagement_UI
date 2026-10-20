@@ -36,9 +36,9 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
     try {
       const res = await authApi.forgotPassword(values.email);
       onSuccess(values.email, res?.debugOtpCode ?? null);
-      toast.success(res?.message || 'Mã OTP đã được gửi về email của bạn!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể gửi mã OTP. Vui lòng thử lại.';
+      toast.error(message);
     } finally {
       isSubmittingRef.current = false;
     }

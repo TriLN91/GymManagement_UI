@@ -15,7 +15,7 @@ export function ResetSuccessStep({ onNavigateLogin }: ResetSuccessStepProps) {
     if (onNavigateLogin) {
       onNavigateLogin();
     } else {
-      navigate(ROUTES.public.login);
+      void navigate(ROUTES.public.login);
     }
   };
 

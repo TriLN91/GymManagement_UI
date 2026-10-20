@@ -9,7 +9,6 @@ import { gymOwnerTrainingCopy } from './copy';
 import { OperationalBadge, TrainerAvatar } from './TrainingShared';
 
 import { marketplaceApi } from '@/features/marketplace';
-
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';

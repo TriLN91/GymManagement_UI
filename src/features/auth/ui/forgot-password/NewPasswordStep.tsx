@@ -50,8 +50,9 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
       });
       onSuccess();
       toast.success('Đặt lại mật khẩu thành công!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể đặt lại mật khẩu.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể đặt lại mật khẩu.';
+      toast.error(message);
     } finally {
       isSubmittingRef.current = false;
     }

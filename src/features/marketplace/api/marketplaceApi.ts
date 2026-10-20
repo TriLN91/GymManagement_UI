@@ -49,7 +49,7 @@ export interface GymOfferView {
   gymBranchId?: string | null;
   title: string;
   description: string;
-  durationType: 'Day' | 'Month' | 'Year' | string;
+  durationType: 'Day' | 'Month' | 'Year' | (string & {});
   durationValue: number;
   gymServicePrice: number;
   includesPlus: boolean;

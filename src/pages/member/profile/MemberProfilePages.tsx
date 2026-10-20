@@ -33,9 +33,9 @@ import { completedAssessments, trainerAppointments } from './memberProfileData';
 import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
+import { marketplaceApi } from '@/features/marketplace';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { useMemberProfileStore } from '@/features/member-profile';
-import { marketplaceApi } from '@/features/marketplace';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
@@ -510,8 +510,9 @@ export function AccountSecurityPage() {
       recordPasswordChange();
       setPasswords({ current: '', next: '', confirm: '' });
       toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
+      toast.error(message);
     } finally {
       setIsUpdating(false);
     }

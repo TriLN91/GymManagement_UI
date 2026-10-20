@@ -1,4 +1,9 @@
-import axios, { type AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from 'axios';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 import { ApiError, AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
@@ -251,7 +256,7 @@ async function executeMutatingRequest<T>(
   method: 'post' | 'put' | 'patch' | 'delete',
   url: string,
   body?: unknown,
-  config?: any,
+  config?: AxiosRequestConfig,
 ): Promise<T> {
   const key = getMutationKey(method, url, body);
   const existing = inFlightMutations.get(key);

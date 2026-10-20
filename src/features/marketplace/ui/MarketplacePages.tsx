@@ -30,7 +30,6 @@ import {
   type OrderView,
   type BranchTrainerDto,
 } from '../api/marketplaceApi';
-
 import {
   getGym,
   getTrainer,
@@ -605,7 +604,7 @@ export function GymDetailPage() {
   let facilitiesList: string[] = [];
   if (isRealBranch && apiBranch!.facilitiesJson) {
     try {
-      facilitiesList = JSON.parse(apiBranch!.facilitiesJson);
+      facilitiesList = JSON.parse(apiBranch!.facilitiesJson) as string[];
     } catch {
       facilitiesList = ['Cardio', 'Free Weights', 'Locker Room'];
     }
@@ -862,6 +861,7 @@ export function MarketplaceCheckoutPage() {
   const completeCheckout = useMarketplaceStore((state) => state.completeCheckout);
   const [method, setMethod] = useState<PaymentMethod>('card');
   const [accepted, setAccepted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const breakdown = resolveCheckout(selection, coverageDays);
   const selectedOffer =
     selection?.kind === 'gym_offer'
@@ -886,7 +886,6 @@ export function MarketplaceCheckoutPage() {
         </div>
       </div>
     );
-  const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
     if (!accepted || submitting) return;

@@ -179,14 +179,14 @@ class ActionRollbackManager {
       }
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.actions = this.actions.map((a) =>
         a.id === actionId ? { ...a, status: 'available' } : a,
       );
       this.notify();
 
       const errMsg =
-        err?.message || 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
+        err instanceof Error ? err.message : 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
       toast.error(errMsg);
       return false;
     }

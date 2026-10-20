@@ -216,7 +216,7 @@ export function TrainerLayout() {
       location.pathname !== ROUTES.pt.profile &&
       location.pathname !== ROUTES.pt.gymInfo
     ) {
-      navigate(ROUTES.pt.profileEdit, { replace: true });
+      void navigate(ROUTES.pt.profileEdit, { replace: true });
     }
   }, [isProfileComplete, location.pathname, navigate]);
 

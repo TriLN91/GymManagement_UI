@@ -89,7 +89,7 @@ export function RegisterForm() {
       setCooldown(60);
       setStep('otp');
       toast.success(res.message || 'Mã OTP đã được gửi đến email của bạn!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {
           if ((field === 'email' || field === 'password') && messages[0]) {
@@ -99,7 +99,8 @@ export function RegisterForm() {
         if (error.message) setError('root', { message: error.message });
         return;
       }
-      setError('root', { message: error?.message || t('auth:errors.somethingWentWrong') });
+      const message = error instanceof Error ? error.message : t('auth:errors.somethingWentWrong');
+      setError('root', { message });
     } finally {
       isSubmittingRef.current = false;
       setIsSendingOtp(false);
@@ -124,8 +125,9 @@ export function RegisterForm() {
       }
       setCooldown(60);
       toast.success('Mã OTP mới đã được gửi về email!');
-    } catch (err: any) {
-      setOtpError(err?.message || 'Không thể gửi lại mã OTP. Vui lòng thử lại sau.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể gửi lại mã OTP. Vui lòng thử lại sau.';
+      setOtpError(message);
     } finally {
       isSubmittingRef.current = false;
       setIsSendingOtp(false);
@@ -157,8 +159,9 @@ export function RegisterForm() {
       } else {
         void navigate(ROUTES.member.profileSetup, { replace: true });
       }
-    } catch (err: any) {
-      setOtpError(err?.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
+      setOtpError(message);
     } finally {
       isSubmittingRef.current = false;
     }

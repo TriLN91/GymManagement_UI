@@ -48,8 +48,9 @@ export function OtpVerificationStep({
       } else {
         setOtpError(res?.message || 'Mã OTP không hợp lệ.');
       }
-    } catch (err: any) {
-      setOtpError(err?.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
+      setOtpError(message);
     } finally {
       isSubmittingRef.current = false;
       setIsVerifyingOtp(false);

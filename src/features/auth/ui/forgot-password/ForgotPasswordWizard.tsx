@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { authApi } from '../../api/authApi';
+
 import { EmailStep } from './EmailStep';
 import { NewPasswordStep } from './NewPasswordStep';
 import { OtpVerificationStep } from './OtpVerificationStep';
@@ -39,8 +40,9 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
       }
       setCooldown(60);
       toast.success('Mã OTP mới đã được gửi!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể gửi lại mã OTP.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể gửi lại mã OTP.';
+      toast.error(message);
     }
   };
 

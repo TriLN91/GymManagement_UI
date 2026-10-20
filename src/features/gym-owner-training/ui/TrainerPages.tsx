@@ -168,8 +168,8 @@ export function GymOwnerTrainerListPage() {
       setCreatedCredentials(result);
       toast.success(isVi ? 'Đã tạo tài khoản Huấn luyện viên thành công!' : 'Trainer created successfully!');
       void loadData();
-    } catch (err: any) {
-      const message = err?.message || (isVi ? 'Không thể tạo tài khoản huấn luyện viên.' : 'Failed to create trainer.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (isVi ? 'Không thể tạo tài khoản huấn luyện viên.' : 'Failed to create trainer.');
       setCreateError(message);
       toast.error(message);
     } finally {
@@ -179,7 +179,7 @@ export function GymOwnerTrainerListPage() {
 
   // Copy helper
   const copyToClipboard = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
+    void navigator.clipboard.writeText(text);
     setCopiedKey(key);
     toast.success(isVi ? 'Đã sao chép vào bộ nhớ tạm!' : 'Copied to clipboard!');
     setTimeout(() => setCopiedKey(null), 2500);
@@ -211,8 +211,9 @@ export function GymOwnerTrainerListPage() {
         },
       });
       void loadData();
-    } catch (err: any) {
-      toast.error(err?.message || (isVi ? 'Không thể cập nhật trạng thái.' : 'Failed to update status.'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (isVi ? 'Không thể cập nhật trạng thái.' : 'Failed to update status.');
+      toast.error(message);
     }
   };
 
@@ -255,8 +256,9 @@ export function GymOwnerTrainerListPage() {
       });
       setBranchModalTrainer(null);
       void loadData();
-    } catch (err: any) {
-      toast.error(err?.message || (isVi ? 'Không thể cập nhật chi nhánh.' : 'Failed to update branches.'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (isVi ? 'Không thể cập nhật chi nhánh.' : 'Failed to update branches.');
+      toast.error(message);
     } finally {
       setIsSavingBranches(false);
     }
@@ -291,8 +293,8 @@ export function GymOwnerTrainerListPage() {
       });
       setUnlinkTarget(null);
       void loadData();
-    } catch (err: any) {
-      const msg = err?.message || (isVi ? 'Không thể hủy liên kết huấn luyện viên.' : 'Failed to unlink trainer.');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : (isVi ? 'Không thể hủy liên kết huấn luyện viên.' : 'Failed to unlink trainer.');
       setUnlinkError(msg);
       toast.error(msg);
     } finally {
@@ -900,18 +902,18 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    marketplaceApi.getMyBrands().then((myBrands) => {
+    void (async () => {
+      const myBrands = await marketplaceApi.getMyBrands();
       const firstBrand = myBrands[0];
       if (firstBrand) {
-        marketplaceApi.getBrandBranches(firstBrand.id).then((b) => {
-          setBranches(b);
-          const firstBranch = b[0];
-          if (firstBranch && !primaryBranchId) {
-            setPrimaryBranchId(firstBranch.id);
-          }
-        });
+        const b = await marketplaceApi.getBrandBranches(firstBrand.id);
+        setBranches(b);
+        const firstBranch = b[0];
+        if (firstBranch && !primaryBranchId) {
+          setPrimaryBranchId(firstBranch.id);
+        }
       }
-    });
+    })();
   }, [primaryBranchId]);
 
   if (mode === 'edit' && (!trainer || !['draft', 'rejected'].includes(trainer.approvalStatus))) {
@@ -939,8 +941,8 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
       });
       setCreatedCredentials(res);
       toast.success(isVi ? 'Đã tạo tài khoản huấn luyện viên!' : 'Trainer created successfully!');
-    } catch (err: any) {
-      setError(err?.message || (isVi ? 'Không thể tạo huấn luyện viên.' : 'Failed to create trainer.'));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : (isVi ? 'Không thể tạo huấn luyện viên.' : 'Failed to create trainer.'));
     } finally {
       setIsSaving(false);
     }
@@ -1064,7 +1066,7 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
                 className="w-full"
                 onClick={() => {
                   const text = `Email: ${createdCredentials.email} | Mật khẩu: ${createdCredentials.temporaryPassword} | Chi nhánh: ${createdCredentials.primaryBranchName}`;
-                  navigator.clipboard.writeText(text);
+                  void navigator.clipboard.writeText(text);
                   toast.success(isVi ? 'Đã sao chép mật khẩu!' : 'Copied credentials!');
                 }}
               >
@@ -1074,7 +1076,7 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => navigate(ROUTES.admin.pts)}>{isVi ? 'Hoàn tất' : 'Done'}</Button>
+            <Button onClick={() => void navigate(ROUTES.admin.pts)}>{isVi ? 'Hoàn tất' : 'Done'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1245,7 +1247,7 @@ export function GymOwnerTrainerDetailPage() {
         <div className="gym-training-section-head">
           <TrendingUp size={18} />
           <h2>
-            {useLocale().language === 'vi'
+            {isVi
               ? 'Chỉ số Hiệu suất & KPI Huấn luyện viên'
               : 'Trainer Performance & KPI Metrics'}
           </h2>
@@ -1255,7 +1257,7 @@ export function GymOwnerTrainerDetailPage() {
             <div className="p-3 border rounded bg-background/50">
               <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <UsersRound size={14} />
-                {useLocale().language === 'vi' ? 'Học viên đang kèm' : 'Active Clients'}
+                {isVi ? 'Học viên đang kèm' : 'Active Clients'}
               </span>
               <p className="text-xl font-bold font-data text-foreground mt-1">
                 {assignments.filter((item) => item.status === 'active').length}
@@ -1264,7 +1266,7 @@ export function GymOwnerTrainerDetailPage() {
             <div className="p-3 border rounded bg-background/50">
               <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <CalendarCheck size={14} />
-                {useLocale().language === 'vi' ? 'Buổi hoàn thành' : 'Completed Sessions'}
+                {isVi ? 'Buổi hoàn thành' : 'Completed Sessions'}
               </span>
               <p className="text-xl font-bold font-data text-foreground mt-1">
                 {assignments.length * 8 + 4}
@@ -1273,7 +1275,7 @@ export function GymOwnerTrainerDetailPage() {
             <div className="p-3 border rounded border-amber-200/50 bg-amber-50/20 dark:bg-amber-950/20">
               <span className="text-xs text-amber-800 dark:text-amber-300 font-medium flex items-center gap-1">
                 <Star size={14} className="fill-amber-400 text-amber-400" />
-                {useLocale().language === 'vi' ? 'Đánh giá trung bình' : 'Average Rating'}
+                {isVi ? 'Đánh giá trung bình' : 'Average Rating'}
               </span>
               <p className="text-xl font-bold font-data text-amber-900 dark:text-amber-200 mt-1">
                 4.9 <span className="text-xs font-normal text-muted-foreground">/ 5.0</span>
@@ -1282,7 +1284,7 @@ export function GymOwnerTrainerDetailPage() {
             <div className="p-3 border rounded bg-background/50">
               <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <Award size={14} />
-                {useLocale().language === 'vi' ? 'Lần đổi PT đột xuất' : 'Reassignments'}
+                {isVi ? 'Lần đổi PT đột xuất' : 'Reassignments'}
               </span>
               <p className="text-xl font-bold font-data text-foreground mt-1">0</p>
             </div>
@@ -1366,13 +1368,15 @@ export function GymOwnerTrainerDetailPage() {
                     actionName: isVi
                       ? `Đổi trạng thái vận hành của ${trainer.fullName} sang "${copy.operational[target] || target}"`
                       : `Set operational status of ${trainer.fullName} to "${copy.operational[target] || target}"`,
-                    execute: async () => {
+                    execute: () => {
                       setTrainerOperationalStatus(trainer.id, target);
+                      return Promise.resolve();
                     },
-                    rollback: async () => {
+                    rollback: () => {
                       if (prev) {
                         setTrainerOperationalStatus(trainer.id, prev);
                       }
+                      return Promise.resolve();
                     },
                     successMessage: copy.statusUpdated,
                     rollbackSuccessMessage: isVi

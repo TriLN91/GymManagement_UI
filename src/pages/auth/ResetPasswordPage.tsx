@@ -60,8 +60,9 @@ export function ResetPasswordPage() {
       });
       setDone(true);
       toast.success('Đặt lại mật khẩu thành công!');
-    } catch (err: any) {
-      setError('root', { message: err?.message || 'Không thể đặt lại mật khẩu.' });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể đặt lại mật khẩu.';
+      setError('root', { message });
     }
   });
 
