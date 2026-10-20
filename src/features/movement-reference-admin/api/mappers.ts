@@ -23,6 +23,7 @@ export function mapExercise(value: unknown): ExerciseDto {
   return {
     id: text(dto.id),
     name: text(dto.name),
+    movementPatternCode: optionalText(dto.movementPatternCode),
     muscleGroup: optionalText(dto.muscleGroup),
     equipment: optionalText(dto.equipment),
     difficultyLevel: optionalText(dto.difficultyLevel),
@@ -86,12 +87,20 @@ export function mapReferenceSetSource(value: unknown): ReferenceSetSourceDto {
       ? dto.warnings.filter((x): x is string => typeof x === 'string')
       : [],
     failureMessage: optionalText(dto.failureMessage),
+    failureCode: optionalText(dto.failureCode),
+    failureStage: optionalText(dto.failureStage),
+    failureSummary: optionalText(dto.failureSummary),
+    detectedPattern: optionalText(dto.detectedPattern),
+    processingSummary: object(dto.processingSummary),
+    createdAtUtc: optionalText(dto.createdAtUtc) ?? undefined,
+    processedAtUtc: optionalText(dto.processedAtUtc),
   };
 }
 
 export function mapReferenceSetProfile(value: unknown): ReferenceSetProfileDto {
   const dto = object(value);
   return {
+    sourceReferenceIds: Array.isArray(dto.sourceReferenceIds) ? dto.sourceReferenceIds.filter((id): id is string => typeof id === 'string') : undefined,
     id: text(dto.id),
     version: number(dto.version),
     view: text(dto.view),

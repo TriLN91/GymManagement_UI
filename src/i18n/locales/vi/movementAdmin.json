@@ -59,7 +59,8 @@
     "approveVersion": "Phê duyệt phiên bản tham chiếu này",
     "approving": "Đang phê duyệt…",
     "publishLive": "Xuất bản để sử dụng",
-    "publishing": "Đang xuất bản…"
+    "publishing": "Đang xuất bản…",
+    "refreshStatus": "Tải lại kết quả đã lưu"
   },
   "createSet": {
     "title": "Tạo bộ tham chiếu",
@@ -68,7 +69,7 @@
   },
   "createExercise": {
     "title": "Thêm bài tập vào danh mục",
-    "description": "Tạo bài tập toàn cục và chuyển thẳng sang bước chuẩn bị tham chiếu."
+    "description": "Chọn bộ xử lý chuyển động và tạo bài tập riêng cho từng biến thể."
   },
   "breadcrumbs": {
     "label": "Đường dẫn",
@@ -153,11 +154,14 @@
     "another": "Tải thêm video tham chiếu GOOD",
     "invalidType": "Hãy chọn video MP4.",
     "empty": "Video đã chọn không có dữ liệu.",
-    "tooLarge": "Video vượt quá giới hạn 500 MB của backend."
+    "tooLarge": "Video vượt quá giới hạn 500 MB của backend.",
+    "preview": "Xem trước video tham chiếu đã chọn",
+    "uncertain": "Kết nối đã kết thúc trước khi nhận kết quả. Quá trình xử lý có thể đã được lưu. Tải lại và kiểm tra danh sách video trước khi gửi lại.",
+    "checkedHistory": "Tôi đã kiểm tra video đã lưu; cho phép tải lên lại"
   },
   "processing": {
     "title": "Đang chuẩn bị video tham chiếu",
-    "description": "Phân tích có thể mất vài giây. Giữ trang mở cho đến khi yêu cầu hoàn tất.",
+    "description": "Tải lên và phân tích có thể mất vài phút. Yêu cầu này không cung cấp tiến độ từng bước. Giữ trang mở; bản ghi đang xử lý tự động được cập nhật.",
     "stages": {
       "uploading": "Tải video lên",
       "normalizing": "Chuẩn hóa khi cần",
@@ -289,5 +293,102 @@
     "sourceUploadFailed": "Không thể xử lý nguồn. Hãy xem lỗi và thử video khác.",
     "profileConfirmed": "Đã phê duyệt phiên bản tham chiếu.",
     "profileActivated": "Đã xuất bản tham chiếu để sử dụng và giữ lại các phiên bản lịch sử."
+  },
+  "inspection": {
+    "failedFootage": "Video xử lý thất bại",
+    "pendingFootage": "Đang chờ phân tích",
+    "reviewExercise": "Chọn bài tập khác",
+    "nextFailure": "Xem lỗi đã lưu. Kiểm tra video phù hợp bài tập, loại chuyển động và yêu cầu góc quay.",
+    "noRepResult": "Chưa có kết quả phân tích lần lặp",
+    "replaceVideo": "Chọn video thay thế",
+    "stale": "Video chưa có kết quả sau hơn 10 phút. Xử lý đồng bộ không tự tiếp tục khi máy chủ khởi động lại. Tải lại kết quả và nhờ hỗ trợ kiểm tra trước khi gửi lại.",
+    "duration": "Thời lượng video",
+    "resolution": "Kích thước khung hình",
+    "frameRate": "Tốc độ khung hình",
+    "usableFrames": "Khung hình dùng được",
+    "excludedUpload": "Video đã phân tích nhưng bị loại khỏi mẫu tham chiếu. Xem lý do bên dưới.",
+    "pendingUpload": "Video đã lưu; quá trình xử lý chưa hoàn tất.",
+    "nextPublish": "Phiên bản đã được xác nhận. Xem lại thông tin rồi xuất bản để Member sử dụng cho các đánh giá tiếp theo.",
+    "nextReview": "Phiên bản đề xuất đã sẵn sàng để xem xét. Kiểm tra chất lượng và các lần lặp trước khi xác nhận. Xác nhận và xuất bản là hai bước riêng.",
+    "nextProcessing": "Video đang xử lý. Tải lại kết quả để kiểm tra; không gửi trùng khi chưa rõ kết quả.",
+    "nextLive": "Đã có phiên bản xuất bản cho Member. Các video lỗi trước đây không thay thế phiên bản này. Chỉ thêm video khi chuẩn bị phiên bản mới.",
+    "nextUpload": "Chọn video GOOD đúng biến thể bài tập. Đọc hướng dẫn, xem trước, tải lên và kiểm tra kết quả đã lưu.",
+    "autoMetadata": "Pattern và góc quay được phát hiện tự động. Luồng mẫu tổng hợp chưa hỗ trợ sửa thủ công thông tin trích xuất. Thay video bị phân loại sai; không xác nhận để bỏ qua lỗi xử lý.",
+    "notConfigured": "Chưa cấu hình",
+    "retryReadiness": "Chưa đọc được trạng thái — thử lại",
+    "memberReady": "Góc quay hỗ trợ đã xuất bản · Member sử dụng được",
+    "filterLabel": "Trạng thái mẫu tham chiếu",
+    "filters": {
+      "all": "Tất cả bài tập",
+      "published": "Có phiên bản đã xuất bản",
+      "unpublished": "Có video · chưa xuất bản",
+      "unconfigured": "Chưa có video tham chiếu"
+    },
+    "squatOnly": "Hỗ trợ SQUAT, HINGE và PULL dọc (lat pulldown). PUSH đang chờ video kiểm chứng. Thành viên chỉ đánh giá được khi có mẫu phù hợp đã xuất bản.",
+    "setupTitle": "Tạo mẫu tham chiếu: {{exercise}}",
+    "setupDescription": "Chọn chuyển động phù hợp và đọc yêu cầu quay video. Không gian làm việc trống chưa cho phép đánh giá bài tập.",
+    "setupConfirm": "Tôi xác nhận bài tập và video mẫu phù hợp với chuyển động và biến thể được hỗ trợ đã chọn.",
+    "setupAction": "Tạo không gian mẫu {{pattern}}",
+    "reusedExercise": "Đã chọn bài tập có sẵn. Không tạo bài tập trùng.",
+    "reuseHint": "Tìm trong danh mục trước. Tên đã tồn tại sẽ được sử dụng lại.",
+    "noMatches": "Không có bài tập phù hợp",
+    "changeFilter": "Xóa tìm kiếm hoặc chọn bộ lọc khác.",
+    "phases": "Các pha chuyển động",
+    "samples": "Số điểm quỹ đạo chuẩn hóa",
+    "noPhaseEvidence": "Phiên bản này chưa cung cấp thông tin pha.",
+    "awaitingFootage": "Chờ video kiểm chứng",
+    "withdrawn": "Đã rút khỏi đánh giá mới"
+  },
+  "processingIssues": {
+    "VIDEO_NORMALIZATION_FAILED": {
+      "title": "Không chuẩn bị được video",
+      "description": "Máy chủ không chuyển đổi được bản quay để phân tích. Chưa có căn cứ khẳng định tệp gốc bị hỏng.",
+      "recovery": "Thử xuất H.264 MP4. Nếu tiếp tục lỗi, nhờ người vận hành kiểm tra bước chuyển đổi video."
+    },
+    "PROCESSOR_UNAVAILABLE": {
+      "title": "Bộ xử lý cần được kiểm tra",
+      "description": "Máy chủ thiếu công cụ, model hoặc thư viện cần thiết. Đây là lỗi cấu hình, không phải đánh giá chất lượng video hay động tác.",
+      "recovery": "Nhờ người vận hành sửa cấu hình. Gửi lại cùng video không khắc phục được thư viện bị thiếu."
+    },
+    "UNSUPPORTED_PATTERN": {
+      "title": "Động tác chưa được hỗ trợ",
+      "description": "Chuyển động phát hiện không phù hợp bộ xử lý hoặc biến thể được hỗ trợ đã chọn.",
+      "recovery": "Chọn đúng bài tập và không gian SQUAT, HINGE hoặc PULL dọc. PUSH và kéo ngang chưa được kiểm chứng."
+    },
+    "UNSUPPORTED_VIEW": {
+      "title": "Góc quay chưa được hỗ trợ",
+      "description": "Góc quay này không phù hợp mẫu chuyển động đã chọn.",
+      "recovery": "Dùng góc ngang hoặc chéo ngang, thấy rõ hông, gối và cổ chân."
+    },
+    "INSUFFICIENT_MOVEMENT_EVIDENCE": {
+      "title": "Chưa đủ lần lặp đáng tin cậy",
+      "description": "Không trích xuất đủ lần lặp hoàn chỉnh với các khớp cần thiết hiện rõ.",
+      "recovery": "Quay nhiều lần lặp hoàn chỉnh, đủ sáng và thấy toàn thân. Không xác nhận kết quả chưa đầy đủ."
+    },
+    "VIDEO_DECODE_FAILED": {
+      "title": "Không đọc được video",
+      "description": "Tệp bị hỏng hoặc luồng video không giải mã được.",
+      "recovery": "Chọn bản quay nguyên vẹn hoặc xuất H.264 MP4. Đổi tên tệp không chuyển đổi định dạng."
+    },
+    "PROCESSING_TIMEOUT": {
+      "title": "Xử lý quá thời gian",
+      "description": "Yêu cầu kết thúc trước khi hoàn tất xử lý trong thời gian cho phép.",
+      "recovery": "Tải lại kết quả trước. Nếu đã lỗi, dùng video ngắn hơn hoặc nhờ kiểm tra bộ xử lý."
+    },
+    "PROCESSING_CANCELLED": {
+      "title": "Xử lý bị gián đoạn",
+      "description": "Yêu cầu kết thúc trước khi có kết quả dùng được.",
+      "recovery": "Tải lại và kiểm tra video đã lưu trước khi chọn video khác."
+    },
+    "REFERENCE_PROCESSING_FAILED": {
+      "title": "Xử lý mẫu tham chiếu thất bại",
+      "description": "Video chưa tạo được kết quả dùng được. Bằng chứng hiện có chưa xác định chính xác bước lỗi.",
+      "recovery": "Nhờ hỗ trợ kiểm tra chi tiết kỹ thuật và giữ ID video. Chỉ thay video nếu nguyên nhân nằm ở bản quay."
+    }
+  },
+  "patternGuidance": {
+    "SQUAT": "Góc bên hoặc chếch bên; thấy rõ vai, hông, gối và cổ chân. Chọn đúng biến thể squat, dụng cụ và các lần lặp đầy đủ.",
+    "HINGE": "Góc bên hoặc chếch bên; thấy rõ vai, hông, gối và cổ chân. Tạo mẫu riêng cho hip hinge và deficit deadlift. Quay vài chu kỳ từ đứng thẳng về đứng thẳng; bỏ đoạn đầu/cuối chưa hoàn chỉnh. Chỉ so sánh số đo; chưa hiệu chuẩn phản hồi sửa động tác.",
+    "PULL": "Chỉ hỗ trợ lat pulldown dọc; góc bên hoặc chếch bên, thấy rõ vai, khuỷu, cổ tay và hông, kể cả khi tay trên đầu. Quay vài chu kỳ duỗi tay đến duỗi tay. Row và các kiểu kéo khác chưa được kiểm chứng. Chỉ so sánh số đo; chưa hiệu chuẩn phản hồi sửa động tác."
   }
 }

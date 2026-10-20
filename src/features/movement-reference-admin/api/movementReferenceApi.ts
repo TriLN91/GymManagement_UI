@@ -44,7 +44,10 @@ export const movementReferenceApi = {
     const form = new FormData();
     form.append('video', video);
     return mapReferenceSet(
-      await apiPostForm<unknown>(ENDPOINTS.referenceSets.sources(referenceSetId), form),
+      await apiPostForm<unknown>(ENDPOINTS.referenceSets.sources(referenceSetId), form, {
+        // The server processes this request synchronously; ordinary JSON timeouts are too short.
+        timeout: 330_000,
+      }),
     );
   },
 
