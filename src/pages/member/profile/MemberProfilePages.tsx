@@ -511,7 +511,10 @@ export function AccountSecurityPage() {
       setPasswords({ current: '', next: '', confirm: '' });
       toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
       toast.error(message);
     } finally {
       setIsUpdating(false);
@@ -907,10 +910,11 @@ export function PTAppointmentsPage() {
                   ⚠️ Đề xuất đổi Huấn luyện viên (CF03)
                 </strong>
                 <p style={{ fontSize: '0.875rem', marginBottom: 12 }}>
-                  HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển sang{' '}
+                  HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển
+                  sang{' '}
                   <strong>
-                    {(appointment as unknown as { currentTrainerName?: string }).currentTrainerName ||
-                      'HLV Minh Trần (Rating 4.9⭐)'}
+                    {(appointment as unknown as { currentTrainerName?: string })
+                      .currentTrainerName || 'HLV Minh Trần (Rating 4.9⭐)'}
                   </strong>{' '}
                   tiếp quản buổi tập này.
                 </p>

@@ -45,4 +45,3 @@ export function GymOwnerApprovalGuard() {
   const destination = status === 'draft' ? ROUTES.admin.onboarding : ROUTES.admin.onboardingStatus;
   return <Navigate to={destination} replace />;
 }
-

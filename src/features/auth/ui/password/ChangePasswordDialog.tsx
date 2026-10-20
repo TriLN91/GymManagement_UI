@@ -71,7 +71,10 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
       reset();
       onOpenChange(false);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
       setServerError(message);
     }
   });
@@ -175,7 +178,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
           </div>
 
           {serverError && (
-            <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive font-medium">
+            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-2.5 text-xs font-medium text-destructive">
               {serverError}
             </div>
           )}

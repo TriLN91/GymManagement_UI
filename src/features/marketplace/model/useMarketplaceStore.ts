@@ -62,7 +62,10 @@ interface MarketplaceState {
   ) => void;
   setIncludePlus: (includePlus: boolean) => void;
   clearSelection: () => void;
-  completeCheckout: (method: PaymentMethod, backendOrder?: { id: string; orderNumber: string }) => MarketplaceOrder | null;
+  completeCheckout: (
+    method: PaymentMethod,
+    backendOrder?: { id: string; orderNumber: string },
+  ) => MarketplaceOrder | null;
   recordBackendOrder: (order: MarketplaceOrder) => void;
 }
 
@@ -76,8 +79,11 @@ export function resolveCheckout(
     const serviceAmountVnd = selection.details.serviceAmountVnd ?? 0;
     const serviceDiscountVnd = selection.details.serviceDiscountVnd ?? 0;
     const plusAmountVnd = selection.includePlus ? (selection.details.plusAmountVnd ?? 0) : 0;
-    const uncoveredPlusDays = selection.includePlus ? (selection.details.uncoveredPlusDays ?? 0) : 0;
-    const totalVnd = selection.details.totalVnd ?? serviceAmountVnd - serviceDiscountVnd + plusAmountVnd;
+    const uncoveredPlusDays = selection.includePlus
+      ? (selection.details.uncoveredPlusDays ?? 0)
+      : 0;
+    const totalVnd =
+      selection.details.totalVnd ?? serviceAmountVnd - serviceDiscountVnd + plusAmountVnd;
     return {
       title: selection.details.title,
       providerName: selection.details.providerName,
@@ -197,4 +203,3 @@ export const useMarketplaceStore = create<MarketplaceState>()(
     { name: 'fit:member-marketplace:v1', version: 1 },
   ),
 );
-

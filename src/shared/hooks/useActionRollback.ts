@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   actionRollbackManager,
-  type RollbackAction,
   type ExecuteRollbackOptions,
+  type RollbackAction,
 } from '@/shared/lib/actionRollback';
 
 export function useActionRollback() {
@@ -21,12 +21,9 @@ export function useActionRollback() {
   const latestAction = actions.find((a) => a.status === 'available');
   const canUndo = Boolean(latestAction);
 
-  const executeWithRollback = useCallback(
-    <T>(options: ExecuteRollbackOptions<T>): Promise<T> => {
-      return actionRollbackManager.executeWithRollback(options);
-    },
-    [],
-  );
+  const executeWithRollback = useCallback(<T>(options: ExecuteRollbackOptions<T>): Promise<T> => {
+    return actionRollbackManager.executeWithRollback(options);
+  }, []);
 
   const rollbackAction = useCallback((actionId: string) => {
     return actionRollbackManager.rollbackAction(actionId);

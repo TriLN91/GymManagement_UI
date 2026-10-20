@@ -61,7 +61,10 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
   return (
     <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
       <div className="space-y-1.5">
-        <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-foreground">
+        <Label
+          htmlFor="password"
+          className="text-xs font-bold uppercase tracking-wider text-foreground"
+        >
           Mật khẩu mới
         </Label>
         <div className="relative">
@@ -69,7 +72,7 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
             id="password"
             type={showPassword ? 'text' : 'password'}
             {...form.register('password')}
-            className="h-12 pl-10 pr-10 border-input bg-background/50"
+            className="h-12 border-input bg-background/50 pl-10 pr-10"
             placeholder="Tối thiểu 6 ký tự"
           />
           <Lock className="absolute left-3 top-3.5 text-muted-foreground" size={18} />
@@ -89,7 +92,10 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="confirmPassword" className="text-xs font-bold uppercase tracking-wider text-foreground">
+        <Label
+          htmlFor="confirmPassword"
+          className="text-xs font-bold uppercase tracking-wider text-foreground"
+        >
           Xác nhận mật khẩu mới
         </Label>
         <div className="relative">
@@ -97,7 +103,7 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             {...form.register('confirmPassword')}
-            className="h-12 pl-10 pr-10 border-input bg-background/50"
+            className="h-12 border-input bg-background/50 pl-10 pr-10"
             placeholder="Nhập lại mật khẩu mới"
           />
           <Lock className="absolute left-3 top-3.5 text-muted-foreground" size={18} />
@@ -118,7 +124,7 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
 
       <Button
         type="submit"
-        className="mt-6 h-12 w-full rounded-xl bg-forest dark:bg-emerald-600 font-bold text-white hover:bg-forest/90 dark:hover:bg-emerald-700 shadow-md transition-all gap-2"
+        className="mt-6 h-12 w-full gap-2 rounded-xl bg-forest font-bold text-white shadow-md transition-all hover:bg-forest/90 dark:bg-emerald-600 dark:hover:bg-emerald-700"
         disabled={form.formState.isSubmitting}
       >
         {form.formState.isSubmitting ? (

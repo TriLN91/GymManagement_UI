@@ -305,7 +305,10 @@ export function TrainerLayout() {
 
             // Direct link trigger for single destination items
             if (group.to && (!group.items || group.items.length === 0)) {
-              const active = matchesTrainerRoute({ to: group.to, labelKey: group.labelKey }, location.pathname);
+              const active = matchesTrainerRoute(
+                { to: group.to, labelKey: group.labelKey },
+                location.pathname,
+              );
               return (
                 <div className="member-nav-group" key={group.id}>
                   <NavLink
@@ -451,10 +454,10 @@ export function TrainerLayout() {
         {!isProfileComplete && (
           <aside
             role="alert"
-            className="bg-amber-500/15 border-b border-amber-500/30 px-6 py-3 flex items-center justify-between text-amber-900 dark:text-amber-200"
+            className="flex items-center justify-between border-b border-amber-500/30 bg-amber-500/15 px-6 py-3 text-amber-900 dark:text-amber-200"
           >
             <div className="flex items-center gap-2 text-sm font-medium">
-              <AlertTriangle className="text-amber-500 shrink-0" size={18} />
+              <AlertTriangle className="shrink-0 text-amber-500" size={18} />
               <span>
                 {isVi
                   ? 'Hồ sơ chưa hoàn thiện: Vui lòng điền đầy đủ thông tin chuyên môn trước khi nhận học viên.'
@@ -463,7 +466,7 @@ export function TrainerLayout() {
             </div>
             <NavLink
               to={ROUTES.pt.profileEdit}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-black hover:bg-amber-400 transition"
+              className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-black transition hover:bg-amber-400"
             >
               {isVi ? 'Hoàn tất hồ sơ ngay' : 'Complete Profile Now'}
             </NavLink>

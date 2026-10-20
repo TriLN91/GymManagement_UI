@@ -17,18 +17,18 @@ import {
   Star,
   Users,
 } from 'lucide-react';
-import { useState, useEffect, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import {
   marketplaceApi,
+  type BranchTrainerDto,
   type GymBranchCardView,
   type GymBranchDetailView,
   type GymOfferView,
   type OrderView,
-  type BranchTrainerDto,
 } from '../api/marketplaceApi';
 import {
   getGym,
@@ -224,12 +224,17 @@ function BranchCard({ branch }: { branch: GymBranchCardView }) {
           </span>
           {branch.distanceKm != null && <span>{branch.distanceKm.toFixed(1)} km</span>}
         </div>
-        <h2>{branch.brandName} - {branch.branchName}</h2>
+        <h2>
+          {branch.brandName} - {branch.branchName}
+        </h2>
         <p>
-          <MapPin size={14} /> {branch.addressLine1}, {branch.district ? `${branch.district}, ` : ''}{branch.city}
+          <MapPin size={14} /> {branch.addressLine1},{' '}
+          {branch.district ? `${branch.district}, ` : ''}
+          {branch.city}
         </p>
         <div className="marketplace-rating">
-          <Star size={14} fill="currentColor" /> <strong>{Number(branch.averageRating).toFixed(1)}</strong>
+          <Star size={14} fill="currentColor" />{' '}
+          <strong>{Number(branch.averageRating).toFixed(1)}</strong>
           <span>
             ({branch.reviewCount} {copy.reviews})
           </span>
@@ -315,15 +320,20 @@ function OfferCard({
         type="button"
         onClick={() => {
           if (isBackend) {
-            selectGymOffer(offer.id, offer.includesPlus, branchId ?? offer.gymBranchId ?? undefined, {
-              title: offer.title,
-              providerName: branchName ?? 'Phòng Gym',
-              serviceAmountVnd: offer.gymServicePrice,
-              serviceDiscountVnd: 0,
-              plusAmountVnd: offer.plusPrice,
-              uncoveredPlusDays: offer.plusDurationDays,
-              totalVnd: offer.gymServicePrice + (offer.includesPlus ? offer.plusPrice : 0),
-            });
+            selectGymOffer(
+              offer.id,
+              offer.includesPlus,
+              branchId ?? offer.gymBranchId ?? undefined,
+              {
+                title: offer.title,
+                providerName: branchName ?? 'Phòng Gym',
+                serviceAmountVnd: offer.gymServicePrice,
+                serviceDiscountVnd: 0,
+                plusAmountVnd: offer.plusPrice,
+                uncoveredPlusDays: offer.plusDurationDays,
+                totalVnd: offer.gymServicePrice + (offer.includesPlus ? offer.plusPrice : 0),
+              },
+            );
           } else {
             selectGymOffer(offer.id, offer.plusEligible);
           }
@@ -1066,7 +1076,8 @@ export function MarketplacePaymentResultPage() {
       ? localize(orderedProduct.name, language)
       : localOrder?.title || 'Khóa tập FitFlex';
 
-  const orderDisplayId = backendOrder?.orderNumber ?? localOrder?.orderNumber ?? localOrder?.id ?? orderId;
+  const orderDisplayId =
+    backendOrder?.orderNumber ?? localOrder?.orderNumber ?? localOrder?.id ?? orderId;
   const totalAmount = backendOrder?.totalAmount ?? localOrder?.totalVnd ?? 0;
 
   return (
@@ -1122,7 +1133,15 @@ export function MarketplacePaymentResultPage() {
             </>
           )}
         </dl>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '16px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginTop: '16px',
+          }}
+        >
           <Link to={ROUTES.member.marketplace}>
             {copy.continueMarketplace} <ArrowRight size={15} />
           </Link>
@@ -1149,4 +1168,3 @@ export function MarketplacePaymentResultPage() {
     </div>
   );
 }
-

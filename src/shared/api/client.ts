@@ -179,12 +179,16 @@ instance.interceptors.response.use(
   async (error: AxiosError<ApiEnvelope<unknown>>) => {
     if (!error.response) {
       if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
-        throw new NetworkError('Yêu cầu đã hết thời gian chờ (Server Timeout). Vui lòng thử lại sau.');
+        throw new NetworkError(
+          'Yêu cầu đã hết thời gian chờ (Server Timeout). Vui lòng thử lại sau.',
+        );
       }
       if (typeof window !== 'undefined' && !window.navigator.onLine) {
         throw new NetworkError('Mất kết nối Internet. Vui lòng kiểm tra lại đường truyền mạng.');
       }
-      throw new NetworkError(error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
+      throw new NetworkError(
+        error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
+      );
     }
 
     const { status, data } = error.response;
@@ -194,7 +198,12 @@ instance.interceptors.response.use(
 
     // Handle Idempotency in-flight conflicts
     if (status === 409 && (code === 'IdempotencyInFlight' || code === 'Conflict')) {
-      throw new ApiError(status, message || 'Thao tác đang được xử lý, vui lòng không gửi lại liên tục.', code, data);
+      throw new ApiError(
+        status,
+        message || 'Thao tác đang được xử lý, vui lòng không gửi lại liên tục.',
+        code,
+        data,
+      );
     }
 
     // Credential errors on login/register/refresh must not trigger a refresh or a sign-out.

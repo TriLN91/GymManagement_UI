@@ -126,7 +126,8 @@ export function RegisterForm() {
       setCooldown(60);
       toast.success('Mã OTP mới đã được gửi về email!');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Không thể gửi lại mã OTP. Vui lòng thử lại sau.';
+      const message =
+        err instanceof Error ? err.message : 'Không thể gửi lại mã OTP. Vui lòng thử lại sau.';
       setOtpError(message);
     } finally {
       isSubmittingRef.current = false;
@@ -160,7 +161,8 @@ export function RegisterForm() {
         void navigate(ROUTES.member.profileSetup, { replace: true });
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
+      const message =
+        err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
       setOtpError(message);
     } finally {
       isSubmittingRef.current = false;
@@ -174,10 +176,10 @@ export function RegisterForm() {
         <div className="mb-4 flex items-center font-syne text-4xl font-bold text-forest">
           FIT<span className="relative -top-2 align-top text-sm">®</span>
         </div>
-        <h1 className="mb-2 font-syne text-3xl sm:text-4xl font-bold text-forest">
+        <h1 className="mb-2 font-syne text-3xl font-bold text-forest sm:text-4xl">
           {step === 'form' ? t('auth:register.heading') : 'Xác thực mã OTP'}
         </h1>
-        <p className="text-sm font-medium text-forest/70 max-w-sm">
+        <p className="max-w-sm text-sm font-medium text-forest/70">
           {step === 'form'
             ? t('auth:register.subtitle')
             : `Hệ thống đã gửi mã OTP 6 số về email ${savedValues?.email}. Vui lòng nhập mã để hoàn tất đăng ký.`}
@@ -198,7 +200,9 @@ export function RegisterForm() {
                   aria-checked={selected}
                   onClick={() => setRole(item)}
                   className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${
-                    selected ? 'border-forest bg-forest/5' : 'border-forest/20 hover:border-forest/40'
+                    selected
+                      ? 'border-forest bg-forest/5'
+                      : 'border-forest/20 hover:border-forest/40'
                   }`}
                 >
                   <div className="flex flex-col text-left">
@@ -258,7 +262,9 @@ export function RegisterForm() {
                 placeholder={t('auth:register.passwordPlaceholder')}
               />
               {errors.password ? (
-                <p className="text-xs font-medium text-red-500">{t(errors.password.message ?? '')}</p>
+                <p className="text-xs font-medium text-red-500">
+                  {t(errors.password.message ?? '')}
+                </p>
               ) : null}
             </div>
 
@@ -323,7 +329,7 @@ export function RegisterForm() {
       ) : (
         /* OTP Step */
         <div className="w-full space-y-5">
-          <div className="p-3.5 rounded-xl bg-forest/5 border border-forest/20 flex items-center justify-between text-xs text-forest">
+          <div className="flex items-center justify-between rounded-xl border border-forest/20 bg-forest/5 p-3.5 text-xs text-forest">
             <span>
               Gửi tới: <strong>{savedValues?.email}</strong>
             </span>
@@ -333,21 +339,22 @@ export function RegisterForm() {
                 setStep('form');
                 setOtpError('');
               }}
-              className="text-xs text-forest/70 hover:text-forest underline flex items-center gap-1 font-semibold"
+              className="flex items-center gap-1 text-xs font-semibold text-forest/70 underline hover:text-forest"
             >
-              <ArrowLeft className="w-3 h-3" /> Đổi thông tin
+              <ArrowLeft className="h-3 w-3" /> Đổi thông tin
             </button>
           </div>
 
           {debugOtpCode && (
-            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-300 flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
               <span>
-                🛠️ Mã OTP phát triển: <strong className="font-mono text-sm tracking-widest">{debugOtpCode}</strong>
+                🛠️ Mã OTP phát triển:{' '}
+                <strong className="font-mono text-sm tracking-widest">{debugOtpCode}</strong>
               </span>
               <button
                 type="button"
                 onClick={() => setOtpCode(debugOtpCode)}
-                className="text-xs underline font-semibold text-amber-600 hover:text-amber-800 dark:text-amber-400"
+                className="text-xs font-semibold text-amber-600 underline hover:text-amber-800 dark:text-amber-400"
               >
                 Nhập nhanh
               </button>
@@ -356,7 +363,10 @@ export function RegisterForm() {
 
           <form onSubmit={onVerifyOtpSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="otp" className="text-xs font-bold uppercase tracking-wider text-forest">
+              <Label
+                htmlFor="otp"
+                className="text-xs font-bold uppercase tracking-wider text-forest"
+              >
                 Mã xác thực OTP (6 chữ số)
               </Label>
               <div className="relative">
@@ -374,7 +384,7 @@ export function RegisterForm() {
                     setOtpError('');
                   }}
                   autoFocus
-                  className="pl-10 h-12 text-center text-xl font-bold tracking-[0.4em] font-mono border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
+                  className="h-12 border-forest/20 bg-transparent pl-10 text-center font-mono text-xl font-bold tracking-[0.4em] text-forest focus-visible:ring-forest"
                 />
               </div>
               <p className="text-[11px] text-forest/60">
@@ -383,7 +393,7 @@ export function RegisterForm() {
             </div>
 
             {otpError && (
-              <p className="text-xs font-medium text-red-500 text-center" role="alert">
+              <p className="text-center text-xs font-medium text-red-500" role="alert">
                 {otpError}
               </p>
             )}
@@ -402,9 +412,9 @@ export function RegisterForm() {
                 type="button"
                 disabled={cooldown > 0 || isSendingOtp}
                 onClick={onResendOtp}
-                className="flex items-center gap-1 font-semibold text-forest hover:underline disabled:opacity-50 disabled:no-underline"
+                className="flex items-center gap-1 font-semibold text-forest hover:underline disabled:no-underline disabled:opacity-50"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSendingOtp ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${isSendingOtp ? 'animate-spin' : ''}`} />
                 {cooldown > 0 ? `Gửi lại sau ${cooldown}s` : 'Gửi lại mã OTP'}
               </button>
             </div>
@@ -413,7 +423,7 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setStep('form')}
-                className="text-xs text-forest/60 hover:text-forest transition-colors"
+                className="text-xs text-forest/60 transition-colors hover:text-forest"
               >
                 &larr; Quay lại chỉnh sửa thông tin đăng ký
               </button>

@@ -37,7 +37,8 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
       const res = await authApi.forgotPassword(values.email);
       onSuccess(values.email, res?.debugOtpCode ?? null);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Không thể gửi mã OTP. Vui lòng thử lại.';
+      const message =
+        err instanceof Error ? err.message : 'Không thể gửi mã OTP. Vui lòng thử lại.';
       toast.error(message);
     } finally {
       isSubmittingRef.current = false;
@@ -47,7 +48,10 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
   return (
     <form onSubmit={onSubmit} className="w-full space-y-4" noValidate>
       <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-foreground">
+        <Label
+          htmlFor="email"
+          className="text-xs font-bold uppercase tracking-wider text-foreground"
+        >
           Email đăng ký tài khoản
         </Label>
         <div className="relative">
@@ -56,7 +60,7 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
             type="email"
             autoComplete="email"
             {...form.register('email')}
-            className="h-12 pl-10 border-input bg-background/50 focus-visible:ring-forest dark:focus-visible:ring-emerald-500"
+            className="h-12 border-input bg-background/50 pl-10 focus-visible:ring-forest dark:focus-visible:ring-emerald-500"
             placeholder="name@example.com"
           />
           <Mail className="absolute left-3 top-3.5 text-muted-foreground" size={18} />
@@ -70,7 +74,7 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
 
       <Button
         type="submit"
-        className="mt-6 h-12 w-full rounded-xl bg-forest dark:bg-emerald-600 font-bold text-white hover:bg-forest/90 dark:hover:bg-emerald-700 shadow-md transition-all gap-2"
+        className="mt-6 h-12 w-full gap-2 rounded-xl bg-forest font-bold text-white shadow-md transition-all hover:bg-forest/90 dark:bg-emerald-600 dark:hover:bg-emerald-700"
         disabled={form.formState.isSubmitting}
       >
         {form.formState.isSubmitting ? (
@@ -89,7 +93,7 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
       <div className="w-full pt-4 text-center">
         <Link
           to={ROUTES.public.login}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft size={14} />
           Quay lại Đăng nhập

@@ -191,7 +191,10 @@ export function GymOwnerAssignmentExceptionsPage() {
               type="button"
               onClick={async () => {
                 if (confirming && confirmingTrainer) {
-                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(confirming.id);
+                  const isUuid =
+                    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                      confirming.id,
+                    );
                   if (isUuid) {
                     try {
                       await marketplaceApi.reassignAppointment(confirming.id, {

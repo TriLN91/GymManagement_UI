@@ -170,8 +170,7 @@ class ActionRollbackManager {
       );
       this.notify();
 
-      const successNotice =
-        action.rollbackSuccessMessage || `Đã hoàn tác: ${action.title}!`;
+      const successNotice = action.rollbackSuccessMessage || `Đã hoàn tác: ${action.title}!`;
       toast.success(successNotice, { duration: 4000 });
 
       if (action.onAfterRollback) {

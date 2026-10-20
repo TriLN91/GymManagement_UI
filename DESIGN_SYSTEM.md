@@ -34,15 +34,15 @@
 
 ## 2. Technology and Styling Architecture
 
-| Layer | Verified implementation | Source |
-| --- | --- | --- |
-| Rendering | React 19 + TypeScript, Vite client app | `package.json`, `src/main.tsx`, `src/app/App.tsx` |
-| Routing | React Router; lazy page imports; role guards; `/app`, `/pt`, `/admin`, `/superadmin` portals | `src/app/router/index.tsx`, `src/shared/config/constants.ts` |
-| Styling | Tailwind 3 utilities and extended semantic colors, plus global CSS and feature scoped CSS classes | `tailwind.config.ts`, `src/styles/globals.css`, `src/features/**/ui/*.css` |
-| Components | Project wrappers around Radix Dialog, Tabs, Label, Slot; native form controls; CVA variants | `src/shared/ui` |
-| Icons and feedback | `lucide-react`; Sonner toasts; `tailwindcss-animate` | `package.json`, `src/shared/ui/toast/Toaster.tsx`, `tailwind.config.ts` |
-| Theme | `dark` class on document root, `light`/`dark`/`system` preference in local storage | `src/shared/hooks/useTheme.ts`, `src/styles/globals.css` |
-| Localization | i18next, English and Vietnamese | `src/i18n/index.ts`, `src/i18n/locales` |
+| Layer              | Verified implementation                                                                           | Source                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Rendering          | React 19 + TypeScript, Vite client app                                                            | `package.json`, `src/main.tsx`, `src/app/App.tsx`                          |
+| Routing            | React Router; lazy page imports; role guards; `/app`, `/pt`, `/admin`, `/superadmin` portals      | `src/app/router/index.tsx`, `src/shared/config/constants.ts`               |
+| Styling            | Tailwind 3 utilities and extended semantic colors, plus global CSS and feature scoped CSS classes | `tailwind.config.ts`, `src/styles/globals.css`, `src/features/**/ui/*.css` |
+| Components         | Project wrappers around Radix Dialog, Tabs, Label, Slot; native form controls; CVA variants       | `src/shared/ui`                                                            |
+| Icons and feedback | `lucide-react`; Sonner toasts; `tailwindcss-animate`                                              | `package.json`, `src/shared/ui/toast/Toaster.tsx`, `tailwind.config.ts`    |
+| Theme              | `dark` class on document root, `light`/`dark`/`system` preference in local storage                | `src/shared/hooks/useTheme.ts`, `src/styles/globals.css`                   |
+| Localization       | i18next, English and Vietnamese                                                                   | `src/i18n/index.ts`, `src/i18n/locales`                                    |
 
 The canonical semantic mapping is CSS custom properties in `src/styles/globals.css` consumed by `tailwind.config.ts`. The authenticated shell has additional local `--member-*` variables in `member-layout.css`. Feature CSS often declares its own aliases or literal colors; preserve the local pattern when extending that feature and avoid exporting local values as universal tokens. `src/shared/ui/workspace/Workspace.tsx` is a reusable page/panel entry point. `PortalLayout.tsx` is an older, distinct generic layout; the role routes use their role layouts in `src/pages/*/components` and `src/pages/superadmin` (verify the route before choosing a shell).
 
@@ -50,25 +50,25 @@ The canonical semantic mapping is CSS custom properties in `src/styles/globals.c
 
 Values are the exact source representation. HSL triplets are supplied to `hsl(var(...))`; `--surface` and some accents are complete colors. A color row being present does not mean it is used in every role or in dark mode.
 
-| Token / value | Purpose and usage | Evidence | Status |
-| --- | --- | --- | --- |
-| `--brand: 117.143 29.577% 27.843%` | `primary`, `forest`, headings/actions via Tailwind | `globals.css`, `tailwind.config.ts` | Verified |
-| `--brand-strong: #173917` | Strong heading/hover green | `globals.css`; landing and marketplace local equivalents | Verified |
-| `--brand-secondary: #1c6a5b` | Secondary teal accent | `globals.css`; workout local alias | Verified |
-| `--canvas: 71 52% 96%` | Pale canvas / accent background | `globals.css`, Tailwind `canvas`, `accent` | Verified |
-| `--surface: #ffffff`, `--background: 0 0% 100%`, `--card: 0 0% 100%` | White surfaces | `globals.css` | Verified |
-| `--ink: 72 100% 6%`, `--foreground: var(--ink)` | Main text | `globals.css` | Verified |
-| `--text-muted: 100 7% 41%`, `--muted-foreground: var(--text-muted)` | Secondary/helper text | `globals.css` | Verified |
-| `--outline: 80 16% 82%`, `--border` and `--input: var(--outline)` | Dividers/form borders | `globals.css` | Verified |
-| `--mint: #a7f0dd` | Mint accents, chart comparison, shell selected text | `globals.css`, `member-layout.css`, `gym-owner-analytics.css` | Verified |
-| `--energy-lime: #e5f796`, `--energy-lime-soft: color-mix(in srgb, var(--energy-lime) 28%, white)`, `--energy-lime-faint: color-mix(in srgb, var(--energy-lime) 14%, white)` | Accent buttons, active tabs, attention panels, selected rows | `globals.css`, shared `Button`, `Tabs`, `Card`, `Table` | Verified |
-| `ash: #97CD97`, `pebble: #9CAC54` | Tailwind named accents; table header tint and attention borders | `tailwind.config.ts`, `src/shared/ui/table/Table.tsx`, `globals.css` | Verified |
-| `--destructive: 0 84.2% 60.2%`, foreground `0 0% 98%` | Error/destructive shared controls | `globals.css`, shared `Button`, `Badge`, form controls | Verified |
-| `--ring: var(--brand)` | Focus ring for shared controls | `globals.css`, shared components | Verified |
-| Shell `--member-primary: #1d441d`, `--member-brand: #345c32`, `--member-ink: #181e00`, `--member-muted: #667061`, `--member-outline: #d4d9ca`, shell background `#f8faef` | Authenticated shell nav, text, dividers and canvas | `member-layout.css` | Verified |
-| Shell hover `#f4f7ee`; active child `--member-primary` background and `--member-mint` text | Sidebar states | `member-layout.css` | Verified |
-| Dark semantic `--background: 240 10% 3.9%`, `--foreground: 0 0% 98%`, `--secondary: 240 3.7% 15.9%`, `--muted-foreground: 240 5% 64.9%`, `--destructive: 0 62.8% 30.6%` | Shared dark primitives | `globals.css` `.dark` | Verified |
-| Dark Platform `#101d11` canvas, `#1a2a1a` surface, `#edf4e9` text, `#3c503b` border | Explicit Platform overrides | `src/pages/superadmin/platform-admin-layout.css`, `platform-dashboard.css` | Verified |
+| Token / value                                                                                                                                                               | Purpose and usage                                               | Evidence                                                                   | Status   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------- | -------- |
+| `--brand: 117.143 29.577% 27.843%`                                                                                                                                          | `primary`, `forest`, headings/actions via Tailwind              | `globals.css`, `tailwind.config.ts`                                        | Verified |
+| `--brand-strong: #173917`                                                                                                                                                   | Strong heading/hover green                                      | `globals.css`; landing and marketplace local equivalents                   | Verified |
+| `--brand-secondary: #1c6a5b`                                                                                                                                                | Secondary teal accent                                           | `globals.css`; workout local alias                                         | Verified |
+| `--canvas: 71 52% 96%`                                                                                                                                                      | Pale canvas / accent background                                 | `globals.css`, Tailwind `canvas`, `accent`                                 | Verified |
+| `--surface: #ffffff`, `--background: 0 0% 100%`, `--card: 0 0% 100%`                                                                                                        | White surfaces                                                  | `globals.css`                                                              | Verified |
+| `--ink: 72 100% 6%`, `--foreground: var(--ink)`                                                                                                                             | Main text                                                       | `globals.css`                                                              | Verified |
+| `--text-muted: 100 7% 41%`, `--muted-foreground: var(--text-muted)`                                                                                                         | Secondary/helper text                                           | `globals.css`                                                              | Verified |
+| `--outline: 80 16% 82%`, `--border` and `--input: var(--outline)`                                                                                                           | Dividers/form borders                                           | `globals.css`                                                              | Verified |
+| `--mint: #a7f0dd`                                                                                                                                                           | Mint accents, chart comparison, shell selected text             | `globals.css`, `member-layout.css`, `gym-owner-analytics.css`              | Verified |
+| `--energy-lime: #e5f796`, `--energy-lime-soft: color-mix(in srgb, var(--energy-lime) 28%, white)`, `--energy-lime-faint: color-mix(in srgb, var(--energy-lime) 14%, white)` | Accent buttons, active tabs, attention panels, selected rows    | `globals.css`, shared `Button`, `Tabs`, `Card`, `Table`                    | Verified |
+| `ash: #97CD97`, `pebble: #9CAC54`                                                                                                                                           | Tailwind named accents; table header tint and attention borders | `tailwind.config.ts`, `src/shared/ui/table/Table.tsx`, `globals.css`       | Verified |
+| `--destructive: 0 84.2% 60.2%`, foreground `0 0% 98%`                                                                                                                       | Error/destructive shared controls                               | `globals.css`, shared `Button`, `Badge`, form controls                     | Verified |
+| `--ring: var(--brand)`                                                                                                                                                      | Focus ring for shared controls                                  | `globals.css`, shared components                                           | Verified |
+| Shell `--member-primary: #1d441d`, `--member-brand: #345c32`, `--member-ink: #181e00`, `--member-muted: #667061`, `--member-outline: #d4d9ca`, shell background `#f8faef`   | Authenticated shell nav, text, dividers and canvas              | `member-layout.css`                                                        | Verified |
+| Shell hover `#f4f7ee`; active child `--member-primary` background and `--member-mint` text                                                                                  | Sidebar states                                                  | `member-layout.css`                                                        | Verified |
+| Dark semantic `--background: 240 10% 3.9%`, `--foreground: 0 0% 98%`, `--secondary: 240 3.7% 15.9%`, `--muted-foreground: 240 5% 64.9%`, `--destructive: 0 62.8% 30.6%`     | Shared dark primitives                                          | `globals.css` `.dark`                                                      | Verified |
+| Dark Platform `#101d11` canvas, `#1a2a1a` surface, `#edf4e9` text, `#3c503b` border                                                                                         | Explicit Platform overrides                                     | `src/pages/superadmin/platform-admin-layout.css`, `platform-dashboard.css` | Verified |
 
 `--secondary` and `--muted` are both `240 4.8% 95.9%` in light mode; they have different semantic names despite the same value. `--brand` and shell `--member-primary` are distinct greens. `--outline` and shell `--member-outline` are distinct border sources. Preserve these differences instead of replacing one by eye. `#345c32`, `#153e2f`, `#667061`, and `#9cac54` recur as hardcoded feature colors; for example `landing.css`, `marketplace.css`, and `trainer-workspace.css`. The landing hero uses `linear-gradient(180deg, #97cd971c 0%, #ffffff 80%)`; the auth layout has translucent mint blurred circles; Dialog overlay uses `bg-black/60 backdrop-blur-sm`. These are local treatments, not global decoration rules.
 
@@ -78,20 +78,20 @@ Values are the exact source representation. HSL triplets are supplied to `hsl(va
 
 `index.html` loads Be Vietnam Pro weights 400, 500, 600, 700, 800 and IBM Plex Mono weights 500, 600, 700 from Google Fonts. `globals.css` defines `--font-ui` and `--font-display` as Be Vietnam Pro stacks, and `--font-data` as IBM Plex Mono with monospace fallbacks. Tailwind maps `font-sans`, `font-display`/`font-syne`, and `font-mono`/`font-data` to these variables. The `font-syne` utility name is a legacy alias; its actual font is Be Vietnam Pro (`tailwind.config.ts`). Font delivery when Google Fonts is unavailable falls back to the CSS stacks; offline visual equivalence is **not verified**.
 
-| Role | Exact example | Source | Scope |
-| --- | --- | --- | --- |
-| Shared body | `font-family: var(--font-ui)`; browser/Tailwind base size and line height otherwise | `globals.css` | Global |
-| Shared card title | `text-2xl font-semibold leading-none tracking-tight` | `src/shared/ui/card/Card.tsx` | Shared CardTitle, overridable |
-| Shared panel title | `text-lg font-bold text-forest` | `src/shared/ui/workspace/Workspace.tsx` | Operational panels |
-| Shared button | `text-sm font-bold` | `src/shared/ui/button/buttonVariants.ts` | Shared Button |
-| Shared label | `text-sm font-medium leading-none` | `src/shared/ui/label/Label.tsx` | Shared Label |
-| Table head | `10px`, bold, uppercase, `0.07em` tracking | `src/shared/ui/table/Table.tsx` | Shared table |
-| Badge | `10px`, bold, uppercase, `0.05em` tracking | `src/shared/ui/badge/Badge.tsx` | Shared badge |
-| Shell brand | `25px`, display font, line height `1`; role pill `10px` | `member-layout.css` | Portal shell |
-| Shell group/link | `12px` / `11px`, 700, uppercase, `0.08em` / `0.045em` | `member-layout.css` | Sidebar |
-| Shell context | `11px`, 700, uppercase, `0.09em` | `member-layout.css` | Topbar |
-| Landing H1/H2/H3 | `clamp(44px, 5.4vw, 84px)` / `clamp(34px, 4vw, 60px)` / `26px`; heading line height `1.08` | `src/features/landing/ui/landing.css` | Public landing only |
-| Numeric display | IBM Plex Mono via `font-data` or explicit declaration; tabular numbers in analytics table | `trainer-workspace.css`, `marketplace.css`, `gym-owner-analytics.css` | Feature specific |
+| Role               | Exact example                                                                              | Source                                                                | Scope                         |
+| ------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | ----------------------------- |
+| Shared body        | `font-family: var(--font-ui)`; browser/Tailwind base size and line height otherwise        | `globals.css`                                                         | Global                        |
+| Shared card title  | `text-2xl font-semibold leading-none tracking-tight`                                       | `src/shared/ui/card/Card.tsx`                                         | Shared CardTitle, overridable |
+| Shared panel title | `text-lg font-bold text-forest`                                                            | `src/shared/ui/workspace/Workspace.tsx`                               | Operational panels            |
+| Shared button      | `text-sm font-bold`                                                                        | `src/shared/ui/button/buttonVariants.ts`                              | Shared Button                 |
+| Shared label       | `text-sm font-medium leading-none`                                                         | `src/shared/ui/label/Label.tsx`                                       | Shared Label                  |
+| Table head         | `10px`, bold, uppercase, `0.07em` tracking                                                 | `src/shared/ui/table/Table.tsx`                                       | Shared table                  |
+| Badge              | `10px`, bold, uppercase, `0.05em` tracking                                                 | `src/shared/ui/badge/Badge.tsx`                                       | Shared badge                  |
+| Shell brand        | `25px`, display font, line height `1`; role pill `10px`                                    | `member-layout.css`                                                   | Portal shell                  |
+| Shell group/link   | `12px` / `11px`, 700, uppercase, `0.08em` / `0.045em`                                      | `member-layout.css`                                                   | Sidebar                       |
+| Shell context      | `11px`, 700, uppercase, `0.09em`                                                           | `member-layout.css`                                                   | Topbar                        |
+| Landing H1/H2/H3   | `clamp(44px, 5.4vw, 84px)` / `clamp(34px, 4vw, 60px)` / `26px`; heading line height `1.08` | `src/features/landing/ui/landing.css`                                 | Public landing only           |
+| Numeric display    | IBM Plex Mono via `font-data` or explicit declaration; tabular numbers in analytics table  | `trainer-workspace.css`, `marketplace.css`, `gym-owner-analytics.css` | Feature specific              |
 
 The landing uses heading letter spacing `-0.05em` (H3 `-0.035em`), while operational metadata often uses positive tracking and uppercase. Long labels are truncated in the mobile bottom navigation (`text-overflow: ellipsis; white-space: nowrap`) and onboarding step labels. There is no single enforced global heading scale beyond Tailwind defaults and these component rules: **Not found**. Apply the closest page hierarchy, including real heading tags; note `CardTitle` defaults to a `div` unless `as` is set.
 
@@ -121,15 +121,15 @@ The collapse toggle is desktop only. Collapsed desktop groups show icon buttons 
 
 The shared `Button` (`src/shared/ui/button/Button.tsx`) uses CVA classes from `buttonVariants.ts`, supports `asChild`, and defaults to the `default` variant and size. All shared variants are full pills (`rounded-full`), `text-sm font-bold`, `gap-2`, with `transition-colors`, a two-pixel focus-visible ring and ring offset, and disabled pointer blocking plus `opacity-50`.
 
-| Existing shared variant | Implemented appearance | Typical choice |
-| --- | --- | --- |
-| `default` | Primary green background, white text, 90% opacity hover | Main action |
-| `accent` | Lime background, green text, green 20% border, 80% hover | Prominent highlight |
-| `destructive` | Destructive background/foreground; 90% hover | Destructive action |
-| `outline` | Border and page background; accent hover | Secondary outlined action |
-| `secondary` | Muted secondary fill; 80% hover | Lower emphasis filled action |
-| `ghost` | Transparent; accent hover | Utility/icon action |
-| `link` | Green text with underline on hover | Text link action |
+| Existing shared variant | Implemented appearance                                   | Typical choice               |
+| ----------------------- | -------------------------------------------------------- | ---------------------------- |
+| `default`               | Primary green background, white text, 90% opacity hover  | Main action                  |
+| `accent`                | Lime background, green text, green 20% border, 80% hover | Prominent highlight          |
+| `destructive`           | Destructive background/foreground; 90% hover             | Destructive action           |
+| `outline`               | Border and page background; accent hover                 | Secondary outlined action    |
+| `secondary`             | Muted secondary fill; 80% hover                          | Lower emphasis filled action |
+| `ghost`                 | Transparent; accent hover                                | Utility/icon action          |
+| `link`                  | Green text with underline on hover                       | Text link action             |
 
 Sizes: `default` `h-10 px-4 py-2`; `sm` `h-9 px-3`; `lg` `h-11 px-8`; `icon` `h-10 w-10`. Width is content based unless caller adds `w-full` (e.g. auth submit). There is no shared named `tertiary` variant; use existing `ghost`/`link` as implemented, not a new API. The shared component has no built-in loading spinner; callers set `disabled`, pending text, or icons. Pressed state has no dedicated shared style: **Not found**.
 
@@ -137,36 +137,36 @@ Local exceptions: landing `.fit-button` is 46px high with 22px horizontal paddin
 
 ## 8. Component Library and UI Patterns
 
-| Component / pattern | Anatomy, variants, behavior, and source |
-| --- | --- |
-| Cards/panels | Shared `Card` has `default` (rounded/shadow), `panel` (flat), `attention` (lime-tinted), plus Header/Title/Description/Content/Footer (`src/shared/ui/card/Card.tsx`). `WorkspacePanel` is a flat section with separate header/content. Feature dashboards define their own widget grids. |
-| Inputs | Shared `Input`, `Textarea`, `Select`, `Checkbox`, `Label` in `src/shared/ui`. Input/Select are `h-10`, `rounded-md`, bordered, `text-sm`; textarea is `min-h-24`. Select adds a right 16px ChevronDown. Checkbox is 20px with green checked fill and white check. Native radio controls appear in feature forms; no shared Radio component was found. |
-| Search/filter | `SidebarSearch` is a 38px-minimum bordered field. Marketplace has a 3-column filter panel (`marketplace.css`); analytics has date presets/custom range and chart tabs (`gym-owner-analytics.css`). Use the nearest feature's filter grammar. |
-| Tabs | Shared Radix `Tabs`: 40px muted list, active lime trigger with bold green text, focus ring and disabled state (`src/shared/ui/tabs/Tabs.tsx`). Some features use local button tabs instead, including Owner analytics. |
-| Tables/lists/pagination | Shared `TableContainer` horizontally scrolls; green-tinted head, 44px header cells, 10px uppercase labels, 12px cell padding, row hover canvas and selected lime faint (`src/shared/ui/table/Table.tsx`). Feature lists and pagination use local implementations; e.g. `TrainerExerciseLibraryPage.tsx`, `platform-operations.css`. |
-| Badges/status | Shared `Badge` is min-height 24px, pill, 10px uppercase with `default`, `accent`, `neutral`, `destructive` (`src/shared/ui/badge/Badge.tsx`). Feature specific status chips/dots live in workout, dashboard, and operations CSS. |
-| Dialogs | Radix wrapper supplies `Dialog` primitives, fixed 60%-black blurred overlay, centered `max-w-lg` panel, close icon, lime header strip, responsive footer order (`src/shared/ui/dialog/Dialog.tsx`). Some dialogs add feature class names. |
-| Dropdowns/tooltips | Radix dropdown dependency is installed; a single documented global wrapper or tooltip component was **not found** in `src/shared/ui`. Collapsed sidebar uses native `title` and custom flyouts. Verify local code before implementing a new menu. |
-| Feedback | Sonner `Toaster` uses rich colors, top-right, 4000ms (`src/shared/ui/toast/Toaster.tsx`); shared `EmptyState` is a dashed bordered box with optional icon/action; shared `Skeleton` pulses on a muted surface. Full-page spinner and route loader are separate (`src/shared/ui/loading`, `member-layout.css`). |
-| Metrics/progress | Owner dashboard, Platform dashboard, Trainer workspace, Member dashboard and onboarding implement local metrics/status/progress. There is no one global metric-card or progress-bar primitive. Use the nearest product area. |
-| Images/avatars | Shell avatar is a 34px circular initial or icon (`member-layout.css`); Marketplace gym card has a CSS visual; portraits and anatomy imagery have their own feature treatment. Do not infer one global crop rule. |
+| Component / pattern     | Anatomy, variants, behavior, and source                                                                                                                                                                                                                                                                                                               |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cards/panels            | Shared `Card` has `default` (rounded/shadow), `panel` (flat), `attention` (lime-tinted), plus Header/Title/Description/Content/Footer (`src/shared/ui/card/Card.tsx`). `WorkspacePanel` is a flat section with separate header/content. Feature dashboards define their own widget grids.                                                             |
+| Inputs                  | Shared `Input`, `Textarea`, `Select`, `Checkbox`, `Label` in `src/shared/ui`. Input/Select are `h-10`, `rounded-md`, bordered, `text-sm`; textarea is `min-h-24`. Select adds a right 16px ChevronDown. Checkbox is 20px with green checked fill and white check. Native radio controls appear in feature forms; no shared Radio component was found. |
+| Search/filter           | `SidebarSearch` is a 38px-minimum bordered field. Marketplace has a 3-column filter panel (`marketplace.css`); analytics has date presets/custom range and chart tabs (`gym-owner-analytics.css`). Use the nearest feature's filter grammar.                                                                                                          |
+| Tabs                    | Shared Radix `Tabs`: 40px muted list, active lime trigger with bold green text, focus ring and disabled state (`src/shared/ui/tabs/Tabs.tsx`). Some features use local button tabs instead, including Owner analytics.                                                                                                                                |
+| Tables/lists/pagination | Shared `TableContainer` horizontally scrolls; green-tinted head, 44px header cells, 10px uppercase labels, 12px cell padding, row hover canvas and selected lime faint (`src/shared/ui/table/Table.tsx`). Feature lists and pagination use local implementations; e.g. `TrainerExerciseLibraryPage.tsx`, `platform-operations.css`.                   |
+| Badges/status           | Shared `Badge` is min-height 24px, pill, 10px uppercase with `default`, `accent`, `neutral`, `destructive` (`src/shared/ui/badge/Badge.tsx`). Feature specific status chips/dots live in workout, dashboard, and operations CSS.                                                                                                                      |
+| Dialogs                 | Radix wrapper supplies `Dialog` primitives, fixed 60%-black blurred overlay, centered `max-w-lg` panel, close icon, lime header strip, responsive footer order (`src/shared/ui/dialog/Dialog.tsx`). Some dialogs add feature class names.                                                                                                             |
+| Dropdowns/tooltips      | Radix dropdown dependency is installed; a single documented global wrapper or tooltip component was **not found** in `src/shared/ui`. Collapsed sidebar uses native `title` and custom flyouts. Verify local code before implementing a new menu.                                                                                                     |
+| Feedback                | Sonner `Toaster` uses rich colors, top-right, 4000ms (`src/shared/ui/toast/Toaster.tsx`); shared `EmptyState` is a dashed bordered box with optional icon/action; shared `Skeleton` pulses on a muted surface. Full-page spinner and route loader are separate (`src/shared/ui/loading`, `member-layout.css`).                                        |
+| Metrics/progress        | Owner dashboard, Platform dashboard, Trainer workspace, Member dashboard and onboarding implement local metrics/status/progress. There is no one global metric-card or progress-bar primitive. Use the nearest product area.                                                                                                                          |
+| Images/avatars          | Shell avatar is a 34px circular initial or icon (`member-layout.css`); Marketplace gym card has a CSS visual; portraits and anatomy imagery have their own feature treatment. Do not infer one global crop rule.                                                                                                                                      |
 
 ## 9. Animation and Motion System
 
 The project uses CSS transitions/keyframes and Tailwind `tailwindcss-animate`. No Framer Motion dependency is declared. For Tailwind utilities such as `transition-colors`, duration/easing are Tailwind defaults unless an explicit utility is added; do not state a numeric duration for them based solely on the component class. The `tailwindcss-animate` classes in Dialog have an explicit `duration-200` on content, while overlay duration is not explicitly set in that component.
 
-| Interaction | Trigger | Visual change | Duration | Easing | Implementation reference |
-| --- | --- | --- | --- | --- | --- |
-| Desktop sidebar collapse | Toggle click | Sidebar 250→72px; content left padding tracks width | 500ms | `cubic-bezier(0.4,0,0.2,1)` | `member-layout.css` variables and width/padding transitions |
-| Sidebar labels hide/reveal | Collapse | Opacity/visibility | 230ms, reveal delay 120ms where declared | `ease` | `member-layout.css` |
-| Sidebar group/link hover | Pointer hover | Border/background/color | 160ms | `ease` | `member-layout.css` |
-| Group chevron | Expand/collapse | Rotate 180° | 180ms | `ease` | `member-layout.css` |
-| Mobile drawer | Menu click | Translate X into viewport | 220ms | `ease` | `member-layout.css` mobile rule |
-| Dialog entrance/exit | Radix state | Overlay fade; content fade and zoom 95→100% | Content 200ms; overlay exact duration **not verified** | Plugin default, **not verified** | `src/shared/ui/dialog/Dialog.tsx` |
-| Shared button/tab feedback | Hover/active | Colors or tab surface | Exact duration **not specified locally** | **Not specified locally** | `buttonVariants.ts`, `Tabs.tsx` |
-| Route loading | Suspense fallback | Spinner rotation | 900ms | linear, infinite | `member-layout.css` |
-| Workout skeleton | Loading state | Moving background gradient | 1.4s | ease-in-out, infinite | `workout-plans.css` |
-| Landing hover | Hover | Background/text color | 0.2s | Browser default timing for declaration | `landing.css` |
+| Interaction                | Trigger           | Visual change                                       | Duration                                               | Easing                                 | Implementation reference                                    |
+| -------------------------- | ----------------- | --------------------------------------------------- | ------------------------------------------------------ | -------------------------------------- | ----------------------------------------------------------- |
+| Desktop sidebar collapse   | Toggle click      | Sidebar 250→72px; content left padding tracks width | 500ms                                                  | `cubic-bezier(0.4,0,0.2,1)`            | `member-layout.css` variables and width/padding transitions |
+| Sidebar labels hide/reveal | Collapse          | Opacity/visibility                                  | 230ms, reveal delay 120ms where declared               | `ease`                                 | `member-layout.css`                                         |
+| Sidebar group/link hover   | Pointer hover     | Border/background/color                             | 160ms                                                  | `ease`                                 | `member-layout.css`                                         |
+| Group chevron              | Expand/collapse   | Rotate 180°                                         | 180ms                                                  | `ease`                                 | `member-layout.css`                                         |
+| Mobile drawer              | Menu click        | Translate X into viewport                           | 220ms                                                  | `ease`                                 | `member-layout.css` mobile rule                             |
+| Dialog entrance/exit       | Radix state       | Overlay fade; content fade and zoom 95→100%         | Content 200ms; overlay exact duration **not verified** | Plugin default, **not verified**       | `src/shared/ui/dialog/Dialog.tsx`                           |
+| Shared button/tab feedback | Hover/active      | Colors or tab surface                               | Exact duration **not specified locally**               | **Not specified locally**              | `buttonVariants.ts`, `Tabs.tsx`                             |
+| Route loading              | Suspense fallback | Spinner rotation                                    | 900ms                                                  | linear, infinite                       | `member-layout.css`                                         |
+| Workout skeleton           | Loading state     | Moving background gradient                          | 1.4s                                                   | ease-in-out, infinite                  | `workout-plans.css`                                         |
+| Landing hover              | Hover             | Background/text color                               | 0.2s                                                   | Browser default timing for declaration | `landing.css`                                               |
 
 Many feature sheets include `@media (prefers-reduced-motion: reduce)` to disable their own transitions or animations; the sidebar and workout skeleton explicitly do so. No single global reduced-motion rule was found, so audit each newly touched feature. Page-to-page transition animation is **not found** in the routing layer. Smooth scrolling is only feature specific (e.g. Platform gym operation honors reduced-motion preference); no universal scroll animation rule was found.
 
@@ -192,32 +192,32 @@ The main icon set is `lucide-react` (`package.json`). Shell group icons are comm
 
 Breakpoints are feature scoped, not one app-wide desktop/tablet/mobile taxonomy. Tailwind defaults apply to utility classes; `tailwind.config.ts` only customizes container `2xl` to 1400px.
 
-| Width/rule | Verified change | Source |
-| --- | --- | --- |
-| `min-width: 861px` | Role sidebar may collapse 250→72px and show flyouts | `member-layout.css` |
-| `max-width: 860px` | Mobile header, drawer/overlay, bottom nav where role renders it; desktop topbar hidden; main padding reset | `member-layout.css`, role layouts |
-| `max-width: 420px` | Role pill hidden; bottom labels 9px | `member-layout.css` |
-| `max-width: 1050px` / `700px` | Platform summary 4→2 columns; widget grid one column at 700px | `platform-dashboard.css` |
-| `max-width: 1120px` / `700px` | Owner analytics metrics 3 then 1 column; chart/table regions stack; controls widen | `gym-owner-analytics.css` |
-| `max-width: 1180px` / `820px` / `560px` | Marketplace grids and filters change per local CSS | `marketplace.css` |
-| `max-width: 1023px` / `480px` | Landing rearranges and tightens independently of portal shell | `landing.css` |
-| Other local thresholds | Owner dashboard 920/640; Trainer workspace 1180/1050/760/700; onboarding 920/900/640; workout 1180/860/600 | respective feature CSS |
+| Width/rule                              | Verified change                                                                                            | Source                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `min-width: 861px`                      | Role sidebar may collapse 250→72px and show flyouts                                                        | `member-layout.css`               |
+| `max-width: 860px`                      | Mobile header, drawer/overlay, bottom nav where role renders it; desktop topbar hidden; main padding reset | `member-layout.css`, role layouts |
+| `max-width: 420px`                      | Role pill hidden; bottom labels 9px                                                                        | `member-layout.css`               |
+| `max-width: 1050px` / `700px`           | Platform summary 4→2 columns; widget grid one column at 700px                                              | `platform-dashboard.css`          |
+| `max-width: 1120px` / `700px`           | Owner analytics metrics 3 then 1 column; chart/table regions stack; controls widen                         | `gym-owner-analytics.css`         |
+| `max-width: 1180px` / `820px` / `560px` | Marketplace grids and filters change per local CSS                                                         | `marketplace.css`                 |
+| `max-width: 1023px` / `480px`           | Landing rearranges and tightens independently of portal shell                                              | `landing.css`                     |
+| Other local thresholds                  | Owner dashboard 920/640; Trainer workspace 1180/1050/760/700; onboarding 920/900/640; workout 1180/860/600 | respective feature CSS            |
 
 At mobile widths, a desktop sidebar does not simply disappear: it becomes a drawer, and the available bottom destinations are role-specific. Some desktop-specific content may scroll horizontally or stack. Do not claim a feature has usable mobile behavior merely because a CSS breakpoint exists; no live mobile interaction audit was run.
 
 ## 14. Page Composition Patterns
 
-| Pattern | Implemented composition and reuse guidance |
-| --- | --- |
-| Public landing | Sticky 76px-minimum header, large responsive display headings, audience switch, green/outline CTA, editorial hero gradient and section boundaries. Reference `src/pages/public/LandingPage.tsx`, `src/features/landing/ui/landing.css`; use only for public marketing pages. |
-| Authentication | Pale background, centered `max-w-[420px]` form, large brand/title, 48px custom form controls, top back/language row and footer. Reference `AuthLayout.tsx`, `LoginForm.tsx`. |
-| Member overview | Content under Member shell; profile/plan summary, status accents, compact labels, seven-day volume display and action links. Reference `MemberDashboardPage.tsx`. |
-| Member list/search/detail | Marketplace page has its own padded light canvas, search/filter panel, result count, card grid, then gym/trainer detail and checkout routes. Reference `src/features/marketplace/ui` and `marketplace.css`. Workout plans have a separate feature system row, filters, featured plan and plan grid (`WorkoutPlans.tsx`, `workout-plans.css`). |
-| Trainer workspace | Centered 1160px or wide 1400px workspace, right-aligned context tools, metric strip, panels, mini charts, tables, member detail and plan builder. Reference `TrainerWorkspacePages.tsx`, `trainer-workspace.css`. PT dashboard route is currently only a coming-soon card (`PTDashboardPage.tsx`); it is not a visual template. |
-| Owner operational dashboard | Toolbar above two-column widget grid; cards have bordered headers, icon blocks and dense lists/metrics. Reference `GymOwnerDashboardPage.tsx`, `gym-owner-dashboard.css`, and shared `Workspace*`. |
-| Owner form/workflow | Onboarding progress/status strip, two-column forms, review groups, right-aligned actions, inline errors. Reference `src/features/gym-owner-onboarding/ui`. |
-| Owner analytics | Range selector, compact metric row, SVG trend/legend, detailed table and explicit data states. Reference `GymOwnerAnalyticsPage.tsx`, `AnalyticsTrendChart.tsx`, `gym-owner-analytics.css`. |
-| Platform overview/operations | 1380px max dashboard with four summary cells, queue widgets and customizable visibility; operation pages use bordered list/detail patterns. Reference `PlatformDashboardPage.tsx`, `platform-dashboard.css`, `src/features/platform-admin-operations/ui`. |
+| Pattern                      | Implemented composition and reuse guidance                                                                                                                                                                                                                                                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public landing               | Sticky 76px-minimum header, large responsive display headings, audience switch, green/outline CTA, editorial hero gradient and section boundaries. Reference `src/pages/public/LandingPage.tsx`, `src/features/landing/ui/landing.css`; use only for public marketing pages.                                                                  |
+| Authentication               | Pale background, centered `max-w-[420px]` form, large brand/title, 48px custom form controls, top back/language row and footer. Reference `AuthLayout.tsx`, `LoginForm.tsx`.                                                                                                                                                                  |
+| Member overview              | Content under Member shell; profile/plan summary, status accents, compact labels, seven-day volume display and action links. Reference `MemberDashboardPage.tsx`.                                                                                                                                                                             |
+| Member list/search/detail    | Marketplace page has its own padded light canvas, search/filter panel, result count, card grid, then gym/trainer detail and checkout routes. Reference `src/features/marketplace/ui` and `marketplace.css`. Workout plans have a separate feature system row, filters, featured plan and plan grid (`WorkoutPlans.tsx`, `workout-plans.css`). |
+| Trainer workspace            | Centered 1160px or wide 1400px workspace, right-aligned context tools, metric strip, panels, mini charts, tables, member detail and plan builder. Reference `TrainerWorkspacePages.tsx`, `trainer-workspace.css`. PT dashboard route is currently only a coming-soon card (`PTDashboardPage.tsx`); it is not a visual template.               |
+| Owner operational dashboard  | Toolbar above two-column widget grid; cards have bordered headers, icon blocks and dense lists/metrics. Reference `GymOwnerDashboardPage.tsx`, `gym-owner-dashboard.css`, and shared `Workspace*`.                                                                                                                                            |
+| Owner form/workflow          | Onboarding progress/status strip, two-column forms, review groups, right-aligned actions, inline errors. Reference `src/features/gym-owner-onboarding/ui`.                                                                                                                                                                                    |
+| Owner analytics              | Range selector, compact metric row, SVG trend/legend, detailed table and explicit data states. Reference `GymOwnerAnalyticsPage.tsx`, `AnalyticsTrendChart.tsx`, `gym-owner-analytics.css`.                                                                                                                                                   |
+| Platform overview/operations | 1380px max dashboard with four summary cells, queue widgets and customizable visibility; operation pages use bordered list/detail patterns. Reference `PlatformDashboardPage.tsx`, `platform-dashboard.css`, `src/features/platform-admin-operations/ui`.                                                                                     |
 
 For new pages, copy hierarchy and spacing from the nearest role/feature type, not business content. In most operational pages the page action or filter bar precedes bordered content. Heading placement varies by page; inspect the closest example rather than imposing the landing heading scale.
 
@@ -234,26 +234,26 @@ For new pages, copy hierarchy and spacing from the nearest role/feature type, no
 
 ## 16. Implementation Reference Index
 
-| File path | Responsibility | Relevant rules / reuse guidance |
-| --- | --- | --- |
-| `tailwind.config.ts` | Tailwind theme mappings | Use semantic color, font and radius aliases; default Tailwind spacing/breakpoints remain. |
-| `src/styles/globals.css` | Light/dark tokens, base body, attention utilities | First source for theme values. |
-| `index.html` | Font delivery | Be Vietnam Pro and IBM Plex Mono loading. |
-| `src/app/router/index.tsx` | Role route tree and lazy pages | Find actual shell/neighbor page before building. |
-| `src/shared/config/constants.ts` | Routes, storage keys, brand mark | Use existing route and brand naming. |
-| `src/shared/ui/button/buttonVariants.ts` | Shared button variants/sizes/states | Reuse exact CVA API. |
-| `src/shared/ui/card/Card.tsx` | Card anatomy and variants | Select default/panel/attention according to context. |
-| `src/shared/ui/workspace/Workspace.tsx` | Operational widths/panels | Prefer for Owner/Admin workspace pages where already used. |
-| `src/shared/ui/input/Input.tsx`, `src/shared/ui/select/Select.tsx`, `src/shared/ui/textarea/Textarea.tsx`, `src/shared/ui/checkbox/Checkbox.tsx` | Form controls | Preserve focus, invalid and disabled states. |
-| `src/shared/ui/tabs/Tabs.tsx`, `src/shared/ui/table/Table.tsx`, `src/shared/ui/badge/Badge.tsx`, `src/shared/ui/dialog/Dialog.tsx` | Shared data/navigation/overlay primitives | Use existing variants and Radix behavior. |
-| `src/shared/ui/empty/EmptyState.tsx`, `src/shared/ui/skeleton/Skeleton.tsx`, `src/shared/ui/toast/Toaster.tsx` | Empty/loading/toast feedback | Keep state hierarchy consistent. |
-| `src/shared/ui/sidebar-controls.tsx` | Collapse, search, flyout interaction | Preserve Escape/outside-click behavior. |
-| `src/pages/member/components/member-layout.css` | Shared role-shell geometry and motion | Source for sidebar/topbar/mobile measurements. |
-| `src/pages/member/components/MemberLayout.tsx`, `src/pages/pt/components/TrainerLayout.tsx`, `src/pages/admin/components/GymOwnerLayout.tsx`, `src/pages/superadmin/PlatformAdminLayout.tsx` | Role navigation and topbar | Reuse route-specific shell; inspect mobile actions. |
-| `src/pages/superadmin/platform-admin-layout.css` | Platform dark/mobile exceptions | Preserve explicit overrides. |
-| `src/features/landing/ui/landing.css`, `src/pages/auth/components/AuthLayout.tsx` | Public/auth compositions | Do not apply their decoration to portal pages. |
-| `src/features/workout-plans/ui/workout-plans.css`, `src/features/marketplace/ui/marketplace.css`, `src/pages/pt/workspace/trainer-workspace.css` | Feature-specific Member/Trainer languages | Use as nearest-page sources, not global tokens. |
-| `src/features/gym-owner-dashboard/ui/gym-owner-dashboard.css`, `src/features/gym-owner-analytics/ui/gym-owner-analytics.css`, `src/features/platform-admin-dashboard/ui/platform-dashboard.css` | Operational dashboard/data patterns | Copy hierarchy, breakpoints and data states for adjacent features. |
+| File path                                                                                                                                                                                       | Responsibility                                    | Relevant rules / reuse guidance                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `tailwind.config.ts`                                                                                                                                                                            | Tailwind theme mappings                           | Use semantic color, font and radius aliases; default Tailwind spacing/breakpoints remain. |
+| `src/styles/globals.css`                                                                                                                                                                        | Light/dark tokens, base body, attention utilities | First source for theme values.                                                            |
+| `index.html`                                                                                                                                                                                    | Font delivery                                     | Be Vietnam Pro and IBM Plex Mono loading.                                                 |
+| `src/app/router/index.tsx`                                                                                                                                                                      | Role route tree and lazy pages                    | Find actual shell/neighbor page before building.                                          |
+| `src/shared/config/constants.ts`                                                                                                                                                                | Routes, storage keys, brand mark                  | Use existing route and brand naming.                                                      |
+| `src/shared/ui/button/buttonVariants.ts`                                                                                                                                                        | Shared button variants/sizes/states               | Reuse exact CVA API.                                                                      |
+| `src/shared/ui/card/Card.tsx`                                                                                                                                                                   | Card anatomy and variants                         | Select default/panel/attention according to context.                                      |
+| `src/shared/ui/workspace/Workspace.tsx`                                                                                                                                                         | Operational widths/panels                         | Prefer for Owner/Admin workspace pages where already used.                                |
+| `src/shared/ui/input/Input.tsx`, `src/shared/ui/select/Select.tsx`, `src/shared/ui/textarea/Textarea.tsx`, `src/shared/ui/checkbox/Checkbox.tsx`                                                | Form controls                                     | Preserve focus, invalid and disabled states.                                              |
+| `src/shared/ui/tabs/Tabs.tsx`, `src/shared/ui/table/Table.tsx`, `src/shared/ui/badge/Badge.tsx`, `src/shared/ui/dialog/Dialog.tsx`                                                              | Shared data/navigation/overlay primitives         | Use existing variants and Radix behavior.                                                 |
+| `src/shared/ui/empty/EmptyState.tsx`, `src/shared/ui/skeleton/Skeleton.tsx`, `src/shared/ui/toast/Toaster.tsx`                                                                                  | Empty/loading/toast feedback                      | Keep state hierarchy consistent.                                                          |
+| `src/shared/ui/sidebar-controls.tsx`                                                                                                                                                            | Collapse, search, flyout interaction              | Preserve Escape/outside-click behavior.                                                   |
+| `src/pages/member/components/member-layout.css`                                                                                                                                                 | Shared role-shell geometry and motion             | Source for sidebar/topbar/mobile measurements.                                            |
+| `src/pages/member/components/MemberLayout.tsx`, `src/pages/pt/components/TrainerLayout.tsx`, `src/pages/admin/components/GymOwnerLayout.tsx`, `src/pages/superadmin/PlatformAdminLayout.tsx`    | Role navigation and topbar                        | Reuse route-specific shell; inspect mobile actions.                                       |
+| `src/pages/superadmin/platform-admin-layout.css`                                                                                                                                                | Platform dark/mobile exceptions                   | Preserve explicit overrides.                                                              |
+| `src/features/landing/ui/landing.css`, `src/pages/auth/components/AuthLayout.tsx`                                                                                                               | Public/auth compositions                          | Do not apply their decoration to portal pages.                                            |
+| `src/features/workout-plans/ui/workout-plans.css`, `src/features/marketplace/ui/marketplace.css`, `src/pages/pt/workspace/trainer-workspace.css`                                                | Feature-specific Member/Trainer languages         | Use as nearest-page sources, not global tokens.                                           |
+| `src/features/gym-owner-dashboard/ui/gym-owner-dashboard.css`, `src/features/gym-owner-analytics/ui/gym-owner-analytics.css`, `src/features/platform-admin-dashboard/ui/platform-dashboard.css` | Operational dashboard/data patterns               | Copy hierarchy, breakpoints and data states for adjacent features.                        |
 
 ## 17. New UI Generation Contract for Other AI Tools
 
