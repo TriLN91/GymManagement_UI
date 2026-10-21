@@ -366,6 +366,18 @@ export function GymOwnerTrainerListPage() {
               {openExceptions > 0 ? <Badge variant="destructive">{openExceptions}</Badge> : null}
             </Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link to={ROUTES.admin.trainerServices}>
+              <Plus aria-hidden="true" size={16} />
+              {isVi ? 'Dịch vụ Trainer' : 'Trainer services'}
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to={ROUTES.admin.invitations}>
+              <Mail aria-hidden="true" size={16} />
+              {isVi ? 'Mời nhân sự' : 'Invite staff'}
+            </Link>
+          </Button>
           <Button asChild>
             <Link to={ROUTES.admin.trainerCreate}>
               <Plus aria-hidden="true" size={16} />

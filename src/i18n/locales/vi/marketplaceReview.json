@@ -1,0 +1,17 @@
+{
+  "title": "Duyệt chi nhánh và gói tập",
+  "branches": "Chi nhánh chờ duyệt",
+  "offers": "Gói chờ duyệt",
+  "emptyBranches": "Không có chi nhánh nào chờ duyệt.",
+  "emptyOffers": "Không có gói nào chờ duyệt.",
+  "loading": "Đang tải…",
+  "loadFailed": "Không tải được danh sách.",
+  "approve": "Duyệt",
+  "reject": "Từ chối",
+  "confirmReject": "Xác nhận từ chối",
+  "back": "Quay lại",
+  "reason": "Lý do từ chối",
+  "approved": "Đã duyệt.",
+  "rejected": "Đã từ chối. Chủ phòng gym sẽ nhận được thông báo.",
+  "failed": "Có lỗi xảy ra. Vui lòng thử lại."
+}

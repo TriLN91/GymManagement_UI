@@ -2,3 +2,4 @@
 export * from './model/trainerExerciseModel';
 export * from './model/trainerText';
 export * from './model/useTrainerWorkspaceStore';
+export { AssignedMembersPanel } from './ui/AssignedMembersPanel';

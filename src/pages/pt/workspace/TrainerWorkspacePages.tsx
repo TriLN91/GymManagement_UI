@@ -14,7 +14,6 @@ import {
   Filter,
   History,
   Mail,
-  Pencil,
   Play,
   Plus,
   Save,
@@ -23,7 +22,6 @@ import {
   Trash2,
   UsersRound,
   Video,
-  X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,6 +37,7 @@ import {
 } from '@/features/member-workout-builder/model/muscleMapData';
 import { MaleAnatomyMuscleMap } from '@/features/member-workout-builder/ui/MaleAnatomyMuscleMap';
 import {
+  AssignedMembersPanel,
   getTrainerExercise,
   getTrainerMember,
   trainerExercises,
@@ -47,7 +46,6 @@ import {
   useTrainerText,
   useTrainerWorkspaceStore,
   weekdays,
-  type TrainerAppointment,
   type TrainerExercise,
   type TrainerPlanExercise,
   type TrainerWeekday,
@@ -340,6 +338,7 @@ export function TrainerMembersPage() {
   };
   return (
     <div className="trainer-workspace-page">
+      <AssignedMembersPanel />
       <section className="trainer-filter-panel">
         <label className="trainer-search">
           <Search size={16} />
@@ -1351,263 +1350,6 @@ export function TrainerMemberWorkoutPage() {
           </tbody>
         </table>
       </section>
-    </div>
-  );
-}
-
-const emptyAppointment = (): TrainerAppointment => ({
-  id: `appt-${Date.now()}`,
-  memberId: 'alex',
-  type: 'In-person training',
-  date: '2026-09-30',
-  time: '09:00',
-  duration: 60,
-  status: 'pending',
-  notes: '',
-});
-
-const appointmentMobileCopy = {
-  en: {
-    type: 'Type',
-    time: 'Time',
-    duration: 'Duration',
-    notes: 'Notes',
-    edit: 'Edit appointment',
-    minutes: 'min',
-  },
-  vi: {
-    type: 'Loại lịch',
-    time: 'Thời gian',
-    duration: 'Thời lượng',
-    notes: 'Ghi chú',
-    edit: 'Chỉnh sửa lịch hẹn',
-    minutes: 'phút',
-  },
-} as const;
-
-export function TrainerAppointmentsPage() {
-  const { t } = useTranslation();
-  const tr = useTrainerText();
-  const { language: lang } = useLocale();
-  const mobileCopy = appointmentMobileCopy[lang];
-  const appointments = useTrainerWorkspaceStore((state) => state.appointments);
-  const saveAppointment = useTrainerWorkspaceStore((state) => state.saveAppointment);
-  const [editing, setEditing] = useState<TrainerAppointment | null>(null);
-  const save = () => {
-    if (!editing) return;
-    saveAppointment(editing);
-    setEditing(null);
-    toast.success(t('trainer:trainerWorkspacePages.appointmentSaved'));
-  };
-  return (
-    <div className="trainer-workspace-page">
-      <div className="trainer-context-tools">
-        <button
-          className="trainer-primary-action"
-          type="button"
-          onClick={() => setEditing(emptyAppointment())}
-        >
-          <Plus size={15} />
-          {tr('Create appointment')}
-        </button>
-      </div>
-      <section className="trainer-table-panel trainer-appointments-table" aria-label="Appointments">
-        <table>
-          <thead>
-            <tr>
-              <th>{tr('Member')}</th>
-              <th>{tr('Type')}</th>
-              <th>{tr('Date')}</th>
-              <th>{tr('Time')}</th>
-              <th>{tr('Duration')}</th>
-              <th>{tr('Status')}</th>
-              <th>{tr('Notes')}</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.id}>
-                <td>
-                  <strong>{getTrainerMember(appointment.memberId)?.name}</strong>
-                </td>
-                <td>{tr(appointment.type)}</td>
-                <td>{appointment.date}</td>
-                <td>{appointment.time}</td>
-                <td>{appointment.duration} min</td>
-                <td>
-                  <StatusBadge status={appointment.status} />
-                </td>
-                <td>{tr(appointment.notes)}</td>
-                <td>
-                  <button
-                    type="button"
-                    onClick={() => setEditing(appointment)}
-                    aria-label={tr('Edit appointment')}
-                  >
-                    <Pencil size={14} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <section className="trainer-appointment-mobile-list" aria-label="Appointments">
-        {appointments.map((appointment) => (
-          <article key={appointment.id}>
-            <header>
-              <div>
-                <span>{getTrainerMember(appointment.memberId)?.name}</span>
-                <small>{appointment.type}</small>
-              </div>
-              <StatusBadge status={appointment.status} />
-            </header>
-            <dl>
-              <div>
-                <dt>{mobileCopy.time}</dt>
-                <dd>
-                  <time dateTime={`${appointment.date}T${appointment.time}`}>
-                    {appointment.date} · {appointment.time}
-                  </time>
-                </dd>
-              </div>
-              <div>
-                <dt>{mobileCopy.duration}</dt>
-                <dd>
-                  {appointment.duration} {mobileCopy.minutes}
-                </dd>
-              </div>
-            </dl>
-            {appointment.notes ? (
-              <p>
-                <span>{mobileCopy.notes}</span>
-                {appointment.notes}
-              </p>
-            ) : null}
-            <button
-              type="button"
-              className="trainer-appointment-mobile-edit"
-              onClick={() => setEditing(appointment)}
-              aria-label={mobileCopy.edit}
-            >
-              <Pencil size={14} />
-              {mobileCopy.edit}
-            </button>
-          </article>
-        ))}
-      </section>
-      {editing && (
-        <div className="trainer-modal-backdrop" role="presentation">
-          <section
-            className="trainer-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="appointment-title"
-          >
-            <header>
-              <div>
-                <span>{tr('APPOINTMENT')}</span>
-                <h2 id="appointment-title">
-                  {appointments.some((item) => item.id === editing.id)
-                    ? 'Update appointment'
-                    : 'Create appointment'}
-                </h2>
-              </div>
-              <button type="button" onClick={() => setEditing(null)} aria-label={tr('Close')}>
-                <X />
-              </button>
-            </header>
-            <div className="trainer-modal-grid">
-              <label>
-                <span>{tr('Member')}</span>
-                <select
-                  value={editing.memberId}
-                  onChange={(event) => setEditing({ ...editing, memberId: event.target.value })}
-                >
-                  {trainerMembers.map((member) => (
-                    <option value={member.id} key={member.id}>
-                      {member.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>{tr('Appointment type')}</span>
-                <select
-                  value={editing.type}
-                  onChange={(event) => setEditing({ ...editing, type: event.target.value })}
-                >
-                  <option value="In-person training">{tr('In-person training')}</option>
-                  <option value="Video check-in">{tr('Video check-in')}</option>
-                  <option value="Body assessment">{tr('Body assessment')}</option>
-                </select>
-              </label>
-              <label>
-                <span>{tr('Date')}</span>
-                <input
-                  type="date"
-                  value={editing.date}
-                  onChange={(event) => setEditing({ ...editing, date: event.target.value })}
-                />
-              </label>
-              <label>
-                <span>{tr('Time')}</span>
-                <input
-                  type="time"
-                  value={editing.time}
-                  onChange={(event) => setEditing({ ...editing, time: event.target.value })}
-                />
-              </label>
-              <label>
-                <span>{tr('Duration')}</span>
-                <input
-                  type="number"
-                  min="15"
-                  step="15"
-                  value={editing.duration}
-                  onChange={(event) =>
-                    setEditing({ ...editing, duration: Number(event.target.value) })
-                  }
-                />
-              </label>
-              <label>
-                <span>{tr('Status')}</span>
-                <select
-                  value={editing.status}
-                  onChange={(event) =>
-                    setEditing({
-                      ...editing,
-                      status: event.target.value as TrainerAppointment['status'],
-                    })
-                  }
-                >
-                  <option value="pending">{tr('Pending')}</option>
-                  <option value="confirmed">{tr('Confirmed')}</option>
-                  <option value="completed">{tr('Completed')}</option>
-                  <option value="cancelled">{tr('Cancelled')}</option>
-                </select>
-              </label>
-              <label className="is-full">
-                <span>{tr('Notes')}</span>
-                <textarea
-                  value={editing.notes}
-                  onChange={(event) => setEditing({ ...editing, notes: event.target.value })}
-                />
-              </label>
-            </div>
-            <footer>
-              <button type="button" onClick={() => setEditing(null)}>
-                {tr('Cancel')}
-              </button>
-              <button type="button" className="is-primary" onClick={save}>
-                <Save size={15} />
-                {tr('Save appointment')}
-              </button>
-            </footer>
-          </section>
-        </div>
-      )}
     </div>
   );
 }

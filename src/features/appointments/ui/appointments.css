@@ -1,0 +1,131 @@
+.appointments-page {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.appointment-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.appointment-packages {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appointment-package {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+}
+
+.appointment-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.875rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+}
+
+.appointment-card > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.appointment-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.appointment-card p {
+  margin: 0;
+}
+
+.appointment-card.is-cancelled,
+.appointment-card.is-noshow {
+  opacity: 0.8;
+}
+
+.appointment-status {
+  align-self: flex-start;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: hsl(var(--muted));
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.appointment-note,
+.appointment-hint {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+.appointment-change {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  background: hsl(var(--muted));
+}
+
+.appointment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.appointment-form {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.appointment-form label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.appointment-form label.appointment-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.appointment-propose {
+  padding: 0.875rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+}
+
+.appointment-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.appointment-slot label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.appointment-trainer-change {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+}

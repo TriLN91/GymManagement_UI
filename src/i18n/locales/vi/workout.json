@@ -368,5 +368,32 @@
     "title": "Bài tập bổ sung",
     "accounting": "Không tính vào tiến độ kế hoạch AI/PT",
     "unavailable": "Buổi bổ sung có bài tập hoặc kiểu theo dõi API hiện chưa hỗ trợ. Bản đã lưu được giữ nguyên; hãy kiểm tra trước khi bắt đầu."
+  },
+  "myPlans": {
+    "title": "Plan của bạn",
+    "count": "Tổng: {{count}}",
+    "version": "Phiên bản {{number}}",
+    "open": "đang áp dụng",
+    "byTrainer": "do Trainer phụ trách",
+    "summary": "{{days}} ngày, {{exercises}} bài",
+    "status": {
+      "Draft": "Nháp",
+      "Active": "Đang áp dụng",
+      "Superseded": "Đã thay thế",
+      "Archived": "Đã lưu trữ"
+    }
+  },
+  "correction": {
+    "edit": "Sửa buổi tập",
+    "save": "Lưu thay đổi",
+    "cancel": "Huỷ",
+    "saved": "Đã sửa buổi tập.",
+    "windowClosed": "Chỉ sửa được trong ngày tập. Buổi này đã quá hạn sửa.",
+    "stale": "Buổi tập vừa được cập nhật ở nơi khác. Hãy tải lại rồi sửa lại.",
+    "failed": "Không sửa được buổi tập. Vui lòng thử lại.",
+    "reps": "Số lần hiệp {{set}}",
+    "weight": "Mức tạ hiệp {{set}} (kg)",
+    "duration": "Thời gian hiệp {{set}} (giây)",
+    "hint": "Chỉ sửa được trong ngày tập."
   }
 }

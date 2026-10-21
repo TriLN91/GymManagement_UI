@@ -280,6 +280,23 @@
   font-size: 13px;
   font-weight: 700;
 }
+.profile-choice-grid.is-described {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.profile-choice small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(21, 62, 47, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.profile-hint {
+  margin: 0 0 10px;
+  color: rgba(21, 62, 47, 0.7);
+  font-size: 12px;
+  line-height: 1.5;
+}
 .profile-choice:hover,
 .profile-choice.is-selected {
   border-color: #86aa25;

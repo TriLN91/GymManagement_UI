@@ -22,8 +22,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { ChangePasswordDialog } from '@/features/auth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
-import { ChangePasswordDialog } from '@/features/auth/ui/ChangePasswordDialog';
 import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
 import { getGym } from '@/features/marketplace/model/marketplaceData';
 import { useTrainerProfileStore } from '@/features/trainer-profile';

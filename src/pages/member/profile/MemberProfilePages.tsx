@@ -15,8 +15,6 @@ import {
   EyeOff,
   HeartPulse,
   Laptop,
-  LockKeyhole,
-  MapPin,
   RefreshCw,
   ScanLine,
   ShieldCheck,
@@ -33,7 +31,6 @@ import { completedAssessments, trainerAppointments } from './memberProfileData';
 import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
-import { marketplaceApi } from '@/features/marketplace';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { useMemberProfileStore } from '@/features/member-profile';
 import { ROUTES } from '@/shared/config/constants';
@@ -788,189 +785,6 @@ export function AssessmentDetailPage() {
           </>
         )
       )}
-    </div>
-  );
-}
-
-export function PTAppointmentsPage() {
-  const { copy, language, locale } = useProfileCopy();
-  const [selected, setSelected] = useState(trainerAppointments[0]?.id ?? '');
-  const [reassignStatus, setReassignStatus] = useState<Record<string, 'accepted' | 'declined'>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const appointment = trainerAppointments.find((item) => item.id === selected);
-
-  const handleConsent = async (appointmentId: string, accept: boolean) => {
-    setIsSubmitting(true);
-    try {
-      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(appointmentId)) {
-        const res = await marketplaceApi.consentReassign(appointmentId, accept);
-        toast.success(
-          accept
-            ? `Đã đồng ý HLV ${res.currentTrainerName} thay thế.`
-            : 'Đã từ chối; buổi tập đã được hủy và hoàn trả vào quỹ buổi của bạn.',
-        );
-      } else {
-        toast.success(
-          accept
-            ? 'Đã đồng ý nhận huấn luyện viên thay thế thành công.'
-            : 'Đã từ chối đổi huấn luyện viên; buổi tập được hoàn trả.',
-        );
-      }
-      setReassignStatus((prev) => ({ ...prev, [appointmentId]: accept ? 'accepted' : 'declined' }));
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Xử lý thất bại';
-      toast.error(msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="member-profile-page">
-      <ProfileActions>
-        <span className="profile-readonly-pill">
-          <LockKeyhole size={14} />
-          {copy.readOnly}
-        </span>
-      </ProfileActions>
-      <div className="appointment-layout">
-        <section className="appointment-list">
-          <h2>{copy.upcoming}</h2>
-          {trainerAppointments.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={cn(item.id === selected && 'is-selected')}
-              onClick={() => setSelected(item.id)}
-            >
-              <time>
-                <strong>{new Date(item.startsAt).getDate()}</strong>
-                <span>
-                  {new Intl.DateTimeFormat(locale, {
-                    month: 'short',
-                  }).format(new Date(item.startsAt))}
-                </span>
-              </time>
-              <div>
-                <strong>{copy.appointmentTypes[item.type]}</strong>
-                <span>{item.trainerName}</span>
-                <small>{formatDate(item.startsAt, locale, true)}</small>
-              </div>
-              <em className={`is-${item.status}`}>
-                {item.status === 'confirmed' ? copy.confirmed : copy.waiting}
-              </em>
-            </button>
-          ))}
-        </section>
-        {appointment && (
-          <aside className="appointment-detail">
-            <Avatar name={appointment.trainerName} />
-            <span>{copy.trainerBadge}</span>
-            <h2>{appointment.trainerName}</h2>
-            <p>{appointment.note[language]}</p>
-            <dl>
-              <div>
-                <dt>
-                  <CalendarDays size={16} />
-                  {copy.appointments}
-                </dt>
-                <dd>{formatDate(appointment.startsAt, locale, true)}</dd>
-              </div>
-              <div>
-                <dt>
-                  <Clock3 size={16} />
-                  {copy.duration}
-                </dt>
-                <dd>{appointment.durationMinutes} min</dd>
-              </div>
-              <div>
-                <dt>
-                  <MapPin size={16} />
-                  Location
-                </dt>
-                <dd>{appointment.location[language]}</dd>
-              </div>
-            </dl>
-
-            {/* CF03 Reassignment Consent Flow */}
-            {(appointment.id === 'appointment-linh-02' ||
-              Boolean((appointment as unknown as { isReassigned?: boolean }).isReassigned)) && (
-              <div
-                style={{
-                  marginTop: 16,
-                  padding: 16,
-                  borderRadius: 8,
-                  border: '1px solid var(--energy-lime)',
-                  background: 'var(--energy-lime-faint)',
-                }}
-              >
-                <strong style={{ display: 'block', marginBottom: 4, color: 'var(--brand)' }}>
-                  ⚠️ Đề xuất đổi Huấn luyện viên (CF03)
-                </strong>
-                <p style={{ fontSize: '0.875rem', marginBottom: 12 }}>
-                  HLV {appointment.trainerName} bận lịch đột xuất. Chi nhánh FitFlex đề xuất chuyển
-                  sang{' '}
-                  <strong>
-                    {(appointment as unknown as { currentTrainerName?: string })
-                      .currentTrainerName || 'HLV Minh Trần (Rating 4.9⭐)'}
-                  </strong>{' '}
-                  tiếp quản buổi tập này.
-                </p>
-                {reassignStatus[appointment.id] ? (
-                  <span
-                    style={{
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      color: reassignStatus[appointment.id] === 'accepted' ? '#1c6a5b' : '#b42318',
-                    }}
-                  >
-                    {reassignStatus[appointment.id] === 'accepted'
-                      ? '✓ Bạn đã đồng ý HLV thay thế'
-                      : '✕ Bạn đã từ chối đổi HLV (Đã hoàn 1 buổi)'}
-                  </span>
-                ) : (
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={() => handleConsent(appointment.id, true)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 6,
-                        background: 'var(--brand)',
-                        color: '#fff',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        border: 'none',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Đồng ý PT mới
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={() => handleConsent(appointment.id, false)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: 6,
-                        background: 'transparent',
-                        color: 'var(--text-muted)',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        border: '1px solid var(--outline)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Từ chối & Hoàn buổi
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </aside>
-        )}
-      </div>
     </div>
   );
 }

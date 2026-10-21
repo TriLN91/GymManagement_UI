@@ -24,10 +24,10 @@ import {
   calculateProfileReadiness,
   estimateEnergy,
   getInjuryAdvice,
+  useHydrateFitnessProfile,
   useProfileSetupStore,
   useSyncFitnessProfile,
   type MemberFitnessProfile,
-  type TernaryAnswer,
   type YesNoAnswer,
 } from '@/features/member-fitness';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
@@ -36,7 +36,7 @@ import { cn } from '@/shared/lib/cn';
 
 import './profile-setup.css';
 
-type Option = { value: string; label: string };
+type Option = { value: string; label: string; hint?: string };
 
 function getCopy(t: TFunction) {
   return {
@@ -59,9 +59,7 @@ function getCopy(t: TFunction) {
       rest: t('memberProfile:profileSetup.copy.injuryAdvice.rest'),
     },
     units: {
-      days: t('memberProfile:profileSetup.copy.units.days'),
       min: t('memberProfile:profileSetup.copy.units.min'),
-      hours: t('memberProfile:profileSetup.copy.units.hours'),
     },
     healthNotice: {
       lead: t('memberProfile:profileSetup.copy.healthNotice.lead'),
@@ -96,10 +94,6 @@ function getCopy(t: TFunction) {
         t('memberProfile:profileSetup.copy.steps.5.0'),
         t('memberProfile:profileSetup.copy.steps.5.1'),
       ],
-      [
-        t('memberProfile:profileSetup.copy.steps.6.0'),
-        t('memberProfile:profileSetup.copy.steps.6.1'),
-      ],
     ],
     sections: {
       body: [
@@ -121,10 +115,6 @@ function getCopy(t: TFunction) {
       training: [
         t('memberProfile:profileSetup.copy.sections.training.0'),
         t('memberProfile:profileSetup.copy.sections.training.1'),
-      ],
-      recovery: [
-        t('memberProfile:profileSetup.copy.sections.recovery.0'),
-        t('memberProfile:profileSetup.copy.sections.recovery.1'),
       ],
       review: [
         t('memberProfile:profileSetup.copy.sections.review.0'),
@@ -149,20 +139,8 @@ function getCopy(t: TFunction) {
       lowerBody: t('memberProfile:profileSetup.copy.fields.lowerBody'),
       experience: t('memberProfile:profileSetup.copy.fields.experience'),
       activityLevel: t('memberProfile:profileSetup.copy.fields.activityLevel'),
-      cardioDays: t('memberProfile:profileSetup.copy.fields.cardioDays'),
-      cardioMinutes: t('memberProfile:profileSetup.copy.fields.cardioMinutes'),
-      strengthDays: t('memberProfile:profileSetup.copy.fields.strengthDays'),
       availableDays: t('memberProfile:profileSetup.copy.fields.availableDays'),
       session: t('memberProfile:profileSetup.copy.fields.session'),
-      environments: t('memberProfile:profileSetup.copy.fields.environments'),
-      equipment: t('memberProfile:profileSetup.copy.fields.equipment'),
-      preferred: t('memberProfile:profileSetup.copy.fields.preferred'),
-      avoided: t('memberProfile:profileSetup.copy.fields.avoided'),
-      sleep: t('memberProfile:profileSetup.copy.fields.sleep'),
-      stress: t('memberProfile:profileSetup.copy.fields.stress'),
-      work: t('memberProfile:profileSetup.copy.fields.work'),
-      smoking: t('memberProfile:profileSetup.copy.fields.smoking'),
-      alcohol: t('memberProfile:profileSetup.copy.fields.alcohol'),
     },
     yes: t('memberProfile:profileSetup.copy.yes'),
     no: t('memberProfile:profileSetup.copy.no'),
@@ -242,14 +220,18 @@ function ChoiceGrid({
   value,
   onChange,
   compact,
+  described,
 }: {
   options: Option[];
   value: string;
   onChange: (value: string) => void;
   compact?: boolean;
+  described?: boolean;
 }) {
   return (
-    <div className={cn('profile-choice-grid', compact && 'is-compact')}>
+    <div
+      className={cn('profile-choice-grid', compact && 'is-compact', described && 'is-described')}
+    >
       {options.map((option) => (
         <button
           type="button"
@@ -257,7 +239,10 @@ function ChoiceGrid({
           onClick={() => onChange(option.value)}
           key={option.value}
         >
-          <span>{option.label}</span>
+          <span>
+            {option.label}
+            {option.hint ? <small>{option.hint}</small> : null}
+          </span>
           {value === option.value && <Check size={16} />}
         </button>
       ))}
@@ -297,31 +282,6 @@ function ChipGroup({
   );
 }
 
-function Ternary({
-  value,
-  onChange,
-  labels,
-}: {
-  value: TernaryAnswer;
-  onChange: (value: TernaryAnswer) => void;
-  labels: [string, string, string];
-}) {
-  return (
-    <div className="profile-ternary">
-      {(['yes', 'no', 'unsure'] as TernaryAnswer[]).map((answer, index) => (
-        <button
-          type="button"
-          key={answer}
-          className={cn(value === answer && 'is-selected')}
-          onClick={() => onChange(answer)}
-        >
-          {labels[index]}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function SectionHeader({ title, body }: { title: string; body: string }) {
   return (
     <header className="profile-section-header">
@@ -335,6 +295,9 @@ function parseNumber(value: string) {
   return value === '' ? null : Number(value);
 }
 
+/** Steps: 0 notice, 1 body, 2 goals, 3 movement, 4 training, 5 review (with consents). */
+const LAST_STEP = 5;
+
 export function ProfileSetupPage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -346,6 +309,7 @@ export function ProfileSetupPage() {
   const setStep = useProfileSetupStore((state) => state.setCurrentStep);
   const completeProfile = useProfileSetupStore((state) => state.completeProfile);
   const syncProfile = useSyncFitnessProfile();
+  useHydrateFitnessProfile();
   const readiness = useMemo(() => calculateProfileReadiness(profile), [profile]);
   const setSection = <K extends keyof MemberFitnessProfile>(
     section: K,
@@ -370,20 +334,13 @@ export function ProfileSetupPage() {
       return false;
     if (
       index === 4 &&
-      (!training.experience ||
-        training.availableDays.length === 0 ||
-        !training.sessionMinutes ||
-        training.environments.length === 0)
+      (!training.experience || training.availableDays.length === 0 || !training.sessionMinutes)
     )
       return false;
+    // The last step is the review, where the member confirms the consents.
     if (
-      index === 5 &&
-      (!profile.recovery.sleepHours ||
-        !profile.recovery.stressLevel ||
-        !profile.recovery.workPattern ||
-        !profile.recovery.smoking ||
-        !profile.consent.dataAccuracy ||
-        !profile.consent.screeningAcknowledged)
+      index === LAST_STEP &&
+      (!profile.consent.dataAccuracy || !profile.consent.screeningAcknowledged)
     )
       return false;
     return true;
@@ -393,7 +350,7 @@ export function ProfileSetupPage() {
       toast.error(copy.required);
       return;
     }
-    setStep(Math.min(6, step + 1));
+    setStep(Math.min(LAST_STEP, step + 1));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -415,7 +372,7 @@ export function ProfileSetupPage() {
               key={title}
               className={cn(
                 index === step && 'is-active',
-                index !== step && index < 6 && isStepValid(index) && 'is-complete',
+                index !== step && index < LAST_STEP && isStepValid(index) && 'is-complete',
               )}
               onClick={() => {
                 setStep(index);
@@ -423,7 +380,7 @@ export function ProfileSetupPage() {
               }}
             >
               <span>
-                {index !== step && index < 6 && isStepValid(index) ? (
+                {index !== step && index < LAST_STEP && isStepValid(index) ? (
                   <Check size={14} />
                 ) : (
                   index + 1
@@ -446,8 +403,14 @@ export function ProfileSetupPage() {
           {step === 4 && (
             <TrainingStep copy={copy} isVi={isVi} profile={profile} setSection={setSection} />
           )}
-          {step === 5 && <RecoveryStep copy={copy} profile={profile} setSection={setSection} />}
-          {step === 6 && <ReviewStep copy={copy} profile={profile} readiness={readiness} />}
+          {step === LAST_STEP && (
+            <ReviewStep
+              copy={copy}
+              profile={profile}
+              readiness={readiness}
+              setSection={setSection}
+            />
+          )}
           <footer className="profile-form-actions">
             <button
               type="button"
@@ -457,7 +420,7 @@ export function ProfileSetupPage() {
             >
               <ChevronLeft size={17} /> {copy.previous}
             </button>
-            {step < 6 ? (
+            {step < LAST_STEP ? (
               <button type="button" className="is-primary" onClick={next}>
                 {copy.next} <ArrowRight size={17} />
               </button>
@@ -467,7 +430,9 @@ export function ProfileSetupPage() {
                 className="is-primary"
                 onClick={() => {
                   // Steps can be filled in any order, so check every required step before saving.
-                  const firstInvalid = [0, 1, 2, 3, 4, 5].find((index) => !isStepValid(index));
+                  const firstInvalid = [0, 1, 2, 3, 4, LAST_STEP].find(
+                    (index) => !isStepValid(index),
+                  );
                   if (firstInvalid !== undefined) {
                     toast.error(copy.required);
                     setStep(firstInvalid);
@@ -608,13 +573,30 @@ function BodyStep({
         />
       </div>
       <Block title={copy.fields.activityLevel}>
+        <p className="profile-hint">{t('memberProfile:profileSetup.activityNote')}</p>
         <ChoiceGrid
-          compact
+          described
           options={[
-            { value: 'sedentary', label: t('memberProfile:profileSetup.sedentary') },
-            { value: 'light', label: t('memberProfile:profileSetup.lightlyActive') },
-            { value: 'moderate', label: t('memberProfile:profileSetup.moderatelyActive') },
-            { value: 'high', label: t('memberProfile:profileSetup.highlyActive') },
+            {
+              value: 'sedentary',
+              label: t('memberProfile:profileSetup.sedentary'),
+              hint: t('memberProfile:profileSetup.activityHints.sedentary'),
+            },
+            {
+              value: 'light',
+              label: t('memberProfile:profileSetup.lightlyActive'),
+              hint: t('memberProfile:profileSetup.activityHints.light'),
+            },
+            {
+              value: 'moderate',
+              label: t('memberProfile:profileSetup.moderatelyActive'),
+              hint: t('memberProfile:profileSetup.activityHints.moderate'),
+            },
+            {
+              value: 'high',
+              label: t('memberProfile:profileSetup.highlyActive'),
+              hint: t('memberProfile:profileSetup.activityHints.high'),
+            },
           ]}
           value={data.activityLevel}
           onChange={(activityLevel) =>
@@ -751,24 +733,6 @@ function HealthNoticeStep({ copy }: { copy: Copy }) {
   );
 }
 
-function TextField({
-  label,
-  value,
-  onChange,
-  optional,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  optional?: string;
-}) {
-  return (
-    <Field label={label} optional={optional}>
-      <textarea value={value} onChange={(e) => onChange(e.target.value)} />
-    </Field>
-  );
-}
-
 function YesNo({
   value,
   onChange,
@@ -852,14 +816,6 @@ function TrainingStep({
 }) {
   const { t } = useTranslation();
   const data = profile.training;
-  const equipment: Option[] = toOptions([
-    ['bodyweight', t('memberProfile:profileSetup.bodyweight')],
-    ['dumbbells', t('memberProfile:profileSetup.dumbbells')],
-    ['barbell', t('memberProfile:profileSetup.barbell')],
-    ['machines', t('memberProfile:profileSetup.machines')],
-    ['bands', t('memberProfile:profileSetup.bands')],
-    ['cardio', t('memberProfile:profileSetup.cardioMachines')],
-  ]);
   return (
     <>
       <SectionHeader
@@ -889,35 +845,6 @@ function TrainingStep({
           }
         />
       </Block>
-      <div className="profile-form-grid is-three">
-        <UnitNumber
-          label={copy.fields.cardioDays}
-          unit={copy.units.days}
-          optional={copy.optional}
-          value={data.cardioDays}
-          min={0}
-          max={7}
-          onChange={(v) => setSection('training', { ...data, cardioDays: parseNumber(v) })}
-        />
-        <UnitNumber
-          label={copy.fields.cardioMinutes}
-          unit={copy.units.min}
-          optional={copy.optional}
-          value={data.cardioMinutes}
-          min={0}
-          max={300}
-          onChange={(v) => setSection('training', { ...data, cardioMinutes: parseNumber(v) })}
-        />
-        <UnitNumber
-          label={copy.fields.strengthDays}
-          unit={copy.units.days}
-          optional={copy.optional}
-          value={data.strengthDays}
-          min={0}
-          max={7}
-          onChange={(v) => setSection('training', { ...data, strengthDays: parseNumber(v) })}
-        />
-      </div>
       <Block title={copy.fields.availableDays}>
         <ChipGroup
           options={days(isVi)}
@@ -941,148 +868,6 @@ function TrainingStep({
           }
         />
       </Block>
-      <div className="profile-form-grid">
-        <Block title={copy.fields.environments}>
-          <ChipGroup
-            options={[
-              { value: 'gym', label: t('memberProfile:profileSetup.gym') },
-              { value: 'home', label: t('memberProfile:profileSetup.home') },
-              { value: 'outdoor', label: t('memberProfile:profileSetup.outdoor') },
-            ]}
-            values={data.environments}
-            onChange={(environments) => setSection('training', { ...data, environments })}
-          />
-        </Block>
-        <Block title={copy.fields.equipment} note={copy.optional}>
-          <ChipGroup
-            options={equipment}
-            values={data.equipment}
-            onChange={(equipmentValues) =>
-              setSection('training', { ...data, equipment: equipmentValues })
-            }
-          />
-        </Block>
-        <TextField
-          label={copy.fields.preferred}
-          value={data.preferredExercises}
-          onChange={(preferredExercises) => setSection('training', { ...data, preferredExercises })}
-          optional={copy.optional}
-        />
-        <TextField
-          label={copy.fields.avoided}
-          value={data.avoidedExercises}
-          onChange={(avoidedExercises) => setSection('training', { ...data, avoidedExercises })}
-          optional={copy.optional}
-        />
-      </div>
-    </>
-  );
-}
-
-function RecoveryStep({
-  copy,
-  profile,
-  setSection,
-}: {
-  copy: Copy;
-  profile: MemberFitnessProfile;
-  setSection: SetSection;
-}) {
-  const { t } = useTranslation();
-  const data = profile.recovery;
-  return (
-    <>
-      <SectionHeader
-        title={copy.sections.recovery[0] ?? ''}
-        body={copy.sections.recovery[1] ?? ''}
-      />
-      <div className="profile-form-grid">
-        <UnitNumber
-          label={copy.fields.sleep}
-          unit={copy.units.hours}
-          value={data.sleepHours}
-          min={2}
-          max={14}
-          step="0.5"
-          onChange={(v) => setSection('recovery', { ...data, sleepHours: parseNumber(v) })}
-        />
-        <Field label={copy.fields.alcohol} optional={copy.optional}>
-          <input
-            type="number"
-            min="0"
-            max="50"
-            value={data.alcoholPerWeek ?? ''}
-            onChange={(e) =>
-              setSection('recovery', { ...data, alcoholPerWeek: parseNumber(e.target.value) })
-            }
-          />
-        </Field>
-      </div>
-      <Block title={copy.fields.stress}>
-        <ChoiceGrid
-          compact
-          options={[1, 2, 3, 4, 5].map((value) => ({
-            value: String(value),
-            label: `${value} · ${[t('memberProfile:profileSetup.recoveryStep.0'), t('memberProfile:profileSetup.recoveryStep.1'), t('memberProfile:profileSetup.recoveryStep.2'), t('memberProfile:profileSetup.recoveryStep.3'), t('memberProfile:profileSetup.recoveryStep.4')][value - 1]}`,
-          }))}
-          value={String(data.stressLevel ?? '')}
-          onChange={(value) =>
-            setSection('recovery', {
-              ...data,
-              stressLevel: Number(value) as typeof data.stressLevel,
-            })
-          }
-        />
-      </Block>
-      <Block title={copy.fields.work}>
-        <ChoiceGrid
-          compact
-          options={[
-            { value: 'mostly_sitting', label: t('memberProfile:profileSetup.mostlySitting') },
-            { value: 'mixed', label: t('memberProfile:profileSetup.mixed') },
-            { value: 'mostly_active', label: t('memberProfile:profileSetup.mostlyActive') },
-            { value: 'shift_work', label: t('memberProfile:profileSetup.shiftWork') },
-          ]}
-          value={data.workPattern}
-          onChange={(workPattern) =>
-            setSection('recovery', { ...data, workPattern: workPattern as typeof data.workPattern })
-          }
-        />
-      </Block>
-      <div className="profile-feature-question">
-        <div>
-          <CircleAlert size={22} />
-          <strong>{copy.fields.smoking}</strong>
-        </div>
-        <Ternary
-          value={data.smoking}
-          labels={[copy.yes, copy.no, copy.unsure]}
-          onChange={(smoking) => setSection('recovery', { ...data, smoking })}
-        />
-      </div>
-      <section className="profile-consent">
-        <h3>
-          <ShieldCheck size={19} /> {copy.privacyTitle}
-        </h3>
-        {(
-          [
-            ['shareWithAssignedTrainer', copy.shareTrainer],
-            ['dataAccuracy', copy.accuracy],
-            ['screeningAcknowledged', copy.screeningConsent],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key}>
-            <input
-              type="checkbox"
-              checked={profile.consent[key]}
-              onChange={(e) =>
-                setSection('consent', { ...profile.consent, [key]: e.target.checked })
-              }
-            />
-            <span>{label}</span>
-          </label>
-        ))}
-      </section>
     </>
   );
 }
@@ -1091,10 +876,12 @@ function ReviewStep({
   copy,
   profile,
   readiness,
+  setSection,
 }: {
   copy: Copy;
   profile: MemberFitnessProfile;
   readiness: ReturnType<typeof calculateProfileReadiness>;
+  setSection: SetSection;
 }) {
   const { t } = useTranslation();
   const status = copy.readiness[readiness.level];
@@ -1154,6 +941,29 @@ function ReviewStep({
         <ShieldCheck size={18} />
         <span>{t('memberProfile:profileSetup.aIReceivesOnlyStructured')}</span>
       </div>
+      <section className="profile-consent">
+        <h3>
+          <ShieldCheck size={19} /> {copy.privacyTitle}
+        </h3>
+        {(
+          [
+            ['shareWithAssignedTrainer', copy.shareTrainer],
+            ['dataAccuracy', copy.accuracy],
+            ['screeningAcknowledged', copy.screeningConsent],
+          ] as const
+        ).map(([key, label]) => (
+          <label key={key}>
+            <input
+              type="checkbox"
+              checked={profile.consent[key]}
+              onChange={(e) =>
+                setSection('consent', { ...profile.consent, [key]: e.target.checked })
+              }
+            />
+            <span>{label}</span>
+          </label>
+        ))}
+      </section>
     </>
   );
 }

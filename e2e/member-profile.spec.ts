@@ -40,7 +40,7 @@ test.describe('Member profile center', () => {
     await expect(page.getByRole('link', { name: 'Update health profile' })).toBeVisible();
   });
 
-  test('opens assessment result and exposes read-only PT appointments', async ({ page }) => {
+  test('opens assessment result and opens the live sessions page', async ({ page }) => {
     await openAsMember(page, '/app/profile/assessments');
     const bench = page.locator('.assessment-history-list article').filter({
       hasText: 'Barbell Bench Press',
@@ -50,12 +50,7 @@ test.describe('Member profile center', () => {
     await expect(page.getByRole('heading', { name: 'Movement findings' })).toBeVisible();
 
     await page.goto('/app/profile/appointments');
-    await expect(page.getByText('Appointments are managed by your Trainer')).toBeVisible();
-    await expect(page.getByRole('button', { name: /create|add appointment/i })).toHaveCount(0);
-    await page.getByRole('button', { name: /Video check-in/i }).click();
-    await expect(
-      page.getByText('Review recovery, adherence and next-week schedule.'),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My coaching sessions' })).toBeVisible();
   });
 
   test('connects a wearable and clears unread notifications', async ({ page }) => {

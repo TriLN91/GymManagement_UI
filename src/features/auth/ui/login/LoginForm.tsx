@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { resolveLoginDestination } from '../../model/loginDestination';
 import { useLogin } from '../../model/useAuth';
 
-import { AuthError, ValidationError } from '@/shared/api/errorTypes';
+import { ApiError, AuthError, ValidationError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
@@ -46,6 +46,14 @@ export function LoginForm() {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {
           if (messages[0]) setError(field as keyof FormValues, { message: messages[0] });
         }
+        return;
+      }
+      if (error instanceof ApiError && error.code === 'AccountPendingApproval') {
+        setError('root', { message: t('auth:errors.accountPending') });
+        return;
+      }
+      if (error instanceof ApiError && error.code === 'AccountRejected') {
+        setError('root', { message: t('auth:errors.accountRejected') });
         return;
       }
       if (error instanceof AuthError) {

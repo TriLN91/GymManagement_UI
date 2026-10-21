@@ -49,13 +49,7 @@ test('Trainer mobile navigation exposes members, plans and appointments as separ
   await mobileNav.getByRole('link', { name: 'Appointments' }).click();
   await expect(page).toHaveURL(/\/pt\/appointments$/);
   await expect(mobileNav.getByRole('link', { name: 'Appointments' })).toHaveClass(/is-active/);
-  await page
-    .locator('.trainer-appointment-mobile-list')
-    .getByRole('button', { name: 'Edit appointment' })
-    .first()
-    .click();
-  await expect(page.getByRole('dialog', { name: 'Update appointment' })).toBeVisible();
-  await page.getByRole('button', { name: 'Close' }).click();
+  await expect(page.getByRole('heading', { name: 'Session schedule' })).toBeVisible();
 
   await mobileNav.getByRole('link', { name: 'Build a plan' }).click();
   await expect(page).toHaveURL(/\/pt\/workout-builder\/plan$/);

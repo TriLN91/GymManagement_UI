@@ -1,0 +1,11 @@
+{
+  "bell": "Notifications",
+  "bellUnread": "Notifications ({{count}} unread)",
+  "title": "Notifications",
+  "subtitle": "You have {{count}} unread notifications.",
+  "loading": "Loading notifications…",
+  "error": "Could not load notifications.",
+  "empty": "No notifications yet.",
+  "markRead": "Mark as read",
+  "markAll": "Mark all as read"
+}

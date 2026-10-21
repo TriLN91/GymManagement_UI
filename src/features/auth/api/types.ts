@@ -5,6 +5,8 @@ export interface AuthResponseDto {
   accessToken: string;
   refreshToken: string;
   roles: string[];
+  /** Gym Admin registration awaiting Platform Admin review: no tokens are issued. */
+  pendingApproval?: boolean;
 }
 
 export interface OtpSentResponse {

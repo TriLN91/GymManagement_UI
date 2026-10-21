@@ -4,7 +4,12 @@ import { authApi } from '../api/authApi';
 
 import { useAuthStore } from './useAuthStore';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
+import type {
+  AuthSession,
+  LoginPayload,
+  RegisterGymAdminPayload,
+  RegisterPayload,
+} from '@/entities/user';
 import { tokenManager } from '@/shared/api/client';
 
 export function useLogin() {
@@ -29,13 +34,20 @@ export function useRegister() {
   });
 }
 
+export function useRegisterGymAdmin() {
+  return useMutation({
+    mutationFn: (payload: RegisterGymAdminPayload) => authApi.registerGymAdmin(payload),
+  });
+}
+
 export function useVerifyRegisterOtp() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
     mutationFn: (payload: { email: string; otpCode: string }) => authApi.verifyRegisterOtp(payload),
-    onSuccess: (session: AuthSession) => {
-      tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
-      setSession(session.user);
+    onSuccess: (result) => {
+      if (result.status !== 'signedIn') return;
+      tokenManager.setTokens(result.session.tokens.accessToken, result.session.tokens.refreshToken);
+      setSession(result.session.user);
     },
   });
 }

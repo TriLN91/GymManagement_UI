@@ -1,12 +1,27 @@
 import type { MemberFitnessProfile } from '../model/profileSetupModel';
 
 import { toBodyInput, toGoalInput, toNutritionInput, toTrainingInput } from './mappers';
-import type { BodyInput, GoalInput, NutritionInput, TrainingInput } from './types';
+import type {
+  BackendBody,
+  BackendProfile,
+  BodyInput,
+  GoalInput,
+  NutritionInput,
+  TrainingInput,
+} from './types';
 
-import { apiPost, apiPut } from '@/shared/api/client';
+import { apiGet, apiPost, apiPut } from '@/shared/api/client';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
 export const fitnessApi = {
+  getProfile: () => apiGet<BackendProfile>(ENDPOINTS.coaching.me.profile),
+  // Newest first; only the latest check-in is needed to restore height and weight.
+  getLatestBody: async (): Promise<BackendBody | null> =>
+    (
+      await apiGet<BackendBody[]>(ENDPOINTS.coaching.me.bodyCheckins, {
+        params: { page: 1, pageSize: 1 },
+      })
+    )[0] ?? null,
   saveGoal: (input: GoalInput) => apiPut<unknown, GoalInput>(ENDPOINTS.coaching.me.goal, input),
   saveTraining: (input: TrainingInput) =>
     apiPut<unknown, TrainingInput>(ENDPOINTS.coaching.me.trainingProfile, input),
