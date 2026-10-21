@@ -248,6 +248,34 @@ export const workoutHandlers = [
     save(state);
     return ok(session);
   }),
+  http.put('*/workouts/me/sessions/:id', async ({ params, request }) => {
+    const state = load();
+    const session = state.sessions.find((s) => s.id === params.id);
+    if (!session) return fail(404, 'SessionNotFound');
+    const body = (await request.json()) as {
+      expectedRevision: number;
+      notes: string | null;
+      exercises: Array<{
+        exerciseId: string;
+        sortOrder: number;
+        logs: SessionView['exercises'][number]['logs'];
+      }>;
+    };
+    if (body.expectedRevision !== session.revision) return fail(409, 'ConcurrencyConflict');
+    // Like the backend: a session can be corrected only on the day it was recorded.
+    const day = (iso: string) =>
+      new Date(new Date(iso).getTime() + 7 * 3_600_000).toISOString().slice(0, 10);
+    if (day(session.completedAtUtc ?? session.scheduledAtUtc) !== day(new Date().toISOString()))
+      return fail(409, 'CorrectionWindowClosed');
+    session.exercises = session.exercises.map((e) => ({
+      ...e,
+      logs: body.exercises.find((x) => x.exerciseId === e.exerciseId)?.logs ?? e.logs,
+    }));
+    session.notes = body.notes;
+    session.revision++;
+    save(state);
+    return ok(session);
+  }),
   http.post('*/workouts/me/sessions/:id/complete', async ({ params, request }) => {
     if (sessionStorage.getItem('fitflex:mock:completion-fail'))
       return fail(503, 'UploadUnavailable');

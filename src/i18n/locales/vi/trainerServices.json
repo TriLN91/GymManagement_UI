@@ -1,0 +1,21 @@
+{
+  "title": "Dịch vụ của Trainer",
+  "intro": "Mỗi dịch vụ là một loại buổi tập có thời lượng và giá mà Member có thể mua cùng Trainer.",
+  "trainer": "Trainer",
+  "noTrainers": "Chưa có Trainer nào. Hãy mời hoặc tạo Trainer trước.",
+  "name": "Tên dịch vụ",
+  "minutes": "Thời lượng (phút)",
+  "minutesShort": "{{count}} phút",
+  "price": "Giá (VND)",
+  "add": "Thêm dịch vụ",
+  "created": "Đã tạo dịch vụ.",
+  "failed": "Có lỗi xảy ra. Vui lòng thử lại.",
+  "listTitle": "Dịch vụ hiện có",
+  "loading": "Đang tải…",
+  "loadFailed": "Không tải được danh sách dịch vụ.",
+  "empty": "Trainer này chưa có dịch vụ nào.",
+  "active": "Đang bán",
+  "inactive": "Đã tắt",
+  "activate": "Bật",
+  "deactivate": "Tắt"
+}

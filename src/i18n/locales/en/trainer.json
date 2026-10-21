@@ -115,6 +115,11 @@
     "trainingSummary": "{{level}} · {{days}} days/week · {{minutes}} min/session",
     "limitations": "Movement limitations",
     "yes": "Yes",
-    "none": "None"
+    "none": "None",
+    "plans": "Workout plans",
+    "loadingPlans": "Loading plans…",
+    "plansError": "Could not load the Member's plans.",
+    "noPlans": "This Member has no plan yet.",
+    "planVersion": "version {{number}}, {{count}} exercises"
   }
 }

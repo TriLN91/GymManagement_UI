@@ -113,6 +113,11 @@
     "trainingSummary": "{{level}} · {{days}} ngày/tuần · {{minutes}} phút/buổi",
     "limitations": "Giới hạn vận động",
     "yes": "Có",
-    "none": "Không"
+    "none": "Không",
+    "plans": "Plan tập",
+    "loadingPlans": "Đang tải plan…",
+    "plansError": "Không tải được plan của học viên.",
+    "noPlans": "Học viên chưa có plan nào.",
+    "planVersion": "phiên bản {{number}}, {{count}} bài"
   }
 }

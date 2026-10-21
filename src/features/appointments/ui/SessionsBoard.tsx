@@ -12,6 +12,7 @@ import {
 } from '../model/useAppointments';
 
 import { AppointmentCard } from './AppointmentCard';
+import { PlanFeedbackPanel } from './PlanFeedbackPanel';
 import { TrainerChangePanel } from './TrainerChangePanel';
 
 import { useLocale } from '@/shared/hooks/useLocale';
@@ -252,6 +253,8 @@ export function SessionsBoard({ role }: { role: Role }) {
           </section>
         ) : null,
       )}
+
+      <PlanFeedbackPanel role={role} assignments={active} locale={locale} />
 
       {role === 'Member' ? <TrainerChangePanel assignments={active} /> : null}
     </div>

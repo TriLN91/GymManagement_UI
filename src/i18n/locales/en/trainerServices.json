@@ -1,0 +1,21 @@
+{
+  "title": "Trainer services",
+  "intro": "Each service is a type of session with a duration and a price that Members can buy with a Trainer.",
+  "trainer": "Trainer",
+  "noTrainers": "There is no Trainer yet. Invite or create one first.",
+  "name": "Service name",
+  "minutes": "Duration (minutes)",
+  "minutesShort": "{{count}} min",
+  "price": "Price (VND)",
+  "add": "Add service",
+  "created": "Service created.",
+  "failed": "Something went wrong. Please try again.",
+  "listTitle": "Current services",
+  "loading": "Loading…",
+  "loadFailed": "Could not load the services.",
+  "empty": "This Trainer has no service yet.",
+  "active": "On sale",
+  "inactive": "Off",
+  "activate": "Turn on",
+  "deactivate": "Turn off"
+}

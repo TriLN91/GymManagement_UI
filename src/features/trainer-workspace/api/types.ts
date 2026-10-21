@@ -41,3 +41,14 @@ export interface MemberProfileDto {
   missingWorkoutInput: string[];
   missingNutritionInput: string[];
 }
+
+/** Workout plans of an assigned Member (Cf01Dtos `PlansView`, workout part only). */
+export interface MemberPlansDto {
+  workout: Array<{
+    id: string;
+    name: string;
+    status: string;
+    managedByTrainerProfileId: string | null;
+    versions: Array<{ id: string; versionNumber: number; exercises: unknown[] }>;
+  }>;
+}

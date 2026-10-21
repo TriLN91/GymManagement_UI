@@ -62,7 +62,10 @@
     "substitute": "Dạy thay {{name}}",
     "cancelReason": "Lý do: {{reason}}"
   },
-  "role": { "Member": "Học viên", "Trainer": "Huấn luyện viên" },
+  "role": {
+    "Member": "Học viên",
+    "Trainer": "Huấn luyện viên"
+  },
   "action": {
     "accept": "Chấp nhận",
     "decline": "Từ chối",
@@ -140,5 +143,27 @@
     "submit": "Đề xuất huấn luyện viên",
     "proposed": "Đã gửi đề xuất. Chờ học viên xác nhận.",
     "branch": "Chi nhánh: {{name}}"
+  },
+  "feedback": {
+    "heading": "Phản hồi về plan",
+    "kindLabel": "Loại",
+    "domainLabel": "Phần plan",
+    "message": "Nội dung",
+    "send": "Gửi cho Trainer",
+    "sent": "Đã gửi phản hồi cho Trainer.",
+    "empty": "Chưa có phản hồi nào.",
+    "waiting": "Đang chờ Trainer trả lời.",
+    "reply": "Trainer trả lời",
+    "yourReply": "Trả lời của bạn",
+    "sendReply": "Gửi trả lời",
+    "replied": "Đã trả lời học viên.",
+    "kind": {
+      "Feedback": "Phản hồi",
+      "ChangeRequest": "Đề nghị chỉnh plan"
+    },
+    "domain": {
+      "Workout": "Luyện tập",
+      "Nutrition": "Dinh dưỡng"
+    }
   }
 }

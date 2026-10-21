@@ -1,4 +1,4 @@
-import type { AssignmentDto, MemberProfileDto } from './types';
+import type { AssignmentDto, MemberPlansDto, MemberProfileDto } from './types';
 
 import { apiGet } from '@/shared/api/client';
 import { ENDPOINTS } from '@/shared/api/endpoints';
@@ -10,4 +10,8 @@ export const assignmentsApi = {
   /** Fitness profile of an assigned Member; the backend requires an active assignment with read access. */
   getMemberProfile: (memberProfileId: string) =>
     apiGet<MemberProfileDto>(ENDPOINTS.coaching.memberProfile(memberProfileId)),
+
+  /** Workout plans of an assigned Member with their versions (needs read access to the Member's fitness data). */
+  getMemberPlans: (memberProfileId: string) =>
+    apiGet<MemberPlansDto>(ENDPOINTS.coaching.memberPlans(memberProfileId)),
 };

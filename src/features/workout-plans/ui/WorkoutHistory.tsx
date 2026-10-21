@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { serverSessionTotals } from '../model/liveWorkout';
+import { canCorrect } from '../model/sessionCorrection';
 import { useExerciseCatalog, useWorkoutSessions } from '../model/useLiveWorkout';
 import { useWorkoutSync } from '../model/workoutSync';
 
 import { PendingSyncNotice } from './PendingSyncNotice';
+import { SessionCorrectionForm } from './SessionCorrectionForm';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { ROUTES } from '@/shared/config/constants';
@@ -18,6 +20,7 @@ export function WorkoutHistory() {
   const { catalog } = useExerciseCatalog();
   const completed = (sessions.data ?? []).filter((session) => session.status === 'Completed');
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
   const copy = {
     back: t('workout:workoutHistory.workoutHistory.back'),
     empty: t('workout:workoutHistory.workoutHistory.empty'),
@@ -88,7 +91,16 @@ export function WorkoutHistory() {
                     <ChevronDown className={isOpen ? 'is-open' : ''} size={18} />
                   </div>
                 </button>
-                {isOpen && (
+                {isOpen && editing === session.id && (
+                  <div className="workout-history__details">
+                    <SessionCorrectionForm
+                      session={session}
+                      exerciseName={(id) => catalog.get(id)?.name ?? id}
+                      onDone={() => setEditing(null)}
+                    />
+                  </div>
+                )}
+                {isOpen && editing !== session.id && (
                   <div className="workout-history__details">
                     {session.exercises.map((exercise, index) => (
                       <div key={exercise.id}>
@@ -107,6 +119,11 @@ export function WorkoutHistory() {
                         </small>
                       </div>
                     ))}
+                    {canCorrect(session) && (
+                      <button type="button" onClick={() => setEditing(session.id)}>
+                        {t('correction.edit')}
+                      </button>
+                    )}
                   </div>
                 )}
               </article>

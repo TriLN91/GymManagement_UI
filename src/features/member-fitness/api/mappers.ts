@@ -62,6 +62,7 @@ export function toTrainingInput(profile: MemberFitnessProfile): TrainingInput | 
   return {
     experienceLevel: training.experience,
     weeklyWorkoutDays: Math.min(7, training.availableDays.length),
+    preferredWorkoutDays: [...new Set(training.availableDays)].slice(0, 7),
     sessionDurationMinutes: training.sessionMinutes,
     equipmentAccess: DEFAULT_EQUIPMENT_ACCESS,
     hasLimitations: hasPain,

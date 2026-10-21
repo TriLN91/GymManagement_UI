@@ -56,6 +56,7 @@ describe('toTrainingInput', () => {
     expect(input).toEqual({
       experienceLevel: 'beginner',
       weeklyWorkoutDays: 3,
+      preferredWorkoutDays: ['mon', 'wed', 'fri'],
       sessionDurationMinutes: 45,
       equipmentAccess: 'Bodyweight',
       hasLimitations: true,

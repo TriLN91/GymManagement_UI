@@ -64,6 +64,14 @@ export interface SessionInput {
   planDayNumber: number | null;
 }
 
+/** Body of PUT /workouts/me/sessions/{id}: the backend rejects unknown fields and a stale `expectedRevision` (409). */
+export interface SessionCorrectionBody {
+  expectedRevision: number;
+  notes: string | null;
+  exercises: Array<{ exerciseId: string; sortOrder: number; logs: LogInput[] }>;
+  activitySegments: never[];
+}
+
 export interface SessionView {
   id: string;
   revision: number;

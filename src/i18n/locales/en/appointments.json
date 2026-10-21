@@ -62,7 +62,10 @@
     "substitute": "Substitute for {{name}}",
     "cancelReason": "Reason: {{reason}}"
   },
-  "role": { "Member": "Member", "Trainer": "Trainer" },
+  "role": {
+    "Member": "Member",
+    "Trainer": "Trainer"
+  },
   "action": {
     "accept": "Accept",
     "decline": "Decline",
@@ -140,5 +143,27 @@
     "submit": "Propose Trainer",
     "proposed": "Proposal sent. Waiting for the Member to confirm.",
     "branch": "Branch: {{name}}"
+  },
+  "feedback": {
+    "heading": "Plan feedback",
+    "kindLabel": "Type",
+    "domainLabel": "Part of the plan",
+    "message": "Message",
+    "send": "Send to Trainer",
+    "sent": "Feedback sent to your Trainer.",
+    "empty": "No feedback yet.",
+    "waiting": "Waiting for the Trainer to answer.",
+    "reply": "Trainer reply",
+    "yourReply": "Your reply",
+    "sendReply": "Send reply",
+    "replied": "Reply sent.",
+    "kind": {
+      "Feedback": "Feedback",
+      "ChangeRequest": "Plan change request"
+    },
+    "domain": {
+      "Workout": "Workout",
+      "Nutrition": "Nutrition"
+    }
   }
 }

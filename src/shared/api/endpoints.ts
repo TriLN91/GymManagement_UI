@@ -1,6 +1,24 @@
 // Every URL string in the app lives here. Importing the constant is the only way to make a request.
 // Paths are relative to VITE_API_BASE_URL (the backend serves everything under /api).
 export const ENDPOINTS = {
+  trainerServices: {
+    forTrainer: (trainerProfileId: string) => `/gym-owner/trainers/${trainerProfileId}/services`,
+    active: (serviceId: string) => `/gym-owner/trainer-services/${serviceId}/active`,
+  },
+  marketplaceReview: {
+    branches: '/admin/approvals/branches',
+    approveBranch: (id: string) => `/admin/approvals/branches/${id}/approve`,
+    rejectBranch: (id: string) => `/admin/approvals/branches/${id}/reject`,
+    offers: '/admin/approvals/offers',
+    approveOffer: (id: string) => `/admin/approvals/offers/${id}/approve`,
+    rejectOffer: (id: string) => `/admin/approvals/offers/${id}/reject`,
+  },
+  staffInvitations: {
+    list: '/gym-owner/invitations',
+    revoke: (id: string) => `/gym-owner/invitations/${id}/revoke`,
+    preview: '/staff-invitations/preview',
+    accept: '/staff-invitations/accept',
+  },
   notifications: {
     mine: '/notifications/mine',
     read: (id: string) => `/notifications/${id}/read`,
@@ -35,6 +53,7 @@ export const ENDPOINTS = {
       plans: '/coaching/me/plans',
     },
     memberProfile: (memberProfileId: string) => `/coaching/members/${memberProfileId}/profile`,
+    memberPlans: (memberProfileId: string) => `/coaching/members/${memberProfileId}/plans`,
     memberBodyCheckins: (memberId: string) => `/coaching/members/${memberId}/body-checkins`,
     plan: '/coaching/plans/current',
     planHistory: (memberId: string) => `/coaching/plans/history/${memberId}`,
@@ -50,6 +69,12 @@ export const ENDPOINTS = {
     reject: (userId: string) => `/admin/registrations/gym-admins/${userId}/reject`,
   },
   // CF04: coaching sessions, Trainer availability and change of primary Trainer (backend AppointmentsController).
+  planFeedback: {
+    create: (assignmentId: string) => `/coaching/assignments/${assignmentId}/plan-feedback`,
+    mine: '/coaching/me/plan-feedback',
+    received: '/coaching/plan-feedback/received',
+    reply: (id: string) => `/coaching/plan-feedback/${id}/reply`,
+  },
   appointments: {
     mine: '/appointments/mine',
     assignments: '/appointments/assignments',
@@ -81,6 +106,7 @@ export const ENDPOINTS = {
   workouts: {
     exercises: '/workouts/exercises',
     sessions: '/workouts/me/sessions',
+    session: (sessionId: string) => `/workouts/me/sessions/${sessionId}`,
     complete: (sessionId: string) => `/workouts/me/sessions/${sessionId}/complete`,
   },
   // CF05 Fitness Progression (backend ProgressionController). Member-only gamification.

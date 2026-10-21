@@ -3,7 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { AssignmentDto } from '../api/types';
-import { useAssignedMemberProfile, useMyAssignments } from '../model/useAssignedMembers';
+import {
+  useAssignedMemberPlans,
+  useAssignedMemberProfile,
+  useMyAssignments,
+} from '../model/useAssignedMembers';
 
 import { LOCALE_TAGS, type Language } from '@/shared/config/constants';
 
@@ -55,6 +59,36 @@ function MemberProfile({ memberProfileId }: { memberProfileId: string }) {
   );
 }
 
+function MemberPlans({ memberProfileId }: { memberProfileId: string }) {
+  const { t } = useTranslation('trainer');
+  const plans = useAssignedMemberPlans(memberProfileId, true);
+  if (plans.isPending) return <p role="status">{t('assignedMembers.loadingPlans')}</p>;
+  if (plans.isError) return <p role="alert">{t('assignedMembers.plansError')}</p>;
+  const workout = plans.data.workout;
+  return (
+    <div className="trainer-assigned-profile">
+      <strong>{t('assignedMembers.plans')}</strong>
+      {workout.length === 0 ? (
+        <p>{t('assignedMembers.noPlans')}</p>
+      ) : (
+        <ul>
+          {workout.map((plan) => {
+            const latest = [...plan.versions].sort((a, b) => b.versionNumber - a.versionNumber)[0];
+            return (
+              <li key={plan.id} data-testid="member-plan">
+                {plan.name} · {plan.status}
+                {latest
+                  ? ` · ${t('assignedMembers.planVersion', { number: latest.versionNumber, count: latest.exercises.length })}`
+                  : ''}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function AssignedMemberCard({ assignment, locale }: { assignment: AssignmentDto; locale: string }) {
   const { t } = useTranslation('trainer');
   const [open, setOpen] = useState(false);
@@ -95,6 +129,9 @@ function AssignedMemberCard({ assignment, locale }: { assignment: AssignmentDto;
           </button>
         </footer>
         {open ? <MemberProfile memberProfileId={assignment.memberProfileId} /> : null}
+        {open && assignment.canReadFitness ? (
+          <MemberPlans memberProfileId={assignment.memberProfileId} />
+        ) : null}
       </div>
     </article>
   );

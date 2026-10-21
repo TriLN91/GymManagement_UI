@@ -369,5 +369,32 @@
     "title": "Optional exercises",
     "accounting": "Excluded from AI/PT plan completion",
     "unavailable": "This optional workout contains an exercise or tracking type not supported by the current API. Your saved workout is preserved; review it before starting."
+  },
+  "myPlans": {
+    "title": "Your plans",
+    "count": "Total: {{count}}",
+    "version": "Version {{number}}",
+    "open": "current",
+    "byTrainer": "managed by your Trainer",
+    "summary": "{{days}} days, {{exercises}} exercises",
+    "status": {
+      "Draft": "Draft",
+      "Active": "Active",
+      "Superseded": "Superseded",
+      "Archived": "Archived"
+    }
+  },
+  "correction": {
+    "edit": "Edit workout",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "saved": "Workout updated.",
+    "windowClosed": "A workout can only be edited on the day it was recorded. This one is too old.",
+    "stale": "This workout was just updated elsewhere. Reload and edit again.",
+    "failed": "Could not update the workout. Please try again.",
+    "reps": "Reps for set {{set}}",
+    "weight": "Weight for set {{set}} (kg)",
+    "duration": "Duration for set {{set}} (seconds)",
+    "hint": "Editing is possible only on the day of the workout."
   }
 }

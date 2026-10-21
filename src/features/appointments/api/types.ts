@@ -143,3 +143,29 @@ export interface ProposeTrainerChangeBody {
   reason?: string;
   changeId?: string;
 }
+
+export type FeedbackKind = 'Feedback' | 'ChangeRequest';
+export type FeedbackDomain = 'Workout' | 'Nutrition';
+
+/** Member feedback or change request about the plan a Trainer manages (SRS FR-CF04-03). */
+export interface PlanFeedbackDto {
+  id: string;
+  assignmentId: string;
+  memberProfileId: string;
+  memberName: string;
+  trainerProfileId: string;
+  trainerName: string;
+  kind: FeedbackKind;
+  domain: FeedbackDomain;
+  message: string;
+  trainerReply: string | null;
+  repliedAtUtc: string | null;
+  createdAtUtc: string;
+}
+
+/** The backend rejects unknown fields: send exactly these keys. */
+export interface CreateFeedbackBody {
+  kind: FeedbackKind;
+  domain: FeedbackDomain;
+  message: string;
+}

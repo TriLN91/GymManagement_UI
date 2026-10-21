@@ -8,7 +8,7 @@ import type { BackendBody, BackendProfile } from './types';
 
 // Reverse of mappers.ts: rebuilds what the wizard can know from the backend, so a Member on a new
 // device (or after clearing the browser) does not start from an empty form. The backend stores less
-// than the wizard collects (it keeps only the number of workout days, not which days; consents stay
+// than the wizard collects (consents stay
 // local), so only fields it really holds are restored, and only where the local value is empty.
 
 const GOAL_TO_ID: Readonly<Record<string, FitnessGoalId>> = {
@@ -22,6 +22,7 @@ const GOAL_TO_ID: Readonly<Record<string, FitnessGoalId>> = {
 const EXPERIENCE = ['beginner', 'intermediate', 'advanced'] as const;
 const SESSION_MINUTES = [30, 45, 60, 75, 90] as const;
 const ACTIVITY = ['sedentary', 'light', 'moderate', 'high'] as const;
+const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const MEASUREMENT_SOURCES = ['self_reported', 'smart_scale', 'gym_scan'] as const;
 
 const isOneOf = <T extends string | number>(list: ReadonlyArray<T>, value: unknown): value is T =>
@@ -68,6 +69,12 @@ export function mergeBackendProfile(
       isOneOf(SESSION_MINUTES, training.sessionDurationMinutes)
     ) {
       next.training.sessionMinutes = training.sessionDurationMinutes;
+    }
+    // The backend keeps which weekdays the Member chose (older records only had the count).
+    if (next.training.availableDays.length === 0 && training.preferredWorkoutDays?.length) {
+      next.training.availableDays = training.preferredWorkoutDays.filter((day) =>
+        WEEKDAYS.includes(day),
+      );
     }
     // The FE writes "Upper body injury" / "Lower body injury" into the notes (see toTrainingInput).
     const notes = training.limitationNotes ?? '';

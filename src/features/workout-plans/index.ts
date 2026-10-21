@@ -12,3 +12,4 @@ export { WorkoutExecution } from './ui/WorkoutExecution';
 export { WorkoutExecutionEntry } from './ui/WorkoutExecutionEntry';
 export { WorkoutHistory } from './ui/WorkoutHistory';
 export { WorkoutProgress } from './ui/WorkoutProgress';
+export { MyPlansSection } from './ui/MyPlansSection';

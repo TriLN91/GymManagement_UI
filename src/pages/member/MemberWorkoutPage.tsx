@@ -1,5 +1,10 @@
-import { WorkoutPlans } from '@/features/workout-plans';
+import { MyPlansSection, WorkoutPlans } from '@/features/workout-plans';
 
 export function MemberWorkoutPage() {
-  return <WorkoutPlans />;
+  return (
+    <>
+      <WorkoutPlans />
+      <MyPlansSection />
+    </>
+  );
 }

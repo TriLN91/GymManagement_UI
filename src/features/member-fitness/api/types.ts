@@ -18,6 +18,8 @@ export interface TrainingInput {
   equipmentAccess: string;
   hasLimitations: boolean;
   limitationNotes: string | null;
+  /** monday…sunday; when sent it must list exactly `weeklyWorkoutDays` distinct days. */
+  preferredWorkoutDays: string[];
 }
 
 export interface NutritionInput {
@@ -55,6 +57,7 @@ export interface BackendProfile {
     equipmentAccess: string;
     hasLimitations: boolean;
     limitationNotes: string | null;
+    preferredWorkoutDays?: string[] | null;
   } | null;
   nutrition: {
     dateOfBirth: string | null;

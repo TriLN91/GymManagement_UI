@@ -30,6 +30,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useGymOwnerApproved } from '@/features/gym-owner-onboarding';
+import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -509,6 +510,7 @@ export function GymOwnerLayout() {
               <Languages aria-hidden="true" size={16} />
               <span>{t('shell.switchLanguage')}</span>
             </button>
+            <NotificationBell />
             <div className="member-topbar__profile">
               <div>
                 <strong>{userName}</strong>

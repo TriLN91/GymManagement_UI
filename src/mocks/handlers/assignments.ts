@@ -55,6 +55,27 @@ const assignments = [
 export const assignmentHandlers = [
   http.get(path(ENDPOINTS.coaching.me.assignments), () => ok(assignments)),
 
+  http.get(path('/coaching/members/:memberProfileId/plans'), ({ params }) => {
+    const found = assignments.find((item) => item.memberProfileId === params.memberProfileId);
+    if (!found?.canReadFitness) {
+      return HttpResponse.json(
+        { isSuccess: false, message: '403: Forbidden', data: null, errorCode: 'Forbidden' },
+        { status: 403 },
+      );
+    }
+    return ok({
+      workout: [
+        {
+          id: 'plan-demo',
+          name: 'Strength base',
+          status: 'Active',
+          managedByTrainerProfileId: found.trainerProfileId,
+          versions: [{ id: 'plan-demo-v1', versionNumber: 1, exercises: [{}, {}, {}, {}] }],
+        },
+      ],
+    });
+  }),
+
   http.get(path('/coaching/members/:memberProfileId/profile'), ({ params }) => {
     const found = assignments.find((item) => item.memberProfileId === params.memberProfileId);
     if (!found?.canReadFitness) {

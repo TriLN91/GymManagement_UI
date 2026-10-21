@@ -8,10 +8,14 @@ import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
 import { gymOwnerHandlers } from './gymOwner';
+import { marketplaceReviewHandlers } from './marketplaceReview';
 import { movementReferenceHandlers } from './movementReferences';
 import { notificationHandlers } from './notifications';
+import { planFeedbackHandlers } from './planFeedback';
+import { staffInvitationHandlers } from './staffInvitations';
 import { studioHandlers } from './studio';
 import { trainerHandlers } from './trainers';
+import { trainerServiceHandlers } from './trainerServices';
 import { workoutHandlers } from './workouts';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
@@ -29,6 +33,10 @@ export const handlers = [
   ...appointmentHandlers,
   ...gymOwnerHandlers,
   ...notificationHandlers,
+  ...marketplaceReviewHandlers,
+  ...planFeedbackHandlers,
+  ...staffInvitationHandlers,
+  ...trainerServiceHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
   ...assistantHandlers,
