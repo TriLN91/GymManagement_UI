@@ -27,14 +27,6 @@ function completeProfile(): MemberFitnessProfile {
       experience: 'intermediate',
       availableDays: ['monday', 'thursday'],
       sessionMinutes: 60,
-      environments: ['gym'],
-    },
-    recovery: {
-      ...EMPTY_PROFILE.recovery,
-      sleepHours: 7,
-      stressLevel: 2,
-      workPattern: 'mostly_sitting',
-      smoking: 'no',
     },
     consent: {
       ...EMPTY_PROFILE.consent,

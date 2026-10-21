@@ -4,6 +4,8 @@ export type {
   AuthTokens,
   AuthUser,
   LoginPayload,
+  PendingRegistration,
+  RegisterGymAdminPayload,
   RegisterPayload,
   Role,
 } from './types';

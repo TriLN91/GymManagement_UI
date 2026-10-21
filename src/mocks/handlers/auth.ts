@@ -1,5 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
+import { emailTaken, gymAdminRegistry, trainerRegistry } from './mockRegistry';
+
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
 // Mirrors the backend contract (ResponseDto<AuthResponseDto>) so the FE behaves the same with MSW on or off.
@@ -48,8 +50,37 @@ const success = (data: unknown, status = 200) =>
 const failure = (status: number, errorCode: string, message: string) =>
   HttpResponse.json({ isSuccess: false, message, data: null, errorCode }, { status });
 
+const passwordTooShort = () =>
+  failure(
+    400,
+    'Validation',
+    `400: Validation Error thất bại - Password: Mật khẩu phải có ít nhất ${MIN_PASSWORD_LENGTH} ký tự`,
+  );
+
+// Accounts created through the mocked registration flow: approved Gym Admins and the Trainers they create.
+const dynamicAccounts = (): Array<MockAccount & { password: string }> => [
+  ...gymAdminRegistry
+    .filter((item) => item.status === 'Active')
+    .map((item) => ({
+      userId: item.userId,
+      email: item.email,
+      fullName: item.fullName,
+      roles: ['GymAdmin'],
+      password: item.password,
+    })),
+  ...trainerRegistry.map((item) => ({
+    userId: item.userId,
+    email: item.email,
+    fullName: item.fullName,
+    roles: ['Trainer'],
+    password: item.password,
+  })),
+];
+
 const accountFromRefreshToken = (token: string | undefined) =>
-  Object.values(accounts).find((account) => `mock-refresh-${account.userId}` === token);
+  [...Object.values(accounts), ...dynamicAccounts()].find(
+    (account) => `mock-refresh-${account.userId}` === token,
+  );
 
 // Wildcard patterns so MSW intercepts regardless of baseURL (cross-origin dev server).
 const path = (p: string) => `*${p}`;
@@ -57,22 +88,34 @@ const path = (p: string) => `*${p}`;
 export const authHandlers = [
   http.post(path(ENDPOINTS.auth.login), async ({ request }) => {
     const body = (await request.json()) as { email?: string; password?: string };
-    const account = Object.values(accounts).find((item) => item.email === body.email);
-    if (!account || body.password !== DEMO_PASSWORD) {
-      return failure(401, 'InvalidCredentials', '401: Đăng nhập thất bại');
+
+    // Same order as the backend: a correct password on a not-yet-approved account explains why.
+    const registration = gymAdminRegistry.find((item) => item.email === body.email);
+    if (registration && body.password === registration.password) {
+      if (registration.status === 'PendingApproval') {
+        return failure(
+          403,
+          'AccountPendingApproval',
+          '403: Tài khoản đang chờ Platform Admin duyệt; bạn chưa thể đăng nhập.',
+        );
+      }
+      if (registration.status === 'Rejected') {
+        return failure(403, 'AccountRejected', '403: Đăng ký tài khoản đã bị từ chối.');
+      }
     }
-    return success(tokensFor(account));
+
+    const demo = Object.values(accounts).find((item) => item.email === body.email);
+    if (demo && body.password === DEMO_PASSWORD) return success(tokensFor(demo));
+
+    const dynamic = dynamicAccounts().find((item) => item.email === body.email);
+    if (dynamic && body.password === dynamic.password) return success(tokensFor(dynamic));
+
+    return failure(401, 'InvalidCredentials', '401: Đăng nhập thất bại');
   }),
 
   http.post(path(ENDPOINTS.auth.register), async ({ request }) => {
     const body = (await request.json()) as { email?: string; fullName?: string; password?: string };
-    if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
-      return failure(
-        400,
-        'Validation',
-        `400: Validation Error thất bại - Password: Mật khẩu phải có ít nhất ${MIN_PASSWORD_LENGTH} ký tự`,
-      );
-    }
+    if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) return passwordTooShort();
     const account: MockAccount = {
       userId: `u-${Date.now()}`,
       email: body.email ?? '',
@@ -82,13 +125,65 @@ export const authHandlers = [
     return success(tokensFor(account), 201);
   }),
 
+  http.post(path(ENDPOINTS.auth.registerGymAdmin), async ({ request }) => {
+    const body = (await request.json()) as {
+      email?: string;
+      fullName?: string;
+      gymName?: string;
+      password?: string;
+    };
+    if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) return passwordTooShort();
+    const email = body.email ?? '';
+    if (emailTaken(email) || Object.values(accounts).some((item) => item.email === email)) {
+      return failure(409, 'Conflict', '409: Email đã được đăng ký.');
+    }
+    const registration = {
+      userId: crypto.randomUUID(),
+      email,
+      password: body.password ?? '',
+      fullName: body.fullName ?? '',
+      phoneNumber: null,
+      gymId: crypto.randomUUID(),
+      gymName: body.gymName ?? '',
+      legalName: null,
+      taxCode: null,
+      status: 'PendingApproval' as const,
+      createdAtUtc: new Date().toISOString(),
+    };
+    gymAdminRegistry.push(registration);
+    // Like the backend, no tokens are returned: the account waits for a Platform Admin.
+    return success({
+      userId: registration.userId,
+      email,
+      fullName: registration.fullName,
+      status: registration.status,
+      gymId: registration.gymId,
+      gymName: registration.gymName,
+    });
+  }),
+
   http.post(path(ENDPOINTS.auth.registerSendOtp), async ({ request }) => {
     const body = (await request.json()) as {
       email?: string;
       password?: string;
       fullName?: string;
       role?: string;
+      gymName?: string;
     };
+    const requested = (body.role ?? 'Member').toLowerCase();
+    if (requested === 'trainer' || requested === 'pt') {
+      return failure(
+        400,
+        'Validation',
+        '400: Tài khoản huấn luyện viên do Gym Admin tạo; không thể tự đăng ký.',
+      );
+    }
+    const isGymAdmin = requested === 'gymadmin' || requested === 'gym_admin';
+    if (isGymAdmin && !(body.gymName ?? '').trim()) {
+      return failure(400, 'Validation', '400: Cần nhập tên phòng gym khi đăng ký Gym Admin.');
+    }
+    if (emailTaken(body.email ?? ''))
+      return failure(409, 'Conflict', '409: Email đã được đăng ký.');
     if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
       return failure(
         400,
@@ -98,7 +193,13 @@ export const authHandlers = [
     }
     sessionStorage.setItem(
       'fitflex:mock-registration',
-      JSON.stringify({ email: body.email, fullName: body.fullName, role: body.role }),
+      JSON.stringify({
+        email: body.email,
+        password: body.password,
+        fullName: body.fullName,
+        role: isGymAdmin ? 'GymAdmin' : 'Member',
+        gymName: body.gymName,
+      }),
     );
     return success({
       email: body.email,
@@ -114,22 +215,44 @@ export const authHandlers = [
     if (body.otpCode !== '123456' && body.otpCode !== '888888') {
       return failure(400, 'InvalidOtp', 'Mã OTP không chính xác. Vui lòng kiểm tra lại.');
     }
+    const stored = JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
+      password?: string;
+      fullName?: string;
+      role?: string;
+      gymName?: string;
+    };
+    const email = body.email ?? '';
+    if (stored.role === 'GymAdmin') {
+      // Like the backend, no tokens are returned: the account waits for a Platform Admin.
+      const userId = crypto.randomUUID();
+      gymAdminRegistry.push({
+        userId,
+        email,
+        password: stored.password ?? '',
+        fullName: stored.fullName ?? '',
+        phoneNumber: null,
+        gymId: crypto.randomUUID(),
+        gymName: stored.gymName ?? '',
+        legalName: null,
+        taxCode: null,
+        status: 'PendingApproval' as const,
+        createdAtUtc: new Date().toISOString(),
+      });
+      return success({
+        userId,
+        email,
+        fullName: stored.fullName ?? '',
+        accessToken: '',
+        refreshToken: '',
+        roles: ['GymAdmin'],
+        pendingApproval: true,
+      });
+    }
     const account: MockAccount = {
       userId: `u-${Date.now()}`,
-      email: body.email ?? '',
-      fullName:
-        (
-          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
-            fullName?: string;
-          }
-        ).fullName ?? 'User',
-      roles: [
-        (
-          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
-            role?: string;
-          }
-        ).role ?? 'Member',
-      ],
+      email,
+      fullName: stored.fullName ?? 'User',
+      roles: ['Member'],
     };
     return success(tokensFor(account), 201);
   }),

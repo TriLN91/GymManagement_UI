@@ -6,6 +6,7 @@ import { GymOwnerApprovalGuard } from './guards/GymOwnerApprovalGuard';
 import { GymOwnerEditableGuard } from './guards/GymOwnerEditableGuard';
 import { RoleGuard } from './guards/RoleGuard';
 
+import { AcceptInvitationPage } from '@/features/staff-invitations';
 import { GymOwnerLayout } from '@/pages/admin/components/GymOwnerLayout';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
@@ -120,8 +121,22 @@ const AssessmentDetailPage = lazy(() =>
   })),
 );
 const PTAppointmentsPage = lazy(() =>
-  import('@/pages/member/profile/MemberProfilePages').then((m) => ({
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.PTAppointmentsPage,
+  })),
+);
+const MarketplaceReviewPage = lazy(() =>
+  import('@/features/marketplace-review').then((m) => ({ default: m.MarketplaceReviewPage })),
+);
+const TrainerServicesPage = lazy(() =>
+  import('@/features/trainer-services').then((m) => ({ default: m.TrainerServicesPage })),
+);
+const StaffInvitationsPage = lazy(() =>
+  import('@/features/staff-invitations').then((m) => ({ default: m.StaffInvitationsPage })),
+);
+const TrainerAssignmentsPage = lazy(() =>
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
+    default: m.TrainerAssignmentsPage,
   })),
 );
 const WearableConnectionsPage = lazy(() =>
@@ -186,7 +201,7 @@ const TrainerMemberWorkoutPage = lazy(() =>
   })),
 );
 const TrainerAppointmentsPage = lazy(() =>
-  import('@/pages/pt/workspace/TrainerWorkspacePages').then((m) => ({
+  import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.TrainerAppointmentsPage,
   })),
 );
@@ -217,11 +232,6 @@ const GymOwnerTrainerFormPage = lazy(() =>
 const GymOwnerTrainerDetailPage = lazy(() =>
   import('@/features/gym-owner-training').then((m) => ({
     default: m.GymOwnerTrainerDetailPage,
-  })),
-);
-const GymOwnerAssignmentExceptionsPage = lazy(() =>
-  import('@/features/gym-owner-training').then((m) => ({
-    default: m.GymOwnerAssignmentExceptionsPage,
   })),
 );
 const GymOwnerPTPackageListPage = lazy(() =>
@@ -443,6 +453,7 @@ const router = createBrowserRouter([
   { path: ROUTES.public.register, element: <RegisterPage /> },
   { path: ROUTES.public.forgotPassword, element: <ForgotPasswordPage /> },
   { path: ROUTES.public.resetPassword, element: <ResetPasswordPage /> },
+  { path: ROUTES.public.acceptInvitation, element: <AcceptInvitationPage /> },
   { path: ROUTES.public.forbidden, element: <ForbiddenPage /> },
   { path: '/404', element: <NotFoundPage /> },
   { path: '*', element: <NotFoundPage /> },
@@ -568,13 +579,15 @@ const router = createBrowserRouter([
                     element: <GymOwnerBranchesPage />,
                   },
                   { path: ROUTES.admin.pts, element: <GymOwnerTrainerListPage /> },
+                  { path: ROUTES.admin.invitations, element: <StaffInvitationsPage /> },
+                  { path: ROUTES.admin.trainerServices, element: <TrainerServicesPage /> },
                   {
                     path: ROUTES.admin.trainerCreate,
                     element: <GymOwnerTrainerFormPage mode="create" />,
                   },
                   {
                     path: ROUTES.admin.trainerAssignments,
-                    element: <GymOwnerAssignmentExceptionsPage />,
+                    element: <TrainerAssignmentsPage />,
                   },
                   {
                     path: ROUTES.admin.trainerEdit,
@@ -651,6 +664,7 @@ const router = createBrowserRouter([
                 path: ROUTES.superadmin.movementReferenceSet,
                 element: <MovementReferenceSetPage />,
               },
+              { path: ROUTES.superadmin.marketplaceReview, element: <MarketplaceReviewPage /> },
               { path: ROUTES.superadmin.gymApplications, element: <PlatformGymApplicationsPage /> },
               {
                 path: ROUTES.superadmin.gymApplicationDetail,

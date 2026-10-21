@@ -9,6 +9,7 @@ export const ROUTES = Object.freeze({
     login: '/login',
     register: '/register',
     forgotPassword: '/forgot-password',
+    acceptInvitation: '/accept-invitation',
     resetPassword: '/reset-password',
     forbidden: '/403',
     notFound: '/404',
@@ -86,6 +87,8 @@ export const ROUTES = Object.freeze({
     onboardingStatus: '/admin/onboarding/status',
     pts: '/admin/pts',
     trainerCreate: '/admin/pts/new',
+    invitations: '/admin/pts/invitations',
+    trainerServices: '/admin/pts/services',
     trainerAssignments: '/admin/pts/assignments',
     trainerDetail: '/admin/pts/:trainerId',
     trainerDetailPath: (trainerId: string) => `/admin/pts/${trainerId}`,
@@ -114,6 +117,7 @@ export const ROUTES = Object.freeze({
     movementReferenceSet: '/superadmin/movement-assessment/reference-sets/:referenceSetId',
     movementReferenceSetPath: (referenceSetId: string) =>
       `/superadmin/movement-assessment/reference-sets/${referenceSetId}`,
+    marketplaceReview: '/superadmin/approvals/marketplace',
     gymApplications: '/superadmin/approvals/gyms',
     gymApplicationDetail: '/superadmin/approvals/gyms/:applicationId',
     gymApplicationDetailPath: (applicationId: string) =>
@@ -169,12 +173,35 @@ export const STORAGE_KEYS = Object.freeze({
 
 export const QUERY_KEYS = Object.freeze({
   currentUser: () => ['auth', 'me'] as const,
+  assignedMemberPlans: (memberProfileId: string) =>
+    ['coaching', 'members', memberProfileId, 'plans'] as const,
+  notifications: () => ['notifications'] as const,
+  trainerServices: (trainerProfileId: string) => ['trainer-services', trainerProfileId] as const,
+  marketplaceReview: () => ['marketplace-review'] as const,
+  planFeedback: () => ['plan-feedback'] as const,
+  staffInvitations: () => ['staff-invitations'] as const,
   currentPlan: () => ['coaching', 'plan', 'current'] as const,
   assistantConversations: () => ['assistant', 'conversations'] as const,
   assistantConversation: (id: string) => ['assistant', 'conversation', id] as const,
   coachingHistory: (memberId: string) => ['coaching', 'plan', 'history', memberId] as const,
   checkIns: (memberId: string) => ['coaching', 'checkins', memberId] as const,
   exercises: () => ['exercises'] as const,
+  gymAdminRegistrations: (status: string) => ['admin-registrations', 'gym-admins', status] as const,
+  gymAdminRegistration: (userId: string) => ['admin-registrations', 'gym-admin', userId] as const,
+  ownerGyms: () => ['gym-owner', 'gyms'] as const,
+  ownerTrainers: (gymId?: string) => ['gym-owner', 'trainers', { gymId: gymId ?? null }] as const,
+  fitnessProfile: () => ['coaching', 'me', 'profile'] as const,
+  appointments: () => ['appointments'] as const,
+  myAppointments: (scope: string) => ['appointments', 'mine', scope] as const,
+  appointmentAssignments: () => ['appointments', 'assignments'] as const,
+  assignmentAvailability: (assignmentId: string) =>
+    ['appointments', 'availability', assignmentId] as const,
+  trainerAvailability: () => ['appointments', 'trainer-availability'] as const,
+  managedAssignments: () => ['appointments', 'managed-assignments'] as const,
+  trainerChanges: () => ['appointments', 'trainer-changes'] as const,
+  myAssignments: () => ['coaching', 'me', 'assignments'] as const,
+  assignedMemberProfile: (memberProfileId: string) =>
+    ['coaching', 'members', memberProfileId, 'profile'] as const,
   referenceSets: (exerciseId?: string) =>
     ['movement-reference-sets', { exerciseId: exerciseId ?? null }] as const,
   referenceSet: (referenceSetId: string) =>

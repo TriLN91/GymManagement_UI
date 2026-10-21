@@ -55,6 +55,7 @@ type CopyKey =
   | 'movementAssessment'
   | 'analyticsOverview'
   | 'gymApplications'
+  | 'marketplaceReview'
   | 'activeGyms'
   | 'legalChanges'
   | 'trainerApplications'
@@ -106,6 +107,7 @@ const groups: ReadonlyArray<NavGroup> = [
     icon: ClipboardCheck,
     items: [
       { label: 'gymApplications', to: ROUTES.superadmin.gymApplications, icon: Building2 },
+      { label: 'marketplaceReview', to: ROUTES.superadmin.marketplaceReview, icon: ClipboardCheck },
       { label: 'activeGyms', to: ROUTES.superadmin.activeGyms, icon: BadgeCheck },
       { label: 'legalChanges', to: ROUTES.superadmin.legalChanges, icon: FileText },
       { label: 'trainerApplications', to: ROUTES.superadmin.trainerApplications, icon: UserRound },

@@ -1,0 +1,11 @@
+{
+  "bell": "Thông báo",
+  "bellUnread": "Thông báo ({{count}} chưa đọc)",
+  "title": "Thông báo",
+  "subtitle": "Bạn có {{count}} thông báo chưa đọc.",
+  "loading": "Đang tải thông báo…",
+  "error": "Không tải được thông báo.",
+  "empty": "Chưa có thông báo nào.",
+  "markRead": "Đánh dấu đã đọc",
+  "markAll": "Đánh dấu tất cả đã đọc"
+}

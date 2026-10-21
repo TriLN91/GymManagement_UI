@@ -57,6 +57,8 @@ export interface GymOfferView {
   plusPrice: number;
   approvalStatus: string;
   isPublished: boolean;
+  /** Hours of notice to cancel or move a session free of charge; null uses the platform default. */
+  minNoticeHours?: number | null;
 }
 
 export interface GymBranchDetailView {
@@ -335,6 +337,9 @@ export interface CreateGymOfferRequest {
   plusDurationDays: number;
   plusPrice: number;
   isPublished: boolean;
+  sessionsIncluded?: number;
+  /** 0 to 720 hours; omit to use the platform default (24). */
+  minNoticeHours?: number;
 }
 
 // ============================================================================

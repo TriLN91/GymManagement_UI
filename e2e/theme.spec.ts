@@ -1,9 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Theme toggle', () => {
   test('Platform Admin theme toggle adds dark class to <html>', async ({ page }) => {
     await page.goto('/login');
-    await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
+    await page.evaluate(() => {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    });
     await page.evaluate(() => window.sessionStorage.clear());
     await page.evaluate(() => window.localStorage.setItem('gmc.theme', 'light'));
     await page.reload();

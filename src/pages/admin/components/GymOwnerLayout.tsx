@@ -29,7 +29,8 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
-import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding';
+import { useGymOwnerApproved } from '@/features/gym-owner-onboarding';
+import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -94,7 +95,7 @@ export function GymOwnerLayout() {
   const { i18n, t } = useTranslation(['owner', 'common']);
   const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
-  const status = useGymOwnerOnboardingStore((state) => state.status);
+  const { approved } = useGymOwnerApproved();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -104,7 +105,7 @@ export function GymOwnerLayout() {
 
   const navGroups = useMemo<ReadonlyArray<OwnerNavGroup>>(() => {
     const groups: OwnerNavGroup[] = [];
-    if (status === 'approved') {
+    if (approved) {
       groups.push({
         id: 'dashboard',
         label: t('shell.nav.dashboard'),
@@ -256,7 +257,7 @@ export function GymOwnerLayout() {
       });
     }
     return groups;
-  }, [isVi, status, t]);
+  }, [approved, isVi, t]);
 
   const initialGroup =
     navGroups.find((group) => group.items.some((item) => matchesRoute(item.to, location.pathname)))
@@ -507,6 +508,7 @@ export function GymOwnerLayout() {
               <Languages aria-hidden="true" size={16} />
               <span>{t('shell.switchLanguage')}</span>
             </button>
+            <NotificationBell />
             <div className="member-topbar__profile">
               <div>
                 <strong>{userName}</strong>

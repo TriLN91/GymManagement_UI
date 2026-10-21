@@ -1,9 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Coaching vertical slice', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
-    await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
+    await page.evaluate(() => {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    });
     await page.evaluate(() => window.sessionStorage.clear());
     await page.reload();
     await page.getByLabel(/email/i).fill('member@demo.gym');

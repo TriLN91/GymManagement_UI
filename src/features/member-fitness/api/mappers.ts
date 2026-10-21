@@ -17,6 +17,10 @@ const GOAL_TYPES: Readonly<Record<string, GoalInput['goalType']>> = {
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 
+// The wizard no longer asks for equipment or training location, but the backend requires a value and
+// only plans exercises whose equipment is listed. Bodyweight is the only assumption that is always safe.
+export const DEFAULT_EQUIPMENT_ACCESS = 'Bodyweight';
+
 const trimmed = (value: string, max: number): string | null => {
   const text = value.trim();
   return text ? text.slice(0, max) : null;
@@ -40,13 +44,7 @@ export function toGoalInput(profile: MemberFitnessProfile): GoalInput | null {
 
 export function toTrainingInput(profile: MemberFitnessProfile): TrainingInput | null {
   const { training, movement } = profile;
-  const equipment = [...training.equipment, ...training.environments].join(', ');
-  if (
-    !training.experience ||
-    !training.sessionMinutes ||
-    training.availableDays.length === 0 ||
-    !equipment
-  ) {
+  if (!training.experience || !training.sessionMinutes || training.availableDays.length === 0) {
     return null;
   }
   const hasPain = movement.upperBodyInjury === 'yes' || movement.lowerBodyInjury === 'yes';
@@ -64,8 +62,9 @@ export function toTrainingInput(profile: MemberFitnessProfile): TrainingInput | 
   return {
     experienceLevel: training.experience,
     weeklyWorkoutDays: Math.min(7, training.availableDays.length),
+    preferredWorkoutDays: [...new Set(training.availableDays)].slice(0, 7),
     sessionDurationMinutes: training.sessionMinutes,
-    equipmentAccess: equipment.slice(0, 500),
+    equipmentAccess: DEFAULT_EQUIPMENT_ACCESS,
     hasLimitations: hasPain,
     limitationNotes: trimmed(notes, 1000),
   };

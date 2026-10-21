@@ -4,11 +4,16 @@ import { authApi } from '../api/authApi';
 
 import { useAuthStore } from './useAuthStore';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
+import type {
+  AuthSession,
+  LoginPayload,
+  RegisterGymAdminPayload,
+  RegisterPayload,
+} from '@/entities/user';
 import { tokenManager } from '@/shared/api/client';
 import { AuthError } from '@/shared/api/errorTypes';
 
-async function authenticate(request: () => Promise<AuthSession>): Promise<AuthSession> {
+async function authenticate<T>(request: () => Promise<T>): Promise<T> {
   const version = tokenManager.getVersion();
   const session = await request();
   if (version !== tokenManager.getVersion())
@@ -38,14 +43,21 @@ export function useRegister() {
   });
 }
 
+export function useRegisterGymAdmin() {
+  return useMutation({
+    mutationFn: (payload: RegisterGymAdminPayload) => authApi.registerGymAdmin(payload),
+  });
+}
+
 export function useVerifyRegisterOtp() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
     mutationFn: (payload: { email: string; otpCode: string }) =>
       authenticate(() => authApi.verifyRegisterOtp(payload)),
-    onSuccess: (session: AuthSession) => {
-      tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
-      setSession(session.user);
+    onSuccess: (result) => {
+      if (result.status !== 'signedIn') return;
+      tokenManager.setTokens(result.session.tokens.accessToken, result.session.tokens.refreshToken);
+      setSession(result.session.user);
     },
   });
 }

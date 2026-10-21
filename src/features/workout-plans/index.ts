@@ -9,6 +9,7 @@ export { WeeklySchedule } from './ui/WeeklySchedule';
 export { WorkoutCompletion } from './ui/WorkoutCompletion';
 export { WorkoutExecution } from './ui/WorkoutExecution';
 
+export { MyPlansSection } from './ui/MyPlansSection';
 export { WorkoutExecutionEntry } from './ui/WorkoutExecutionEntry';
 export { WorkoutHistory } from './ui/WorkoutHistory';
 export { WorkoutProgress } from './ui/WorkoutProgress';
