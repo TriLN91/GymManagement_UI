@@ -221,6 +221,8 @@ export const workoutHandlers = [
   http.get(path(ENDPOINTS.workouts.exercises), () => ok(mockCatalog)),
   http.get(path(ENDPOINTS.workouts.sessions), () => ok(load().sessions)),
   http.post(path(ENDPOINTS.workouts.sessions), async ({ request }) => {
+    if (sessionStorage.getItem('fitflex:mock:creation-fail'))
+      return fail(503, 'SessionCreateUnavailable');
     const body = (await request.json()) as SessionInput;
     const state = load();
     const old = state.sessions.find((s) => s.id === state.requests[body.clientRequestId]);
