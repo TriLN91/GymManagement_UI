@@ -1,5 +1,5 @@
 import { mapAuthResponse } from './mappers';
-import type { AuthResponseDto } from './types';
+import type { AuthResponseDto, RegisterOtpSentResponse, VerifyRegisterOtpPayload } from './types';
 
 import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
 import { apiPost } from '@/shared/api/client';
@@ -12,6 +12,17 @@ export const sessionApi = {
   register: async (payload: RegisterPayload): Promise<AuthSession> =>
     mapAuthResponse(
       await apiPost<AuthResponseDto, RegisterPayload>(ENDPOINTS.auth.register, payload),
+    ),
+
+  sendRegisterOtp: (payload: RegisterPayload): Promise<RegisterOtpSentResponse> =>
+    apiPost<RegisterOtpSentResponse, RegisterPayload>(ENDPOINTS.auth.registerSendOtp, payload),
+
+  verifyRegisterOtp: async (payload: VerifyRegisterOtpPayload): Promise<AuthSession> =>
+    mapAuthResponse(
+      await apiPost<AuthResponseDto, VerifyRegisterOtpPayload>(
+        ENDPOINTS.auth.registerVerifyOtp,
+        payload,
+      ),
     ),
 
   logout: (refreshToken: string) => apiPost<void>(ENDPOINTS.auth.logout, { refreshToken }),

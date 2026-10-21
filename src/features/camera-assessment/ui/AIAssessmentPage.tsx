@@ -53,7 +53,8 @@ export function AIAssessmentPage() {
     [previewUrl],
   );
 
-  const sessionExerciseId = activeSession?.exercises[activeSession.currentExerciseIndex]?.id;
+  const sessionExerciseId =
+    activeSession?.exercises[activeSession.currentExerciseIndex]?.backendExerciseId;
   const exerciseId = routeExerciseId ?? sessionExerciseId;
   const state = location.state as AssessmentLocationState | null;
   const returnTo =
@@ -62,7 +63,9 @@ export function AIAssessmentPage() {
       ? ROUTES.member.workoutSessionPath(activeSession.dayId)
       : ROUTES.member.workoutSchedule);
   const exerciseName = exerciseId
-    ? (activeSession?.exercises.find((item) => item.id === exerciseId)?.name ?? exerciseId)
+    ? (activeSession?.exercises.find(
+        (item) => item.backendExerciseId === exerciseId || item.id === exerciseId,
+      )?.name ?? exerciseId)
     : copy.noExercise;
 
   const handleQueue = () => {

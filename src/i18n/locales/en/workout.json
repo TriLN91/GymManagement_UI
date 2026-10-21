@@ -364,5 +364,10 @@
   "aria": {
     "trainingStations": "Training stations",
     "loadingPlans": "Loading workout plans"
+  },
+  "optional": {
+    "title": "Optional exercises",
+    "accounting": "Excluded from AI/PT plan completion",
+    "unavailable": "This optional workout contains an exercise or tracking type not supported by the current API. Your saved workout is preserved; review it before starting."
   }
 }

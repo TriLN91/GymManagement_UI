@@ -15,6 +15,19 @@ export interface OtpSentResponse {
   debugOtpCode?: string;
 }
 
+export interface RegisterOtpSentResponse {
+  email: string;
+  expiryMinutes: number;
+  message: string;
+  isEmailSent: boolean;
+  debugOtpCode?: string;
+}
+
+export interface VerifyRegisterOtpPayload {
+  email: string;
+  otpCode: string;
+}
+
 export interface VerifyOtpResponse {
   isValid: boolean;
   resetToken: string;

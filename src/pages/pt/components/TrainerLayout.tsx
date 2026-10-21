@@ -58,10 +58,12 @@ interface TrainerNavGroup {
 const navGroups: ReadonlyArray<TrainerNavGroup> = [
   {
     id: 'dashboard',
-    labelKey: 'trainerShell.overview',
+    labelKey: 'trainerShell.dashboardGroup',
     icon: LayoutDashboard,
-    to: ROUTES.pt.root,
-    items: [],
+    items: [
+      { labelKey: 'trainerShell.overview', to: ROUTES.pt.root, icon: LayoutDashboard },
+      { labelKey: 'trainerShell.memberData', to: ROUTES.pt.memberData, icon: Activity },
+    ],
   },
   {
     id: 'members',
@@ -70,7 +72,6 @@ const navGroups: ReadonlyArray<TrainerNavGroup> = [
     items: [
       { labelKey: 'trainerShell.members', to: ROUTES.pt.members, icon: UserRound },
       { labelKey: 'trainerShell.appointments', to: ROUTES.pt.appointments, icon: CalendarDays },
-      { labelKey: 'trainerShell.memberData', to: ROUTES.pt.memberData, icon: Activity },
     ],
   },
   {

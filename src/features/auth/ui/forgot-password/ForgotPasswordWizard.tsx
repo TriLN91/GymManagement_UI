@@ -8,8 +8,6 @@ import { NewPasswordStep } from './NewPasswordStep';
 import { OtpVerificationStep } from './OtpVerificationStep';
 import { ResetSuccessStep } from './ResetSuccessStep';
 
-import { errorMessage } from '@/shared/lib/errorMessage';
-
 export type ForgotPasswordStep = 'email' | 'otp' | 'new_password' | 'success';
 
 export interface ForgotPasswordWizardProps {
@@ -43,7 +41,8 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
       setCooldown(60);
       toast.success('Mã OTP mới đã được gửi!');
     } catch (err: unknown) {
-      toast.error(errorMessage(err) || 'Không thể gửi lại mã OTP.');
+      const message = err instanceof Error ? err.message : 'Không thể gửi lại mã OTP.';
+      toast.error(message);
     }
   };
 

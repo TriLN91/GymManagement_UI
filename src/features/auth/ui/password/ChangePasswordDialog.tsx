@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { authApi } from '@/features/auth/api/authApi';
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import {
   Dialog,
@@ -72,9 +71,11 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
       reset();
       onOpenChange(false);
     } catch (err: unknown) {
-      setServerError(
-        errorMessage(err) || 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.',
-      );
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.';
+      setServerError(message);
     }
   });
 

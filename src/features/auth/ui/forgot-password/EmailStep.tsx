@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail, RefreshCw, ShieldCheck } from 'lucide-react';
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,7 +9,6 @@ import { z } from 'zod';
 import { authApi } from '../../api/authApi';
 
 import { ROUTES } from '@/shared/config/constants';
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -24,18 +24,24 @@ export interface EmailStepProps {
 }
 
 export function EmailStep({ onSuccess }: EmailStepProps) {
+  const isSubmittingRef = useRef(false);
   const form = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
     defaultValues: { email: '' },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     try {
       const res = await authApi.forgotPassword(values.email);
       onSuccess(values.email, res?.debugOtpCode ?? null);
-      toast.success(res?.message || 'Mã OTP đã được gửi về email của bạn!');
     } catch (err: unknown) {
-      toast.error(errorMessage(err) || 'Không thể gửi mã OTP. Vui lòng thử lại.');
+      const message =
+        err instanceof Error ? err.message : 'Không thể gửi mã OTP. Vui lòng thử lại.';
+      toast.error(message);
+    } finally {
+      isSubmittingRef.current = false;
     }
   });
 

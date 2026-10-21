@@ -1,10 +1,9 @@
 import { AlertCircle, ArrowLeft, KeyRound, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { authApi } from '../../api/authApi';
 
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -26,16 +25,19 @@ export function OtpVerificationStep({
   onBackToEmail,
   onSuccess,
 }: OtpVerificationStepProps) {
+  const isSubmittingRef = useRef(false);
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
 
   const onVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isVerifyingOtp) return;
     if (!otpCode.trim() || otpCode.trim().length < 4) {
       setOtpError('Vui lòng nhập đầy đủ mã OTP 6 số.');
       return;
     }
+    isSubmittingRef.current = true;
     setOtpError('');
     setIsVerifyingOtp(true);
     try {
@@ -47,8 +49,11 @@ export function OtpVerificationStep({
         setOtpError(res?.message || 'Mã OTP không hợp lệ.');
       }
     } catch (err: unknown) {
-      setOtpError(errorMessage(err) || 'Mã OTP không chính xác hoặc đã hết hạn.');
+      const message =
+        err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
+      setOtpError(message);
     } finally {
+      isSubmittingRef.current = false;
       setIsVerifyingOtp(false);
     }
   };

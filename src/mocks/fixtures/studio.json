@@ -1,0 +1,4104 @@
+{
+  "configuration": {
+    "id": "50000000-0000-4000-8000-000000000001",
+    "view": "SIDE_LEFT",
+    "rules": [
+      {
+        "cue": "Match the reference hip bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_hipAngleDeg_EXTENDING",
+        "lower": 108.8840829667002,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 162.72561139566955,
+        "phases": ["EXTENDING"],
+        "enabled": false,
+        "feature": "hipAngleDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["EXTENDING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "EXTENDING",
+        "requiredJoints": ["Shoulder", "Hip", "Knee"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "EXTENDING",
+          "sampleCount": 19,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference hip bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_hipAngleDeg_HINGE_TRANSITION",
+        "lower": 68.55407873095244,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 106.25948796062097,
+        "phases": ["HINGE_TRANSITION"],
+        "enabled": false,
+        "feature": "hipAngleDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGE_TRANSITION"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGE_TRANSITION",
+        "requiredJoints": ["Shoulder", "Hip", "Knee"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "HINGE_TRANSITION",
+          "sampleCount": 65,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference hip bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_hipAngleDeg_HINGING",
+        "lower": 109.65734976254858,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 155.02738041108083,
+        "phases": ["HINGING"],
+        "enabled": false,
+        "feature": "hipAngleDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGING",
+        "requiredJoints": ["Shoulder", "Hip", "Knee"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "HINGING",
+          "sampleCount": 22,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference knee bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_kneeAngleDeg_EXTENDING",
+        "lower": 154.4882225442448,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 165.11005931155708,
+        "phases": ["EXTENDING"],
+        "enabled": true,
+        "feature": "kneeAngleDeg",
+        "cueAbove": "Use more knee bend to match the reference. During extending.",
+        "cueBelow": "Use less knee bend to match the reference. During extending.",
+        "delivery": "LIVE_AND_REVIEW",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 1,
+        "cueOrigin": "ADMIN_APPROVED_REFERENCE_GUIDANCE",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["EXTENDING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "EXTENDING",
+        "requiredJoints": ["Hip", "Knee", "Ankle"],
+        "coachingPriority": "P1",
+        "confirmationNote": "Inspected actual extracted GOOD footage and phase evidence.",
+        "realtimeSupported": true,
+        "referenceEvidence": {
+          "phase": "EXTENDING",
+          "sampleCount": 19,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference knee bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_kneeAngleDeg_HINGE_TRANSITION",
+        "lower": 150.1698660299707,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 159.9914400762258,
+        "phases": ["HINGE_TRANSITION"],
+        "enabled": false,
+        "feature": "kneeAngleDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGE_TRANSITION"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGE_TRANSITION",
+        "requiredJoints": ["Hip", "Knee", "Ankle"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "HINGE_TRANSITION",
+          "sampleCount": 65,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference knee bend. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_kneeAngleDeg_HINGING",
+        "lower": 156.58392879020258,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 170.37230795041714,
+        "phases": ["HINGING"],
+        "enabled": true,
+        "feature": "kneeAngleDeg",
+        "cueAbove": "Use more knee bend to match the reference. During hinging.",
+        "cueBelow": "Use less knee bend to match the reference. During hinging.",
+        "delivery": "LIVE_AND_REVIEW",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 2,
+        "cueOrigin": "ADMIN_APPROVED_REFERENCE_GUIDANCE",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGING",
+        "requiredJoints": ["Hip", "Knee", "Ankle"],
+        "coachingPriority": "P2",
+        "confirmationNote": "Inspected actual extracted GOOD footage and phase evidence.",
+        "realtimeSupported": true,
+        "referenceEvidence": {
+          "phase": "HINGING",
+          "sampleCount": 22,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference measured position. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_torsoInclinationDeg_EXTENDING",
+        "lower": 8.040916009994216,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 49.99233921272869,
+        "phases": ["EXTENDING"],
+        "enabled": false,
+        "feature": "torsoInclinationDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["EXTENDING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "EXTENDING",
+        "requiredJoints": ["Shoulder", "Hip"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "EXTENDING",
+          "sampleCount": 19,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference measured position. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_torsoInclinationDeg_HINGE_TRANSITION",
+        "lower": 52.15276385321213,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 84.82603780994606,
+        "phases": ["HINGE_TRANSITION"],
+        "enabled": false,
+        "feature": "torsoInclinationDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGE_TRANSITION"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGE_TRANSITION",
+        "requiredJoints": ["Shoulder", "Hip"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "HINGE_TRANSITION",
+          "sampleCount": 65,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      },
+      {
+        "cue": "Match the reference measured position. Direction is selected from the measured deviation.",
+        "code": "REFERENCE_RANGE_torsoInclinationDeg_HINGING",
+        "lower": 15.372166831038257,
+        "scope": "REFERENCE_RELATIVE_TARGET",
+        "upper": 50.11858593090681,
+        "phases": ["HINGING"],
+        "enabled": false,
+        "feature": "torsoInclinationDeg",
+        "cueAbove": "",
+        "cueBelow": "",
+        "delivery": "REVIEW_ONLY",
+        "evidence": "Observed extrema from usable samples in this runtime-defined movement phase. No interpolation or temporal trajectory alignment; only a 0.000001 degree floating-point guard, not a calibrated movement tolerance or validated fault boundary.",
+        "priority": 3,
+        "cueOrigin": "REVIEW_ONLY",
+        "expectation": "Observe this phase against the approved GOOD example.",
+        "reviewPhases": ["HINGING"],
+        "criterionKind": "REFERENCE_COMPARISON",
+        "reviewEnabled": true,
+        "criterionPhase": "HINGING",
+        "requiredJoints": ["Shoulder", "Hip"],
+        "coachingPriority": "P3",
+        "confirmationNote": null,
+        "realtimeSupported": false,
+        "referenceEvidence": {
+          "phase": "HINGING",
+          "sampleCount": 22,
+          "acceptedRepCount": 4,
+          "sourceVideoCount": 1
+        },
+        "reviewExplanation": "Measured geometry differs from the reference; no technical fault is established.",
+        "technicalCorrectionSupported": false
+      }
+    ],
+    "pattern": "HINGE",
+    "quality": {
+      "stableReadyMs": 500,
+      "minimumPresence": 0.5,
+      "maximumPoseGapMs": 250,
+      "minimumVisibility": 0.5
+    },
+    "version": 1,
+    "exercise": {
+      "name": "Hip hinge",
+      "equipment": "Bodyweight",
+      "instructions": "Hinge and return upright."
+    },
+    "cuePolicy": {
+      "dwellMs": 500,
+      "cooldownMs": 4000,
+      "maximumAgeMs": 250
+    },
+    "capability": {
+      "code": "HINGE_SIDE_V1",
+      "label": "Upright-to-upright hip hinge",
+      "views": ["SIDE_LEFT", "SIDE_RIGHT", "OBLIQUE_SIDE"],
+      "driver": "hipAngleDeg",
+      "phases": ["READY", "HINGING", "HINGE_TRANSITION", "EXTENDING", "COMPLETION"],
+      "pattern": "HINGE",
+      "version": 1,
+      "available": true,
+      "limitation": "2D exercise-specific reference-relative targets only. No biomechanical diagnosis, load measurement, or universal form score. Partial opening/closing cycles are excluded.",
+      "viewClassifier": {
+        "version": "view-geometry-v1",
+        "frontDepth": 0.1,
+        "pureSideWidth": 0.18,
+        "minimumSideDepth": 0.08,
+        "obliqueSideWidth": 0.62,
+        "obliqueFrontWidth": 0.9
+      },
+      "coordinateSpace": "ASPECT_CORRECTED_IMAGE",
+      "featureGeometry": {
+        "hipAngleDeg": {
+          "kind": "ANGLE",
+          "joints": ["Shoulder", "Hip", "Knee"]
+        },
+        "kneeAngleDeg": {
+          "kind": "ANGLE",
+          "joints": ["Hip", "Knee", "Ankle"]
+        },
+        "torsoInclinationDeg": {
+          "kind": "INCLINATION",
+          "joints": ["Shoulder", "Hip"]
+        }
+      },
+      "requiredRegions": ["TORSO", "HIPS", "KNEES", "ANKLES"]
+    },
+    "exerciseId": "20000000-0000-4000-8000-000000000001",
+    "limitations": "2D exercise-specific reference-relative targets only. No biomechanical diagnosis, load measurement, or universal form score. Partial opening/closing cycles are excluded.",
+    "segmentation": {
+      "driver": "hipAngleDeg",
+      "flexedAngle": 69.94855014568321,
+      "maximumRepMs": 10000,
+      "minimumRepMs": 1000,
+      "peakProgress": 0.65,
+      "extendedAngle": 176.42545298685093,
+      "startProgress": 0.2,
+      "returnProgress": 0.12,
+      "completionHoldMs": 150,
+      "minimumUsableRatio": 0.8
+    },
+    "schemaVersion": "movement-runtime-v3",
+    "targetMuscles": [
+      {
+        "code": "hamstrings",
+        "role": "PRIMARY"
+      },
+      {
+        "code": "gluteus_maximus",
+        "role": "SECONDARY"
+      }
+    ],
+    "assessmentPlan": {
+      "version": "focused-assessment-v1",
+      "featureRoles": [
+        {
+          "roles": ["RECORDED_REVIEW", "LIVE_OPTION"],
+          "feature": "kneeAngleDeg"
+        },
+        {
+          "roles": ["RECORDED_REVIEW", "TRACKING", "REP_PHASE"],
+          "feature": "hipAngleDeg"
+        },
+        {
+          "roles": ["RECORDED_REVIEW"],
+          "feature": "torsoInclinationDeg"
+        }
+      ],
+      "requiredJoints": ["Shoulder", "Hip", "Knee"],
+      "requiredRegions": ["SHOULDERS", "HIPS", "KNEES"],
+      "viewStabilityMs": 500,
+      "trackingFeatures": ["hipAngleDeg"],
+      "availableFeatures": ["kneeAngleDeg", "hipAngleDeg", "torsoInclinationDeg"],
+      "referenceAspectRatio": 1.7777777777777777,
+      "optionalFeaturePolicy": "SKIP_UNOBSERVABLE_FINDINGS_WITHOUT_BLOCKING_REPS",
+      "canonicalEvidenceLocation": "REFERENCE_PROFILE"
+    },
+    "reviewRequired": true,
+    "selectedRegions": ["TORSO", "HIPS", "KNEES", "ANKLES"],
+    "assessmentPolicy": {
+      "version": "motion-comparison-v1",
+      "coverageUnit": "ELAPSED_TIME",
+      "referenceMeaning": "DESCRIPTIVE_ENVELOPE",
+      "minimumComparisonRatio": 0.8,
+      "biomechanicalFaultDetection": false
+    },
+    "referenceSupport": {
+      "meaning": "DESCRIPTIVE_GOOD_REFERENCE_NOT_VALIDATED_FAULT_BOUNDARIES",
+      "acceptedRepCount": 4,
+      "acceptedVideoCount": 1,
+      "featureDefinitionsVersion": "hinge-geometry-v1"
+    },
+    "referenceVersion": 1,
+    "selectedFeatures": ["kneeAngleDeg", "hipAngleDeg", "torsoInclinationDeg"],
+    "referenceProfileId": "60000000-0000-4000-8000-000000000001",
+    "referenceComparison": {
+      "meaning": "SAMPLED_PHASE_ENVELOPE_NOT_TRAJECTORY_MATCH_OR_FAULT_BOUNDARY",
+      "version": "phase-envelope-v1",
+      "alignment": "RUNTIME_PHASE_FROM_DRIVER",
+      "toleranceDeg": 1e-6,
+      "interpolation": "NONE",
+      "toleranceMeaning": "FLOATING_POINT_GUARD_NOT_CALIBRATED_MOVEMENT_TOLERANCE",
+      "observationDwellMs": 0
+    },
+    "assessmentDefinition": {
+      "status": "REVIEWED",
+      "meaning": "Reference guidance is descriptive; no validated technical-fault detector is enabled.",
+      "version": "exercise-assessment-definition-v1",
+      "mobileRuntimeSchema": "movement-runtime-v3",
+      "unsupportedCriteria": [
+        {
+          "code": "SPINAL_NEUTRALITY",
+          "reason": "The current landmarks and approved evidence do not establish a spinal-neutrality fault detector."
+        },
+        {
+          "code": "MUSCLE_ACTIVATION",
+          "reason": "Target muscles are catalog metadata, not physiological measurements."
+        },
+        {
+          "code": "TECHNIQUE_TEMPO",
+          "reason": "Technical duration limits and low inference coverage do not establish an exercise-tempo fault."
+        }
+      ]
+    },
+    "coachingPolicyVersion": "criterion-priority-v1",
+    "muscleTaxonomyVersion": "exercise-muscles-v1",
+    "featureDefinitionsVersion": "hinge-geometry-v1"
+  },
+  "evidence": {
+    "featureDefinitionsVersion": "hinge-geometry-v1",
+    "frames": [
+      {
+        "features": {
+          "cycleProgress": 0.027806097138898915,
+          "hipAngleDeg": 171.8460738970221,
+          "kneeAngleDeg": 178.4580232118856,
+          "torsoInclinationDeg": 3.4171852189993603
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9997904896736145,
+            "visibility": 0.9999387264251709,
+            "x": 0.46319517493247986,
+            "y": 0.13095688819885254,
+            "z": -0.13963793218135834
+          },
+          {
+            "index": 1,
+            "presence": 0.9997721314430237,
+            "visibility": 0.9999470710754395,
+            "x": 0.4697105884552002,
+            "y": 0.10925754904747009,
+            "z": -0.16101886332035065
+          },
+          {
+            "index": 2,
+            "presence": 0.9997883439064026,
+            "visibility": 0.9999505281448364,
+            "x": 0.47116249799728394,
+            "y": 0.10889974236488342,
+            "z": -0.1610121876001358
+          },
+          {
+            "index": 3,
+            "presence": 0.999799907207489,
+            "visibility": 0.9999628067016602,
+            "x": 0.4727109968662262,
+            "y": 0.10848638415336609,
+            "z": -0.16104334592819214
+          },
+          {
+            "index": 4,
+            "presence": 0.9997285008430481,
+            "visibility": 0.9999291896820068,
+            "x": 0.46884089708328247,
+            "y": 0.10887963324785233,
+            "z": -0.12461469322443008
+          },
+          {
+            "index": 5,
+            "presence": 0.9997161030769348,
+            "visibility": 0.9999061822891235,
+            "x": 0.46983256936073303,
+            "y": 0.10813844203948975,
+            "z": -0.12455837428569794
+          },
+          {
+            "index": 6,
+            "presence": 0.9996919631958008,
+            "visibility": 0.9999208450317383,
+            "x": 0.47096019983291626,
+            "y": 0.10720738023519516,
+            "z": -0.12457926571369171
+          },
+          {
+            "index": 7,
+            "presence": 0.9998717308044434,
+            "visibility": 0.9999750852584839,
+            "x": 0.48842543363571167,
+            "y": 0.11577422171831131,
+            "z": -0.20819637179374695
+          },
+          {
+            "index": 8,
+            "presence": 0.9997619986534119,
+            "visibility": 0.9998730421066284,
+            "x": 0.48677149415016174,
+            "y": 0.11356169730424881,
+            "z": -0.04744512960314751
+          },
+          {
+            "index": 9,
+            "presence": 0.9998950958251953,
+            "visibility": 0.999969482421875,
+            "x": 0.4687654376029968,
+            "y": 0.14686742424964905,
+            "z": -0.15372201800346375
+          },
+          {
+            "index": 10,
+            "presence": 0.9998419284820557,
+            "visibility": 0.9999433755874634,
+            "x": 0.46734899282455444,
+            "y": 0.14779603481292725,
+            "z": -0.10695668309926987
+          },
+          {
+            "index": 11,
+            "presence": 0.9999792575836182,
+            "visibility": 0.999996542930603,
+            "x": 0.5024844408035278,
+            "y": 0.22253352403640747,
+            "z": -0.2903071641921997
+          },
+          {
+            "index": 12,
+            "presence": 0.9999169111251831,
+            "visibility": 0.9998281002044678,
+            "x": 0.5110028386116028,
+            "y": 0.22365745902061462,
+            "z": 0.08106835931539536
+          },
+          {
+            "index": 13,
+            "presence": 0.9998971223831177,
+            "visibility": 0.9987826943397522,
+            "x": 0.4926057755947113,
+            "y": 0.37950262427330017,
+            "z": -0.3158791661262512
+          },
+          {
+            "index": 14,
+            "presence": 0.999795138835907,
+            "visibility": 0.12502111494541168,
+            "x": 0.49902230501174927,
+            "y": 0.3752835988998413,
+            "z": 0.11943598091602325
+          },
+          {
+            "index": 15,
+            "presence": 0.9996950626373291,
+            "visibility": 0.9947733283042908,
+            "x": 0.4667847752571106,
+            "y": 0.5142735242843628,
+            "z": -0.27573585510253906
+          },
+          {
+            "index": 16,
+            "presence": 0.9993632435798645,
+            "visibility": 0.184895321726799,
+            "x": 0.47233542799949646,
+            "y": 0.4902583658695221,
+            "z": 0.04866526275873184
+          },
+          {
+            "index": 17,
+            "presence": 0.9992166757583618,
+            "visibility": 0.9861598610877991,
+            "x": 0.46211761236190796,
+            "y": 0.5494292378425598,
+            "z": -0.31441035866737366
+          },
+          {
+            "index": 18,
+            "presence": 0.9990222454071045,
+            "visibility": 0.1869593858718872,
+            "x": 0.46418100595474243,
+            "y": 0.5247161388397217,
+            "z": 0.04537811502814293
+          },
+          {
+            "index": 19,
+            "presence": 0.999213695526123,
+            "visibility": 0.9852463603019714,
+            "x": 0.45574483275413513,
+            "y": 0.5462384223937988,
+            "z": -0.3130241334438324
+          },
+          {
+            "index": 20,
+            "presence": 0.9989491105079651,
+            "visibility": 0.1929590255022049,
+            "x": 0.4641183912754059,
+            "y": 0.5251302719116211,
+            "z": 0.008755767717957497
+          },
+          {
+            "index": 21,
+            "presence": 0.9993759989738464,
+            "visibility": 0.9736701250076294,
+            "x": 0.4567069113254547,
+            "y": 0.53758704662323,
+            "z": -0.273271381855011
+          },
+          {
+            "index": 22,
+            "presence": 0.9991458654403687,
+            "visibility": 0.1940155178308487,
+            "x": 0.46627745032310486,
+            "y": 0.515830934047699,
+            "z": 0.03034905716776848
+          },
+          {
+            "index": 23,
+            "presence": 0.9993991851806641,
+            "visibility": 0.9992732405662537,
+            "x": 0.49316611886024475,
+            "y": 0.4999638497829437,
+            "z": -0.10573391616344452
+          },
+          {
+            "index": 24,
+            "presence": 0.9988411068916321,
+            "visibility": 0.9981105327606201,
+            "x": 0.49988794326782227,
+            "y": 0.49900490045547485,
+            "z": 0.10569651424884796
+          },
+          {
+            "index": 25,
+            "presence": 0.9990983009338379,
+            "visibility": 0.9064255952835083,
+            "x": 0.5024600625038147,
+            "y": 0.6993658542633057,
+            "z": -0.023989472538232803
+          },
+          {
+            "index": 26,
+            "presence": 0.9988296627998352,
+            "visibility": 0.4690421223640442,
+            "x": 0.5041758418083191,
+            "y": 0.6955640912055969,
+            "z": 0.18172810971736908
+          },
+          {
+            "index": 27,
+            "presence": 0.9974358677864075,
+            "visibility": 0.9586371183395386,
+            "x": 0.5088284015655518,
+            "y": 0.9021981358528137,
+            "z": 0.0873788595199585
+          },
+          {
+            "index": 28,
+            "presence": 0.9981648325920105,
+            "visibility": 0.5776694416999817,
+            "x": 0.5126321315765381,
+            "y": 0.884614884853363,
+            "z": 0.3035239279270172
+          },
+          {
+            "index": 29,
+            "presence": 0.9947572946548462,
+            "visibility": 0.9463486075401306,
+            "x": 0.5155447125434875,
+            "y": 0.9344639182090759,
+            "z": 0.09185754507780075
+          },
+          {
+            "index": 30,
+            "presence": 0.9960585832595825,
+            "visibility": 0.6895412802696228,
+            "x": 0.5215539932250977,
+            "y": 0.9180917739868164,
+            "z": 0.3108845055103302
+          },
+          {
+            "index": 31,
+            "presence": 0.9951335787773132,
+            "visibility": 0.9602118134498596,
+            "x": 0.46088671684265137,
+            "y": 0.9295746684074402,
+            "z": -0.0009068287909030914
+          },
+          {
+            "index": 32,
+            "presence": 0.9976233839988708,
+            "visibility": 0.7777647376060486,
+            "x": 0.46642932295799255,
+            "y": 0.9141581058502197,
+            "z": 0.24553847312927246
+          }
+        ],
+        "timeMs": 0,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.22710182489614722,
+          "hipAngleDeg": 152.43091830239067,
+          "kneeAngleDeg": 170.37230795041714,
+          "torsoInclinationDeg": 19.65281431204286
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9998310804367065,
+            "visibility": 0.9998136758804321,
+            "x": 0.4162461757659912,
+            "y": 0.20998473465442657,
+            "z": -0.08827511966228485
+          },
+          {
+            "index": 1,
+            "presence": 0.9997836947441101,
+            "visibility": 0.9998135566711426,
+            "x": 0.41379818320274353,
+            "y": 0.19111385941505432,
+            "z": -0.11329527199268341
+          },
+          {
+            "index": 2,
+            "presence": 0.9997939467430115,
+            "visibility": 0.9998334050178528,
+            "x": 0.41478124260902405,
+            "y": 0.18882817029953003,
+            "z": -0.113325335085392
+          },
+          {
+            "index": 3,
+            "presence": 0.9998007416725159,
+            "visibility": 0.9998739957809448,
+            "x": 0.41587406396865845,
+            "y": 0.18613111972808838,
+            "z": -0.1133379340171814
+          },
+          {
+            "index": 4,
+            "presence": 0.9997524619102478,
+            "visibility": 0.9997330904006958,
+            "x": 0.41289979219436646,
+            "y": 0.19258512556552887,
+            "z": -0.07386455684900284
+          },
+          {
+            "index": 5,
+            "presence": 0.9997379183769226,
+            "visibility": 0.9996819496154785,
+            "x": 0.4133198857307434,
+            "y": 0.19140979647636414,
+            "z": -0.073822982609272
+          },
+          {
+            "index": 6,
+            "presence": 0.9997085928916931,
+            "visibility": 0.9997240900993347,
+            "x": 0.41390395164489746,
+            "y": 0.1898726522922516,
+            "z": -0.07388477027416229
+          },
+          {
+            "index": 7,
+            "presence": 0.9998910427093506,
+            "visibility": 0.9998834133148193,
+            "x": 0.4296643137931824,
+            "y": 0.17193388938903809,
+            "z": -0.1787254512310028
+          },
+          {
+            "index": 8,
+            "presence": 0.9997760653495789,
+            "visibility": 0.9994235634803772,
+            "x": 0.42902857065200806,
+            "y": 0.1736314743757248,
+            "z": -0.003970376215875149
+          },
+          {
+            "index": 9,
+            "presence": 0.9999204874038696,
+            "visibility": 0.9998652338981628,
+            "x": 0.4265546202659607,
+            "y": 0.21662548184394836,
+            "z": -0.10898454487323761
+          },
+          {
+            "index": 10,
+            "presence": 0.9998918771743774,
+            "visibility": 0.9997475147247314,
+            "x": 0.4260152280330658,
+            "y": 0.22006036341190338,
+            "z": -0.05795203521847725
+          },
+          {
+            "index": 11,
+            "presence": 0.9999794960021973,
+            "visibility": 0.999996542930603,
+            "x": 0.4715491235256195,
+            "y": 0.23544663190841675,
+            "z": -0.2829928994178772
+          },
+          {
+            "index": 12,
+            "presence": 0.9999088048934937,
+            "visibility": 0.9995908141136169,
+            "x": 0.4767259955406189,
+            "y": 0.23164257407188416,
+            "z": 0.13153506815433502
+          },
+          {
+            "index": 13,
+            "presence": 0.9998273253440857,
+            "visibility": 0.9978940486907959,
+            "x": 0.48470455408096313,
+            "y": 0.3908562660217285,
+            "z": -0.31843119859695435
+          },
+          {
+            "index": 14,
+            "presence": 0.9997046589851379,
+            "visibility": 0.07330391556024551,
+            "x": 0.49655789136886597,
+            "y": 0.37636011838912964,
+            "z": 0.16908234357833862
+          },
+          {
+            "index": 15,
+            "presence": 0.9996905326843262,
+            "visibility": 0.9910210371017456,
+            "x": 0.4736577570438385,
+            "y": 0.5323836207389832,
+            "z": -0.2544020414352417
+          },
+          {
+            "index": 16,
+            "presence": 0.9993485808372498,
+            "visibility": 0.08421766757965088,
+            "x": 0.4849870800971985,
+            "y": 0.4959014356136322,
+            "z": 0.10553673654794693
+          },
+          {
+            "index": 17,
+            "presence": 0.9993495345115662,
+            "visibility": 0.9776456356048584,
+            "x": 0.4735249876976013,
+            "y": 0.5701453685760498,
+            "z": -0.2924077808856964
+          },
+          {
+            "index": 18,
+            "presence": 0.9989326596260071,
+            "visibility": 0.0837731882929802,
+            "x": 0.482306569814682,
+            "y": 0.5330048203468323,
+            "z": 0.11833424866199493
+          },
+          {
+            "index": 19,
+            "presence": 0.9993677735328674,
+            "visibility": 0.9761201739311218,
+            "x": 0.4684630334377289,
+            "y": 0.5729131698608398,
+            "z": -0.27969229221343994
+          },
+          {
+            "index": 20,
+            "presence": 0.9988872408866882,
+            "visibility": 0.08577392995357513,
+            "x": 0.48126935958862305,
+            "y": 0.5395243763923645,
+            "z": 0.07981659471988678
+          },
+          {
+            "index": 21,
+            "presence": 0.999504804611206,
+            "visibility": 0.9545769691467285,
+            "x": 0.46894922852516174,
+            "y": 0.5600267052650452,
+            "z": -0.24713782966136932
+          },
+          {
+            "index": 22,
+            "presence": 0.9991119503974915,
+            "visibility": 0.08945633471012115,
+            "x": 0.48226985335350037,
+            "y": 0.5282119512557983,
+            "z": 0.08773933351039886
+          },
+          {
+            "index": 23,
+            "presence": 0.999523401260376,
+            "visibility": 0.9990196824073792,
+            "x": 0.5226300954818726,
+            "y": 0.48973050713539124,
+            "z": -0.12412525713443756
+          },
+          {
+            "index": 24,
+            "presence": 0.9990236759185791,
+            "visibility": 0.9965499639511108,
+            "x": 0.5279843211174011,
+            "y": 0.4825267791748047,
+            "z": 0.12407634407281876
+          },
+          {
+            "index": 25,
+            "presence": 0.9992824196815491,
+            "visibility": 0.9510719180107117,
+            "x": 0.5066722631454468,
+            "y": 0.6937528252601624,
+            "z": -0.063024140894413
+          },
+          {
+            "index": 26,
+            "presence": 0.998561680316925,
+            "visibility": 0.38936349749565125,
+            "x": 0.5091320276260376,
+            "y": 0.6755080223083496,
+            "z": 0.19029633700847626
+          },
+          {
+            "index": 27,
+            "presence": 0.9985596537590027,
+            "visibility": 0.964989960193634,
+            "x": 0.5103024244308472,
+            "y": 0.9097455143928528,
+            "z": 0.02100265957415104
+          },
+          {
+            "index": 28,
+            "presence": 0.9983546137809753,
+            "visibility": 0.5946546196937561,
+            "x": 0.5138468742370605,
+            "y": 0.8734438419342041,
+            "z": 0.2805464267730713
+          },
+          {
+            "index": 29,
+            "presence": 0.9976882934570312,
+            "visibility": 0.9473696351051331,
+            "x": 0.5205432772636414,
+            "y": 0.9460809230804443,
+            "z": 0.024391548708081245
+          },
+          {
+            "index": 30,
+            "presence": 0.9971676468849182,
+            "visibility": 0.6743346452713013,
+            "x": 0.5220991969108582,
+            "y": 0.9053148031234741,
+            "z": 0.28595250844955444
+          },
+          {
+            "index": 31,
+            "presence": 0.9976813793182373,
+            "visibility": 0.9576004147529602,
+            "x": 0.4607064723968506,
+            "y": 0.9357839226722717,
+            "z": -0.04699022322893143
+          },
+          {
+            "index": 32,
+            "presence": 0.9982140064239502,
+            "visibility": 0.7309105396270752,
+            "x": 0.46682819724082947,
+            "y": 0.9021413326263428,
+            "z": 0.23206594586372375
+          }
+        ],
+        "timeMs": 1602,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.9525829794345211,
+          "hipAngleDeg": 77.74375451117383,
+          "kneeAngleDeg": 154.66154314785675,
+          "torsoInclinationDeg": 76.4083155372651
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9978693723678589,
+            "visibility": 0.999110758304596,
+            "x": 0.3794799745082855,
+            "y": 0.4881209135055542,
+            "z": -0.026575740426778793
+          },
+          {
+            "index": 1,
+            "presence": 0.9973402619361877,
+            "visibility": 0.9990130066871643,
+            "x": 0.3706102967262268,
+            "y": 0.47523006796836853,
+            "z": -0.05221526697278023
+          },
+          {
+            "index": 2,
+            "presence": 0.9972208738327026,
+            "visibility": 0.999041736125946,
+            "x": 0.37049707770347595,
+            "y": 0.4726089537143707,
+            "z": -0.052256178110837936
+          },
+          {
+            "index": 3,
+            "presence": 0.9970855116844177,
+            "visibility": 0.9992551207542419,
+            "x": 0.37030887603759766,
+            "y": 0.46976369619369507,
+            "z": -0.05227724462747574
+          },
+          {
+            "index": 4,
+            "presence": 0.9979954957962036,
+            "visibility": 0.9992554783821106,
+            "x": 0.37064528465270996,
+            "y": 0.4761170744895935,
+            "z": -0.013669012114405632
+          },
+          {
+            "index": 5,
+            "presence": 0.9982705116271973,
+            "visibility": 0.9992963075637817,
+            "x": 0.3704945743083954,
+            "y": 0.47404608130455017,
+            "z": -0.013704702258110046
+          },
+          {
+            "index": 6,
+            "presence": 0.9984326958656311,
+            "visibility": 0.9993962049484253,
+            "x": 0.3702726662158966,
+            "y": 0.47130927443504333,
+            "z": -0.013767723925411701
+          },
+          {
+            "index": 7,
+            "presence": 0.997489333152771,
+            "visibility": 0.9988605380058289,
+            "x": 0.3764883577823639,
+            "y": 0.44766128063201904,
+            "z": -0.11826274544000626
+          },
+          {
+            "index": 8,
+            "presence": 0.9989295601844788,
+            "visibility": 0.999136209487915,
+            "x": 0.3757976293563843,
+            "y": 0.4477293789386749,
+            "z": 0.05329339951276779
+          },
+          {
+            "index": 9,
+            "presence": 0.9991773962974548,
+            "visibility": 0.9995663166046143,
+            "x": 0.390686571598053,
+            "y": 0.4808028042316437,
+            "z": -0.047231875360012054
+          },
+          {
+            "index": 10,
+            "presence": 0.9994522929191589,
+            "visibility": 0.9992896914482117,
+            "x": 0.39117327332496643,
+            "y": 0.4824002981185913,
+            "z": 0.003014343325048685
+          },
+          {
+            "index": 11,
+            "presence": 0.9994588494300842,
+            "visibility": 0.9999639391899109,
+            "x": 0.42892804741859436,
+            "y": 0.4502392113208771,
+            "z": -0.22537274658679962
+          },
+          {
+            "index": 12,
+            "presence": 0.999848484992981,
+            "visibility": 0.9998757839202881,
+            "x": 0.43629080057144165,
+            "y": 0.4479154050350189,
+            "z": 0.19311940670013428
+          },
+          {
+            "index": 13,
+            "presence": 0.996940016746521,
+            "visibility": 0.9872589707374573,
+            "x": 0.45856866240501404,
+            "y": 0.5928502678871155,
+            "z": -0.2568643093109131
+          },
+          {
+            "index": 14,
+            "presence": 0.9992338418960571,
+            "visibility": 0.17511078715324402,
+            "x": 0.4679563045501709,
+            "y": 0.576384425163269,
+            "z": 0.24298183619976044
+          },
+          {
+            "index": 15,
+            "presence": 0.9953987002372742,
+            "visibility": 0.9692689180374146,
+            "x": 0.4595872759819031,
+            "y": 0.7214237451553345,
+            "z": -0.16216619312763214
+          },
+          {
+            "index": 16,
+            "presence": 0.9983853101730347,
+            "visibility": 0.29982736706733704,
+            "x": 0.47641587257385254,
+            "y": 0.6882023215293884,
+            "z": 0.16626465320587158
+          },
+          {
+            "index": 17,
+            "presence": 0.9942771792411804,
+            "visibility": 0.9494827389717102,
+            "x": 0.4625990390777588,
+            "y": 0.7607301473617554,
+            "z": -0.1931024044752121
+          },
+          {
+            "index": 18,
+            "presence": 0.9977045655250549,
+            "visibility": 0.28333795070648193,
+            "x": 0.4843598008155823,
+            "y": 0.7215333580970764,
+            "z": 0.17766258120536804
+          },
+          {
+            "index": 19,
+            "presence": 0.995243489742279,
+            "visibility": 0.9466471672058105,
+            "x": 0.4586261212825775,
+            "y": 0.763667643070221,
+            "z": -0.1687546819448471
+          },
+          {
+            "index": 20,
+            "presence": 0.9976890087127686,
+            "visibility": 0.2860119044780731,
+            "x": 0.4783373773097992,
+            "y": 0.7236999273300171,
+            "z": 0.142433762550354
+          },
+          {
+            "index": 21,
+            "presence": 0.9957504272460938,
+            "visibility": 0.9073834419250488,
+            "x": 0.45878878235816956,
+            "y": 0.7525855302810669,
+            "z": -0.1496187299489975
+          },
+          {
+            "index": 22,
+            "presence": 0.9981163740158081,
+            "visibility": 0.2809494137763977,
+            "x": 0.47793474793434143,
+            "y": 0.708661675453186,
+            "z": 0.14954012632369995
+          },
+          {
+            "index": 23,
+            "presence": 0.9849604964256287,
+            "visibility": 0.9976014494895935,
+            "x": 0.5648679137229919,
+            "y": 0.5086684226989746,
+            "z": -0.13046720623970032
+          },
+          {
+            "index": 24,
+            "presence": 0.9911948442459106,
+            "visibility": 0.9977620840072632,
+            "x": 0.5557398200035095,
+            "y": 0.5062651038169861,
+            "z": 0.13075624406337738
+          },
+          {
+            "index": 25,
+            "presence": 0.9962976574897766,
+            "visibility": 0.9413065910339355,
+            "x": 0.5126908421516418,
+            "y": 0.700141191482544,
+            "z": -0.09157225489616394
+          },
+          {
+            "index": 26,
+            "presence": 0.9961585402488708,
+            "visibility": 0.2643481492996216,
+            "x": 0.5082586407661438,
+            "y": 0.6949222087860107,
+            "z": 0.16627246141433716
+          },
+          {
+            "index": 27,
+            "presence": 0.9926522970199585,
+            "visibility": 0.9728886485099792,
+            "x": 0.5115889310836792,
+            "y": 0.9204409122467041,
+            "z": -0.010354015976190567
+          },
+          {
+            "index": 28,
+            "presence": 0.9930480122566223,
+            "visibility": 0.44891345500946045,
+            "x": 0.5125485062599182,
+            "y": 0.8893214464187622,
+            "z": 0.25216299295425415
+          },
+          {
+            "index": 29,
+            "presence": 0.991340696811676,
+            "visibility": 0.9640856385231018,
+            "x": 0.5217707753181458,
+            "y": 0.9529021978378296,
+            "z": -0.003535898867994547
+          },
+          {
+            "index": 30,
+            "presence": 0.9905367493629456,
+            "visibility": 0.5405345559120178,
+            "x": 0.5238728523254395,
+            "y": 0.9265351295471191,
+            "z": 0.25896015763282776
+          },
+          {
+            "index": 31,
+            "presence": 0.9887773394584656,
+            "visibility": 0.971068799495697,
+            "x": 0.4581252634525299,
+            "y": 0.9566138386726379,
+            "z": -0.054056666791439056
+          },
+          {
+            "index": 32,
+            "presence": 0.9921814203262329,
+            "visibility": 0.5879719853401184,
+            "x": 0.4653070867061615,
+            "y": 0.9428367018699646,
+            "z": 0.22745215892791748
+          }
+        ],
+        "timeMs": 3203,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.2533802333315637,
+          "hipAngleDeg": 148.42845183802137,
+          "kneeAngleDeg": 161.32206216335908,
+          "torsoInclinationDeg": 20.26494592229269
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9998347759246826,
+            "visibility": 0.9994750618934631,
+            "x": 0.4104740023612976,
+            "y": 0.2288789302110672,
+            "z": -0.0846441388130188
+          },
+          {
+            "index": 1,
+            "presence": 0.9997926354408264,
+            "visibility": 0.9994755983352661,
+            "x": 0.4071745276451111,
+            "y": 0.211183562874794,
+            "z": -0.10967326164245605
+          },
+          {
+            "index": 2,
+            "presence": 0.9998055100440979,
+            "visibility": 0.9994823932647705,
+            "x": 0.4080692231655121,
+            "y": 0.20849329233169556,
+            "z": -0.10970400273799896
+          },
+          {
+            "index": 3,
+            "presence": 0.999816358089447,
+            "visibility": 0.9996253848075867,
+            "x": 0.4090728759765625,
+            "y": 0.2054048478603363,
+            "z": -0.1097303032875061
+          },
+          {
+            "index": 4,
+            "presence": 0.9997482895851135,
+            "visibility": 0.9994953274726868,
+            "x": 0.40650248527526855,
+            "y": 0.21269561350345612,
+            "z": -0.07048963755369186
+          },
+          {
+            "index": 5,
+            "presence": 0.9997312426567078,
+            "visibility": 0.999424397945404,
+            "x": 0.40674901008605957,
+            "y": 0.21146053075790405,
+            "z": -0.07044367492198944
+          },
+          {
+            "index": 6,
+            "presence": 0.9997029900550842,
+            "visibility": 0.9995184540748596,
+            "x": 0.4071676731109619,
+            "y": 0.2095896154642105,
+            "z": -0.07049039751291275
+          },
+          {
+            "index": 7,
+            "presence": 0.9998998641967773,
+            "visibility": 0.999467670917511,
+            "x": 0.4214905798435211,
+            "y": 0.18789619207382202,
+            "z": -0.17411157488822937
+          },
+          {
+            "index": 8,
+            "presence": 0.9997660517692566,
+            "visibility": 0.9991921186447144,
+            "x": 0.42039600014686584,
+            "y": 0.1903485804796219,
+            "z": -0.00034597679041326046
+          },
+          {
+            "index": 9,
+            "presence": 0.9999407529830933,
+            "visibility": 0.9997155666351318,
+            "x": 0.42127346992492676,
+            "y": 0.23333676159381866,
+            "z": -0.10479722917079926
+          },
+          {
+            "index": 10,
+            "presence": 0.9999085664749146,
+            "visibility": 0.999478280544281,
+            "x": 0.4210450053215027,
+            "y": 0.2367333471775055,
+            "z": -0.054109662771224976
+          },
+          {
+            "index": 11,
+            "presence": 0.9999899864196777,
+            "visibility": 0.9999865293502808,
+            "x": 0.4677913188934326,
+            "y": 0.2402956634759903,
+            "z": -0.27264314889907837
+          },
+          {
+            "index": 12,
+            "presence": 0.9999196529388428,
+            "visibility": 0.9997953176498413,
+            "x": 0.4698967933654785,
+            "y": 0.23970960080623627,
+            "z": 0.13461913168430328
+          },
+          {
+            "index": 13,
+            "presence": 0.9999161958694458,
+            "visibility": 0.9948103427886963,
+            "x": 0.47467726469039917,
+            "y": 0.3978535532951355,
+            "z": -0.3031895160675049
+          },
+          {
+            "index": 14,
+            "presence": 0.9997971653938293,
+            "visibility": 0.12254326045513153,
+            "x": 0.48227015137672424,
+            "y": 0.3885681927204132,
+            "z": 0.181665301322937
+          },
+          {
+            "index": 15,
+            "presence": 0.9998643398284912,
+            "visibility": 0.983886182308197,
+            "x": 0.46022647619247437,
+            "y": 0.5338022112846375,
+            "z": -0.2436572015285492
+          },
+          {
+            "index": 16,
+            "presence": 0.9995280504226685,
+            "visibility": 0.20555619895458221,
+            "x": 0.4684039056301117,
+            "y": 0.5091375708580017,
+            "z": 0.11202774196863174
+          },
+          {
+            "index": 17,
+            "presence": 0.9996739625930786,
+            "visibility": 0.9689067006111145,
+            "x": 0.45977821946144104,
+            "y": 0.5701418519020081,
+            "z": -0.2815285921096802
+          },
+          {
+            "index": 18,
+            "presence": 0.9992192983627319,
+            "visibility": 0.19598710536956787,
+            "x": 0.4641757607460022,
+            "y": 0.543781042098999,
+            "z": 0.1196504607796669
+          },
+          {
+            "index": 19,
+            "presence": 0.9997000694274902,
+            "visibility": 0.967011570930481,
+            "x": 0.45444154739379883,
+            "y": 0.5710936784744263,
+            "z": -0.27224698662757874
+          },
+          {
+            "index": 20,
+            "presence": 0.9991499185562134,
+            "visibility": 0.19836285710334778,
+            "x": 0.4628400206565857,
+            "y": 0.5471444129943848,
+            "z": 0.08188626915216446
+          },
+          {
+            "index": 21,
+            "presence": 0.999771773815155,
+            "visibility": 0.9393413066864014,
+            "x": 0.45478910207748413,
+            "y": 0.5610292553901672,
+            "z": -0.23680131137371063
+          },
+          {
+            "index": 22,
+            "presence": 0.9993531107902527,
+            "visibility": 0.1962175965309143,
+            "x": 0.463479220867157,
+            "y": 0.5316644906997681,
+            "z": 0.09431003034114838
+          },
+          {
+            "index": 23,
+            "presence": 0.9998118281364441,
+            "visibility": 0.998977541923523,
+            "x": 0.5193966031074524,
+            "y": 0.4887755811214447,
+            "z": -0.12064266204833984
+          },
+          {
+            "index": 24,
+            "presence": 0.9994297623634338,
+            "visibility": 0.9983367323875427,
+            "x": 0.5213789939880371,
+            "y": 0.48298466205596924,
+            "z": 0.12071175873279572
+          },
+          {
+            "index": 25,
+            "presence": 0.9996461868286133,
+            "visibility": 0.9394818544387817,
+            "x": 0.49560174345970154,
+            "y": 0.7003493905067444,
+            "z": -0.08356495201587677
+          },
+          {
+            "index": 26,
+            "presence": 0.9987844824790955,
+            "visibility": 0.26716041564941406,
+            "x": 0.500347912311554,
+            "y": 0.6756482720375061,
+            "z": 0.21109065413475037
+          },
+          {
+            "index": 27,
+            "presence": 0.9986312985420227,
+            "visibility": 0.9608871936798096,
+            "x": 0.5113523602485657,
+            "y": 0.9167936444282532,
+            "z": -0.029059648513793945
+          },
+          {
+            "index": 28,
+            "presence": 0.998291552066803,
+            "visibility": 0.4255000650882721,
+            "x": 0.5122653245925903,
+            "y": 0.8738172650337219,
+            "z": 0.30753976106643677
+          },
+          {
+            "index": 29,
+            "presence": 0.9975050091743469,
+            "visibility": 0.9512181282043457,
+            "x": 0.5237499475479126,
+            "y": 0.9516662359237671,
+            "z": -0.028447356075048447
+          },
+          {
+            "index": 30,
+            "presence": 0.9971656203269958,
+            "visibility": 0.5354104042053223,
+            "x": 0.5232627391815186,
+            "y": 0.9012686610221863,
+            "z": 0.3141266405582428
+          },
+          {
+            "index": 31,
+            "presence": 0.9970081448554993,
+            "visibility": 0.9554249048233032,
+            "x": 0.4606247544288635,
+            "y": 0.9407001733779907,
+            "z": -0.10206256061792374
+          },
+          {
+            "index": 32,
+            "presence": 0.9983872175216675,
+            "visibility": 0.5790717005729675,
+            "x": 0.46860894560813904,
+            "y": 0.9044638872146606,
+            "z": 0.2628067135810852
+          }
+        ],
+        "timeMs": 4805,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.30614905595347836,
+          "hipAngleDeg": 142.84767444139942,
+          "kneeAngleDeg": 164.97575685619043,
+          "torsoInclinationDeg": 24.280335006124602
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9998282194137573,
+            "visibility": 0.9996000528335571,
+            "x": 0.40826478600502014,
+            "y": 0.2460007518529892,
+            "z": -0.12892231345176697
+          },
+          {
+            "index": 1,
+            "presence": 0.99977046251297,
+            "visibility": 0.9995875954627991,
+            "x": 0.40349918603897095,
+            "y": 0.22691108286380768,
+            "z": -0.15344111621379852
+          },
+          {
+            "index": 2,
+            "presence": 0.9997749924659729,
+            "visibility": 0.9996384978294373,
+            "x": 0.4046816825866699,
+            "y": 0.2233707159757614,
+            "z": -0.15348106622695923
+          },
+          {
+            "index": 3,
+            "presence": 0.9997796416282654,
+            "visibility": 0.9997109174728394,
+            "x": 0.4058187007904053,
+            "y": 0.2193683683872223,
+            "z": -0.15349827706813812
+          },
+          {
+            "index": 4,
+            "presence": 0.9997538924217224,
+            "visibility": 0.9993850588798523,
+            "x": 0.4023018777370453,
+            "y": 0.23010662198066711,
+            "z": -0.11484032869338989
+          },
+          {
+            "index": 5,
+            "presence": 0.9997461438179016,
+            "visibility": 0.999257504940033,
+            "x": 0.4026149809360504,
+            "y": 0.22920763492584229,
+            "z": -0.11480289697647095
+          },
+          {
+            "index": 6,
+            "presence": 0.9997300505638123,
+            "visibility": 0.9993664026260376,
+            "x": 0.4030535817146301,
+            "y": 0.2275661826133728,
+            "z": -0.11487573385238647
+          },
+          {
+            "index": 7,
+            "presence": 0.9998694658279419,
+            "visibility": 0.9997317790985107,
+            "x": 0.41766443848609924,
+            "y": 0.1983703374862671,
+            "z": -0.2119351625442505
+          },
+          {
+            "index": 8,
+            "presence": 0.9997960925102234,
+            "visibility": 0.9987790584564209,
+            "x": 0.41562700271606445,
+            "y": 0.20419122278690338,
+            "z": -0.04011695832014084
+          },
+          {
+            "index": 9,
+            "presence": 0.9999291896820068,
+            "visibility": 0.9997105598449707,
+            "x": 0.41951125860214233,
+            "y": 0.24812714755535126,
+            "z": -0.14650298655033112
+          },
+          {
+            "index": 10,
+            "presence": 0.9999103546142578,
+            "visibility": 0.9994892477989197,
+            "x": 0.4190376400947571,
+            "y": 0.25265204906463623,
+            "z": -0.09644757956266403
+          },
+          {
+            "index": 11,
+            "presence": 0.9999819993972778,
+            "visibility": 0.9999972581863403,
+            "x": 0.468557745218277,
+            "y": 0.23984433710575104,
+            "z": -0.3034692406654358
+          },
+          {
+            "index": 12,
+            "presence": 0.9999459981918335,
+            "visibility": 0.9997134804725647,
+            "x": 0.4613327980041504,
+            "y": 0.24861924350261688,
+            "z": 0.09994681179523468
+          },
+          {
+            "index": 13,
+            "presence": 0.999795138835907,
+            "visibility": 0.9974027872085571,
+            "x": 0.47393879294395447,
+            "y": 0.40225839614868164,
+            "z": -0.3379227817058563
+          },
+          {
+            "index": 14,
+            "presence": 0.999785840511322,
+            "visibility": 0.11675084382295609,
+            "x": 0.476534903049469,
+            "y": 0.3953253924846649,
+            "z": 0.14859053492546082
+          },
+          {
+            "index": 15,
+            "presence": 0.9996267557144165,
+            "visibility": 0.9852517247200012,
+            "x": 0.46334952116012573,
+            "y": 0.5469925999641418,
+            "z": -0.28862884640693665
+          },
+          {
+            "index": 16,
+            "presence": 0.999473512172699,
+            "visibility": 0.13185222446918488,
+            "x": 0.4665137827396393,
+            "y": 0.5183103084564209,
+            "z": 0.07919442653656006
+          },
+          {
+            "index": 17,
+            "presence": 0.999276340007782,
+            "visibility": 0.9663739204406738,
+            "x": 0.462484747171402,
+            "y": 0.5871753096580505,
+            "z": -0.3279934227466583
+          },
+          {
+            "index": 18,
+            "presence": 0.9991033673286438,
+            "visibility": 0.12108182162046432,
+            "x": 0.46263760328292847,
+            "y": 0.5642461776733398,
+            "z": 0.08686169236898422
+          },
+          {
+            "index": 19,
+            "presence": 0.9993014335632324,
+            "visibility": 0.9644622206687927,
+            "x": 0.4569562077522278,
+            "y": 0.5907679796218872,
+            "z": -0.3206624388694763
+          },
+          {
+            "index": 20,
+            "presence": 0.9990506768226624,
+            "visibility": 0.12390501797199249,
+            "x": 0.458335816860199,
+            "y": 0.5686159729957581,
+            "z": 0.04791956767439842
+          },
+          {
+            "index": 21,
+            "presence": 0.999450147151947,
+            "visibility": 0.9336727261543274,
+            "x": 0.45747384428977966,
+            "y": 0.5764602422714233,
+            "z": -0.28329697251319885
+          },
+          {
+            "index": 22,
+            "presence": 0.9992849230766296,
+            "visibility": 0.12583589553833008,
+            "x": 0.4609995484352112,
+            "y": 0.5529032945632935,
+            "z": 0.06105310469865799
+          },
+          {
+            "index": 23,
+            "presence": 0.9995810389518738,
+            "visibility": 0.9992247819900513,
+            "x": 0.5325050354003906,
+            "y": 0.49185723066329956,
+            "z": -0.12132702022790909
+          },
+          {
+            "index": 24,
+            "presence": 0.999229907989502,
+            "visibility": 0.9971906542778015,
+            "x": 0.5179905295372009,
+            "y": 0.4871809184551239,
+            "z": 0.12137265503406525
+          },
+          {
+            "index": 25,
+            "presence": 0.9994202852249146,
+            "visibility": 0.9550318717956543,
+            "x": 0.5062264204025269,
+            "y": 0.6962959170341492,
+            "z": -0.07913095504045486
+          },
+          {
+            "index": 26,
+            "presence": 0.9987720847129822,
+            "visibility": 0.40141481161117554,
+            "x": 0.5043510794639587,
+            "y": 0.6708106994628906,
+            "z": 0.19282719492912292
+          },
+          {
+            "index": 27,
+            "presence": 0.9985164999961853,
+            "visibility": 0.9646816849708557,
+            "x": 0.5107589960098267,
+            "y": 0.9107071757316589,
+            "z": -0.0036163548938930035
+          },
+          {
+            "index": 28,
+            "presence": 0.9984990358352661,
+            "visibility": 0.6225906014442444,
+            "x": 0.5128014087677002,
+            "y": 0.8726344704627991,
+            "z": 0.28386247158050537
+          },
+          {
+            "index": 29,
+            "presence": 0.9974977374076843,
+            "visibility": 0.9469031691551208,
+            "x": 0.5219966173171997,
+            "y": 0.950387716293335,
+            "z": -0.0012498964788392186
+          },
+          {
+            "index": 30,
+            "presence": 0.997554361820221,
+            "visibility": 0.6891656517982483,
+            "x": 0.5217729806900024,
+            "y": 0.9059709906578064,
+            "z": 0.2890423536300659
+          },
+          {
+            "index": 31,
+            "presence": 0.9968640804290771,
+            "visibility": 0.9579429626464844,
+            "x": 0.4593873918056488,
+            "y": 0.9394740462303162,
+            "z": -0.07910014688968658
+          },
+          {
+            "index": 32,
+            "presence": 0.9981757402420044,
+            "visibility": 0.7279142141342163,
+            "x": 0.4695439338684082,
+            "y": 0.9068182110786438,
+            "z": 0.23154518008232117
+          }
+        ],
+        "timeMs": 6406,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.960477476231931,
+          "hipAngleDeg": 76.67693112942177,
+          "kneeAngleDeg": 156.31428945744548,
+          "torsoInclinationDeg": 78.13669987505146
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9962313771247864,
+            "visibility": 0.9982870817184448,
+            "x": 0.3795929551124573,
+            "y": 0.5004407167434692,
+            "z": -0.03877309709787369
+          },
+          {
+            "index": 1,
+            "presence": 0.9956492781639099,
+            "visibility": 0.9982348680496216,
+            "x": 0.37022295594215393,
+            "y": 0.48888349533081055,
+            "z": -0.06455209106206894
+          },
+          {
+            "index": 2,
+            "presence": 0.9955928921699524,
+            "visibility": 0.9983213543891907,
+            "x": 0.3700358271598816,
+            "y": 0.48634612560272217,
+            "z": -0.06459295004606247
+          },
+          {
+            "index": 3,
+            "presence": 0.9955610036849976,
+            "visibility": 0.9987006187438965,
+            "x": 0.36982759833335876,
+            "y": 0.4837125539779663,
+            "z": -0.06461701542139053
+          },
+          {
+            "index": 4,
+            "presence": 0.9964033365249634,
+            "visibility": 0.9986051917076111,
+            "x": 0.3702305853366852,
+            "y": 0.48917388916015625,
+            "z": -0.027875881642103195
+          },
+          {
+            "index": 5,
+            "presence": 0.9968090653419495,
+            "visibility": 0.998694658279419,
+            "x": 0.370015025138855,
+            "y": 0.4869425892829895,
+            "z": -0.027896374464035034
+          },
+          {
+            "index": 6,
+            "presence": 0.9970245957374573,
+            "visibility": 0.9988787174224854,
+            "x": 0.36976176500320435,
+            "y": 0.48409825563430786,
+            "z": -0.027928302064538002
+          },
+          {
+            "index": 7,
+            "presence": 0.9963796734809875,
+            "visibility": 0.9980549216270447,
+            "x": 0.3752751052379608,
+            "y": 0.46168696880340576,
+            "z": -0.13194365799427032
+          },
+          {
+            "index": 8,
+            "presence": 0.9978516101837158,
+            "visibility": 0.9984848499298096,
+            "x": 0.3752293288707733,
+            "y": 0.4606647789478302,
+            "z": 0.03310518339276314
+          },
+          {
+            "index": 9,
+            "presence": 0.9987872242927551,
+            "visibility": 0.9991850256919861,
+            "x": 0.3908003568649292,
+            "y": 0.4926987588405609,
+            "z": -0.05942782014608383
+          },
+          {
+            "index": 10,
+            "presence": 0.9991011619567871,
+            "visibility": 0.9987194538116455,
+            "x": 0.39161908626556396,
+            "y": 0.49365171790122986,
+            "z": -0.011236710473895073
+          },
+          {
+            "index": 11,
+            "presence": 0.999322772026062,
+            "visibility": 0.9999563097953796,
+            "x": 0.42386874556541443,
+            "y": 0.46209806203842163,
+            "z": -0.2318582981824875
+          },
+          {
+            "index": 12,
+            "presence": 0.9997521042823792,
+            "visibility": 0.9998520016670227,
+            "x": 0.43497830629348755,
+            "y": 0.4447825253009796,
+            "z": 0.16681642830371857
+          },
+          {
+            "index": 13,
+            "presence": 0.9961802959442139,
+            "visibility": 0.9872570037841797,
+            "x": 0.4493614137172699,
+            "y": 0.6021842956542969,
+            "z": -0.2616139352321625
+          },
+          {
+            "index": 14,
+            "presence": 0.9988535642623901,
+            "visibility": 0.16387608647346497,
+            "x": 0.46393299102783203,
+            "y": 0.575778067111969,
+            "z": 0.21276924014091492
+          },
+          {
+            "index": 15,
+            "presence": 0.99332594871521,
+            "visibility": 0.9664862751960754,
+            "x": 0.44984012842178345,
+            "y": 0.7305130958557129,
+            "z": -0.1735444962978363
+          },
+          {
+            "index": 16,
+            "presence": 0.997227132320404,
+            "visibility": 0.2695545256137848,
+            "x": 0.4661160409450531,
+            "y": 0.6923386454582214,
+            "z": 0.14241686463356018
+          },
+          {
+            "index": 17,
+            "presence": 0.9918909072875977,
+            "visibility": 0.9459543228149414,
+            "x": 0.45336785912513733,
+            "y": 0.7661786675453186,
+            "z": -0.2059520035982132
+          },
+          {
+            "index": 18,
+            "presence": 0.9961555600166321,
+            "visibility": 0.2603648006916046,
+            "x": 0.46695250272750854,
+            "y": 0.7205731868743896,
+            "z": 0.1567792445421219
+          },
+          {
+            "index": 19,
+            "presence": 0.9932523369789124,
+            "visibility": 0.9428086280822754,
+            "x": 0.45063623785972595,
+            "y": 0.7684036493301392,
+            "z": -0.18012505769729614
+          },
+          {
+            "index": 20,
+            "presence": 0.9959981441497803,
+            "visibility": 0.2626436948776245,
+            "x": 0.4677194654941559,
+            "y": 0.7239652276039124,
+            "z": 0.1212606430053711
+          },
+          {
+            "index": 21,
+            "presence": 0.9938442707061768,
+            "visibility": 0.9012487530708313,
+            "x": 0.4505862295627594,
+            "y": 0.7585179805755615,
+            "z": -0.16101528704166412
+          },
+          {
+            "index": 22,
+            "presence": 0.9967470169067383,
+            "visibility": 0.2566498816013336,
+            "x": 0.46705156564712524,
+            "y": 0.7163392901420593,
+            "z": 0.12638165056705475
+          },
+          {
+            "index": 23,
+            "presence": 0.9811205267906189,
+            "visibility": 0.9965035915374756,
+            "x": 0.563467800617218,
+            "y": 0.5142309665679932,
+            "z": -0.12693209946155548
+          },
+          {
+            "index": 24,
+            "presence": 0.9882919192314148,
+            "visibility": 0.9966248869895935,
+            "x": 0.5546989440917969,
+            "y": 0.5021623969078064,
+            "z": 0.127264603972435
+          },
+          {
+            "index": 25,
+            "presence": 0.9963155388832092,
+            "visibility": 0.9546834230422974,
+            "x": 0.5146219730377197,
+            "y": 0.698883056640625,
+            "z": -0.10066261142492294
+          },
+          {
+            "index": 26,
+            "presence": 0.9960212111473083,
+            "visibility": 0.25483956933021545,
+            "x": 0.5100647211074829,
+            "y": 0.6899041533470154,
+            "z": 0.15951791405677795
+          },
+          {
+            "index": 27,
+            "presence": 0.9929715991020203,
+            "visibility": 0.9795841574668884,
+            "x": 0.5114111304283142,
+            "y": 0.9167733788490295,
+            "z": -0.03520239144563675
+          },
+          {
+            "index": 28,
+            "presence": 0.9935603141784668,
+            "visibility": 0.5000537037849426,
+            "x": 0.5119658708572388,
+            "y": 0.8899262547492981,
+            "z": 0.24212932586669922
+          },
+          {
+            "index": 29,
+            "presence": 0.9913074374198914,
+            "visibility": 0.9725909233093262,
+            "x": 0.522302508354187,
+            "y": 0.9537330865859985,
+            "z": -0.030346503481268883
+          },
+          {
+            "index": 30,
+            "presence": 0.9910575151443481,
+            "visibility": 0.5824170708656311,
+            "x": 0.5276576280593872,
+            "y": 0.9244187474250793,
+            "z": 0.24834580719470978
+          },
+          {
+            "index": 31,
+            "presence": 0.9888129830360413,
+            "visibility": 0.9770494103431702,
+            "x": 0.45806804299354553,
+            "y": 0.9554121494293213,
+            "z": -0.08357950299978256
+          },
+          {
+            "index": 32,
+            "presence": 0.9926435351371765,
+            "visibility": 0.6302703022956848,
+            "x": 0.4731559753417969,
+            "y": 0.9383765459060669,
+            "z": 0.21633782982826233
+          }
+        ],
+        "timeMs": 8008,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.3919140618437576,
+          "hipAngleDeg": 136.6370993647827,
+          "kneeAngleDeg": 158.97892313933167,
+          "torsoInclinationDeg": 29.03772820530364
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.999784529209137,
+            "visibility": 0.9988203048706055,
+            "x": 0.3943687379360199,
+            "y": 0.26801538467407227,
+            "z": -0.054981548339128494
+          },
+          {
+            "index": 1,
+            "presence": 0.999721109867096,
+            "visibility": 0.9988425970077515,
+            "x": 0.3901251256465912,
+            "y": 0.25127801299095154,
+            "z": -0.07975240051746368
+          },
+          {
+            "index": 2,
+            "presence": 0.9997342228889465,
+            "visibility": 0.9989004135131836,
+            "x": 0.3910055160522461,
+            "y": 0.2481372058391571,
+            "z": -0.07979930937290192
+          },
+          {
+            "index": 3,
+            "presence": 0.9997472167015076,
+            "visibility": 0.9991450905799866,
+            "x": 0.39207723736763,
+            "y": 0.2443341314792633,
+            "z": -0.07981167733669281
+          },
+          {
+            "index": 4,
+            "presence": 0.9996858835220337,
+            "visibility": 0.9989719986915588,
+            "x": 0.3897039592266083,
+            "y": 0.25272879004478455,
+            "z": -0.040181662887334824
+          },
+          {
+            "index": 5,
+            "presence": 0.9996753931045532,
+            "visibility": 0.9990035891532898,
+            "x": 0.39017876982688904,
+            "y": 0.2508786916732788,
+            "z": -0.04015007242560387
+          },
+          {
+            "index": 6,
+            "presence": 0.9996563196182251,
+            "visibility": 0.9991418719291687,
+            "x": 0.39079660177230835,
+            "y": 0.24823881685733795,
+            "z": -0.04023093730211258
+          },
+          {
+            "index": 7,
+            "presence": 0.9998515844345093,
+            "visibility": 0.9987145066261292,
+            "x": 0.40436458587646484,
+            "y": 0.22204576432704926,
+            "z": -0.14483821392059326
+          },
+          {
+            "index": 8,
+            "presence": 0.9997245669364929,
+            "visibility": 0.9986874461174011,
+            "x": 0.4032929539680481,
+            "y": 0.22487062215805054,
+            "z": 0.030967965722084045
+          },
+          {
+            "index": 9,
+            "presence": 0.9999158382415771,
+            "visibility": 0.9993647933006287,
+            "x": 0.40651240944862366,
+            "y": 0.26916247606277466,
+            "z": -0.07557064294815063
+          },
+          {
+            "index": 10,
+            "presence": 0.9998857975006104,
+            "visibility": 0.9989407062530518,
+            "x": 0.4065365195274353,
+            "y": 0.27174362540245056,
+            "z": -0.024200541898608208
+          },
+          {
+            "index": 11,
+            "presence": 0.9999836683273315,
+            "visibility": 0.999964714050293,
+            "x": 0.45349937677383423,
+            "y": 0.2607356905937195,
+            "z": -0.24873073399066925
+          },
+          {
+            "index": 12,
+            "presence": 0.9999105930328369,
+            "visibility": 0.9998060464859009,
+            "x": 0.45159912109375,
+            "y": 0.26671913266181946,
+            "z": 0.16401074826717377
+          },
+          {
+            "index": 13,
+            "presence": 0.9998722076416016,
+            "visibility": 0.9910901784896851,
+            "x": 0.45908278226852417,
+            "y": 0.4177621603012085,
+            "z": -0.29505571722984314
+          },
+          {
+            "index": 14,
+            "presence": 0.9997664093971252,
+            "visibility": 0.15878014266490936,
+            "x": 0.46396201848983765,
+            "y": 0.4077114164829254,
+            "z": 0.20831021666526794
+          },
+          {
+            "index": 15,
+            "presence": 0.9997944235801697,
+            "visibility": 0.9785350561141968,
+            "x": 0.4485965669155121,
+            "y": 0.5575088858604431,
+            "z": -0.25619757175445557
+          },
+          {
+            "index": 16,
+            "presence": 0.9993937015533447,
+            "visibility": 0.2848096787929535,
+            "x": 0.45652613043785095,
+            "y": 0.5308170318603516,
+            "z": 0.12504594027996063
+          },
+          {
+            "index": 17,
+            "presence": 0.9995130300521851,
+            "visibility": 0.9634377956390381,
+            "x": 0.4501136243343353,
+            "y": 0.5928292870521545,
+            "z": -0.29786697030067444
+          },
+          {
+            "index": 18,
+            "presence": 0.9989560842514038,
+            "visibility": 0.27031153440475464,
+            "x": 0.4535890519618988,
+            "y": 0.5686988234519958,
+            "z": 0.1320272833108902
+          },
+          {
+            "index": 19,
+            "presence": 0.9995720982551575,
+            "visibility": 0.9610738158226013,
+            "x": 0.44566765427589417,
+            "y": 0.5961956977844238,
+            "z": -0.28409239649772644
+          },
+          {
+            "index": 20,
+            "presence": 0.998867392539978,
+            "visibility": 0.2737176716327667,
+            "x": 0.45156019926071167,
+            "y": 0.573696494102478,
+            "z": 0.09242492914199829
+          },
+          {
+            "index": 21,
+            "presence": 0.9996757507324219,
+            "visibility": 0.9313023686408997,
+            "x": 0.44598445296287537,
+            "y": 0.5870944261550903,
+            "z": -0.24832935631275177
+          },
+          {
+            "index": 22,
+            "presence": 0.9991979002952576,
+            "visibility": 0.27029815316200256,
+            "x": 0.45381593704223633,
+            "y": 0.5598553419113159,
+            "z": 0.10648970305919647
+          },
+          {
+            "index": 23,
+            "presence": 0.9997656941413879,
+            "visibility": 0.9975150227546692,
+            "x": 0.5275036096572876,
+            "y": 0.4977136254310608,
+            "z": -0.1273268610239029
+          },
+          {
+            "index": 24,
+            "presence": 0.999419093132019,
+            "visibility": 0.997352123260498,
+            "x": 0.5245391130447388,
+            "y": 0.49091678857803345,
+            "z": 0.1274130493402481
+          },
+          {
+            "index": 25,
+            "presence": 0.9995439648628235,
+            "visibility": 0.9417711496353149,
+            "x": 0.4974974989891052,
+            "y": 0.7066077589988708,
+            "z": -0.11469612270593643
+          },
+          {
+            "index": 26,
+            "presence": 0.9987156391143799,
+            "visibility": 0.24885039031505585,
+            "x": 0.5000062584877014,
+            "y": 0.6833091378211975,
+            "z": 0.20192018151283264
+          },
+          {
+            "index": 27,
+            "presence": 0.9986833930015564,
+            "visibility": 0.966282308101654,
+            "x": 0.5118342638015747,
+            "y": 0.923707127571106,
+            "z": -0.07818438857793808
+          },
+          {
+            "index": 28,
+            "presence": 0.9983388185501099,
+            "visibility": 0.4139547646045685,
+            "x": 0.5086736679077148,
+            "y": 0.869667649269104,
+            "z": 0.2985522747039795
+          },
+          {
+            "index": 29,
+            "presence": 0.9979047775268555,
+            "visibility": 0.9587287902832031,
+            "x": 0.525694727897644,
+            "y": 0.9584589004516602,
+            "z": -0.07892730832099915
+          },
+          {
+            "index": 30,
+            "presence": 0.9976219534873962,
+            "visibility": 0.5343576073646545,
+            "x": 0.5206230878829956,
+            "y": 0.900147020816803,
+            "z": 0.3054748773574829
+          },
+          {
+            "index": 31,
+            "presence": 0.9970501661300659,
+            "visibility": 0.9618831276893616,
+            "x": 0.4607056677341461,
+            "y": 0.9479135274887085,
+            "z": -0.14755097031593323
+          },
+          {
+            "index": 32,
+            "presence": 0.9984238147735596,
+            "visibility": 0.5729942321777344,
+            "x": 0.46459323167800903,
+            "y": 0.9074652194976807,
+            "z": 0.26484352350234985
+          }
+        ],
+        "timeMs": 9610,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.27001026536904055,
+          "hipAngleDeg": 148.25557972788246,
+          "kneeAngleDeg": 169.36197008991599,
+          "torsoInclinationDeg": 21.749904080730378
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9998646974563599,
+            "visibility": 0.9996644854545593,
+            "x": 0.4095822274684906,
+            "y": 0.22216881811618805,
+            "z": -0.12254293262958527
+          },
+          {
+            "index": 1,
+            "presence": 0.9998236298561096,
+            "visibility": 0.9996554851531982,
+            "x": 0.4068359434604645,
+            "y": 0.20189914107322693,
+            "z": -0.1478230506181717
+          },
+          {
+            "index": 2,
+            "presence": 0.9998241066932678,
+            "visibility": 0.9996943473815918,
+            "x": 0.4082334041595459,
+            "y": 0.1986440271139145,
+            "z": -0.14785391092300415
+          },
+          {
+            "index": 3,
+            "presence": 0.9998238682746887,
+            "visibility": 0.9997529983520508,
+            "x": 0.40968069434165955,
+            "y": 0.19529961049556732,
+            "z": -0.14785674214363098
+          },
+          {
+            "index": 4,
+            "presence": 0.9998207688331604,
+            "visibility": 0.9994673728942871,
+            "x": 0.4053994119167328,
+            "y": 0.20459327101707458,
+            "z": -0.10840220749378204
+          },
+          {
+            "index": 5,
+            "presence": 0.999819815158844,
+            "visibility": 0.9993431568145752,
+            "x": 0.40580302476882935,
+            "y": 0.20321300625801086,
+            "z": -0.10837240517139435
+          },
+          {
+            "index": 6,
+            "presence": 0.9998117089271545,
+            "visibility": 0.9994291067123413,
+            "x": 0.40639495849609375,
+            "y": 0.2014753818511963,
+            "z": -0.10844296216964722
+          },
+          {
+            "index": 7,
+            "presence": 0.9998887777328491,
+            "visibility": 0.9997623562812805,
+            "x": 0.4231101870536804,
+            "y": 0.17865104973316193,
+            "z": -0.20888476073741913
+          },
+          {
+            "index": 8,
+            "presence": 0.9998570680618286,
+            "visibility": 0.9988751411437988,
+            "x": 0.4214284420013428,
+            "y": 0.1828542947769165,
+            "z": -0.033675990998744965
+          },
+          {
+            "index": 9,
+            "presence": 0.9999399185180664,
+            "visibility": 0.9997175335884094,
+            "x": 0.4210885167121887,
+            "y": 0.22765208780765533,
+            "z": -0.14116083085536957
+          },
+          {
+            "index": 10,
+            "presence": 0.9999281167984009,
+            "visibility": 0.9995161890983582,
+            "x": 0.4201127588748932,
+            "y": 0.23194816708564758,
+            "z": -0.09010063856840134
+          },
+          {
+            "index": 11,
+            "presence": 0.9999803304672241,
+            "visibility": 0.999995231628418,
+            "x": 0.4713403582572937,
+            "y": 0.2344260960817337,
+            "z": -0.3031562864780426
+          },
+          {
+            "index": 12,
+            "presence": 0.999958872795105,
+            "visibility": 0.999645471572876,
+            "x": 0.4658583700656891,
+            "y": 0.24212291836738586,
+            "z": 0.10894355922937393
+          },
+          {
+            "index": 13,
+            "presence": 0.9998229146003723,
+            "visibility": 0.9968467950820923,
+            "x": 0.47195297479629517,
+            "y": 0.3950352072715759,
+            "z": -0.3397670090198517
+          },
+          {
+            "index": 14,
+            "presence": 0.9998680353164673,
+            "visibility": 0.11538468301296234,
+            "x": 0.4760766923427582,
+            "y": 0.39031463861465454,
+            "z": 0.1602238267660141
+          },
+          {
+            "index": 15,
+            "presence": 0.9997245669364929,
+            "visibility": 0.9865483641624451,
+            "x": 0.4585600793361664,
+            "y": 0.5375063419342041,
+            "z": -0.2931223213672638
+          },
+          {
+            "index": 16,
+            "presence": 0.9997085928916931,
+            "visibility": 0.147923082113266,
+            "x": 0.46127447485923767,
+            "y": 0.5145189762115479,
+            "z": 0.08653131872415543
+          },
+          {
+            "index": 17,
+            "presence": 0.9994778037071228,
+            "visibility": 0.9698943495750427,
+            "x": 0.4568428099155426,
+            "y": 0.5770499110221863,
+            "z": -0.3322947025299072
+          },
+          {
+            "index": 18,
+            "presence": 0.9994762539863586,
+            "visibility": 0.13750232756137848,
+            "x": 0.45715588331222534,
+            "y": 0.5558310747146606,
+            "z": 0.09481107443571091
+          },
+          {
+            "index": 19,
+            "presence": 0.9994786381721497,
+            "visibility": 0.9684070348739624,
+            "x": 0.45196041464805603,
+            "y": 0.5791151523590088,
+            "z": -0.32458508014678955
+          },
+          {
+            "index": 20,
+            "presence": 0.9994367957115173,
+            "visibility": 0.1411517709493637,
+            "x": 0.4537338316440582,
+            "y": 0.5629438757896423,
+            "z": 0.054525308310985565
+          },
+          {
+            "index": 21,
+            "presence": 0.9995926022529602,
+            "visibility": 0.9419718980789185,
+            "x": 0.4530569612979889,
+            "y": 0.5650815963745117,
+            "z": -0.287804514169693
+          },
+          {
+            "index": 22,
+            "presence": 0.9995893836021423,
+            "visibility": 0.14250251650810242,
+            "x": 0.4580443799495697,
+            "y": 0.5457891821861267,
+            "z": 0.06766791641712189
+          },
+          {
+            "index": 23,
+            "presence": 0.9996917247772217,
+            "visibility": 0.9990304708480835,
+            "x": 0.5292822122573853,
+            "y": 0.49261829257011414,
+            "z": -0.12426789104938507
+          },
+          {
+            "index": 24,
+            "presence": 0.9995098114013672,
+            "visibility": 0.9971021413803101,
+            "x": 0.5170124769210815,
+            "y": 0.48706483840942383,
+            "z": 0.1241750568151474
+          },
+          {
+            "index": 25,
+            "presence": 0.9996258020401001,
+            "visibility": 0.9566437602043152,
+            "x": 0.5091277360916138,
+            "y": 0.6959351301193237,
+            "z": -0.07727058976888657
+          },
+          {
+            "index": 26,
+            "presence": 0.9993390440940857,
+            "visibility": 0.4368129074573517,
+            "x": 0.5076726675033569,
+            "y": 0.6753717660903931,
+            "z": 0.19958357512950897
+          },
+          {
+            "index": 27,
+            "presence": 0.9990032315254211,
+            "visibility": 0.9663228988647461,
+            "x": 0.5104962587356567,
+            "y": 0.9125438928604126,
+            "z": -0.0034028359223157167
+          },
+          {
+            "index": 28,
+            "presence": 0.999180257320404,
+            "visibility": 0.6571642756462097,
+            "x": 0.5139285326004028,
+            "y": 0.8781284689903259,
+            "z": 0.2902001440525055
+          },
+          {
+            "index": 29,
+            "presence": 0.9982672929763794,
+            "visibility": 0.9543958306312561,
+            "x": 0.5207534432411194,
+            "y": 0.9525960087776184,
+            "z": -0.0015466881450265646
+          },
+          {
+            "index": 30,
+            "presence": 0.9985866546630859,
+            "visibility": 0.729030191898346,
+            "x": 0.5230420827865601,
+            "y": 0.9110601544380188,
+            "z": 0.29448795318603516
+          },
+          {
+            "index": 31,
+            "presence": 0.9979236125946045,
+            "visibility": 0.9617559909820557,
+            "x": 0.4595482349395752,
+            "y": 0.9393065571784973,
+            "z": -0.08224363625049591
+          },
+          {
+            "index": 32,
+            "presence": 0.9989727735519409,
+            "visibility": 0.7660128474235535,
+            "x": 0.46699994802474976,
+            "y": 0.9072823524475098,
+            "z": 0.23473694920539856
+          }
+        ],
+        "timeMs": 11211,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.9571028768021451,
+          "hipAngleDeg": 77.04949578420178,
+          "kneeAngleDeg": 156.48047184347976,
+          "torsoInclinationDeg": 78.23967417890077
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9976492524147034,
+            "visibility": 0.9987376928329468,
+            "x": 0.3807222545146942,
+            "y": 0.5073453783988953,
+            "z": -0.030622363090515137
+          },
+          {
+            "index": 1,
+            "presence": 0.9970034956932068,
+            "visibility": 0.9986278414726257,
+            "x": 0.3713396489620209,
+            "y": 0.4956246316432953,
+            "z": -0.05619584769010544
+          },
+          {
+            "index": 2,
+            "presence": 0.9968323111534119,
+            "visibility": 0.9986931681632996,
+            "x": 0.3710380494594574,
+            "y": 0.4928094148635864,
+            "z": -0.05622904375195503
+          },
+          {
+            "index": 3,
+            "presence": 0.9966539144515991,
+            "visibility": 0.9989637136459351,
+            "x": 0.3706735372543335,
+            "y": 0.4896588623523712,
+            "z": -0.056243617087602615
+          },
+          {
+            "index": 4,
+            "presence": 0.9978200197219849,
+            "visibility": 0.9989410638809204,
+            "x": 0.3713535666465759,
+            "y": 0.49680179357528687,
+            "z": -0.018961403518915176
+          },
+          {
+            "index": 5,
+            "presence": 0.9981299042701721,
+            "visibility": 0.9990319609642029,
+            "x": 0.3711259961128235,
+            "y": 0.49502700567245483,
+            "z": -0.018996190279722214
+          },
+          {
+            "index": 6,
+            "presence": 0.9983335137367249,
+            "visibility": 0.9991685748100281,
+            "x": 0.3708557188510895,
+            "y": 0.4926610291004181,
+            "z": -0.01904939115047455
+          },
+          {
+            "index": 7,
+            "presence": 0.9970536231994629,
+            "visibility": 0.9983771443367004,
+            "x": 0.375743567943573,
+            "y": 0.4664784371852875,
+            "z": -0.12235689163208008
+          },
+          {
+            "index": 8,
+            "presence": 0.9988024234771729,
+            "visibility": 0.9988654255867004,
+            "x": 0.3757314085960388,
+            "y": 0.4678075611591339,
+            "z": 0.04602082818746567
+          },
+          {
+            "index": 9,
+            "presence": 0.9991459846496582,
+            "visibility": 0.9993524551391602,
+            "x": 0.3919021487236023,
+            "y": 0.498144268989563,
+            "z": -0.050734322518110275
+          },
+          {
+            "index": 10,
+            "presence": 0.9994056224822998,
+            "visibility": 0.9989827275276184,
+            "x": 0.39232137799263,
+            "y": 0.5005142092704773,
+            "z": -0.0019141907105222344
+          },
+          {
+            "index": 11,
+            "presence": 0.9994369149208069,
+            "visibility": 0.9999531507492065,
+            "x": 0.42602795362472534,
+            "y": 0.4591304659843445,
+            "z": -0.22515936195850372
+          },
+          {
+            "index": 12,
+            "presence": 0.9998455047607422,
+            "visibility": 0.9998803734779358,
+            "x": 0.4325914978981018,
+            "y": 0.4588142931461334,
+            "z": 0.1764155924320221
+          },
+          {
+            "index": 13,
+            "presence": 0.9965503215789795,
+            "visibility": 0.9863592982292175,
+            "x": 0.45156875252723694,
+            "y": 0.5992761254310608,
+            "z": -0.2627582550048828
+          },
+          {
+            "index": 14,
+            "presence": 0.9993922710418701,
+            "visibility": 0.21600642800331116,
+            "x": 0.4632948040962219,
+            "y": 0.5885637402534485,
+            "z": 0.2224409282207489
+          },
+          {
+            "index": 15,
+            "presence": 0.9958117008209229,
+            "visibility": 0.9669516086578369,
+            "x": 0.4538414478302002,
+            "y": 0.7268542051315308,
+            "z": -0.18487276136875153
+          },
+          {
+            "index": 16,
+            "presence": 0.9983304142951965,
+            "visibility": 0.34768033027648926,
+            "x": 0.46506866812705994,
+            "y": 0.703849732875824,
+            "z": 0.14976336061954498
+          },
+          {
+            "index": 17,
+            "presence": 0.9949442744255066,
+            "visibility": 0.9469237923622131,
+            "x": 0.457437127828598,
+            "y": 0.7628718018531799,
+            "z": -0.21685874462127686
+          },
+          {
+            "index": 18,
+            "presence": 0.9974844455718994,
+            "visibility": 0.323519229888916,
+            "x": 0.46623364090919495,
+            "y": 0.730154275894165,
+            "z": 0.16155867278575897
+          },
+          {
+            "index": 19,
+            "presence": 0.9957520961761475,
+            "visibility": 0.9437341690063477,
+            "x": 0.4543290138244629,
+            "y": 0.766518235206604,
+            "z": -0.1936587691307068
+          },
+          {
+            "index": 20,
+            "presence": 0.9974493384361267,
+            "visibility": 0.3268173933029175,
+            "x": 0.46641165018081665,
+            "y": 0.7320832014083862,
+            "z": 0.12729695439338684
+          },
+          {
+            "index": 21,
+            "presence": 0.9961586594581604,
+            "visibility": 0.9027377963066101,
+            "x": 0.4539704918861389,
+            "y": 0.7564970850944519,
+            "z": -0.17318390309810638
+          },
+          {
+            "index": 22,
+            "presence": 0.9979748129844666,
+            "visibility": 0.319700688123703,
+            "x": 0.4652789235115051,
+            "y": 0.7254263162612915,
+            "z": 0.1334756761789322
+          },
+          {
+            "index": 23,
+            "presence": 0.9816593527793884,
+            "visibility": 0.9962255358695984,
+            "x": 0.5636481642723083,
+            "y": 0.5100654363632202,
+            "z": -0.12609067559242249
+          },
+          {
+            "index": 24,
+            "presence": 0.9913271069526672,
+            "visibility": 0.9968329071998596,
+            "x": 0.5530303120613098,
+            "y": 0.5062360167503357,
+            "z": 0.12637367844581604
+          },
+          {
+            "index": 25,
+            "presence": 0.9948769211769104,
+            "visibility": 0.9546655416488647,
+            "x": 0.5147550106048584,
+            "y": 0.6989515423774719,
+            "z": -0.10139791667461395
+          },
+          {
+            "index": 26,
+            "presence": 0.9961115717887878,
+            "visibility": 0.26022061705589294,
+            "x": 0.5097353458404541,
+            "y": 0.6924280524253845,
+            "z": 0.15026429295539856
+          },
+          {
+            "index": 27,
+            "presence": 0.9907211065292358,
+            "visibility": 0.9795231223106384,
+            "x": 0.512161135673523,
+            "y": 0.9207020998001099,
+            "z": -0.02789105474948883
+          },
+          {
+            "index": 28,
+            "presence": 0.9930457472801208,
+            "visibility": 0.48398178815841675,
+            "x": 0.512702226638794,
+            "y": 0.8919697403907776,
+            "z": 0.23740606009960175
+          },
+          {
+            "index": 29,
+            "presence": 0.9889863729476929,
+            "visibility": 0.9728171825408936,
+            "x": 0.5229421257972717,
+            "y": 0.9556955695152283,
+            "z": -0.021734535694122314
+          },
+          {
+            "index": 30,
+            "presence": 0.9900985360145569,
+            "visibility": 0.5747881531715393,
+            "x": 0.5287274718284607,
+            "y": 0.93092942237854,
+            "z": 0.24394159018993378
+          },
+          {
+            "index": 31,
+            "presence": 0.9862078428268433,
+            "visibility": 0.9769126772880554,
+            "x": 0.45987552404403687,
+            "y": 0.9592950344085693,
+            "z": -0.07444960623979568
+          },
+          {
+            "index": 32,
+            "presence": 0.9919031262397766,
+            "visibility": 0.6124328374862671,
+            "x": 0.46721798181533813,
+            "y": 0.9430022239685059,
+            "z": 0.2095348834991455
+          }
+        ],
+        "timeMs": 12813,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.23234359822974218,
+          "hipAngleDeg": 152.02285606180877,
+          "kneeAngleDeg": 158.0973762276024,
+          "torsoInclinationDeg": 15.07537023823081
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9997510313987732,
+            "visibility": 0.9992988705635071,
+            "x": 0.4172855317592621,
+            "y": 0.21550437808036804,
+            "z": -0.08435910940170288
+          },
+          {
+            "index": 1,
+            "presence": 0.9996885061264038,
+            "visibility": 0.9993085265159607,
+            "x": 0.4147883355617523,
+            "y": 0.19799041748046875,
+            "z": -0.1101669892668724
+          },
+          {
+            "index": 2,
+            "presence": 0.9997093081474304,
+            "visibility": 0.9993310570716858,
+            "x": 0.4157926142215729,
+            "y": 0.19564010202884674,
+            "z": -0.1101968064904213
+          },
+          {
+            "index": 3,
+            "presence": 0.9997263550758362,
+            "visibility": 0.9994953274726868,
+            "x": 0.41698724031448364,
+            "y": 0.19296610355377197,
+            "z": -0.1102156862616539
+          },
+          {
+            "index": 4,
+            "presence": 0.9996050000190735,
+            "visibility": 0.9993432760238647,
+            "x": 0.41410452127456665,
+            "y": 0.19896084070205688,
+            "z": -0.07013858109712601
+          },
+          {
+            "index": 5,
+            "presence": 0.9995688796043396,
+            "visibility": 0.9992980360984802,
+            "x": 0.4144650101661682,
+            "y": 0.19745637476444244,
+            "z": -0.07009083777666092
+          },
+          {
+            "index": 6,
+            "presence": 0.9995120763778687,
+            "visibility": 0.9994041323661804,
+            "x": 0.4150457978248596,
+            "y": 0.19549791514873505,
+            "z": -0.07013021409511566
+          },
+          {
+            "index": 7,
+            "presence": 0.9998438358306885,
+            "visibility": 0.9992748498916626,
+            "x": 0.43073731660842896,
+            "y": 0.17718665301799774,
+            "z": -0.1758141815662384
+          },
+          {
+            "index": 8,
+            "presence": 0.9995915293693542,
+            "visibility": 0.9990457892417908,
+            "x": 0.42979735136032104,
+            "y": 0.1777595430612564,
+            "z": 0.0019175333436578512
+          },
+          {
+            "index": 9,
+            "presence": 0.9999063014984131,
+            "visibility": 0.9996233582496643,
+            "x": 0.42763185501098633,
+            "y": 0.22204715013504028,
+            "z": -0.10462770611047745
+          },
+          {
+            "index": 10,
+            "presence": 0.9998457431793213,
+            "visibility": 0.9993404150009155,
+            "x": 0.42728567123413086,
+            "y": 0.22414103150367737,
+            "z": -0.052865274250507355
+          },
+          {
+            "index": 11,
+            "presence": 0.9999773502349854,
+            "visibility": 0.9999818801879883,
+            "x": 0.4773276746273041,
+            "y": 0.23764771223068237,
+            "z": -0.27468571066856384
+          },
+          {
+            "index": 12,
+            "presence": 0.9998492002487183,
+            "visibility": 0.9997931122779846,
+            "x": 0.477947860956192,
+            "y": 0.23761378228664398,
+            "z": 0.1382976919412613
+          },
+          {
+            "index": 13,
+            "presence": 0.9998371601104736,
+            "visibility": 0.994278073310852,
+            "x": 0.47238749265670776,
+            "y": 0.40139368176460266,
+            "z": -0.3035304844379425
+          },
+          {
+            "index": 14,
+            "presence": 0.9996998310089111,
+            "visibility": 0.14126402139663696,
+            "x": 0.4775973856449127,
+            "y": 0.384170264005661,
+            "z": 0.1897391378879547
+          },
+          {
+            "index": 15,
+            "presence": 0.9997172951698303,
+            "visibility": 0.9840732216835022,
+            "x": 0.4488861560821533,
+            "y": 0.5311282277107239,
+            "z": -0.2459287941455841
+          },
+          {
+            "index": 16,
+            "presence": 0.9991739392280579,
+            "visibility": 0.24403686821460724,
+            "x": 0.4577001631259918,
+            "y": 0.4912993609905243,
+            "z": 0.11205601692199707
+          },
+          {
+            "index": 17,
+            "presence": 0.9993953704833984,
+            "visibility": 0.9703741073608398,
+            "x": 0.4449865221977234,
+            "y": 0.5670308470726013,
+            "z": -0.2829939126968384
+          },
+          {
+            "index": 18,
+            "presence": 0.9987272620201111,
+            "visibility": 0.23177018761634827,
+            "x": 0.4516354501247406,
+            "y": 0.5259274244308472,
+            "z": 0.1163087859749794
+          },
+          {
+            "index": 19,
+            "presence": 0.9994151592254639,
+            "visibility": 0.9685667157173157,
+            "x": 0.44031280279159546,
+            "y": 0.5677276253700256,
+            "z": -0.2770847976207733
+          },
+          {
+            "index": 20,
+            "presence": 0.9986293315887451,
+            "visibility": 0.23563627898693085,
+            "x": 0.4496954381465912,
+            "y": 0.5201651453971863,
+            "z": 0.07946360856294632
+          },
+          {
+            "index": 21,
+            "presence": 0.9995331764221191,
+            "visibility": 0.9420720934867859,
+            "x": 0.44198283553123474,
+            "y": 0.5570836067199707,
+            "z": -0.24010498821735382
+          },
+          {
+            "index": 22,
+            "presence": 0.9989060163497925,
+            "visibility": 0.23189449310302734,
+            "x": 0.45091184973716736,
+            "y": 0.5144992470741272,
+            "z": 0.09426604956388474
+          },
+          {
+            "index": 23,
+            "presence": 0.9994367957115173,
+            "visibility": 0.9987905621528625,
+            "x": 0.5166401267051697,
+            "y": 0.4971105456352234,
+            "z": -0.12063465267419815
+          },
+          {
+            "index": 24,
+            "presence": 0.9986675977706909,
+            "visibility": 0.9980468153953552,
+            "x": 0.5203502178192139,
+            "y": 0.48770421743392944,
+            "z": 0.1206851378083229
+          },
+          {
+            "index": 25,
+            "presence": 0.9992075562477112,
+            "visibility": 0.9460967779159546,
+            "x": 0.49057430028915405,
+            "y": 0.699409544467926,
+            "z": -0.07152484357357025
+          },
+          {
+            "index": 26,
+            "presence": 0.9981657862663269,
+            "visibility": 0.3114530146121979,
+            "x": 0.49775004386901855,
+            "y": 0.679332971572876,
+            "z": 0.18674099445343018
+          },
+          {
+            "index": 27,
+            "presence": 0.9979963898658752,
+            "visibility": 0.9668508768081665,
+            "x": 0.509850263595581,
+            "y": 0.9157508015632629,
+            "z": 0.011882847175002098
+          },
+          {
+            "index": 28,
+            "presence": 0.9977820515632629,
+            "visibility": 0.4839191436767578,
+            "x": 0.5110759735107422,
+            "y": 0.8838306665420532,
+            "z": 0.26946786046028137
+          },
+          {
+            "index": 29,
+            "presence": 0.9965710639953613,
+            "visibility": 0.958245038986206,
+            "x": 0.5214976072311401,
+            "y": 0.9467750787734985,
+            "z": 0.01621963456273079
+          },
+          {
+            "index": 30,
+            "presence": 0.9959182143211365,
+            "visibility": 0.5875638127326965,
+            "x": 0.5215179324150085,
+            "y": 0.9129261374473572,
+            "z": 0.27413037419319153
+          },
+          {
+            "index": 31,
+            "presence": 0.9962001442909241,
+            "visibility": 0.9630491733551025,
+            "x": 0.4596668779850006,
+            "y": 0.9407404661178589,
+            "z": -0.05162476375699043
+          },
+          {
+            "index": 32,
+            "presence": 0.9970390796661377,
+            "visibility": 0.6329126954078674,
+            "x": 0.4678531587123871,
+            "y": 0.9134085178375244,
+            "z": 0.2182307243347168
+          }
+        ],
+        "timeMs": 14414,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 0.43683071451635425,
+          "hipAngleDeg": 130.04305952614686,
+          "kneeAngleDeg": 158.19402710691324,
+          "torsoInclinationDeg": 33.66310064542101
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9998506307601929,
+            "visibility": 0.9996803998947144,
+            "x": 0.3957424759864807,
+            "y": 0.29079732298851013,
+            "z": -0.0791192501783371
+          },
+          {
+            "index": 1,
+            "presence": 0.9997685551643372,
+            "visibility": 0.9996710419654846,
+            "x": 0.3892594575881958,
+            "y": 0.2739133834838867,
+            "z": -0.10411226749420166
+          },
+          {
+            "index": 2,
+            "presence": 0.9997687935829163,
+            "visibility": 0.9996963739395142,
+            "x": 0.3899391293525696,
+            "y": 0.27053946256637573,
+            "z": -0.10414942353963852
+          },
+          {
+            "index": 3,
+            "presence": 0.9997718930244446,
+            "visibility": 0.99976646900177,
+            "x": 0.3906552493572235,
+            "y": 0.2669229209423065,
+            "z": -0.10415197908878326
+          },
+          {
+            "index": 4,
+            "presence": 0.9997684359550476,
+            "visibility": 0.9995571374893188,
+            "x": 0.3886776566505432,
+            "y": 0.27666500210762024,
+            "z": -0.06489022076129913
+          },
+          {
+            "index": 5,
+            "presence": 0.9997720122337341,
+            "visibility": 0.9994611144065857,
+            "x": 0.3889419436454773,
+            "y": 0.27540403604507446,
+            "z": -0.0648561343550682
+          },
+          {
+            "index": 6,
+            "presence": 0.999767005443573,
+            "visibility": 0.9995502829551697,
+            "x": 0.38928478956222534,
+            "y": 0.27356114983558655,
+            "z": -0.06494171917438507
+          },
+          {
+            "index": 7,
+            "presence": 0.999862551689148,
+            "visibility": 0.9997546672821045,
+            "x": 0.40006333589553833,
+            "y": 0.2451801300048828,
+            "z": -0.1680484563112259
+          },
+          {
+            "index": 8,
+            "presence": 0.9998360872268677,
+            "visibility": 0.9991586208343506,
+            "x": 0.39940014481544495,
+            "y": 0.24885766208171844,
+            "z": 0.006120207719504833
+          },
+          {
+            "index": 9,
+            "presence": 0.9999407529830933,
+            "visibility": 0.9997833371162415,
+            "x": 0.40696826577186584,
+            "y": 0.289791077375412,
+            "z": -0.09923185408115387
+          },
+          {
+            "index": 10,
+            "presence": 0.9999313354492188,
+            "visibility": 0.9996100664138794,
+            "x": 0.40706658363342285,
+            "y": 0.2938108742237091,
+            "z": -0.048392217606306076
+          },
+          {
+            "index": 11,
+            "presence": 0.9999862909317017,
+            "visibility": 0.9999973177909851,
+            "x": 0.451958566904068,
+            "y": 0.27703145146369934,
+            "z": -0.2669442892074585
+          },
+          {
+            "index": 12,
+            "presence": 0.9999593496322632,
+            "visibility": 0.9997921586036682,
+            "x": 0.44852766394615173,
+            "y": 0.2780750095844269,
+            "z": 0.14264467358589172
+          },
+          {
+            "index": 13,
+            "presence": 0.9998224377632141,
+            "visibility": 0.9969801306724548,
+            "x": 0.4565850794315338,
+            "y": 0.4421720802783966,
+            "z": -0.30855074524879456
+          },
+          {
+            "index": 14,
+            "presence": 0.9998453855514526,
+            "visibility": 0.12852485477924347,
+            "x": 0.4611961841583252,
+            "y": 0.4193693697452545,
+            "z": 0.18644392490386963
+          },
+          {
+            "index": 15,
+            "presence": 0.9997671246528625,
+            "visibility": 0.9853143095970154,
+            "x": 0.4466163218021393,
+            "y": 0.5786149501800537,
+            "z": -0.26799723505973816
+          },
+          {
+            "index": 16,
+            "presence": 0.9996086955070496,
+            "visibility": 0.1739492118358612,
+            "x": 0.45536819100379944,
+            "y": 0.5478864908218384,
+            "z": 0.10621378570795059
+          },
+          {
+            "index": 17,
+            "presence": 0.999517560005188,
+            "visibility": 0.967857837677002,
+            "x": 0.44727784395217896,
+            "y": 0.6099428534507751,
+            "z": -0.3111131191253662
+          },
+          {
+            "index": 18,
+            "presence": 0.9992777705192566,
+            "visibility": 0.1602848768234253,
+            "x": 0.4505646824836731,
+            "y": 0.5855376124382019,
+            "z": 0.11174111068248749
+          },
+          {
+            "index": 19,
+            "presence": 0.9995760321617126,
+            "visibility": 0.9660182595252991,
+            "x": 0.4433218538761139,
+            "y": 0.6117489337921143,
+            "z": -0.2983472943305969
+          },
+          {
+            "index": 20,
+            "presence": 0.9992458820343018,
+            "visibility": 0.16336604952812195,
+            "x": 0.44946712255477905,
+            "y": 0.58953458070755,
+            "z": 0.07436124980449677
+          },
+          {
+            "index": 21,
+            "presence": 0.9996705055236816,
+            "visibility": 0.9353368282318115,
+            "x": 0.4438181519508362,
+            "y": 0.6033489108085632,
+            "z": -0.2607845366001129
+          },
+          {
+            "index": 22,
+            "presence": 0.9994680285453796,
+            "visibility": 0.1629217118024826,
+            "x": 0.4518471360206604,
+            "y": 0.5762593150138855,
+            "z": 0.08835117518901825
+          },
+          {
+            "index": 23,
+            "presence": 0.9998817443847656,
+            "visibility": 0.9994584918022156,
+            "x": 0.5343067049980164,
+            "y": 0.4968505799770355,
+            "z": -0.12628334760665894
+          },
+          {
+            "index": 24,
+            "presence": 0.999775230884552,
+            "visibility": 0.9980055689811707,
+            "x": 0.5217456817626953,
+            "y": 0.4912952482700348,
+            "z": 0.12638893723487854
+          },
+          {
+            "index": 25,
+            "presence": 0.9998286962509155,
+            "visibility": 0.9585587978363037,
+            "x": 0.4999980926513672,
+            "y": 0.7055139541625977,
+            "z": -0.1303563416004181
+          },
+          {
+            "index": 26,
+            "presence": 0.9994489550590515,
+            "visibility": 0.37908950448036194,
+            "x": 0.4971534311771393,
+            "y": 0.6743248701095581,
+            "z": 0.19963310658931732
+          },
+          {
+            "index": 27,
+            "presence": 0.9989399313926697,
+            "visibility": 0.9692839980125427,
+            "x": 0.5116835236549377,
+            "y": 0.9207834005355835,
+            "z": -0.10540656745433807
+          },
+          {
+            "index": 28,
+            "presence": 0.9991434812545776,
+            "visibility": 0.5718668103218079,
+            "x": 0.5091527700424194,
+            "y": 0.863462507724762,
+            "z": 0.3375028073787689
+          },
+          {
+            "index": 29,
+            "presence": 0.9981622099876404,
+            "visibility": 0.9528875350952148,
+            "x": 0.5247340798377991,
+            "y": 0.9578295350074768,
+            "z": -0.10747133195400238
+          },
+          {
+            "index": 30,
+            "presence": 0.9988307356834412,
+            "visibility": 0.65877765417099,
+            "x": 0.5198700428009033,
+            "y": 0.8899577856063843,
+            "z": 0.34856030344963074
+          },
+          {
+            "index": 31,
+            "presence": 0.9972311854362488,
+            "visibility": 0.9636363983154297,
+            "x": 0.4596107602119446,
+            "y": 0.944682240486145,
+            "z": -0.18173089623451233
+          },
+          {
+            "index": 32,
+            "presence": 0.9991599321365356,
+            "visibility": 0.6962465047836304,
+            "x": 0.4637696146965027,
+            "y": 0.9041076898574829,
+            "z": 0.3198072910308838
+          }
+        ],
+        "timeMs": 16016,
+        "usable": true
+      },
+      {
+        "features": {
+          "cycleProgress": 1.0,
+          "hipAngleDeg": 70.4876451239492,
+          "kneeAngleDeg": 152.50549330586907,
+          "torsoInclinationDeg": 82.85377478870338
+        },
+        "landmarks": [
+          {
+            "index": 0,
+            "presence": 0.9934645295143127,
+            "visibility": 0.9965046048164368,
+            "x": 0.3797776997089386,
+            "y": 0.5225451588630676,
+            "z": -0.04097354784607887
+          },
+          {
+            "index": 1,
+            "presence": 0.9927052855491638,
+            "visibility": 0.9963468909263611,
+            "x": 0.3694845139980316,
+            "y": 0.5129110217094421,
+            "z": -0.06774619221687317
+          },
+          {
+            "index": 2,
+            "presence": 0.992595374584198,
+            "visibility": 0.9965264797210693,
+            "x": 0.3691222667694092,
+            "y": 0.5105143189430237,
+            "z": -0.06778060644865036
+          },
+          {
+            "index": 3,
+            "presence": 0.9924026727676392,
+            "visibility": 0.9972131252288818,
+            "x": 0.3687003254890442,
+            "y": 0.507835328578949,
+            "z": -0.0677928775548935
+          },
+          {
+            "index": 4,
+            "presence": 0.9943958520889282,
+            "visibility": 0.9970409274101257,
+            "x": 0.3694213032722473,
+            "y": 0.5136348009109497,
+            "z": -0.03123418428003788
+          },
+          {
+            "index": 5,
+            "presence": 0.9951567053794861,
+            "visibility": 0.9973689913749695,
+            "x": 0.36904168128967285,
+            "y": 0.5115936994552612,
+            "z": -0.031265970319509506
+          },
+          {
+            "index": 6,
+            "presence": 0.9956117868423462,
+            "visibility": 0.9976990818977356,
+            "x": 0.36858758330345154,
+            "y": 0.5089783072471619,
+            "z": -0.031303808093070984
+          },
+          {
+            "index": 7,
+            "presence": 0.9932118654251099,
+            "visibility": 0.9956579208374023,
+            "x": 0.3719552159309387,
+            "y": 0.4843933582305908,
+            "z": -0.13474124670028687
+          },
+          {
+            "index": 8,
+            "presence": 0.9965443015098572,
+            "visibility": 0.9968063831329346,
+            "x": 0.3716737926006317,
+            "y": 0.48433566093444824,
+            "z": 0.03061296045780182
+          },
+          {
+            "index": 9,
+            "presence": 0.9976205229759216,
+            "visibility": 0.9981185793876648,
+            "x": 0.3903575539588928,
+            "y": 0.5148176550865173,
+            "z": -0.06131569296121597
+          },
+          {
+            "index": 10,
+            "presence": 0.9983190894126892,
+            "visibility": 0.9971988797187805,
+            "x": 0.3906329274177551,
+            "y": 0.5154104232788086,
+            "z": -0.013231383636593819
+          },
+          {
+            "index": 11,
+            "presence": 0.9986886382102966,
+            "visibility": 0.9998857378959656,
+            "x": 0.42194604873657227,
+            "y": 0.4803657531738281,
+            "z": -0.23301930725574493
+          },
+          {
+            "index": 12,
+            "presence": 0.9995934367179871,
+            "visibility": 0.9997615218162537,
+            "x": 0.4261780381202698,
+            "y": 0.4693945050239563,
+            "z": 0.16107872128486633
+          },
+          {
+            "index": 13,
+            "presence": 0.9931758046150208,
+            "visibility": 0.9799874424934387,
+            "x": 0.44296950101852417,
+            "y": 0.6279169321060181,
+            "z": -0.27135640382766724
+          },
+          {
+            "index": 14,
+            "presence": 0.9984585046768188,
+            "visibility": 0.22187595069408417,
+            "x": 0.4503519535064697,
+            "y": 0.6086146831512451,
+            "z": 0.20069333910942078
+          },
+          {
+            "index": 15,
+            "presence": 0.9874449968338013,
+            "visibility": 0.9549040198326111,
+            "x": 0.4455588757991791,
+            "y": 0.7557292580604553,
+            "z": -0.18704913556575775
+          },
+          {
+            "index": 16,
+            "presence": 0.996024489402771,
+            "visibility": 0.32979536056518555,
+            "x": 0.4594038426876068,
+            "y": 0.7222685813903809,
+            "z": 0.12920483946800232
+          },
+          {
+            "index": 17,
+            "presence": 0.9869844913482666,
+            "visibility": 0.9322023391723633,
+            "x": 0.44795021414756775,
+            "y": 0.7877720594406128,
+            "z": -0.21965591609477997
+          },
+          {
+            "index": 18,
+            "presence": 0.9947150349617004,
+            "visibility": 0.31479063630104065,
+            "x": 0.46396851539611816,
+            "y": 0.7617018818855286,
+            "z": 0.14295180141925812
+          },
+          {
+            "index": 19,
+            "presence": 0.9888145327568054,
+            "visibility": 0.9284261465072632,
+            "x": 0.44512638449668884,
+            "y": 0.7891885638237,
+            "z": -0.19325613975524902
+          },
+          {
+            "index": 20,
+            "presence": 0.9943864345550537,
+            "visibility": 0.3188847005367279,
+            "x": 0.45797818899154663,
+            "y": 0.761954665184021,
+            "z": 0.10587482154369354
+          },
+          {
+            "index": 21,
+            "presence": 0.9891559481620789,
+            "visibility": 0.8808230757713318,
+            "x": 0.4451904892921448,
+            "y": 0.7800195217132568,
+            "z": -0.17479363083839417
+          },
+          {
+            "index": 22,
+            "presence": 0.9952671527862549,
+            "visibility": 0.3136499524116516,
+            "x": 0.4584933817386627,
+            "y": 0.7476999163627625,
+            "z": 0.1119513064622879
+          },
+          {
+            "index": 23,
+            "presence": 0.9646406769752502,
+            "visibility": 0.991852879524231,
+            "x": 0.5610032081604004,
+            "y": 0.5113602876663208,
+            "z": -0.12929056584835052
+          },
+          {
+            "index": 24,
+            "presence": 0.9809005856513977,
+            "visibility": 0.9933016300201416,
+            "x": 0.5485085844993591,
+            "y": 0.5019095540046692,
+            "z": 0.1296185702085495
+          },
+          {
+            "index": 25,
+            "presence": 0.9942538142204285,
+            "visibility": 0.9536601901054382,
+            "x": 0.5095947980880737,
+            "y": 0.6934022307395935,
+            "z": -0.11492466926574707
+          },
+          {
+            "index": 26,
+            "presence": 0.9953144788742065,
+            "visibility": 0.26139575242996216,
+            "x": 0.5033302307128906,
+            "y": 0.6951650381088257,
+            "z": 0.13894250988960266
+          },
+          {
+            "index": 27,
+            "presence": 0.9918637275695801,
+            "visibility": 0.9836301207542419,
+            "x": 0.5114272832870483,
+            "y": 0.9166780114173889,
+            "z": -0.046843163669109344
+          },
+          {
+            "index": 28,
+            "presence": 0.9933057427406311,
+            "visibility": 0.48858535289764404,
+            "x": 0.5114107131958008,
+            "y": 0.8846957683563232,
+            "z": 0.21079953014850616
+          },
+          {
+            "index": 29,
+            "presence": 0.9903200268745422,
+            "visibility": 0.9782088398933411,
+            "x": 0.5207710862159729,
+            "y": 0.954545259475708,
+            "z": -0.04162389412522316
+          },
+          {
+            "index": 30,
+            "presence": 0.9907816052436829,
+            "visibility": 0.587693989276886,
+            "x": 0.5308391451835632,
+            "y": 0.9236367344856262,
+            "z": 0.21575601398944855
+          },
+          {
+            "index": 31,
+            "presence": 0.9883059859275818,
+            "visibility": 0.9806181192398071,
+            "x": 0.45992907881736755,
+            "y": 0.9541475176811218,
+            "z": -0.09602094441652298
+          },
+          {
+            "index": 32,
+            "presence": 0.9922016859054565,
+            "visibility": 0.6027700901031494,
+            "x": 0.4660056233406067,
+            "y": 0.9335336685180664,
+            "z": 0.17739282548427582
+          }
+        ],
+        "timeMs": 17618,
+        "usable": true
+      }
+    ],
+    "repetitions": [
+      {
+        "aggregatedFeatures": {
+          "hipAngleDegRange": 105.59723485000437,
+          "kneeAngleDegRange": 16.54978924195146,
+          "maximumHipAngleDeg": 176.46444039544045,
+          "maximumKneeAngleDeg": 170.37230795041714,
+          "maximumTorsoInclinationDeg": 82.78898990455166,
+          "minimumHipAngleDeg": 70.86720554543608,
+          "minimumKneeAngleDeg": 153.82251870846568,
+          "minimumTorsoInclinationDeg": 1.149981793173181,
+          "torsoInclinationDegRange": 81.63900811137847
+        },
+        "durationMs": 3603,
+        "endFrame": 154,
+        "endTimestampMs": 5138,
+        "phases": [
+          {
+            "durationMs": 33,
+            "endTimestampMs": 1568,
+            "metrics": {
+              "minimumHipAngleDeg": 153.9477045057891,
+              "minimumKneeAngleDeg": 169.94791793776577,
+              "minimumTorsoInclinationDeg": 16.247741128217466
+            },
+            "name": "READY",
+            "startTimestampMs": 1535
+          },
+          {
+            "durationMs": 1969,
+            "endTimestampMs": 3537,
+            "metrics": {
+              "minimumHipAngleDeg": 71.45283755804337,
+              "minimumKneeAngleDeg": 153.82251870846568,
+              "minimumTorsoInclinationDeg": 18.138833797177778
+            },
+            "name": "HINGING",
+            "startTimestampMs": 1568
+          },
+          {
+            "durationMs": 0,
+            "endTimestampMs": 3537,
+            "metrics": {
+              "minimumHipAngleDeg": 72.52486869763042,
+              "minimumKneeAngleDeg": 155.50695570288224,
+              "minimumTorsoInclinationDeg": 81.6621807396971
+            },
+            "name": "HINGE_TRANSITION",
+            "startTimestampMs": 3537
+          },
+          {
+            "durationMs": 1435,
+            "endTimestampMs": 4972,
+            "metrics": {
+              "minimumHipAngleDeg": 70.86720554543608,
+              "minimumKneeAngleDeg": 154.22111872456574,
+              "minimumTorsoInclinationDeg": 9.53420762189355
+            },
+            "name": "EXTENDING",
+            "startTimestampMs": 3537
+          },
+          {
+            "durationMs": 166,
+            "endTimestampMs": 5138,
+            "metrics": {
+              "minimumHipAngleDeg": 163.6736023570548,
+              "minimumKneeAngleDeg": 165.305088114878,
+              "minimumTorsoInclinationDeg": 1.149981793173181
+            },
+            "name": "COMPLETION",
+            "startTimestampMs": 4972
+          }
+        ],
+        "rejectionReasons": [],
+        "repIndex": 1,
+        "startFrame": 46,
+        "startTimestampMs": 1535,
+        "status": "ACCEPTED",
+        "usableFrameRatio": 1.0
+      },
+      {
+        "aggregatedFeatures": {
+          "hipAngleDegRange": 108.0363993369723,
+          "kneeAngleDegRange": 14.662409945464788,
+          "maximumHipAngleDeg": 176.38646557826144,
+          "maximumKneeAngleDeg": 167.78553643057361,
+          "maximumTorsoInclinationDeg": 84.9071773807307,
+          "minimumHipAngleDeg": 68.35006624128914,
+          "minimumKneeAngleDeg": 153.12312648510883,
+          "minimumTorsoInclinationDeg": 1.3760140437821167,
+          "torsoInclinationDegRange": 83.53116333694858
+        },
+        "durationMs": 3804,
+        "endFrame": 302,
+        "endTimestampMs": 10077,
+        "phases": [
+          {
+            "durationMs": 33,
+            "endTimestampMs": 6306,
+            "metrics": {
+              "minimumHipAngleDeg": 151.57304775620113,
+              "minimumKneeAngleDeg": 166.12045759654023,
+              "minimumTorsoInclinationDeg": 15.372166831038257
+            },
+            "name": "READY",
+            "startTimestampMs": 6273
+          },
+          {
+            "durationMs": 1969,
+            "endTimestampMs": 8275,
+            "metrics": {
+              "minimumHipAngleDeg": 71.6902597767513,
+              "minimumKneeAngleDeg": 156.08014310324367,
+              "minimumTorsoInclinationDeg": 18.10554488950291
+            },
+            "name": "HINGING",
+            "startTimestampMs": 6306
+          },
+          {
+            "durationMs": 0,
+            "endTimestampMs": 8275,
+            "metrics": {
+              "minimumHipAngleDeg": 71.6902597767513,
+              "minimumKneeAngleDeg": 156.57091574854672,
+              "minimumTorsoInclinationDeg": 82.77491905876887
+            },
+            "name": "HINGE_TRANSITION",
+            "startTimestampMs": 8275
+          },
+          {
+            "durationMs": 1635,
+            "endTimestampMs": 9910,
+            "metrics": {
+              "minimumHipAngleDeg": 68.35006624128914,
+              "minimumKneeAngleDeg": 153.12312648510883,
+              "minimumTorsoInclinationDeg": 9.047651074671924
+            },
+            "name": "EXTENDING",
+            "startTimestampMs": 8275
+          },
+          {
+            "durationMs": 167,
+            "endTimestampMs": 10077,
+            "metrics": {
+              "minimumHipAngleDeg": 164.2482101303244,
+              "minimumKneeAngleDeg": 163.28532081654728,
+              "minimumTorsoInclinationDeg": 1.3760140437821167
+            },
+            "name": "COMPLETION",
+            "startTimestampMs": 9910
+          }
+        ],
+        "rejectionReasons": [],
+        "repIndex": 2,
+        "startFrame": 188,
+        "startTimestampMs": 6273,
+        "status": "ACCEPTED",
+        "usableFrameRatio": 1.0
+      },
+      {
+        "aggregatedFeatures": {
+          "hipAngleDegRange": 101.72319065991029,
+          "kneeAngleDegRange": 14.873747545671193,
+          "maximumHipAngleDeg": 172.56673185013236,
+          "maximumKneeAngleDeg": 169.36197008991599,
+          "maximumTorsoInclinationDeg": 83.7545326367492,
+          "minimumHipAngleDeg": 70.84354119022207,
+          "minimumKneeAngleDeg": 154.4882225442448,
+          "minimumTorsoInclinationDeg": 1.944117639333456,
+          "torsoInclinationDegRange": 81.81041499741575
+        },
+        "durationMs": 3604,
+        "endFrame": 442,
+        "endTimestampMs": 14748,
+        "phases": [
+          {
+            "durationMs": 34,
+            "endTimestampMs": 11178,
+            "metrics": {
+              "minimumHipAngleDeg": 151.10134255454165,
+              "minimumKneeAngleDeg": 166.7570016001902,
+              "minimumTorsoInclinationDeg": 17.371602859334594
+            },
+            "name": "READY",
+            "startTimestampMs": 11144
+          },
+          {
+            "durationMs": 2002,
+            "endTimestampMs": 13180,
+            "metrics": {
+              "minimumHipAngleDeg": 71.35986672141901,
+              "minimumKneeAngleDeg": 156.48047184347976,
+              "minimumTorsoInclinationDeg": 19.587198145797412
+            },
+            "name": "HINGING",
+            "startTimestampMs": 11178
+          },
+          {
+            "durationMs": 0,
+            "endTimestampMs": 13180,
+            "metrics": {
+              "minimumHipAngleDeg": 71.35986672141901,
+              "minimumKneeAngleDeg": 156.8186677776676,
+              "minimumTorsoInclinationDeg": 83.7545326367492
+            },
+            "name": "HINGE_TRANSITION",
+            "startTimestampMs": 13180
+          },
+          {
+            "durationMs": 1401,
+            "endTimestampMs": 14581,
+            "metrics": {
+              "minimumHipAngleDeg": 70.84354119022207,
+              "minimumKneeAngleDeg": 154.4882225442448,
+              "minimumTorsoInclinationDeg": 6.618404335011951
+            },
+            "name": "EXTENDING",
+            "startTimestampMs": 13180
+          },
+          {
+            "durationMs": 167,
+            "endTimestampMs": 14748,
+            "metrics": {
+              "minimumHipAngleDeg": 165.3856826394367,
+              "minimumKneeAngleDeg": 162.01659187019843,
+              "minimumTorsoInclinationDeg": 1.944117639333456
+            },
+            "name": "COMPLETION",
+            "startTimestampMs": 14581
+          }
+        ],
+        "rejectionReasons": [],
+        "repIndex": 3,
+        "startFrame": 334,
+        "startTimestampMs": 11144,
+        "status": "ACCEPTED",
+        "usableFrameRatio": 1.0
+      },
+      {
+        "aggregatedFeatures": {
+          "hipAngleDegRange": 110.31699530383464,
+          "kneeAngleDegRange": 19.290871270499622,
+          "maximumHipAngleDeg": 178.36628073190172,
+          "maximumKneeAngleDeg": 169.44690675471062,
+          "maximumTorsoInclinationDeg": 84.20718086764147,
+          "minimumHipAngleDeg": 68.04928542806708,
+          "minimumKneeAngleDeg": 150.156035484211,
+          "minimumTorsoInclinationDeg": 1.1085895684831382,
+          "torsoInclinationDegRange": 83.09859129915833
+        },
+        "durationMs": 3637,
+        "endFrame": 579,
+        "endTimestampMs": 19319,
+        "phases": [
+          {
+            "durationMs": 34,
+            "endTimestampMs": 15716,
+            "metrics": {
+              "minimumHipAngleDeg": 153.66492040886746,
+              "minimumKneeAngleDeg": 160.8301748130693,
+              "minimumTorsoInclinationDeg": 12.98648306877364
+            },
+            "name": "READY",
+            "startTimestampMs": 15682
+          },
+          {
+            "durationMs": 1835,
+            "endTimestampMs": 17551,
+            "metrics": {
+              "minimumHipAngleDeg": 72.86216061080822,
+              "minimumKneeAngleDeg": 152.8335586953585,
+              "minimumTorsoInclinationDeg": 15.001178045704332
+            },
+            "name": "HINGING",
+            "startTimestampMs": 15716
+          },
+          {
+            "durationMs": 0,
+            "endTimestampMs": 17551,
+            "metrics": {
+              "minimumHipAngleDeg": 72.86216061080822,
+              "minimumKneeAngleDeg": 152.8335586953585,
+              "minimumTorsoInclinationDeg": 80.60150363238998
+            },
+            "name": "HINGE_TRANSITION",
+            "startTimestampMs": 17551
+          },
+          {
+            "durationMs": 1601,
+            "endTimestampMs": 19152,
+            "metrics": {
+              "minimumHipAngleDeg": 68.04928542806708,
+              "minimumKneeAngleDeg": 150.156035484211,
+              "minimumTorsoInclinationDeg": 8.981222055225308
+            },
+            "name": "EXTENDING",
+            "startTimestampMs": 17551
+          },
+          {
+            "durationMs": 167,
+            "endTimestampMs": 19319,
+            "metrics": {
+              "minimumHipAngleDeg": 164.01558819550712,
+              "minimumKneeAngleDeg": 163.159299422794,
+              "minimumTorsoInclinationDeg": 1.1085895684831382
+            },
+            "name": "COMPLETION",
+            "startTimestampMs": 19152
+          }
+        ],
+        "rejectionReasons": [],
+        "repIndex": 4,
+        "startFrame": 470,
+        "startTimestampMs": 15682,
+        "status": "ACCEPTED",
+        "usableFrameRatio": 1.0
+      }
+    ],
+    "schemaVersion": "movement-visual-review-v1",
+    "sourceReferenceId": "86c4191f-59d4-427e-9900-6de3011e717f",
+    "sourceVideo": {
+      "durationMs": 20120,
+      "fileName": "movement-normalized-86c4191f59d4427e99006de3011e717f-72119b7f76ff4f36a35b9c79f8b06d60.mp4",
+      "fps": 29.97002997002997,
+      "height": 1440,
+      "totalFrames": 603,
+      "width": 2560
+    }
+  },
+  "videoBase64": "GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAHwEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEnTbuMU6uEHFO7a1OsggHa7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjEuMS4xMDBXQYxMYXZmNjEuMS4xMDBEiYhAj0AAAAAAABZUrmvMrgEAAAAAAABD14EBc8WI0/9X6vZCJnqcgQAitZyDdW5kiIEAhoVWX1ZQOIOBASPjg4Q7msoA4JSwgUC6gUCagQJVsIhVt4ECVbiBAhJUw2f6c3OfY8CAZ8iZRaOHRU5DT0RFUkSHjExhdmY2MS4xLjEwMHNz1WPAi2PFiNP/V+r2QiZ6Z8igRaOHRU5DT0RFUkSHk0xhdmM2MS4zLjEwMCBsaWJ2cHhnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjAxLjAwMDAwMDAwMAAfQ7Z1r+eBAKOqgQAAgPACAJ0BKkAAQAAARwiFhYiZhIgCAgAGcDxCYAqyIPcwAP7/q1CAHFO7a5G7j7OBALeK94EB8YIBpvCBAw=="
+}

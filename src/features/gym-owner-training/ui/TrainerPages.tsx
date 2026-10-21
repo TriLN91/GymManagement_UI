@@ -4,6 +4,7 @@ import {
   Award,
   Building2,
   CalendarCheck,
+  Camera,
   Check,
   CircleAlert,
   ClipboardCheck,
@@ -26,7 +27,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { type TrainerOperationalStatus } from '../model/types';
+import {
+  TRAINER_SPECIALIZATIONS,
+  type GymTrainerInput,
+  type TrainerOperationalStatus,
+} from '../model/types';
 import { useGymOwnerTrainingStore } from '../model/useGymOwnerTrainingStore';
 
 import { gymOwnerTrainingCopy } from './copy';
@@ -43,7 +48,6 @@ import {
 import { ROUTES } from '@/shared/config/constants';
 import { useActionRollback } from '@/shared/hooks/useActionRollback';
 import { useLocale } from '@/shared/hooks/useLocale';
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
@@ -58,6 +62,7 @@ import {
 } from '@/shared/ui/dialog';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
+import { Textarea } from '@/shared/ui/textarea';
 import { WorkspacePage, WorkspacePanel, WorkspacePanelContent } from '@/shared/ui/workspace';
 
 import './gym-owner-training.css';
@@ -70,6 +75,8 @@ function useTrainingCopy() {
 export function GymOwnerTrainerListPage() {
   const { copy, isVi } = useTrainingCopy();
   const { executeWithRollback } = useActionRollback();
+  const storeTrainers = useGymOwnerTrainingStore((state) => state.trainers);
+  const assignments = useGymOwnerTrainingStore((state) => state.assignments);
   const openExceptions = useGymOwnerTrainingStore(
     (state) => state.assignmentExceptions.filter((item) => item.status === 'open').length,
   );
@@ -77,7 +84,7 @@ export function GymOwnerTrainerListPage() {
   // Real backend data states
   const [overview, setOverview] = useState<GymTrainersLeaderboardDto | null>(null);
   const [branches, setBranches] = useState<GymBranchCardView[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Create PT modal states
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -177,8 +184,11 @@ export function GymOwnerTrainerListPage() {
       void loadData();
     } catch (err: unknown) {
       const message =
-        errorMessage(err) ||
-        (isVi ? 'Không thể tạo tài khoản huấn luyện viên.' : 'Failed to create trainer.');
+        err instanceof Error
+          ? err.message
+          : isVi
+            ? 'Không thể tạo tài khoản huấn luyện viên.'
+            : 'Failed to create trainer.';
       setCreateError(message);
       toast.error(message);
     } finally {
@@ -187,17 +197,8 @@ export function GymOwnerTrainerListPage() {
   };
 
   // Copy helper
-  const copyToClipboard = async (text: string, key: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      toast.error(
-        isVi
-          ? 'Không thể sao chép. Vui lòng sao chép thủ công.'
-          : 'Could not copy. Please copy manually.',
-      );
-      return;
-    }
+  const copyToClipboard = (text: string, key: string) => {
+    void navigator.clipboard.writeText(text);
     setCopiedKey(key);
     toast.success(isVi ? 'Đã sao chép vào bộ nhớ tạm!' : 'Copied to clipboard!');
     setTimeout(() => setCopiedKey(null), 2500);
@@ -234,9 +235,13 @@ export function GymOwnerTrainerListPage() {
       });
       void loadData();
     } catch (err: unknown) {
-      toast.error(
-        errorMessage(err) || (isVi ? 'Không thể cập nhật trạng thái.' : 'Failed to update status.'),
-      );
+      const message =
+        err instanceof Error
+          ? err.message
+          : isVi
+            ? 'Không thể cập nhật trạng thái.'
+            : 'Failed to update status.';
+      toast.error(message);
     }
   };
 
@@ -289,10 +294,13 @@ export function GymOwnerTrainerListPage() {
       setBranchModalTrainer(null);
       void loadData();
     } catch (err: unknown) {
-      toast.error(
-        errorMessage(err) ||
-          (isVi ? 'Không thể cập nhật chi nhánh.' : 'Failed to update branches.'),
-      );
+      const message =
+        err instanceof Error
+          ? err.message
+          : isVi
+            ? 'Không thể cập nhật chi nhánh.'
+            : 'Failed to update branches.';
+      toast.error(message);
     } finally {
       setIsSavingBranches(false);
     }
@@ -329,8 +337,11 @@ export function GymOwnerTrainerListPage() {
       void loadData();
     } catch (err: unknown) {
       const msg =
-        errorMessage(err) ||
-        (isVi ? 'Không thể hủy liên kết huấn luyện viên.' : 'Failed to unlink trainer.');
+        err instanceof Error
+          ? err.message
+          : isVi
+            ? 'Không thể hủy liên kết huấn luyện viên.'
+            : 'Failed to unlink trainer.';
       setUnlinkError(msg);
       toast.error(msg);
     } finally {
@@ -353,6 +364,12 @@ export function GymOwnerTrainerListPage() {
               <ClipboardCheck aria-hidden="true" size={16} />
               {copy.assignmentExceptions}
               {openExceptions > 0 ? <Badge variant="destructive">{openExceptions}</Badge> : null}
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link to={ROUTES.admin.trainerCreate}>
+              <Plus aria-hidden="true" size={16} />
+              {copy.createTrainer}
             </Link>
           </Button>
           <Button variant="ghost" size="sm" onClick={() => void loadData()} disabled={isLoading}>
@@ -536,8 +553,8 @@ export function GymOwnerTrainerListPage() {
         </div>
 
         <ManagementState
-          state={isLoading ? 'loading' : 'loaded'}
-          isEmpty={trainersList.length === 0}
+          state={isLoading && storeTrainers.length === 0 ? 'loading' : 'loaded'}
+          isEmpty={trainersList.length === 0 && storeTrainers.length === 0}
           loadingLabel={copy.loading}
           emptyLabel={
             isVi
@@ -546,134 +563,183 @@ export function GymOwnerTrainerListPage() {
           }
           errorLabel={copy.listError}
         >
-          <div className="divide-y divide-border">
-            {trainersList.map((trainer) => (
-              <article
-                key={trainer.trainerProfileId}
-                className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
-              >
-                {/* Identity */}
-                <div className="flex min-w-[240px] items-center gap-3">
-                  <TrainerAvatar name={trainer.fullName} source={trainer.avatarUrl} />
-                  <div>
-                    <strong className="block text-sm font-semibold text-foreground">
-                      {trainer.fullName}
-                    </strong>
-                    <span className="block text-xs text-muted-foreground">{trainer.email}</span>
-                    {trainer.phoneNumber ? (
-                      <span className="text-xs text-muted-foreground">{trainer.phoneNumber}</span>
+          {trainersList.length > 0 ? (
+            <div className="divide-y divide-border">
+              {trainersList.map((trainer) => (
+                <article
+                  key={trainer.trainerProfileId}
+                  className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
+                >
+                  {/* Identity */}
+                  <div className="flex min-w-[240px] items-center gap-3">
+                    <TrainerAvatar name={trainer.fullName} source={trainer.avatarUrl} />
+                    <div>
+                      <strong className="block text-sm font-semibold text-foreground">
+                        {trainer.fullName}
+                      </strong>
+                      <span className="block text-xs text-muted-foreground">{trainer.email}</span>
+                      {trainer.phoneNumber ? (
+                        <span className="text-xs text-muted-foreground">{trainer.phoneNumber}</span>
+                      ) : (
+                        <span className="text-[11px] italic text-amber-600">
+                          {isVi ? 'Chưa cập nhật SĐT' : 'No phone'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Branches */}
+                  <div className="min-w-[200px] flex-1">
+                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {isVi ? 'Cơ sở phân bổ' : 'Assigned Branches'}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {trainer.assignedBranches.length > 0 ? (
+                        trainer.assignedBranches.map((b) => (
+                          <span
+                            key={b.branchId}
+                            className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                          >
+                            <Building2 size={12} className="text-muted-foreground" />
+                            {b.branchName}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs italic text-amber-600">
+                          {isVi ? 'Chưa phân cơ sở' : 'Unassigned'}
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-1.5 text-xs text-primary hover:text-primary"
+                        onClick={() => openBranchModal(trainer)}
+                      >
+                        <GitBranch size={12} className="mr-1" />
+                        {isVi ? 'Đổi chi nhánh' : 'Change'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Profile Completion */}
+                  <div className="min-w-[130px]">
+                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {isVi ? 'Hồ sơ chuyên môn' : 'Profile Status'}
+                    </span>
+                    {trainer.isProfileComplete ? (
+                      <Badge
+                        variant="neutral"
+                        className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600"
+                      >
+                        <Check size={12} className="mr-1" />
+                        {isVi ? 'Đã hoàn tất' : 'Complete'}
+                      </Badge>
                     ) : (
-                      <span className="text-[11px] italic text-amber-600">
-                        {isVi ? 'Chưa cập nhật SĐT' : 'No phone'}
-                      </span>
+                      <Badge
+                        variant="neutral"
+                        className="border-amber-500/30 bg-amber-500/10 text-xs text-amber-600"
+                      >
+                        <AlertTriangle size={12} className="mr-1" />
+                        {isVi ? 'Chưa hoàn tất (Ép điền)' : 'Incomplete'}
+                      </Badge>
                     )}
                   </div>
-                </div>
 
-                {/* Branches */}
-                <div className="min-w-[200px] flex-1">
-                  <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {isVi ? 'Cơ sở phân bổ' : 'Assigned Branches'}
-                  </span>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {trainer.assignedBranches.length > 0 ? (
-                      trainer.assignedBranches.map((b) => (
-                        <span
-                          key={b.branchId}
-                          className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
-                        >
-                          <Building2 size={12} className="text-muted-foreground" />
-                          {b.branchName}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs italic text-amber-600">
-                        {isVi ? 'Chưa phân cơ sở' : 'Unassigned'}
+                  {/* Status Toggle & Metrics */}
+                  <div className="flex min-w-[120px] items-center gap-4">
+                    <div>
+                      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {isVi ? 'Vận hành' : 'Status'}
                       </span>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => void handleToggleStatus(trainer)}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+                          trainer.isActive
+                            ? 'bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                        }`}
+                      >
+                        <span
+                          className={`h-2 w-2 rounded-full ${trainer.isActive ? 'bg-emerald-500' : 'bg-muted-foreground'}`}
+                        />
+                        {trainer.isActive
+                          ? isVi
+                            ? 'Hoạt động'
+                            : 'Active'
+                          : isVi
+                            ? 'Tạm dừng'
+                            : 'Disabled'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action Controls */}
+                  <div className="flex items-center justify-end gap-2">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      className="h-6 px-1.5 text-xs text-primary hover:text-primary"
-                      onClick={() => openBranchModal(trainer)}
+                      className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => {
+                        setUnlinkTarget(trainer);
+                        setUnlinkError(null);
+                      }}
                     >
-                      <GitBranch size={12} className="mr-1" />
-                      {isVi ? 'Đổi chi nhánh' : 'Change'}
+                      <Trash2 size={14} className="mr-1" />
+                      {isVi ? 'Hủy liên kết' : 'Unlink'}
                     </Button>
                   </div>
-                </div>
-
-                {/* Profile Completion */}
-                <div className="min-w-[130px]">
-                  <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {isVi ? 'Hồ sơ chuyên môn' : 'Profile Status'}
-                  </span>
-                  {trainer.isProfileComplete ? (
-                    <Badge
-                      variant="neutral"
-                      className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-600"
-                    >
-                      <Check size={12} className="mr-1" />
-                      {isVi ? 'Đã hoàn tất' : 'Complete'}
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="neutral"
-                      className="border-amber-500/30 bg-amber-500/10 text-xs text-amber-600"
-                    >
-                      <AlertTriangle size={12} className="mr-1" />
-                      {isVi ? 'Chưa hoàn tất (Ép điền)' : 'Incomplete'}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Status Toggle & Metrics */}
-                <div className="flex min-w-[120px] items-center gap-4">
-                  <div>
-                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      {isVi ? 'Vận hành' : 'Status'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => void handleToggleStatus(trainer)}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition ${
-                        trainer.isActive
-                          ? 'bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 dark:text-emerald-300'
-                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                      }`}
-                    >
-                      <span
-                        className={`h-2 w-2 rounded-full ${trainer.isActive ? 'bg-emerald-500' : 'bg-muted-foreground'}`}
-                      />
-                      {trainer.isActive
-                        ? isVi
-                          ? 'Hoạt động'
-                          : 'Active'
-                        : isVi
-                          ? 'Tạm dừng'
-                          : 'Disabled'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Action Controls */}
-                <div className="flex items-center justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                    onClick={() => {
-                      setUnlinkTarget(trainer);
-                      setUnlinkError(null);
-                    }}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="gym-trainer-list">
+              {storeTrainers.map((trainer) => {
+                const assignedCount = assignments.filter(
+                  (assignment) =>
+                    assignment.trainerId === trainer.id && assignment.status === 'active',
+                ).length;
+                return (
+                  <article
+                    key={trainer.id}
+                    className="flex flex-col justify-between gap-4 p-4 transition hover:bg-muted/30 md:flex-row md:items-center"
                   >
-                    <Trash2 size={14} className="mr-1" />
-                    {isVi ? 'Hủy liên kết' : 'Unlink'}
-                  </Button>
-                </div>
-              </article>
-            ))}
-          </div>
+                    <div className="flex min-w-[240px] items-center gap-3">
+                      <TrainerAvatar name={trainer.fullName} source={trainer.avatarDataUrl} />
+                      <div>
+                        <strong className="block text-sm font-semibold text-foreground">
+                          {trainer.fullName}
+                        </strong>
+                        <span className="block text-xs text-muted-foreground">{trainer.email}</span>
+                      </div>
+                    </div>
+                    <div className="gym-training-chip-list">
+                      {trainer.specializations.slice(0, 2).map((specialization) => (
+                        <span
+                          key={specialization}
+                          className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                        >
+                          {copy.specializationsMap[specialization]}
+                        </span>
+                      ))}
+                    </div>
+                    <div>
+                      <ApprovalBadge status={trainer.approvalStatus} copy={copy} />
+                    </div>
+                    <div>
+                      <OperationalBadge status={trainer.operationalStatus} copy={copy} />
+                    </div>
+                    <strong className="gym-training-assignment-count text-xs">
+                      {assignedCount}
+                    </strong>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link to={ROUTES.admin.trainerDetailPath(trainer.id)}>{copy.viewDetail}</Link>
+                    </Button>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </ManagementState>
       </WorkspacePanel>
 
@@ -855,7 +921,7 @@ export function GymOwnerTrainerListPage() {
                       variant="ghost"
                       size="sm"
                       className="h-7 text-xs"
-                      onClick={() => void copyToClipboard(createdCredentials.email, 'email')}
+                      onClick={() => copyToClipboard(createdCredentials.email, 'email')}
                     >
                       {copiedKey === 'email' ? (
                         <Check size={13} className="text-emerald-500" />
@@ -878,7 +944,7 @@ export function GymOwnerTrainerListPage() {
                       size="sm"
                       className="h-7 text-xs"
                       onClick={() =>
-                        void copyToClipboard(createdCredentials.temporaryPassword, 'password')
+                        copyToClipboard(createdCredentials.temporaryPassword, 'password')
                       }
                     >
                       {copiedKey === 'password' ? (
@@ -914,7 +980,7 @@ export function GymOwnerTrainerListPage() {
                 className="w-full gap-2 font-semibold"
                 onClick={() => {
                   const payload = `THÔNG TIN TÀI KHOẢN PT FITFLEX\n- Họ tên: ${createdCredentials.fullName}\n- Email: ${createdCredentials.email}\n- Mật khẩu: ${createdCredentials.temporaryPassword}\n- Cơ sở: ${createdCredentials.primaryBranchName}\n- Link đăng nhập: ${window.location.origin}/login`;
-                  void copyToClipboard(payload, 'all');
+                  copyToClipboard(payload, 'all');
                 }}
               >
                 <Copy size={15} />
@@ -1074,47 +1140,44 @@ export function GymOwnerTrainerListPage() {
   );
 }
 
-// ── Streamlined Create / Edit PT Form Page (for direct URL navigation) ────────
+type TrainerFormDraft = GymTrainerInput;
+
+const emptyTrainerForm: TrainerFormDraft = {
+  fullName: '',
+  email: '',
+  phone: '',
+  bio: '',
+  specializations: [],
+  experienceYears: 0,
+  selfIntroduction: '',
+  avatarDataUrl: null,
+};
+
 export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
-  const { copy, isVi } = useTrainingCopy();
+  const { copy } = useTrainingCopy();
   const { trainerId = '' } = useParams();
   const navigate = useNavigate();
   const trainer = useGymOwnerTrainingStore((state) =>
     state.trainers.find((item) => item.id === trainerId),
   );
-
-  const [branches, setBranches] = useState<GymBranchCardView[]>([]);
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [primaryBranchId, setPrimaryBranchId] = useState('');
-  const [additionalBranchIds, setAdditionalBranchIds] = useState<string[]>([]);
-  const [createdCredentials, setCreatedCredentials] = useState<CreateGymTrainerResponse | null>(
-    null,
+  const createTrainer = useGymOwnerTrainingStore((state) => state.createTrainer);
+  const updateTrainer = useGymOwnerTrainingStore((state) => state.updateTrainer);
+  const [form, setForm] = useState<TrainerFormDraft>(() =>
+    mode === 'edit' && trainer
+      ? {
+          fullName: trainer.fullName,
+          email: trainer.email,
+          phone: trainer.phone,
+          bio: trainer.bio,
+          specializations: [...trainer.specializations],
+          experienceYears: trainer.experienceYears,
+          selfIntroduction: trainer.selfIntroduction,
+          avatarDataUrl: trainer.avatarDataUrl,
+        }
+      : emptyTrainerForm,
   );
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    void marketplaceApi
-      .getMyBrands()
-      .then(async (myBrands) => {
-        const firstBrand = myBrands[0];
-        if (firstBrand) {
-          await marketplaceApi.getBrandBranches(firstBrand.id).then((b) => {
-            setBranches(b);
-            const firstBranch = b[0];
-            if (firstBranch && !primaryBranchId) {
-              setPrimaryBranchId(firstBranch.id);
-            }
-          });
-        }
-      })
-      .catch((error: unknown) =>
-        setError(
-          errorMessage(error) || (isVi ? 'Không thể tải chi nhánh.' : 'Could not load branches.'),
-        ),
-      );
-  }, [primaryBranchId, isVi]);
 
   if (mode === 'edit' && (!trainer || !['draft', 'rejected'].includes(trainer.approvalStatus))) {
     return (
@@ -1125,199 +1188,177 @@ export function GymOwnerTrainerFormPage({ mode }: { mode: 'create' | 'edit' }) {
     );
   }
 
-  const handleSave = async () => {
-    if (!email.trim() || !email.includes('@') || !fullName.trim() || !primaryBranchId) {
-      setError(
-        isVi
-          ? 'Vui lòng điền đầy đủ Email, Họ tên và Chi nhánh làm việc.'
-          : 'Please enter all required fields.',
-      );
+  const toggleSpecialization = (specialization: TrainerFormDraft['specializations'][number]) => {
+    setForm((current) => ({
+      ...current,
+      specializations: current.specializations.includes(specialization)
+        ? current.specializations.filter((item) => item !== specialization)
+        : [...current.specializations, specialization],
+    }));
+  };
+
+  const save = () => {
+    if (
+      !form.fullName.trim() ||
+      !form.email.trim() ||
+      !form.bio.trim() ||
+      form.experienceYears <= 0 ||
+      form.specializations.length === 0
+    ) {
+      setError(copy.requiredTrainer);
       return;
     }
-    setError('');
     setIsSaving(true);
-    try {
-      const res = await marketplaceApi.createGymTrainer({
-        email: email.trim(),
-        fullName: fullName.trim(),
-        branchId: primaryBranchId,
-        additionalBranchIds,
-      });
-      setCreatedCredentials(res);
-      toast.success(isVi ? 'Đã tạo tài khoản huấn luyện viên!' : 'Trainer created successfully!');
-    } catch (err: unknown) {
-      setError(
-        errorMessage(err) ||
-          (isVi ? 'Không thể tạo huấn luyện viên.' : 'Failed to create trainer.'),
-      );
-    } finally {
-      setIsSaving(false);
-    }
+    window.setTimeout(() => {
+      const normalized: GymTrainerInput = {
+        ...form,
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        bio: form.bio.trim(),
+        selfIntroduction: form.selfIntroduction.trim(),
+        specializations: [...form.specializations],
+      };
+      const savedId = mode === 'create' ? createTrainer(normalized) : trainer!.id;
+      if (mode === 'edit') updateTrainer(trainer!.id, normalized);
+      toast.success(mode === 'create' ? copy.createdTrainer : copy.savedTrainer);
+      void navigate(ROUTES.admin.trainerDetailPath(savedId));
+    }, 250);
   };
 
   return (
-    <WorkspacePage className="gym-training-page mx-auto max-w-xl">
+    <WorkspacePage className="gym-training-page">
       <div className="gym-training-toolbar">
         <Button asChild variant="ghost">
-          <Link to={ROUTES.admin.pts}>
+          <Link
+            to={
+              mode === 'edit' && trainer
+                ? ROUTES.admin.trainerDetailPath(trainer.id)
+                : ROUTES.admin.pts
+            }
+          >
             <ArrowLeft aria-hidden="true" size={16} />
-            {copy.back}
+            {copy.cancel}
           </Link>
         </Button>
       </div>
-
-      <WorkspacePanel className="space-y-5 p-6">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">
-            {isVi ? 'Thêm Huấn luyện viên mới vào phòng Gym' : 'Add New Personal Trainer'}
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {isVi
-              ? 'Chủ phòng gym chỉ cần cấp email và gán chi nhánh. Hệ thống sẽ cấp mật khẩu và ép PT hoàn tất hồ sơ khi đăng nhập lần đầu.'
-              : 'Enter basic information to issue trainer account.'}
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="page-pt-email">
-              {isVi ? 'Gmail / Email đăng ký (*)' : 'Email (*)'}
-            </Label>
-            <Input
-              id="page-pt-email"
-              type="email"
-              placeholder="trainer@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+      <WorkspacePanel className="gym-training-form-shell">
+        <aside className="gym-training-avatar-editor">
+          <TrainerAvatar name={form.fullName || 'Trainer'} source={form.avatarDataUrl} large />
+          <strong>{copy.avatar}</strong>
+          <label>
+            <Camera aria-hidden="true" size={16} />
+            {copy.uploadAvatar}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                if (
+                  !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+                  file.size > 2_000_000
+                ) {
+                  setError(copy.invalidImage);
+                  return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => {
+                  if (typeof reader.result === 'string') {
+                    setForm((current) => ({ ...current, avatarDataUrl: reader.result as string }));
+                  }
+                };
+                reader.readAsDataURL(file);
+              }}
             />
-          </div>
-
-          <div>
-            <Label htmlFor="page-pt-name">{isVi ? 'Họ và tên (*)' : 'Full Name (*)'}</Label>
-            <Input
-              id="page-pt-name"
-              placeholder="Nguyễn Văn Hùng"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="page-pt-branch">
-              {isVi ? 'Chi nhánh làm việc chính (*)' : 'Primary Branch (*)'}
-            </Label>
-            <select
-              id="page-pt-branch"
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              value={primaryBranchId}
-              onChange={(e) => setPrimaryBranchId(e.target.value)}
-            >
-              {branches.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.branchName} — {b.city}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {branches.length > 1 && (
-            <div>
-              <Label className="mb-2 block">
-                {isVi ? 'Các chi nhánh hỗ trợ khác' : 'Additional Branches'}
-              </Label>
-              <div className="max-h-36 space-y-2 overflow-y-auto rounded-lg border p-3">
-                {branches
-                  .filter((b) => b.id !== primaryBranchId)
-                  .map((b) => (
-                    <label key={b.id} className="flex cursor-pointer items-center gap-2 text-xs">
-                      <Checkbox
-                        checked={additionalBranchIds.includes(b.id)}
-                        onChange={() =>
-                          setAdditionalBranchIds((prev) =>
-                            prev.includes(b.id)
-                              ? prev.filter((id) => id !== b.id)
-                              : [...prev, b.id],
-                          )
-                        }
-                      />
-                      <span>{b.branchName}</span>
-                    </label>
-                  ))}
-              </div>
+          </label>
+          <small>{copy.imageRule}</small>
+        </aside>
+        <div className="gym-training-form">
+          <div className="gym-training-form-grid">
+            <div className="gym-training-field">
+              <Label htmlFor="trainer-name">{copy.fullName}</Label>
+              <Input
+                id="trainer-name"
+                value={form.fullName}
+                onChange={(event) => setForm({ ...form, fullName: event.target.value })}
+              />
             </div>
-          )}
-
-          {error && <p className="text-xs font-medium text-destructive">{error}</p>}
-
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => navigate(ROUTES.admin.pts)}>
+            <div className="gym-training-field">
+              <Label htmlFor="trainer-email">{copy.email}</Label>
+              <Input
+                id="trainer-email"
+                type="email"
+                value={form.email}
+                onChange={(event) => setForm({ ...form, email: event.target.value })}
+              />
+            </div>
+            <div className="gym-training-field">
+              <Label htmlFor="trainer-phone">{copy.phone}</Label>
+              <Input
+                id="trainer-phone"
+                value={form.phone}
+                onChange={(event) => setForm({ ...form, phone: event.target.value })}
+              />
+            </div>
+            <div className="gym-training-field">
+              <Label htmlFor="trainer-experience">{copy.experience}</Label>
+              <Input
+                id="trainer-experience"
+                type="number"
+                min={1}
+                value={form.experienceYears || ''}
+                onChange={(event) =>
+                  setForm({ ...form, experienceYears: Number(event.target.value) })
+                }
+              />
+            </div>
+            <div className="gym-training-field is-wide">
+              <Label htmlFor="trainer-bio">{copy.bio}</Label>
+              <Textarea
+                id="trainer-bio"
+                value={form.bio}
+                onChange={(event) => setForm({ ...form, bio: event.target.value })}
+              />
+            </div>
+            <div className="gym-training-field is-wide">
+              <Label htmlFor="trainer-introduction">{copy.selfIntroduction}</Label>
+              <Textarea
+                id="trainer-introduction"
+                value={form.selfIntroduction}
+                onChange={(event) => setForm({ ...form, selfIntroduction: event.target.value })}
+              />
+            </div>
+            <fieldset className="gym-training-specializations">
+              <legend>{copy.specializations}</legend>
+              <div>
+                {TRAINER_SPECIALIZATIONS.map((specialization) => (
+                  <label key={specialization}>
+                    <Checkbox
+                      checked={form.specializations.includes(specialization)}
+                      onChange={() => toggleSpecialization(specialization)}
+                    />
+                    {copy.specializationsMap[specialization]}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+          {error ? (
+            <p className="gym-training-form-error" role="alert">
+              {error}
+            </p>
+          ) : null}
+          <div className="gym-training-form-actions">
+            <Button variant="outline" onClick={() => navigate(-1)}>
               {copy.cancel}
             </Button>
-            <Button onClick={() => void handleSave()} disabled={isSaving} className="gap-2">
-              <UserPlus size={16} />
-              {isSaving
-                ? isVi
-                  ? 'Đang tạo...'
-                  : 'Creating...'
-                : isVi
-                  ? 'Tạo tài khoản PT'
-                  : 'Create Trainer'}
+            <Button onClick={save} disabled={isSaving}>
+              {isSaving ? copy.saving : copy.save}
             </Button>
           </div>
         </div>
       </WorkspacePanel>
-
-      {/* Generated Credentials Dialog */}
-      <Dialog
-        open={Boolean(createdCredentials)}
-        onOpenChange={(open) => {
-          if (!open) void navigate(ROUTES.admin.pts);
-        }}
-      >
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-emerald-600">
-              <Check className="rounded-full bg-emerald-100 p-1 text-emerald-600" size={24} />
-              {isVi ? 'Tài khoản PT đã tạo thành công' : 'Trainer Created Successfully'}
-            </DialogTitle>
-          </DialogHeader>
-          {createdCredentials && (
-            <div className="space-y-3 py-2 text-sm">
-              <div className="space-y-2 rounded-xl border bg-muted/60 p-3.5 font-mono text-xs">
-                <div>
-                  Email: <strong className="text-foreground">{createdCredentials.email}</strong>
-                </div>
-                <div>
-                  Mật khẩu:{' '}
-                  <strong className="text-primary">{createdCredentials.temporaryPassword}</strong>
-                </div>
-                <div>
-                  Chi nhánh:{' '}
-                  <span className="text-muted-foreground">
-                    {createdCredentials.primaryBranchName}
-                  </span>
-                </div>
-              </div>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  const text = `Email: ${createdCredentials.email} | Mật khẩu: ${createdCredentials.temporaryPassword} | Chi nhánh: ${createdCredentials.primaryBranchName}`;
-                  void navigator.clipboard.writeText(text).then(
-                    () => toast.success(isVi ? 'Đã sao chép mật khẩu!' : 'Copied credentials!'),
-                    () => toast.error(isVi ? 'Không thể sao chép.' : 'Could not copy credentials.'),
-                  );
-                }}
-              >
-                <Copy size={14} className="mr-2" />
-                {isVi ? 'Sao chép thông tin tài khoản' : 'Copy Credentials'}
-              </Button>
-            </div>
-          )}
-          <DialogFooter>
-            <Button onClick={() => navigate(ROUTES.admin.pts)}>{isVi ? 'Hoàn tất' : 'Done'}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </WorkspacePage>
   );
 }
@@ -1611,6 +1652,7 @@ export function GymOwnerTrainerDetailPage() {
                       if (prev) {
                         setTrainerOperationalStatus(trainer.id, prev);
                       }
+                      return Promise.resolve();
                     },
                     successMessage: copy.statusUpdated,
                     rollbackSuccessMessage: isVi

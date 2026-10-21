@@ -2,6 +2,7 @@ import { Check, ChevronRight, Clock3, Dumbbell, MoonStar, Plus } from 'lucide-re
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+import { optionalDayId } from '../model/optionalWorkout';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import { useWorkoutSync } from '../model/workoutSync';
@@ -10,6 +11,7 @@ import { PendingSyncNotice } from './PendingSyncNotice';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { formatBusinessDate } from '@/features/gamification/model/presentation';
+import { useMemberWorkoutBuilderStore } from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 
@@ -18,6 +20,7 @@ export function WeeklySchedule() {
   const { locale } = useLocale();
   useWorkoutSync();
   const live = useLiveWorkoutWeek();
+  const optionalAddons = useMemberWorkoutBuilderStore((s) => s.optionalAddons);
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);
 
   if (live.isPending)
@@ -153,6 +156,25 @@ export function WeeklySchedule() {
           );
         })}
       </section>
+      {optionalAddons.length > 0 && (
+        <section className="workout-week-grid" aria-label={t('optional.title')}>
+          <h2>{t('optional.title')}</h2>
+          <p>{t('optional.accounting')}</p>
+          {optionalAddons.flatMap((addon) =>
+            [...new Set(addon.exercises.flatMap((e) => e.days))].map((weekday) => (
+              <Link
+                className="workout-day-card"
+                key={`${addon.id}:${weekday}`}
+                to={ROUTES.member.workoutDayPath(optionalDayId(addon.id, weekday))}
+              >
+                <span>{t(`flow.weekdays.${weekday}`)}</span>
+                <h3>{addon.name}</h3>
+                <p>{t('optional.accounting')}</p>
+              </Link>
+            )),
+          )}
+        </section>
+      )}
       <p className="workout-live-notice is-quiet">{t('flow.schedule.note')}</p>
     </WorkoutFlowShell>
   );

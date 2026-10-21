@@ -1,13 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Lock, RefreshCw, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { authApi } from '../../api/authApi';
 
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -31,6 +30,7 @@ export interface NewPasswordStepProps {
 }
 
 export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordStepProps) {
+  const isSubmittingRef = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -40,6 +40,8 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     try {
       await authApi.resetPassword({
         email,
@@ -49,7 +51,10 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
       onSuccess();
       toast.success('Đặt lại mật khẩu thành công!');
     } catch (err: unknown) {
-      toast.error(errorMessage(err) || 'Không thể đặt lại mật khẩu.');
+      const message = err instanceof Error ? err.message : 'Không thể đặt lại mật khẩu.';
+      toast.error(message);
+    } finally {
+      isSubmittingRef.current = false;
     }
   });
 

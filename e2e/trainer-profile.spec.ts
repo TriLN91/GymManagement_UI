@@ -33,6 +33,7 @@ test.describe('Trainer profile', () => {
   }) => {
     await openAsTrainer(page, '/pt/profile');
 
+    await page.getByRole('button', { name: 'Dashboard', exact: true }).click();
     await expect(page.getByRole('link', { name: 'Trainer overview', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Members' })).toBeVisible();
     await page.getByRole('button', { name: 'Workout builder' }).click();

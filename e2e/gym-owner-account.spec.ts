@@ -79,7 +79,7 @@ test.describe('Gym Owner notifications and account security', () => {
     await expect(orderNotification).toHaveAttribute('href', '/admin/orders/FIT-2026-1048');
     await orderNotification.click();
     await expect(page).toHaveURL(/\/admin\/orders\/FIT-2026-1048$/);
-    await expect(page.getByRole('button', { name: 'Business & Members' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Orders & Settlement' })).toHaveAttribute(
       'aria-expanded',
       'true',
     );
@@ -115,11 +115,10 @@ test.describe('Gym Owner notifications and account security', () => {
     await expect(page.locator('body')).toHaveJSProperty('scrollWidth', 390);
     await expect(page.getByLabel('In-system notifications')).toBeVisible();
     await expect(page.locator('.member-bottom-nav a')).toHaveText([
-      'Dashboard',
-      'Gym profile',
-      'Trainers',
-      'Business & Members',
-      'Analytics',
+      'Overview',
+      'Profile overview',
+      'Trainer list',
+      'Package management',
     ]);
 
     await page.goto('/admin/account-security');

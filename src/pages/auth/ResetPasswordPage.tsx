@@ -8,7 +8,6 @@ import { z } from 'zod';
 
 import { authApi } from '@/features/auth/api/authApi';
 import { ROUTES } from '@/shared/config/constants';
-import { errorMessage } from '@/shared/lib/errorMessage';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
@@ -62,7 +61,8 @@ export function ResetPasswordPage() {
       setDone(true);
       toast.success('Đặt lại mật khẩu thành công!');
     } catch (err: unknown) {
-      setError('root', { message: errorMessage(err) || 'Không thể đặt lại mật khẩu.' });
+      const message = err instanceof Error ? err.message : 'Không thể đặt lại mật khẩu.';
+      setError('root', { message });
     }
   });
 
