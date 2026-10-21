@@ -1,4 +1,5 @@
 import { QueryProvider } from './providers/QueryProvider';
+import { SignalRProvider } from './providers/SignalRProvider';
 import { AppRouter } from './router';
 
 import { ActionRollbackBar } from '@/shared/ui/ActionRollbackBar';
@@ -9,9 +10,11 @@ export function App() {
   return (
     <ErrorBoundary>
       <QueryProvider>
-        <AppRouter />
-        <Toaster />
-        <ActionRollbackBar />
+        <SignalRProvider>
+          <AppRouter />
+          <Toaster />
+          <ActionRollbackBar />
+        </SignalRProvider>
       </QueryProvider>
     </ErrorBoundary>
   );

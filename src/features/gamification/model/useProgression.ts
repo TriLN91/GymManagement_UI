@@ -7,7 +7,11 @@ import { QUERY_KEYS } from '@/shared/config/constants';
 
 // Progression values come only from the backend (single state version for every surface, UC26).
 export function useProgressionState() {
-  return useQuery({ queryKey: QUERY_KEYS.progressionState(), queryFn: progressionApi.getState });
+  return useQuery({
+    queryKey: QUERY_KEYS.progressionState(),
+    queryFn: progressionApi.getState,
+    retry: false,
+  });
 }
 
 export function useProgressionHistory() {
