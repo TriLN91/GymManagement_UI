@@ -98,3 +98,42 @@ test.describe('Member workout vertical slice', () => {
     await expect(page.getByText('Completed sessions')).toBeVisible();
   });
 });
+
+// CF05 809737a: create-stage outbox failure, adapted to the integrated persistent API fixture.
+test('recovers after session creation fails without duplicating the completed workout', async ({
+  page,
+}) => {
+  await openAsMember(page, '/app/workout/schedule');
+  await page.evaluate(() => sessionStorage.setItem('fitflex:mock:creation-fail', 'true'));
+  await page.getByRole('link', { name: /Tuesday.*Day 1/i }).click();
+  await page.getByRole('button', { name: /start session/i }).click();
+  await page.getByRole('button', { name: /save actual & continue/i }).click();
+  await page.getByRole('button', { name: /save actual & continue/i }).click();
+  await expect(page).toHaveURL(/workout\/complete/);
+  const failedOnReload = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'POST' &&
+      response.url().endsWith('/workouts/me/sessions') &&
+      response.status() === 503,
+  );
+  await page.reload();
+  await failedOnReload;
+  await expect(page.getByRole('button', { name: 'Retry now', exact: true })).toBeVisible();
+  const stored = () =>
+    page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem('fitflex:mock-workouts:workout-flow-member') ?? '{}')
+          .sessions ?? [],
+    );
+  expect(await stored()).toHaveLength(0);
+  await page.evaluate(() => sessionStorage.removeItem('fitflex:mock:creation-fail'));
+  await page.getByRole('button', { name: 'Retry now', exact: true }).click();
+  await expect
+    .poll(async () => {
+      const sessions = (await stored()) as Array<{ status: string }>;
+      return sessions.filter((s) => s.status === 'Completed').length;
+    })
+    .toBe(1);
+  await page.reload();
+  expect(await stored()).toHaveLength(1);
+});

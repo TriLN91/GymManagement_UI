@@ -50,6 +50,8 @@ test.describe('Member workout tools', () => {
     await page.goto('/app/workout/achievements');
     await expect(page.getByRole('heading', { name: 'Your progression' })).toBeVisible();
     await expect(page.getByText('150', { exact: true })).toBeVisible();
+    await expect(page.getByText('Confirmed XP', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Badges earned' })).toBeVisible();
     await expect(page.getByText('Workout Milestone', { exact: true }).first()).toBeVisible();
   });
 
