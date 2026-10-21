@@ -614,7 +614,11 @@ export function GymDetailPage() {
   let facilitiesList: string[] = [];
   if (isRealBranch && apiBranch!.facilitiesJson) {
     try {
-      facilitiesList = JSON.parse(apiBranch!.facilitiesJson) as string[];
+      const parsed: unknown = JSON.parse(apiBranch!.facilitiesJson);
+      facilitiesList =
+        Array.isArray(parsed) && parsed.every((item): item is string => typeof item === 'string')
+          ? parsed
+          : ['Cardio', 'Free Weights', 'Locker Room'];
     } catch {
       facilitiesList = ['Cardio', 'Free Weights', 'Locker Room'];
     }

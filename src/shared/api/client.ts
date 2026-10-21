@@ -30,6 +30,11 @@ const AUTH_PATHS: ReadonlyArray<string> = [
   ENDPOINTS.auth.login,
   ENDPOINTS.auth.register,
   ENDPOINTS.auth.refresh,
+  ENDPOINTS.auth.registerSendOtp,
+  ENDPOINTS.auth.registerVerifyOtp,
+  ENDPOINTS.auth.forgotPassword,
+  ENDPOINTS.auth.verifyOtp,
+  ENDPOINTS.auth.resetPassword,
 ];
 
 // Backend validation message: "400: ... thất bại - Email: msg | Password: msg".
@@ -63,6 +68,7 @@ class TokenManager {
   private refreshToken: string | null = null;
   private refreshQueue: Array<(token: string | null) => void> = [];
   private isRefreshing = false;
+  private refreshingOwner: string | null = null;
   private sessionExpiredHandler: (() => void) | null = null;
 
   // Registered by the app shell so this module does not import the auth store (no cycle).
@@ -105,12 +111,26 @@ class TokenManager {
   async refresh(): Promise<string | null> {
     if (!this.refreshToken) return null;
 
+    if (this.isRefreshing && this.refreshToken !== this.refreshingOwner) {
+      const owner = this.refreshToken;
+      // Keep the existing queue, but do not give another login its predecessor's
+      // rotated token. Start its own refresh after the old flight's finally runs.
+      return new Promise<string | null>((resolve) => {
+        this.refreshQueue.push(() =>
+          queueMicrotask(() => {
+            resolve(this.refreshToken === owner ? this.refresh() : null);
+          }),
+        );
+      });
+    }
     if (this.isRefreshing) {
       return new Promise<string | null>((resolve) => {
         this.refreshQueue.push(resolve);
       });
     }
 
+    const ownerRefresh = this.refreshToken;
+    this.refreshingOwner = ownerRefresh;
     this.isRefreshing = true;
     try {
       const response = await axios.post<ApiEnvelope<{ accessToken: string; refreshToken: string }>>(
@@ -118,15 +138,21 @@ class TokenManager {
         { accessToken: this.accessToken ?? '', refreshToken: this.refreshToken },
       );
       const { accessToken, refreshToken } = response.data.data;
+      // A refresh started by a previous login cannot replace the current account.
+      if (this.refreshToken !== ownerRefresh) {
+        this.flushQueue(null);
+        return null;
+      }
       this.setTokens(accessToken, refreshToken);
       this.flushQueue(accessToken);
       return accessToken;
     } catch {
-      this.clear();
+      if (this.refreshToken === ownerRefresh) this.clear();
       this.flushQueue(null);
       return null;
     } finally {
       this.isRefreshing = false;
+      this.refreshingOwner = null;
     }
   }
 
@@ -212,13 +238,18 @@ instance.interceptors.response.use(
     }
 
     if (status === 401 && error.config && !(error.config as { _retried?: boolean })._retried) {
+      const requestAccess = error.config.headers.get('Authorization');
+      if (requestAccess !== `Bearer ${tokenManager.getAccess()}`)
+        throw new AuthError(status, message, code);
+      const ownerRefresh = tokenManager.getRefresh();
       const newToken = await tokenManager.refresh();
       if (newToken) {
         (error.config as { _retried?: boolean })._retried = true;
         error.config.headers.set('Authorization', `Bearer ${newToken}`);
         return instance.request(error.config);
       }
-      tokenManager.notifySessionExpired();
+      if (tokenManager.getRefresh() === null || tokenManager.getRefresh() === ownerRefresh)
+        tokenManager.notifySessionExpired();
       throw new AuthError(status, message, code);
     }
 
@@ -257,7 +288,7 @@ function getMutationKey(method: string, url: string, body?: unknown): string {
   try {
     return `${method.toLowerCase()}:${url}:${JSON.stringify(body ?? {})}`;
   } catch {
-    return `${method.toLowerCase()}:${url}`;
+    return generateUuid();
   }
 }
 
@@ -267,7 +298,10 @@ async function executeMutatingRequest<T>(
   body?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<T> {
-  const key = getMutationKey(method, url, body);
+  // Explicit transport options (signals, idempotency keys, timeouts) belong to
+  // independent requests. Never share an account's in-flight mutation with another.
+  const scope = `${tokenManager.getAccess()}:${sessionStorage.getItem(STORAGE_KEYS.tenantId)}`;
+  const key = config ? generateUuid() : `${scope}:${getMutationKey(method, url, body)}`;
   const existing = inFlightMutations.get(key);
   if (existing) {
     return existing as Promise<T>;
@@ -334,9 +368,13 @@ export async function apiDelete<T>(
   return executeMutatingRequest<T>('delete', url, undefined, config);
 }
 
-export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+export async function apiPostForm<T>(
+  url: string,
+  body: FormData,
+  config?: Parameters<AxiosInstance['post']>[2],
+): Promise<T> {
   // Do not set Content-Type: the browser must add the multipart boundary.
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 

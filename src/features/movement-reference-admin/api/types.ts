@@ -6,6 +6,9 @@ export type SourceDecision = 'CLEAR_ACCEPT' | 'CLEAR_REJECT' | 'AMBIGUOUS' | 'RE
 export type SourceAction = 'KEEP' | 'DOWN_WEIGHT' | 'EXCLUDE' | 'REQUIRES_REVIEW';
 
 export interface ExerciseDto {
+  targetMuscles?: { code: string; role: 'PRIMARY' | 'SECONDARY' }[];
+  metadataRevision?: number;
+  movementPatternCode?: string | null;
   id: string;
   name: string;
   muscleGroup?: string | null;
@@ -43,9 +46,17 @@ export interface ReferenceSetSourceDto {
   adjudication?: ReferenceSourceAdjudicationDto | null;
   warnings: string[];
   failureMessage?: string | null;
+  failureCode?: string | null;
+  failureStage?: string | null;
+  failureSummary?: string | null;
+  detectedPattern?: string | null;
+  processingSummary?: Record<string, unknown>;
+  createdAtUtc?: string;
+  processedAtUtc?: string | null;
 }
 
 export interface ReferenceSetProfileDto {
+  sourceReferenceIds?: string[];
   id: string;
   version: number;
   view: string;
@@ -89,5 +100,5 @@ export interface CreateExerciseInput {
 
 export interface CreateReferenceSetInput {
   exerciseId: string;
-  pattern: 'SQUAT';
+  pattern: 'SQUAT' | 'HINGE' | 'PULL';
 }

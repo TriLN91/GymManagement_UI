@@ -40,7 +40,7 @@ export function NewPasswordStep({ email, resetToken, onSuccess }: NewPasswordSte
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    if (isSubmittingRef.current || form.formState.isSubmitting) return;
+    if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
     try {
       await authApi.resetPassword({

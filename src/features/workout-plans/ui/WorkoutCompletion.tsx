@@ -36,7 +36,7 @@ export function WorkoutCompletion() {
       const completed = log.sets.filter((set) => set.completed);
       return `${t('flow.completion.sets', { count: completed.length })} · ${formatDuration(completed.reduce((sum, set) => sum + set.durationSeconds, 0))}`;
     }
-    if (log.trackingType === 'distance') return `${(log.distanceKm ?? 0).toFixed(2)} km`;
+    if (log.trackingType === 'distance') return `${formatDuration(log.durationSeconds)}`;
     return `${log.completedRounds} ${t('flow.completion.rounds').toLowerCase()}`;
   };
 
@@ -129,7 +129,7 @@ export function WorkoutCompletion() {
             <article key={exercise.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <div>
-                <h3>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</h3>
+                <h3>{exercise.name}</h3>
               </div>
               <strong>{log ? logSummary(log) : t('flow.completion.noData')}</strong>
             </article>

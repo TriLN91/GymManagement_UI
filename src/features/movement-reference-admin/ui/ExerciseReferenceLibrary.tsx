@@ -80,7 +80,15 @@ function ExerciseRow({
   const detail = useReferenceSet(summary?.id ?? '');
   const state: ReferencePresentationState = detail.data
     ? rollUpExerciseState(detail.data)
-    : 'NEEDS_FOOTAGE';
+    : summary?.activeProfileCount
+      ? 'LIVE'
+      : summary?.profileCount
+        ? summary.status === 'CONFIRMED'
+          ? 'APPROVED'
+          : 'READY_TO_APPROVE'
+        : summary?.status === 'FAILED'
+          ? 'PROBLEM'
+          : 'NEEDS_FOOTAGE';
   const views = detail.data ? getViewReferenceStates(detail.data) : [];
   const liveViews = views.filter((view) => view.liveProfile).map((view) => view.view);
   const candidateViews = views.filter((view) => view.currentCandidate).map((view) => view.view);
@@ -100,13 +108,20 @@ function ExerciseRow({
           {[exercise.muscleGroup, exercise.equipment].filter(Boolean).join(' · ') || '—'}
         </div>
       </TableCell>
-      <TableCell>SQUAT</TableCell>
+      <TableCell>{summary?.pattern || t('inspection.notConfigured')}</TableCell>
       <TableCell>
         {detail.isLoading && summary ? (
           <Skeleton className="h-6 w-28" />
+        ) : detail.error ? (
+          <Button variant="ghost" size="sm" onClick={() => void detail.refetch()}>
+            {t('inspection.retryReadiness')}
+          </Button>
         ) : (
           <PresentationStateBadge state={state} />
         )}
+        {liveViews.some((view) => ['SIDE_LEFT', 'SIDE_RIGHT', 'OBLIQUE_SIDE'].includes(view)) ? (
+          <p className="mt-1 text-xs font-medium text-forest">{t('inspection.memberReady')}</p>
+        ) : null}
       </TableCell>
       <TableCell>{liveViews.length > 0 ? liveViews.join(', ') : '—'}</TableCell>
       <TableCell>{candidateViews.length > 0 ? candidateViews.join(', ') : '—'}</TableCell>
@@ -129,6 +144,10 @@ export function ExerciseReferenceLibrary() {
   const { t } = useTranslation('movementAdmin');
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [setupExercise, setSetupExercise] = useState<ExerciseDto | null>(null);
+  const [setupConfirmed, setSetupConfirmed] = useState(false);
+  const [pattern, setPattern] = useState<'SQUAT' | 'HINGE' | 'PULL'>('SQUAT');
   const [exerciseOpen, setExerciseOpen] = useState(false);
   const [openingExerciseId, setOpeningExerciseId] = useState('');
   const exercises = useExercises();
@@ -143,18 +162,44 @@ export function ExerciseReferenceLibrary() {
   );
   const visibleExercises = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return (exercises.data ?? []).filter((exercise) =>
-      [exercise.name, exercise.muscleGroup, exercise.equipment]
-        .filter(Boolean)
-        .some((value) => value!.toLowerCase().includes(normalized)),
-    );
-  }, [exercises.data, query]);
+    return (exercises.data ?? []).filter((exercise) => {
+      const summary = summaries.get(exercise.id);
+      const matchesFilter =
+        filter === 'all' ||
+        (filter === 'published'
+          ? Boolean(summary?.activeProfileCount)
+          : filter === 'unconfigured'
+            ? !summary || summary.sourceCount === 0
+            : Boolean(summary && !summary.activeProfileCount && summary.sourceCount > 0));
+      return (
+        matchesFilter &&
+        [exercise.name, exercise.muscleGroup, exercise.equipment]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(normalized))
+      );
+    });
+  }, [exercises.data, query, filter, summaries]);
 
-  const openPreparation = async (exerciseId: string) => {
+  const openPreparation = async (exerciseId: string, acknowledged = false) => {
+    const existing = summaries.get(exerciseId);
+    if (existing) {
+      void navigate(ROUTES.superadmin.movementReferenceSetPath(existing.id));
+      return;
+    }
+    if (!acknowledged) {
+      setSetupExercise(
+        (exercises.data ?? []).find((exercise) => exercise.id === exerciseId) ?? null,
+      );
+      setSetupConfirmed(false);
+      return;
+    }
     setOpeningExerciseId(exerciseId);
     try {
-      const context = await createSet.mutateAsync({ exerciseId, pattern: 'SQUAT' });
+      const context = await createSet.mutateAsync({ exerciseId, pattern });
+      setSetupExercise(null);
       void navigate(ROUTES.superadmin.movementReferenceSetPath(context.id));
+    } catch {
+      // The typed error remains visible in the setup dialog.
     } finally {
       setOpeningExerciseId('');
     }
@@ -163,6 +208,15 @@ export function ExerciseReferenceLibrary() {
   const submitExercise = async () => {
     if (!newExercise.name.trim()) return;
     try {
+      const matching = exercises.data?.find(
+        (exercise) => exercise.name.trim().toLowerCase() === newExercise.name.trim().toLowerCase(),
+      );
+      if (matching) {
+        setExerciseOpen(false);
+        toast.info(t('inspection.reusedExercise'));
+        await openPreparation(matching.id);
+        return;
+      }
       const created = await createExercise.mutateAsync({
         name: newExercise.name.trim(),
         muscleGroup: newExercise.muscleGroup.trim() || undefined,
@@ -171,7 +225,7 @@ export function ExerciseReferenceLibrary() {
       toast.success(t('messages.exerciseCreated'));
       setExerciseOpen(false);
       setNewExercise({ name: '', muscleGroup: '', equipment: '' });
-      await openPreparation(created.id);
+      await openPreparation(created.id, true);
     } catch {
       // Mutation errors stay visible in the dialog or list notice.
     }
@@ -207,6 +261,22 @@ export function ExerciseReferenceLibrary() {
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t('list.searchPlaceholder')}
           />
+          <Label htmlFor="reference-filter" className="mt-4 block">
+            {t('inspection.filterLabel')}
+          </Label>
+          <select
+            id="reference-filter"
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            className="mt-2 w-full max-w-md rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            {['all', 'published', 'unpublished', 'unconfigured'].map((value) => (
+              <option key={value} value={value}>
+                {t(`inspection.filters.${value}`)}
+              </option>
+            ))}
+          </select>
+          <p className="mt-3 text-sm text-muted-foreground">{t('inspection.squatOnly')}</p>
         </CardContent>
       </Card>
       <ApiErrorNotice error={referenceSets.error ?? exercises.error ?? createSet.error} />
@@ -220,9 +290,10 @@ export function ExerciseReferenceLibrary() {
       ) : visibleExercises.length === 0 ? (
         <EmptyState
           icon={Activity}
-          title={t('list.emptyTitle')}
-          description={t('list.emptyDescription')}
-          action={<Button onClick={() => setExerciseOpen(true)}>{t('actions.addExercise')}</Button>}
+          title={query || filter !== 'all' ? t('inspection.noMatches') : t('list.emptyTitle')}
+          description={
+            query || filter !== 'all' ? t('inspection.changeFilter') : t('list.emptyDescription')
+          }
         />
       ) : (
         <TableContainer>
@@ -254,12 +325,92 @@ export function ExerciseReferenceLibrary() {
         </TableContainer>
       )}
 
+      <Dialog
+        open={setupExercise !== null}
+        onOpenChange={(open) => {
+          if (!open && !createSet.isPending) setSetupExercise(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t('inspection.setupTitle', { exercise: setupExercise?.name })}
+            </DialogTitle>
+            <DialogDescription>{t('inspection.setupDescription')}</DialogDescription>
+          </DialogHeader>
+          <div>
+            <Label htmlFor="movement-pattern">{t('fields.pattern')}</Label>
+            <select
+              id="movement-pattern"
+              value={pattern}
+              onChange={(event) => {
+                setPattern(event.target.value as typeof pattern);
+                setSetupConfirmed(false);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background p-2"
+            >
+              <option value="SQUAT">SQUAT</option>
+              <option value="HINGE">HINGE</option>
+              <option value="PULL">PULL — Lat pulldown</option>
+              <option disabled>PUSH — {t('inspection.awaitingFootage')}</option>
+            </select>
+            <p className="mt-2 text-sm text-muted-foreground">{t(`patternGuidance.${pattern}`)}</p>
+          </div>
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={setupConfirmed}
+              onChange={(event) => setSetupConfirmed(event.target.checked)}
+            />
+            {t('inspection.setupConfirm')}
+          </label>
+          <ApiErrorNotice error={createSet.error} />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={createSet.isPending}
+              onClick={() => setSetupExercise(null)}
+            >
+              {t('actions.cancel')}
+            </Button>
+            <Button
+              disabled={!setupConfirmed || createSet.isPending}
+              onClick={() => setupExercise && void openPreparation(setupExercise.id, true)}
+            >
+              {t('inspection.setupAction', { pattern })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={exerciseOpen} onOpenChange={setExerciseOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('createExercise.title')}</DialogTitle>
             <DialogDescription>{t('createExercise.description')}</DialogDescription>
           </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            {t('inspection.squatOnly')} {t('inspection.reuseHint')}
+          </p>
+          <div>
+            <Label htmlFor="new-movement-pattern">{t('fields.pattern')}</Label>
+            <select
+              id="new-movement-pattern"
+              value={pattern}
+              onChange={(event) => {
+                setPattern(event.target.value as typeof pattern);
+                setSetupConfirmed(false);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background p-2"
+            >
+              <option value="SQUAT">SQUAT</option>
+              <option value="HINGE">HINGE</option>
+              <option value="PULL">PULL — Lat pulldown</option>
+              <option disabled>PUSH — {t('inspection.awaitingFootage')}</option>
+            </select>
+            <p className="mt-2 text-sm text-muted-foreground">{t(`patternGuidance.${pattern}`)}</p>
+          </div>
           <div className="space-y-4">
             <div>
               <Label htmlFor="exercise-name">{t('fields.name')}</Label>

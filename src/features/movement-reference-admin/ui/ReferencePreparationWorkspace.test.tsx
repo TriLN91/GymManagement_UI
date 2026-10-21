@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,6 +11,7 @@ import {
 } from './ReferencePreparationWorkspace';
 
 import i18n from '@/i18n';
+import { NetworkError } from '@/shared/api/errorTypes';
 
 const hooks = vi.hoisted(() => ({
   referenceSet: vi.fn(),
@@ -18,6 +19,7 @@ const hooks = vi.hoisted(() => ({
   confirm: vi.fn(),
   activate: vi.fn(),
 }));
+const revokePreview = vi.fn();
 
 vi.mock('../model/useMovementReferences', () => ({
   useReferenceSet: hooks.referenceSet,
@@ -59,6 +61,13 @@ const footage = {
 
 describe('ReferencePreparationWorkspace', () => {
   beforeEach(async () => {
+    vi.stubGlobal(
+      'URL',
+      Object.assign(URL, {
+        createObjectURL: vi.fn(() => 'blob:preview'),
+        revokeObjectURL: revokePreview,
+      }),
+    );
     await i18n.changeLanguage('en');
     hooks.confirm.mockReturnValue({ mutateAsync: vi.fn(), isPending: false, error: null });
     hooks.activate.mockReturnValue({ mutateAsync: vi.fn(), isPending: false, error: null });
@@ -94,6 +103,50 @@ describe('ReferencePreparationWorkspace', () => {
     expect(screen.getByRole('heading', { name: 'Publish' })).toBeInTheDocument();
   });
 
+  it('previews a selected video and releases it when the file changes', () => {
+    const { unmount } = render(
+      <MemoryRouter>
+        <ReferencePreparationWorkspace referenceSetId="set-1" />
+      </MemoryRouter>,
+    );
+    const input = screen.getByLabelText('MP4 video');
+    fireEvent.change(input, {
+      target: { files: [new File(['video'], 'side.mp4', { type: 'video/mp4' })] },
+    });
+    expect(screen.getByLabelText('Preview selected reference video')).toHaveAttribute(
+      'src',
+      'blob:preview',
+    );
+    expect(screen.getByRole('button', { name: 'Upload and process' })).toBeEnabled();
+    unmount();
+    expect(revokePreview).toHaveBeenCalledWith('blob:preview');
+  });
+
+  it('requires a history check before another upload after an uncertain network outcome', async () => {
+    hooks.upload.mockReturnValue({
+      mutateAsync: vi.fn().mockRejectedValue(new NetworkError()),
+      isPending: false,
+      error: null,
+    });
+    render(
+      <MemoryRouter>
+        <ReferencePreparationWorkspace referenceSetId="set-1" />
+      </MemoryRouter>,
+    );
+    fireEvent.change(screen.getByLabelText('MP4 video'), {
+      target: { files: [new File(['video'], 'side.mp4', { type: 'video/mp4' })] },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Upload and process' }));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Upload and process' })).toBeDisabled(),
+    );
+    expect(screen.getByText(/Processing may already have been saved/)).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'I checked the saved footage; allow another upload' }),
+    );
+    expect(screen.getByRole('button', { name: 'Upload and process' })).toBeEnabled();
+  });
+
   it('shows one operational outcome and keeps raw states in technical details', () => {
     render(<ReferenceFootage sources={[footage]} />);
     expect(screen.getByText('Usable with reduced weight')).toBeInTheDocument();
@@ -102,6 +155,29 @@ describe('ReferencePreparationWorkspace', () => {
     fireEvent.click(screen.getByText('Technical audit details'));
     expect(screen.getByText('Processed')).toBeInTheDocument();
     expect(screen.getByText('Down-weight')).toBeInTheDocument();
+  });
+
+  it('explains a persisted HINGE failure without making its traceback the primary result', () => {
+    render(
+      <MemoryRouter>
+        <ReferenceFootage
+          sources={[
+            {
+              ...footage,
+              processingStatus: 'FAILED',
+              failureCode: 'UNSUPPORTED_PATTERN',
+              failureStage: 'CLASSIFICATION',
+              failureMessage:
+                'Traceback: Detected pattern HINGE has no Phase C reference processor; only SQUAT is currently supported',
+            },
+          ]}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Movement is not supported here')).toBeVisible();
+    expect(screen.getByText('No completed repetition analysis')).toBeVisible();
+    for (const diagnostic of screen.getAllByText(/Traceback: Detected pattern/))
+      expect(diagnostic).not.toBeVisible();
   });
 
   it('uses approve wording and presents contributing footage', () => {

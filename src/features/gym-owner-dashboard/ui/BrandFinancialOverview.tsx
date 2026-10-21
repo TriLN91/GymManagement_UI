@@ -137,14 +137,14 @@ export function BrandFinancialOverview() {
   };
 
   return (
-    <WorkspacePanel className="gym-financial-panel mb-5 max-w-full overflow-hidden rounded-lg border bg-card p-4 text-card-foreground shadow-sm sm:p-5">
+    <WorkspacePanel className="gym-financial-panel mb-5 rounded-lg border bg-card p-5 text-card-foreground shadow-sm">
       <div className="flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="rounded bg-emerald-100 p-2 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
               <Landmark size={20} />
             </span>
-            <h2 className="font-display text-base font-bold sm:text-lg">{copy.title}</h2>
+            <h2 className="font-display text-lg font-bold">{copy.title}</h2>
             <Badge variant="accent" className="ml-1 text-xs">
               {dashboard.brandName || 'FitFlex Partner'}
             </Badge>

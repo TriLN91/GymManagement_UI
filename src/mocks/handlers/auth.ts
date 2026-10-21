@@ -83,7 +83,12 @@ export const authHandlers = [
   }),
 
   http.post(path(ENDPOINTS.auth.registerSendOtp), async ({ request }) => {
-    const body = (await request.json()) as { email?: string; password?: string };
+    const body = (await request.json()) as {
+      email?: string;
+      password?: string;
+      fullName?: string;
+      role?: string;
+    };
     if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
       return failure(
         400,
@@ -91,6 +96,10 @@ export const authHandlers = [
         `400: Validation Error thất bại - Password: Mật khẩu phải có ít nhất ${MIN_PASSWORD_LENGTH} ký tự`,
       );
     }
+    sessionStorage.setItem(
+      'fitflex:mock-registration',
+      JSON.stringify({ email: body.email, fullName: body.fullName, role: body.role }),
+    );
     return success({
       email: body.email,
       expiryMinutes: 15,
@@ -108,8 +117,19 @@ export const authHandlers = [
     const account: MockAccount = {
       userId: `u-${Date.now()}`,
       email: body.email ?? '',
-      fullName: (body.email ?? '').split('@')[0] || 'User',
-      roles: ['User'],
+      fullName:
+        (
+          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
+            fullName?: string;
+          }
+        ).fullName ?? 'User',
+      roles: [
+        (
+          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
+            role?: string;
+          }
+        ).role ?? 'Member',
+      ],
     };
     return success(tokensFor(account), 201);
   }),
@@ -123,7 +143,66 @@ export const authHandlers = [
 
   http.post(path(ENDPOINTS.auth.logout), () => success(null)),
 
-  http.post(path(ENDPOINTS.auth.forgotPassword), () => success(null)),
-  http.post(path(ENDPOINTS.auth.resetPassword), () => success(null)),
-  http.post(path(ENDPOINTS.auth.changePassword), () => success(true)),
+  http.post(path(ENDPOINTS.auth.changePassword), async ({ request }) => {
+    if (!request.headers.get('Authorization')?.startsWith('Bearer ')) {
+      return failure(401, 'Unauthorized', 'Sign in to change your password.');
+    }
+    const body = (await request.json()) as { currentPassword?: string; newPassword?: string };
+    if (body.currentPassword !== DEMO_PASSWORD) {
+      return failure(400, 'PasswordMismatch', 'The current password is incorrect.');
+    }
+    if (
+      (body.newPassword ?? '').length < MIN_PASSWORD_LENGTH ||
+      body.newPassword === body.currentPassword
+    ) {
+      return failure(
+        400,
+        'Validation',
+        'Choose a different password with at least six characters.',
+      );
+    }
+    return success(true);
+  }),
+
+  http.post(path(ENDPOINTS.auth.forgotPassword), async ({ request }) => {
+    const body = (await request.json()) as { email: string };
+    sessionStorage.setItem('fitflex:mock-reset-email', body.email);
+    sessionStorage.removeItem('fitflex:mock-reset-verified');
+    return success({
+      email: body.email,
+      expiryMinutes: 15,
+      isEmailSent: true,
+      debugOtpCode: '123456',
+      message: 'OTP sent',
+    });
+  }),
+  http.post(path(ENDPOINTS.auth.verifyOtp), async ({ request }) => {
+    const body = (await request.json()) as { email: string; otpCode: string };
+    const valid =
+      body.email === sessionStorage.getItem('fitflex:mock-reset-email') &&
+      body.otpCode === '123456';
+    if (valid) sessionStorage.setItem('fitflex:mock-reset-verified', body.email);
+    return success({
+      isValid: valid,
+      resetToken: valid ? 'mock-verified-reset' : null,
+      message: valid ? 'Verified' : 'Invalid OTP',
+    });
+  }),
+  http.post(path(ENDPOINTS.auth.resetPassword), async ({ request }) => {
+    const body = (await request.json()) as {
+      email: string;
+      resetToken: string;
+      newPassword: string;
+    };
+    if (
+      body.email !== sessionStorage.getItem('fitflex:mock-reset-email') ||
+      body.email !== sessionStorage.getItem('fitflex:mock-reset-verified') ||
+      body.resetToken !== 'mock-verified-reset' ||
+      body.newPassword.length < MIN_PASSWORD_LENGTH
+    )
+      return failure(400, 'InvalidResetToken', 'Reset rejected');
+    sessionStorage.removeItem('fitflex:mock-reset-email');
+    sessionStorage.removeItem('fitflex:mock-reset-verified');
+    return success(true);
+  }),
 ];

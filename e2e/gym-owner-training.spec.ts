@@ -35,7 +35,10 @@ const approvedOnboarding = {
 async function loginApprovedGymOwner(page: Page) {
   await page.goto('/login');
   await page.evaluate(() => {
-    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
+    {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    }
     window.sessionStorage.clear();
     window.localStorage.setItem('gmc.locale', 'en');
   });
@@ -55,32 +58,26 @@ async function loginApprovedGymOwner(page: Page) {
 }
 
 test.describe('Gym Owner Trainer and PT Package management', () => {
-  test('creates a Trainer draft and submits it to Platform without owner approval', async ({
+  test('creates a Backend Trainer account with credentials and preserves Platform approval as an explicit unresolved gate', async ({
     page,
   }) => {
     await loginApprovedGymOwner(page);
+    await page.evaluate(() => localStorage.setItem('fitflex:mock:trainer-api', 'true'));
     await page.goto('/admin/pts');
+    await page.getByRole('button', { name: 'Add New PT', exact: true }).click();
+    await page.getByLabel('Email (*)', { exact: true }).fill('mira@fit.local');
+    await page.getByLabel('Full Name (*)', { exact: true }).fill('Mira Coach');
+    await page.getByLabel('Primary Branch (*)').selectOption('branch-main');
+    await page.getByRole('button', { name: 'Create Trainer', exact: true }).click();
+    await expect(page.getByRole('dialog')).toContainText('MockOnly-Temp1!');
+    await page.keyboard.press('Escape');
+    await page.reload();
+    await expect(page.getByText('Mira Coach', { exact: true })).toBeVisible();
+    await expect(page.getByText(/Incomplete/).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /Approve Trainer/ })).toHaveCount(0);
+    // Keep the approved requirement visible as a failing gate: the current API has
+    // no approval status/endpoint. Do not relabel an incomplete profile as pending.
     await expect(page.getByText('Pending Platform approval').first()).toBeVisible();
-    await expect(page.getByText('Suspended').first()).toBeVisible();
-
-    await page.getByRole('link', { name: 'Create Trainer profile' }).click();
-    await page.getByLabel('Full name').fill('Mira Coach');
-    await page.getByLabel('Email').fill('mira@fit.local');
-    await page.getByLabel('Phone').fill('0901112233');
-    await page.getByLabel('Years of experience').fill('5');
-    await page.getByLabel('Professional bio').fill('Strength and movement coach.');
-    await page.getByLabel('Self-introduction').fill('Clear coaching and measurable progress.');
-    await page.getByLabel('Strength').check();
-    await page.getByRole('button', { name: 'Save profile' }).click();
-
-    await expect(page.getByRole('heading', { name: 'Mira Coach' })).toBeVisible();
-    await expect(page.getByText('Draft').first()).toBeVisible();
-    await page.getByRole('button', { name: 'Submit for Platform approval' }).click();
-    await expect(page.getByRole('dialog')).toContainText('Platform');
-    await page.getByRole('dialog').getByRole('button', { name: 'Confirm submission' }).click();
-    await expect(page.getByText('Pending Platform approval').first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Edit' })).toHaveCount(0);
-    await expect(page.getByText('Gym Owner cannot approve it.')).toBeVisible();
   });
 
   test('enforces operational lifecycle and terminal Unlinked state', async ({ page }) => {

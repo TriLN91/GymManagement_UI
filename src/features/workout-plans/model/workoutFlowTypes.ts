@@ -100,6 +100,8 @@ export interface ActiveWorkoutSession {
   exercises: ReadonlyArray<WorkoutExercise>;
   startedAt: string;
   currentExerciseIndex: number;
+  drafts?: Record<string, ExerciseLog>;
+  selectedSets?: Record<string, number>;
   logs: Record<string, ExerciseLog>;
 }
 

@@ -31,7 +31,7 @@ export function EmailStep({ onSuccess }: EmailStepProps) {
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    if (isSubmittingRef.current || form.formState.isSubmitting) return;
+    if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
     try {
       const res = await authApi.forgotPassword(values.email);

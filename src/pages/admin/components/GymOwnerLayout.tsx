@@ -274,7 +274,11 @@ export function GymOwnerLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(item.label, query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(group.label, query))),
+    );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 

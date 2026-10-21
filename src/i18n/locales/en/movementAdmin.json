@@ -59,7 +59,8 @@
     "approveVersion": "Approve this reference version",
     "approving": "Approving…",
     "publishLive": "Publish as live",
-    "publishing": "Publishing…"
+    "publishing": "Publishing…",
+    "refreshStatus": "Refresh saved results"
   },
   "createSet": {
     "title": "Create reference set",
@@ -68,7 +69,7 @@
   },
   "createExercise": {
     "title": "Add catalog exercise",
-    "description": "Create a global exercise and continue directly into reference preparation."
+    "description": "Choose the movement processor and keep each exercise variant separate."
   },
   "breadcrumbs": {
     "label": "Breadcrumb",
@@ -153,11 +154,14 @@
     "another": "Upload another GOOD reference video",
     "invalidType": "Select an MP4 video.",
     "empty": "The selected video is empty.",
-    "tooLarge": "The video exceeds the 500 MB backend limit."
+    "tooLarge": "The video exceeds the 500 MB backend limit.",
+    "preview": "Preview selected reference video",
+    "uncertain": "The connection ended before a result arrived. Processing may already have been saved. Refresh and inspect the footage list before submitting again.",
+    "checkedHistory": "I checked the saved footage; allow another upload"
   },
   "processing": {
     "title": "Preparing reference footage",
-    "description": "Analysis may take several seconds. Keep this page open while the request completes.",
+    "description": "Upload and analysis can take several minutes. This request does not expose individual stage progress. Keep this page open; saved processing records refresh automatically.",
     "stages": {
       "uploading": "Uploading video",
       "normalizing": "Normalizing if needed",
@@ -289,5 +293,102 @@
     "sourceUploadFailed": "The source could not be processed. Inspect the failure and try another video.",
     "profileConfirmed": "Reference version approved.",
     "profileActivated": "Reference published as live. Historical versions were preserved."
+  },
+  "inspection": {
+    "failedFootage": "Processing failed",
+    "pendingFootage": "Analysis pending",
+    "reviewExercise": "Choose another exercise",
+    "nextFailure": "Review the saved failure. Check that the footage matches this exercise, selected movement and camera requirements.",
+    "noRepResult": "No completed repetition analysis",
+    "replaceVideo": "Choose replacement video",
+    "stale": "This upload has not reported a result for more than 10 minutes. Processing is synchronous and does not resume automatically after a server restart. Refresh saved results and ask support to check the request before submitting again.",
+    "duration": "Video length",
+    "resolution": "Video size",
+    "frameRate": "Frame rate",
+    "usableFrames": "Usable frames",
+    "excludedUpload": "Video analyzed, but excluded from reference construction. Review the reason below.",
+    "pendingUpload": "Video is saved; processing has not finished.",
+    "nextPublish": "A reviewed version is approved. Inspect its details and publish it to make it available for future Member assessments.",
+    "nextReview": "A new candidate is ready for review. Inspect source quality and repetitions before approving it. Approval and publication are separate steps.",
+    "nextProcessing": "An upload is still processing. Refresh saved results to check its state; do not duplicate an uncertain submission.",
+    "nextLive": "A published version is available to Members. Failed historical uploads do not replace it. Add footage only when preparing an updated version.",
+    "nextUpload": "Choose a GOOD video of this exact exercise variant. Read the movement guidance, preview, upload, then inspect the saved result.",
+    "autoMetadata": "Pattern and camera view are detected automatically. This aggregate-reference workflow cannot manually edit extracted metadata. Replace incorrectly classified footage; do not approve it to bypass a processing problem.",
+    "notConfigured": "Not configured",
+    "retryReadiness": "Readiness unavailable — retry",
+    "memberReady": "Published supported view · Member available",
+    "filterLabel": "Reference availability",
+    "filters": {
+      "all": "All exercises",
+      "published": "Has a published version",
+      "unpublished": "Footage uploaded · not published",
+      "unconfigured": "No reference footage"
+    },
+    "squatOnly": "Processors: SQUAT, HINGE and vertical PULL (lat pulldown). PUSH awaits suitable validation footage. Only published matching references enable Member assessment.",
+    "setupTitle": "Set up reference: {{exercise}}",
+    "setupDescription": "Choose the matching movement and read its recording requirements. An empty workspace does not make this exercise assessable.",
+    "setupConfirm": "I confirm that this exercise and its intended reference video match the selected movement and supported variant.",
+    "setupAction": "Create {{pattern}} reference workspace",
+    "reusedExercise": "Existing exercise selected. No duplicate exercise was created.",
+    "reuseHint": "Search the catalog first. An existing name will be reused.",
+    "noMatches": "No exercises match this selection",
+    "changeFilter": "Clear the search or choose another reference filter.",
+    "phases": "Detected movement phases",
+    "samples": "Normalized trajectory points",
+    "noPhaseEvidence": "Phase information is unavailable for this version.",
+    "awaitingFootage": "Awaiting validation footage",
+    "withdrawn": "Withdrawn from new assessments"
+  },
+  "processingIssues": {
+    "VIDEO_NORMALIZATION_FAILED": {
+      "title": "Video could not be prepared",
+      "description": "The server could not convert this recording for analysis. This does not establish that the original file is corrupt.",
+      "recovery": "Try an H.264 MP4 export. If the same problem repeats, ask the operator to check video normalization."
+    },
+    "PROCESSOR_UNAVAILABLE": {
+      "title": "Video processor needs attention",
+      "description": "A required server tool, model, or runtime library is missing. This is a setup failure, not a judgment of the video or movement.",
+      "recovery": "Ask the operator to repair the processor configuration. Re-uploading the same video will not fix a missing dependency."
+    },
+    "UNSUPPORTED_PATTERN": {
+      "title": "Movement is not supported here",
+      "description": "The detected movement does not match the selected reference processor or supported variant.",
+      "recovery": "Select the correct exercise and SQUAT, HINGE or vertical PULL workspace. PUSH and horizontal pulls await validation."
+    },
+    "UNSUPPORTED_VIEW": {
+      "title": "Camera angle is not supported",
+      "description": "This camera angle cannot be used for the selected movement reference.",
+      "recovery": "Use a side or oblique side recording with the hip, knee and ankle visible."
+    },
+    "INSUFFICIENT_MOVEMENT_EVIDENCE": {
+      "title": "Not enough reliable repetitions",
+      "description": "Not enough complete repetitions with reliable movement-specific landmarks could be extracted.",
+      "recovery": "Record several complete repetitions in good light with the whole body visible. Do not approve an incomplete result."
+    },
+    "VIDEO_DECODE_FAILED": {
+      "title": "Video could not be read",
+      "description": "The file is corrupt or its video stream could not be decoded.",
+      "recovery": "Choose an intact recording or export an H.264 MP4. Changing the filename alone does not convert the video."
+    },
+    "PROCESSING_TIMEOUT": {
+      "title": "Processing took too long",
+      "description": "The request ended before processing completed within the allowed time.",
+      "recovery": "Refresh saved results first. If it failed, try a shorter recording or ask the operator to check the processor."
+    },
+    "PROCESSING_CANCELLED": {
+      "title": "Processing was interrupted",
+      "description": "The request ended before a usable result was completed.",
+      "recovery": "Refresh and check the saved footage before choosing another video."
+    },
+    "REFERENCE_PROCESSING_FAILED": {
+      "title": "Reference processing failed",
+      "description": "No usable result was completed for this upload. The exact failing stage is not established by the available evidence.",
+      "recovery": "Review the saved technical details with support. Keep the source record ID; replace the video only if the recording is the cause."
+    }
+  },
+  "patternGuidance": {
+    "SQUAT": "Side or oblique-side view; show shoulders, hips, knees and ankles. Match the exact squat variant, equipment and complete repetitions.",
+    "HINGE": "Side or oblique-side view; show shoulders, hips, knees and ankles. Keep hip hinge and deficit deadlift references separate. Include several complete upright-to-upright cycles. Partial opening and closing lifts are excluded. Evidence comparison only; corrective feedback is not calibrated.",
+    "PULL": "Vertical lat pulldown only; side or oblique-side view with shoulders, elbows, wrists and hips visible, including the overhead position. Record several complete extended-arm-to-extended-arm cycles. Rows and other pulls are unvalidated. Evidence comparison only; corrective feedback is not calibrated."
   }
 }

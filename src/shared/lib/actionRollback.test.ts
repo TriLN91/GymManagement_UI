@@ -12,12 +12,11 @@ describe('actionRollbackManager', () => {
 
     await actionRollbackManager.executeWithRollback({
       actionName: 'Thay đổi trạng thái',
-      execute: async () => {
-        await Promise.resolve();
+      execute: () => {
         state = 'updated';
+        return Promise.resolve();
       },
-      rollback: async () => {
-        await Promise.resolve();
+      rollback: () => {
         state = 'initial';
       },
       showToast: false,

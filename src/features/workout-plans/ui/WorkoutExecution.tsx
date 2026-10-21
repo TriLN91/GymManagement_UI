@@ -99,19 +99,26 @@ function StrengthTracker({
   onSave: (log: ExerciseLog) => void;
 }) {
   const { t } = useTranslation('workout');
+  const session = useWorkoutSessionStore((s) => s.activeSession);
+  const saveDraft = useWorkoutSessionStore((s) => s.saveDraft);
+  const selectSet = useWorkoutSessionStore((s) => s.selectSet);
+  const saved = session?.drafts?.[exercise.id] ?? session?.logs[exercise.id];
   const [sets, setSets] = useState(() =>
-    Array.from({ length: exercise.target.sets }, (_, index) => ({
-      setNumber: index + 1,
-      reps: exercise.target.reps,
-      loadKg: exercise.target.loadKg,
-      rpe: 0,
-      completed: true,
-    })),
+    saved?.trackingType === 'strength'
+      ? saved.sets.map((set) => ({ ...set, rpe: set.rpe ?? 0 }))
+      : Array.from({ length: exercise.target.sets }, (_, index) => ({
+          setNumber: index + 1,
+          reps: exercise.target.reps,
+          loadKg: exercise.target.loadKg,
+          rpe: 0,
+          completed: true,
+        })),
   );
-  const update = (index: number, field: 'reps' | 'loadKg' | 'rpe', value: number) =>
-    setSets((current) =>
-      current.map((set, setIndex) => (setIndex === index ? { ...set, [field]: value } : set)),
-    );
+  const update = (index: number, field: 'reps' | 'loadKg' | 'rpe', value: number) => {
+    const next = sets.map((set, i) => (i === index ? { ...set, [field]: value } : set));
+    setSets(next);
+    saveDraft(exercise.id, { trackingType: 'strength', sets: next });
+  };
   return (
     <form
       className="workout-log-panel"
@@ -145,6 +152,8 @@ function StrengthTracker({
             <strong>{String(set.setNumber).padStart(2, '0')}</strong>
             <input
               aria-label={`Set ${set.setNumber} load`}
+              autoFocus={session?.selectedSets?.[exercise.id] === index}
+              onFocus={() => selectSet(exercise.id, index)}
               type="number"
               min="0"
               step="0.5"
@@ -153,6 +162,7 @@ function StrengthTracker({
             />
             <input
               aria-label={`Set ${set.setNumber} reps`}
+              onFocus={() => selectSet(exercise.id, index)}
               type="number"
               min="0"
               value={set.reps}
@@ -160,6 +170,7 @@ function StrengthTracker({
             />
             <input
               aria-label={`Set ${set.setNumber} RPE`}
+              onFocus={() => selectSet(exercise.id, index)}
               type="number"
               min="1"
               max="10"
@@ -185,12 +196,28 @@ function DurationTracker({
   onSave: (log: ExerciseLog) => void;
 }) {
   const { t } = useTranslation('workout');
-  const [durations, setDurations] = useState(
-    () => Array(exercise.target.sets).fill(exercise.target.durationSeconds) as number[],
+  const session = useWorkoutSessionStore((s) => s.activeSession);
+  const saveDraft = useWorkoutSessionStore((s) => s.saveDraft);
+  const selectSet = useWorkoutSessionStore((s) => s.selectSet);
+  const saved = session?.drafts?.[exercise.id] ?? session?.logs[exercise.id];
+  const [durations, setDurations] = useState(() =>
+    saved?.trackingType === 'duration'
+      ? saved.sets.map((s) => s.durationSeconds)
+      : (Array(exercise.target.sets).fill(exercise.target.durationSeconds) as number[]),
   );
-  const [activeSet, setActiveSet] = useState(0);
-  const update = (index: number, value: number) =>
-    setDurations((current) => current.map((duration, i) => (i === index ? value : duration)));
+  const [activeSet, setActiveSet] = useState(session?.selectedSets?.[exercise.id] ?? 0);
+  const update = (index: number, value: number) => {
+    const next = durations.map((duration, i) => (i === index ? value : duration));
+    setDurations(next);
+    saveDraft(exercise.id, {
+      trackingType: 'duration',
+      sets: next.map((durationSeconds, i) => ({
+        setNumber: i + 1,
+        durationSeconds,
+        completed: durationSeconds > 0,
+      })),
+    });
+  };
   return (
     <form
       className="workout-log-panel"
@@ -223,11 +250,18 @@ function DurationTracker({
             className={activeSet === index ? 'is-active' : ''}
             type="button"
             key={index}
-            onClick={() => setActiveSet(index)}
+            onClick={() => {
+              setActiveSet(index);
+              selectSet(exercise.id, index);
+            }}
           >
             <span>Set {index + 1}</span>
             <input
               aria-label={`Set ${index + 1} duration`}
+              onFocus={() => {
+                setActiveSet(index);
+                selectSet(exercise.id, index);
+              }}
               type="number"
               min="0"
               value={duration}
@@ -462,12 +496,12 @@ export function WorkoutExecution() {
               total: String(exercises.length).padStart(2, '0'),
             })}
           </span>
-          <h1>{t(`flow.exercises.${exercise.id}`, { defaultValue: exercise.name })}</h1>
+          <h1>{exercise.name}</h1>
           <button
             className="workout-exercise-assessment"
             type="button"
             onClick={() =>
-              navigate(ROUTES.member.aiAssessmentPath(exercise.id), {
+              navigate(ROUTES.member.aiAssessmentPath(exercise.backendExerciseId), {
                 state: { returnTo: ROUTES.member.workoutSessionPath(session.dayId) },
               })
             }

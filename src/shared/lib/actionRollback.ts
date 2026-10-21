@@ -1,5 +1,7 @@
 import { toast } from 'sonner';
 
+import { errorMessage } from '@/shared/lib/errorMessage';
+
 export interface RollbackAction {
   id: string;
   title: string;
@@ -184,8 +186,7 @@ class ActionRollbackManager {
       );
       this.notify();
 
-      const errMsg =
-        err instanceof Error ? err.message : 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
+      const errMsg = errorMessage(err) || 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
       toast.error(errMsg);
       return false;
     }

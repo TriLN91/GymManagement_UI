@@ -7,7 +7,9 @@ const path = (p: string) => `*${p}`;
 export const gymOwnerHandlers = [
   http.get(path(ENDPOINTS.gymOwner.myBrands), () =>
     HttpResponse.json({
-      data: [],
+      data: localStorage.getItem('fitflex:mock:trainer-api')
+        ? [{ id: 'brand-main', name: 'Fit Central', status: 'Approved' }]
+        : [],
     }),
   ),
 
