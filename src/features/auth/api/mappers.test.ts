@@ -9,6 +9,7 @@ describe('mapRoles', () => {
     expect(mapRoles(['Trainer'])).toEqual(['pt']);
     expect(mapRoles(['PT'])).toEqual(['pt']);
     expect(mapRoles(['GymAdmin'])).toEqual(['gym_admin']);
+    expect(mapRoles(['BranchManager'])).toEqual(['branch_manager']);
     expect(mapRoles(['PlatformAdmin'])).toEqual(['super_admin']);
     expect(mapRoles(['SuperAdmin'])).toEqual(['super_admin']);
   });

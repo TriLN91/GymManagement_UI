@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export type TrainerTrackingType = 'strength' | 'duration' | 'distance' | 'interval';
 export type TrainerWeekday =
   'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -616,7 +618,7 @@ export const useTrainerWorkspaceStore = create<TrainerWorkspaceState>()(
           ].sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)),
         })),
     }),
-    { name: 'fit:trainer-workspace:v1' },
+    { storage: accountStorage, name: 'fit:trainer-workspace:v1' },
   ),
 );
 
@@ -637,3 +639,5 @@ export function getTrainerMember(memberId: string) {
 export function getTrainerExercise(exerciseId: string) {
   return trainerExercises.find((exercise) => exercise.id === exerciseId);
 }
+
+registerAccountStore(useTrainerWorkspaceStore);

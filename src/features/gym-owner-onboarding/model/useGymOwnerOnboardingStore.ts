@@ -10,6 +10,7 @@ import type {
 } from './types';
 
 import { STORAGE_KEYS } from '@/shared/config/constants';
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
 
 export const EMPTY_BRAND: GymBrandProfile = {
   name: '',
@@ -106,8 +107,11 @@ export const useGymOwnerOnboardingStore = create<GymOwnerOnboardingState>()(
       reset: () => set(initialState),
     }),
     {
+      storage: accountStorage,
       name: STORAGE_KEYS.gymOwnerOnboarding,
       version: 1,
     },
   ),
 );
+
+registerAccountStore(useGymOwnerOnboardingStore);

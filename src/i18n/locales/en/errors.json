@@ -4,7 +4,8 @@
     "notFoundBody": "The page you requested does not exist.",
     "forbiddenTitle": "403 — Forbidden",
     "forbiddenBody": "You do not have access to this area.",
-    "goHome": "Go home"
+    "goHome": "Go home",
+    "goBack": "Go back"
   },
   "boundary": {
     "title": "Something went wrong",

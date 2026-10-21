@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 
 import { EMPTY_PROFILE, type MemberFitnessProfile } from './profileSetupModel';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 interface ProfileSetupState {
   profile: MemberFitnessProfile;
   currentStep: number;
@@ -27,13 +29,14 @@ export const useProfileSetupStore = create<ProfileSetupState>()(
         })),
     }),
     {
+      storage: accountStorage,
       name: 'fit:member-fitness-profile:v8',
       version: 9,
       // v9 dropped the cardio/strength/equipment/location/exercise-preference fields and the recovery
       // step (the review became step 5). Keep what the member already typed; drop the removed keys.
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProfileSetupState> | undefined;
-        if (!state || version >= 9) return persisted as ProfileSetupState;
+        if (!state || version >= 9) return persisted;
         const old = (state.profile ?? {}) as Partial<MemberFitnessProfile>;
         const training = (old.training ?? {}) as Partial<MemberFitnessProfile['training']>;
         return {
@@ -52,8 +55,10 @@ export const useProfileSetupStore = create<ProfileSetupState>()(
             consent: { ...EMPTY_PROFILE.consent, ...old.consent },
             updatedAt: old.updatedAt ?? null,
           },
-        } as ProfileSetupState;
+        };
       },
     },
   ),
 );
+
+registerAccountStore(useProfileSetupStore);

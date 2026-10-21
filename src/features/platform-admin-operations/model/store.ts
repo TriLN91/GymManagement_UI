@@ -15,6 +15,7 @@ import type {
 } from './types';
 
 import { usePlatformApprovalStore } from '@/features/platform-admin-approvals/model/store';
+import { registerAccountStore } from '@/shared/lib/accountState';
 
 export const campaignTransitions: Readonly<
   Record<PlatformCampaignStatus, ReadonlyArray<PlatformCampaignStatus>>
@@ -227,3 +228,5 @@ export const usePlatformOperationsStore = create<PlatformOperationsState>((set) 
 }));
 
 export type { CampaignDraft };
+
+registerAccountStore(usePlatformOperationsStore);

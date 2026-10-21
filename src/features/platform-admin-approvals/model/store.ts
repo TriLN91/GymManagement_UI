@@ -8,6 +8,8 @@ import type {
   RejectionReason,
 } from './types';
 
+import { registerAccountStore } from '@/shared/lib/accountState';
+
 interface PlatformApprovalState {
   approvals: ReadonlyArray<PlatformApprovalRecord>;
   accounts: ReadonlyArray<PlatformAccountRecord>;
@@ -118,3 +120,5 @@ export const usePlatformApprovalStore = create<PlatformApprovalState>((set) => (
     }),
   recordAudit: (entry) => set((state) => ({ audit: [createAuditEntry(entry), ...state.audit] })),
 }));
+
+registerAccountStore(usePlatformApprovalStore);

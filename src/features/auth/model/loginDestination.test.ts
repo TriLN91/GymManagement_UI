@@ -19,4 +19,13 @@ describe('resolveLoginDestination', () => {
     expect(resolveLoginDestination(['member'], '/application')).toBe('/app');
     expect(resolveLoginDestination(['member'], 'https://evil.example')).toBe('/app');
   });
+
+  it('keeps search and hash, accepts any authorized portal, and rejects unsafe destinations', () => {
+    expect(resolveLoginDestination(['member', 'pt'], '/app/workout?day=1#sets')).toBe(
+      '/app/workout?day=1#sets',
+    );
+    expect(resolveLoginDestination(['member'], '//evil.example/app')).toBe('/app');
+    expect(resolveLoginDestination(['member'], '/app/\\evil')).toBe('/app');
+    expect(resolveLoginDestination(['branch_manager'], '/admin/orders')).toBe('/');
+  });
 });

@@ -51,6 +51,7 @@ import {
 } from '../model/useMarketplaceStore';
 
 import { BRAND_MARK, ROUTES, type Language } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { useLocale } from '@/shared/hooks/useLocale';
 
 import './marketplace.css';
@@ -908,7 +909,13 @@ export function MarketplaceCheckoutPage() {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
         selection.productId,
       );
-      let beOrderRes: { id: string; orderNumber: string } | undefined;
+      if (!isUuid && !env.VITE_ENABLE_MSW)
+        throw new Error(
+          language === 'vi'
+            ? 'Gói mẫu không thể thanh toán. Vui lòng chọn dịch vụ được công bố.'
+            : 'Sample packages cannot be purchased. Please select a published service.',
+        );
+      let beOrderRes: { id: string; orderNumber: string; totalAmount: number } | undefined;
       if (isUuid) {
         const res = await marketplaceApi.checkout({
           gymOfferId: selection.kind === 'gym_offer' ? selection.productId : null,
@@ -918,11 +925,23 @@ export function MarketplaceCheckoutPage() {
           paymentProvider: method,
           interestedInDiscountedPlus: selection.kind === 'gym_offer' && selection.includePlus,
         });
-        beOrderRes = { id: res.orderId, orderNumber: res.orderNumber };
+        beOrderRes = {
+          id: res.orderId,
+          orderNumber: res.orderNumber,
+          totalAmount: res.totalAmount,
+        };
       }
       const order = completeCheckout(method, beOrderRes);
       if (!order) return;
-      toast.success(copy.paymentDone);
+      toast.success(
+        beOrderRes
+          ? language === 'vi'
+            ? 'Đã tạo đơn. Thanh toán chưa được xác nhận.'
+            : 'Order created. Payment is not confirmed.'
+          : language === 'vi'
+            ? 'Đơn mẫu — không thu tiền.'
+            : 'Sample order — no payment processed.',
+      );
       void navigate(ROUTES.member.marketplacePaymentResultPath(order.id));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Thanh toán thất bại';
@@ -1047,18 +1066,53 @@ export function MarketplacePaymentResultPage() {
   const { orderId = '' } = useParams();
   const { copy, language } = useMarketplaceCopy();
   const [backendOrder, setBackendOrder] = useState<OrderView | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const isRealOrder = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    orderId,
+  );
   const localOrder = useMarketplaceStore((state) =>
     state.orders.find((item) => item.id === orderId),
   );
 
   useEffect(() => {
-    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId)) {
+    let active = true;
+    setBackendOrder(null);
+    setLoadError(false);
+    if (isRealOrder) {
       marketplaceApi
         .getOrder(orderId)
-        .then((data) => setBackendOrder(data))
-        .catch(() => {});
+        .then((data) => {
+          if (active) setBackendOrder(data);
+        })
+        .catch(() => {
+          if (active) setLoadError(true);
+        });
     }
-  }, [orderId]);
+    return () => {
+      active = false;
+    };
+  }, [orderId, isRealOrder, attempt]);
+
+  if (isRealOrder && !backendOrder)
+    return (
+      <div className="marketplace-page" role={loadError ? 'alert' : 'status'}>
+        <p>
+          {loadError
+            ? language === 'vi'
+              ? 'Không thể tải đơn hàng. Chưa thể xác nhận thanh toán.'
+              : 'Could not load the order. Payment cannot be confirmed.'
+            : language === 'vi'
+              ? 'Đang tải đơn hàng…'
+              : 'Loading order…'}
+        </p>
+        {loadError && (
+          <button onClick={() => setAttempt((value) => value + 1)}>
+            {language === 'vi' ? 'Thử lại' : 'Try again'}
+          </button>
+        )}
+      </div>
+    );
 
   if (!localOrder && !backendOrder) {
     return <Navigate to={ROUTES.member.marketplace} replace />;
@@ -1066,7 +1120,11 @@ export function MarketplacePaymentResultPage() {
 
   const success = backendOrder
     ? backendOrder.paymentStatus === 'Paid' || backendOrder.paymentStatus === 'succeeded'
-    : localOrder?.paymentStatus === 'succeeded';
+    : env.VITE_ENABLE_MSW &&
+      localOrder?.isDemo === true &&
+      localOrder.paymentStatus === 'succeeded';
+  const pending =
+    backendOrder?.paymentStatus === 'Pending' || backendOrder?.paymentStatus === 'pending';
 
   const orderedProduct = localOrder
     ? localOrder.selection.kind === 'gym_offer'
@@ -1093,7 +1151,22 @@ export function MarketplacePaymentResultPage() {
         <span>
           {BRAND_MARK.toUpperCase()} / {copy.orderConfirmation}
         </span>
-        <h1>{success ? copy.paymentSuccess : copy.paymentFailed}</h1>
+        {!isRealOrder && (
+          <p role="status">
+            {language === 'vi'
+              ? 'Dữ liệu mẫu — không thu tiền hoặc cấp quyền dịch vụ.'
+              : 'Sample data — no payment or service access granted.'}
+          </p>
+        )}
+        <h1>
+          {pending
+            ? language === 'vi'
+              ? 'Chờ xác nhận thanh toán'
+              : 'Awaiting payment confirmation'
+            : success
+              ? copy.paymentSuccess
+              : copy.paymentFailed}
+        </h1>
         <strong>{orderTitle}</strong>
         <p>
           {backendOrder?.gymBranchName
@@ -1109,15 +1182,30 @@ export function MarketplacePaymentResultPage() {
           </div>
           <div>
             <dt>{copy.paymentState}</dt>
-            <dd>{success ? copy.paid : copy.paymentFailed}</dd>
+            <dd>
+              {pending
+                ? language === 'vi'
+                  ? 'Chưa xác nhận'
+                  : 'Not confirmed'
+                : success
+                  ? copy.paid
+                  : copy.paymentFailed}
+            </dd>
           </div>
           <div>
             <dt>{copy.fulfillmentState}</dt>
             <dd>
-              {backendOrder?.fulfillmentStatus === 'Active' ||
-              localOrder?.fulfillmentStatus === 'trainer_assignment_active'
+              {backendOrder?.enrollmentStatus === 'Active'
                 ? copy.trainerActive
-                : copy.pendingGym}
+                : backendOrder?.status === 'Rejected' || backendOrder?.status === 'Cancelled'
+                  ? language === 'vi'
+                    ? 'Không kích hoạt — đơn đã đóng'
+                    : 'Not active — order closed'
+                  : success
+                    ? copy.pendingGym
+                    : language === 'vi'
+                      ? 'Chưa kích hoạt'
+                      : 'Not active'}
             </dd>
           </div>
           <div>

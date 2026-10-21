@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { isNavigationRouteActive } from './navigationRoute';
 
@@ -178,7 +178,6 @@ export function PlatformAdminLayout() {
   const { i18n, t } = useTranslation('common');
   const copy = platformCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
   const location = useLocation();
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -238,7 +237,6 @@ export function PlatformAdminLayout() {
 
   const handleLogout = () => {
     void logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   return (

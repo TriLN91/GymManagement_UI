@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
@@ -208,7 +208,6 @@ export function MemberLayout() {
   const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
-  const navigate = useNavigate();
 
   const userInitial = user?.fullName?.trim().charAt(0).toUpperCase() || 'M';
   const userName = user?.fullName || 'Member';
@@ -231,7 +230,6 @@ export function MemberLayout() {
 
   const handleLogout = () => {
     void logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   const toggleLanguage = () => {

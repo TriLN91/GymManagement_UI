@@ -8,6 +8,7 @@ type ErrorBoundaryProps = {
   fallback?: (error: Error, reset: () => void) => ReactNode;
   /** Called once when an error is caught — for telemetry hooks. */
   onError?: (error: Error, info: ErrorInfo) => void;
+  resetKey?: string;
 };
 
 type ErrorBoundaryState = {
@@ -38,6 +39,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     this.props.onError?.(error, info);
+  }
+
+  override componentDidUpdate(previous: ErrorBoundaryProps): void {
+    if (this.state.error && previous.resetKey !== this.props.resetKey) this.reset();
   }
 
   reset = (): void => {

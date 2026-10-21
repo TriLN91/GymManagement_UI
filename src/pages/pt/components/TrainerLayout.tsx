@@ -249,7 +249,6 @@ export function TrainerLayout() {
 
   const handleLogout = () => {
     void logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   const toggleLanguage = () => {
