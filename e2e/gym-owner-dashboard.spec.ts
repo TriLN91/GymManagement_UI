@@ -35,7 +35,10 @@ const approvedOnboarding = {
 async function loginApprovedGymOwner(page: Page) {
   await page.goto('/login');
   await page.evaluate(() => {
-    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
+    {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    }
     window.sessionStorage.clear();
     window.localStorage.setItem('gmc.locale', 'en');
   });
