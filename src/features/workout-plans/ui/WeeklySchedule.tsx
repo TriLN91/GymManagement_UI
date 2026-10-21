@@ -2,6 +2,7 @@ import { Check, ChevronRight, Clock3, Dumbbell, MoonStar, Plus } from 'lucide-re
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+import { optionalExercisesFor } from '../model/optionalAddons';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import { useWorkoutSync } from '../model/workoutSync';
@@ -10,6 +11,7 @@ import { PendingSyncNotice } from './PendingSyncNotice';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { formatBusinessDate } from '@/features/gamification/model/presentation';
+import { useMemberWorkoutBuilderStore } from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 
@@ -19,6 +21,7 @@ export function WeeklySchedule() {
   useWorkoutSync();
   const live = useLiveWorkoutWeek();
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+  const optionalAddons = useMemberWorkoutBuilderStore((state) => state.optionalAddons);
 
   if (live.isPending)
     return (
@@ -92,7 +95,9 @@ export function WeeklySchedule() {
 
       <section className="workout-week-grid" aria-label={t('flow.schedule.title')}>
         {live.week.map((day) => {
-          const canOpen = day.isToday && day.status === 'ready' && day.exercises.length > 0;
+          const optional = optionalExercisesFor(optionalAddons, day.weekday);
+          const canOpenMain = day.isToday && day.status === 'ready' && day.exercises.length > 0;
+          const canOpen = canOpenMain || optional.length > 0;
           const isActive = activeSession?.dayId === day.id;
           const content = (
             <>
@@ -128,9 +133,15 @@ export function WeeklySchedule() {
                     {day.exercises.length} {t('metrics.exercises')}
                   </span>
                 )}
+                {optional.length > 0 && (
+                  <span className="is-optional">
+                    {t('flow.schedule.optionalCount', { count: optional.length })} ·{' '}
+                    {optional[0]?.addon.name}
+                  </span>
+                )}
                 {canOpen && (
                   <span>
-                    {isActive ? t('flow.schedule.resume') : t('flow.schedule.view')}{' '}
+                    {isActive && canOpenMain ? t('flow.schedule.resume') : t('flow.schedule.view')}{' '}
                     <ChevronRight size={14} />
                   </span>
                 )}
@@ -153,6 +164,23 @@ export function WeeklySchedule() {
           );
         })}
       </section>
+      {optionalAddons.length > 0 && (
+        <section className="workout-optional-addons" aria-label={t('flow.schedule.optionalTitle')}>
+          <header>
+            <span>{t('flow.schedule.optionalTitle')}</span>
+            <strong>{optionalAddons.length}</strong>
+          </header>
+          {optionalAddons.map((addon) => (
+            <article key={addon.id}>
+              <div>
+                <strong>{addon.name}</strong>
+                <span>{addon.sourcePlanName}</span>
+              </div>
+              <b>{t('flow.schedule.optionalProtected')}</b>
+            </article>
+          ))}
+        </section>
+      )}
       <p className="workout-live-notice is-quiet">{t('flow.schedule.note')}</p>
     </WorkoutFlowShell>
   );

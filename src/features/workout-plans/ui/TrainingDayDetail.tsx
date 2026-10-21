@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { freeWorkoutExercises } from '../model/liveWorkout';
+import {
+  optionalExercisesFor,
+  optionalTargetLabel,
+  type OptionalDayExercise,
+} from '../model/optionalAddons';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import type { WorkoutExercise, WorkoutSource } from '../model/workoutFlowTypes';
@@ -11,6 +16,7 @@ import type { WorkoutExercise, WorkoutSource } from '../model/workoutFlowTypes';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { formatBusinessDate } from '@/features/gamification/model/presentation';
+import { useMemberWorkoutBuilderStore } from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 
@@ -29,6 +35,7 @@ export function TrainingDayDetail() {
   const { t } = useTranslation('workout');
   const { dayId = '' } = useParams();
   const live = useLiveWorkoutWeek();
+  const optionalAddons = useMemberWorkoutBuilderStore((state) => state.optionalAddons);
 
   if (live.isPending)
     return (
@@ -45,15 +52,15 @@ export function TrainingDayDetail() {
   if (dayId === FREE_DAY_ID) return <FreeWorkoutPicker live={live} />;
 
   const day = live.week.find((item) => item.id === dayId);
+  if (!day) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+  const optional = optionalExercisesFor(optionalAddons, day.weekday);
   // Only today's scheduled main session can be started: past days are locked and future days are not open yet.
-  if (
-    !day ||
-    !day.isToday ||
-    day.status !== 'ready' ||
-    day.exercises.length === 0 ||
-    !day.versionId
-  )
-    return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+  const canStartMain =
+    day.isToday && day.status === 'ready' && day.exercises.length > 0 && Boolean(day.versionId);
+  if (!canStartMain) {
+    if (optional.length === 0) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+    return <OptionalOnlyDay dayId={day.id} optional={optional} />;
+  }
   return (
     <DayOverview
       dayId={day.id}
@@ -61,15 +68,74 @@ export function TrainingDayDetail() {
       subtitle={t('flow.live.mainSession')}
       durationMinutes={day.durationMinutes}
       exercises={day.exercises}
+      optional={optional}
       start={{
         source: {
           kind: 'plan',
-          versionId: day.versionId,
+          versionId: day.versionId ?? '',
           planDayNumber: day.dayNumber ?? 0,
           businessDate: day.id,
         },
       }}
     />
+  );
+}
+
+function OptionalSection({ optional }: { optional: ReadonlyArray<OptionalDayExercise> }) {
+  const { t } = useTranslation('workout');
+  const { language } = useLocale();
+  if (optional.length === 0) return null;
+  return (
+    <section className="workout-stations is-optional" aria-label={t('flow.detail.optional')}>
+      <header>
+        <span>{t('flow.detail.optional')}</span>
+        <span>{t('flow.detail.optionalProtected')}</span>
+      </header>
+      {optional.map(({ addon, exercise, item }, index) => (
+        <article className="workout-station" key={`${addon.id}-${exercise.uid}`}>
+          <span className="workout-station__number">+{String(index + 1).padStart(2, '0')}</span>
+          <div className="workout-station__copy">
+            <h2>{item.name[language]}</h2>
+          </div>
+          <div className="workout-station__target">
+            <small>{t('flow.detail.target')}</small>
+            <strong>{optionalTargetLabel(exercise, item)}</strong>
+          </div>
+        </article>
+      ))}
+    </section>
+  );
+}
+
+/** A day without a startable main session that still has Member-added optional exercises (read-only). */
+function OptionalOnlyDay({
+  dayId,
+  optional,
+}: {
+  dayId: string;
+  optional: ReadonlyArray<OptionalDayExercise>;
+}) {
+  const { t } = useTranslation('workout');
+  const { locale } = useLocale();
+  return (
+    <WorkoutFlowShell
+      backTo={ROUTES.member.workoutSchedule}
+      backLabel={t('flow.detail.weeklySchedule')}
+    >
+      <section className="workout-day-overview">
+        <div>
+          <Layers3 />
+          <span>{t('flow.detail.day')}</span>
+          <strong>{formatBusinessDate(dayId, locale)}</strong>
+        </div>
+        <div>
+          <Dumbbell />
+          <span>{t('flow.detail.optional')}</span>
+          <strong>{optional.length}</strong>
+        </div>
+      </section>
+      <OptionalSection optional={optional} />
+    </WorkoutFlowShell>
   );
 }
 
@@ -79,6 +145,7 @@ function DayOverview({
   subtitle,
   durationMinutes,
   exercises,
+  optional = [],
   start,
 }: {
   dayId: string;
@@ -86,6 +153,7 @@ function DayOverview({
   subtitle: string;
   durationMinutes: number;
   exercises: ReadonlyArray<WorkoutExercise>;
+  optional?: ReadonlyArray<OptionalDayExercise>;
   start: { source: WorkoutSource };
 }) {
   const { t } = useTranslation('workout');
@@ -150,6 +218,7 @@ function DayOverview({
           </article>
         ))}
       </section>
+      <OptionalSection optional={optional} />
     </WorkoutFlowShell>
   );
 }
