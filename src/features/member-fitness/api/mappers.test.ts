@@ -58,7 +58,6 @@ describe('toTrainingInput', () => {
       weeklyWorkoutDays: 3,
       preferredWorkoutDays: ['mon', 'wed', 'fri'],
       sessionDurationMinutes: 45,
-      equipmentAccess: 'Bodyweight',
       hasLimitations: true,
       limitationNotes: 'Lower body injury; Prefer upper body training while lower body recovers',
     });

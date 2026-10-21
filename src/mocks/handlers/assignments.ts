@@ -97,7 +97,6 @@ export const assignmentHandlers = [
         experienceLevel: 'intermediate',
         weeklyWorkoutDays: 4,
         sessionDurationMinutes: 60,
-        equipmentAccess: 'Bodyweight',
         hasLimitations: true,
         limitationNotes: 'Lower body injury',
       },

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { ageInYears, estimateEnergy, mifflinRee, PAL_BY_ACTIVITY } from './energyEstimate';
+import {
+  ageInYears,
+  estimateEnergy,
+  mifflinRee,
+  nasemTee,
+  PAL_BY_ACTIVITY,
+} from './energyEstimate';
 import { EMPTY_PROFILE } from './profileSetupModel';
 
 const now = new Date('2026-10-09T10:00:00');
@@ -32,19 +38,40 @@ describe('ageInYears', () => {
 });
 
 describe('estimateEnergy', () => {
-  it('multiplies REE by the PAL of the activity level (PAL_TOTAL mode, no workout added)', () => {
+  it('uses the NASEM 2023 TEE equation for adults (PAL_TOTAL mode, no workout added)', () => {
     const result = estimateEnergy(identity({}), now);
+    // man 30y, 178 cm, 78 kg, "moderate" (NASEM active): 1004.82 - 10.83*30 + 6.52*178 + 15.91*78
+    const expected = 1004.82 - 10.83 * 30 + 6.52 * 178 + 15.91 * 78;
     expect(result).toMatchObject({
       status: 'ok',
       reeKcal: 1748,
       pal: PAL_BY_ACTIVITY.moderate,
-      tdeeKcal: Math.round(1747.5 * PAL_BY_ACTIVITY.moderate),
-      formulaVersion: 'mifflin_1990',
+      tdeeKcal: Math.round(expected),
+      formulaVersion: 'nasem_2023_tee',
     });
     if (result.status === 'ok') {
       expect(result.tdeeLowKcal).toBeLessThan(result.tdeeKcal);
       expect(result.tdeeHighKcal).toBeGreaterThan(result.tdeeKcal);
     }
+  });
+
+  it('falls back to Mifflin x PAL for 18-year-olds, who are outside the NASEM adult equations', () => {
+    const result = estimateEnergy(identity({ dateOfBirth: '2008-10-09' }), now);
+    expect(result).toMatchObject({
+      status: 'ok',
+      formulaVersion: 'mifflin_1990',
+      tdeeKcal: Math.round(mifflinRee(78, 178, 18, 'male') * PAL_BY_ACTIVITY.moderate),
+    });
+  });
+
+  it('matches hand-worked NASEM values for every level (backend Nasem2023 uses the same table)', () => {
+    // 30 years, 175 cm, 70 kg: the same cases as the backend EnergyCalculatorTests.
+    expect(nasemTee(70, 175, 30, 'male', 'sedentary')).toBeCloseTo(2552.67, 2);
+    expect(nasemTee(70, 175, 30, 'male', 'light')).toBeCloseTo(2754.87, 2);
+    expect(nasemTee(70, 175, 30, 'male', 'moderate')).toBeCloseTo(2934.62, 2);
+    expect(nasemTee(70, 175, 30, 'male', 'high')).toBeCloseTo(3226.67, 2);
+    expect(nasemTee(70, 175, 30, 'female', 'sedentary')).toBeCloseTo(2195.3, 2);
+    expect(nasemTee(70, 175, 30, 'female', 'light')).toBeCloseTo(2370.27, 2);
   });
 
   it('keeps PAL values strictly increasing', () => {

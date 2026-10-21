@@ -15,7 +15,6 @@ export interface TrainingInput {
   experienceLevel: string;
   weeklyWorkoutDays: number;
   sessionDurationMinutes: number;
-  equipmentAccess: string;
   hasLimitations: boolean;
   limitationNotes: string | null;
   /** monday…sunday; when sent it must list exactly `weeklyWorkoutDays` distinct days. */
@@ -54,7 +53,6 @@ export interface BackendProfile {
     experienceLevel: string;
     weeklyWorkoutDays: number;
     sessionDurationMinutes: number;
-    equipmentAccess: string;
     hasLimitations: boolean;
     limitationNotes: string | null;
     preferredWorkoutDays?: string[] | null;

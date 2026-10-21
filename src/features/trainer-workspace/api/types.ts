@@ -27,7 +27,6 @@ export interface MemberTrainingDto {
   experienceLevel: string;
   weeklyWorkoutDays: number;
   sessionDurationMinutes: number;
-  equipmentAccess: string;
   hasLimitations: boolean;
   limitationNotes: string | null;
 }

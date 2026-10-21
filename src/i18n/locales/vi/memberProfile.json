@@ -153,7 +153,7 @@
       "pal": "Hệ số vận động (PAL)",
       "tdee": "Calo duy trì (TDEE)",
       "range": "Khoảng {{low}} – {{high}} kcal/ngày",
-      "disclaimer": "Đây là ước tính từ công thức Mifflin-St Jeor nhân hệ số vận động (hiệu chuẩn theo NASEM 2023), không phải số đo chính xác của riêng bạn. Calo buổi tập đã nằm trong hệ số vận động nên không cộng thêm. Kết quả sẽ được hiệu chỉnh dần theo xu hướng cân nặng.",
+      "disclaimer": "Đây là ước tính từ công thức tiêu hao năng lượng NASEM 2023 theo giới tính, tuổi, chiều cao, cân nặng và mức vận động, không phải số đo chính xác của riêng bạn. Calo buổi tập đã nằm trong hệ số vận động nên không cộng thêm. Kết quả sẽ được hiệu chỉnh dần theo xu hướng cân nặng.",
       "missing_input": "Nhập ngày sinh, giới tính, chiều cao, cân nặng và mức vận động để xem ước tính calo.",
       "under_age": "Ước tính calo hiện chỉ áp dụng cho người từ 18 tuổi trở lên.",
       "sex_unsupported": "Công thức cần giới tính Nam hoặc Nữ nên chưa thể ước tính calo tự động."

@@ -58,7 +58,6 @@ describe('AssignedMembersPanel', () => {
         experienceLevel: 'beginner',
         weeklyWorkoutDays: 3,
         sessionDurationMinutes: 45,
-        equipmentAccess: 'Bodyweight',
         hasLimitations: false,
         limitationNotes: null,
       },

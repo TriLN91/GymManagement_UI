@@ -153,7 +153,7 @@
       "pal": "Activity factor (PAL)",
       "tdee": "Maintenance calories (TDEE)",
       "range": "About {{low}} – {{high}} kcal/day",
-      "disclaimer": "This is an estimate from the Mifflin-St Jeor equation times an activity factor (calibrated to NASEM 2023), not an exact measurement for you. Workout calories are already part of the activity factor, so they are not added again. It will be calibrated against your weight trend over time.",
+      "disclaimer": "This is an estimate from the NASEM 2023 energy-expenditure equation for your sex, age, height, weight and activity level, not an exact measurement for you. Workout calories are already part of the activity factor, so they are not added again. It will be calibrated against your weight trend over time.",
       "missing_input": "Enter your date of birth, sex, height, weight and activity level to see your calorie estimate.",
       "under_age": "The calorie estimate currently applies to people aged 18 and over.",
       "sex_unsupported": "The equation needs Male or Female, so an automatic calorie estimate is not available."

@@ -1,23 +1,23 @@
 import type { MemberFitnessProfile } from './profileSetupModel';
 
-// Maintenance-calorie estimate, following doc/backend_calories.md (model 1, PAL_TOTAL):
-//   REE  = Mifflin-St Jeor (1990)
-//   TDEE = REE x PAL_total (workout calories are NOT added, PAL already covers the whole lifestyle)
-// The backend (EnergyCalculator) uses the same REE equation, so both sides agree.
+// Maintenance-calorie estimate (PAL_TOTAL mode, workout calories are NOT added, the activity level already covers the whole lifestyle).
+// Adults 19+: NASEM 2023 "Dietary Reference Intakes for Energy" (Table S-1) predicts total energy expenditure directly from sex, age,
+// height, weight and the activity category. 18-year-olds, for whom NASEM's adult equations do not apply, keep Mifflin-St Jeor (1990) x PAL.
+// The backend (EnergyCalculator / Nasem2023) uses the same equations and the same category per PAL rung, so both sides agree.
 
-export const ENERGY_FORMULA_VERSION = 'mifflin_1990';
+export const ENERGY_FORMULA_VERSION = 'nasem_2023_tee';
+export const FALLBACK_FORMULA_VERSION = 'mifflin_1990';
+export const NASEM_MIN_AGE_YEARS = 19;
 export const MIN_ENERGY_AGE_YEARS = 18;
 
 /**
- * Total PAL per self-reported daily activity level, to be multiplied by the Mifflin-St Jeor REE.
+ * Total PAL per self-reported daily activity level. It is what the app sends to the backend as `palTotal`, and it also drives the
+ * Mifflin-St Jeor fallback for 18-year-olds.
  *
- * The four levels follow the NASEM 2023 PAL categories (inactive, low active, active, very active).
- * The values are calibrated, not copied: dividing the NASEM 2023 TEE prediction equations (Table 5-5,
- * adults 19+) by Mifflin REE over ages 20-60 and BMI 20-30 gives a stable ratio for both sexes:
+ * The four levels are the NASEM 2023 PAL categories (inactive, low active, active, very active). The values are calibrated, not copied:
+ * dividing the NASEM TEE equations (adults 19+) by Mifflin REE over ages 20-60 and BMI 20-30 gives a stable ratio for both sexes:
  *   inactive 1.52-1.53, low active 1.65, active 1.76, very active 1.93-1.95.
- * The previous ladder (1.40 / 1.55 / 1.85 / 2.20) took FAO/WHO/UNU lifestyle bands for working
- * populations: it under-estimated the lowest level by ~8% and over-estimated the highest by ~13%.
- * energyEstimate.test.ts re-checks this calibration against the NASEM equations.
+ * The backend maps a numeric PAL to the nearest rung (cut-offs 1.575 / 1.70 / 1.85).
  */
 export const PAL_BY_ACTIVITY = Object.freeze({
   sedentary: 1.5,
@@ -27,7 +27,7 @@ export const PAL_BY_ACTIVITY = Object.freeze({
 } as const);
 
 export const PAL_SOURCE =
-  'NASEM 2023 Dietary Reference Intakes for Energy (PAL categories), calibrated to Mifflin-St Jeor REE; self-reported activity level';
+  'NASEM 2023 Dietary Reference Intakes for Energy (PAL categories); self-reported activity level';
 
 /**
  * Half-width of the displayed range. Placeholder until it is calibrated on real user data
@@ -68,6 +68,34 @@ export function mifflinRee(
   return 10 * weightKg + 6.25 * heightCm - 5 * ageYears + (sex === 'male' ? 5 : -161);
 }
 
+/** NASEM 2023 TEE equations, adults 19+: [intercept, age, height cm, weight kg] per activity level. */
+const NASEM_TEE = {
+  male: {
+    sedentary: [753.07, -10.83, 6.5, 14.1],
+    light: [581.47, -10.83, 8.3, 14.94],
+    moderate: [1004.82, -10.83, 6.52, 15.91],
+    high: [-517.88, -10.83, 15.61, 19.11],
+  },
+  female: {
+    sedentary: [584.9, -7.01, 5.72, 11.71],
+    light: [575.77, -7.01, 6.6, 12.14],
+    moderate: [710.25, -7.01, 6.54, 12.34],
+    high: [511.83, -7.01, 9.07, 12.56],
+  },
+} as const;
+
+/** NASEM 2023 total energy expenditure, kcal/day (adults 19+). */
+export function nasemTee(
+  weightKg: number,
+  heightCm: number,
+  ageYears: number,
+  sex: 'male' | 'female',
+  level: ActivityLevel,
+): number {
+  const [intercept, perYear, perCm, perKg] = NASEM_TEE[sex][level];
+  return intercept + perYear * ageYears + perCm * heightCm + perKg * weightKg;
+}
+
 export function estimateEnergy(
   identity: MemberFitnessProfile['identity'],
   now: Date = new Date(),
@@ -83,7 +111,9 @@ export function estimateEnergy(
   const ree = mifflinRee(weightKg, heightCm, age, sexAtBirth);
   if (ree <= 0) return { status: 'missing_input' };
   const pal = PAL_BY_ACTIVITY[activityLevel];
-  const tdee = ree * pal;
+  const useNasem = age >= NASEM_MIN_AGE_YEARS;
+  const tdee = useNasem ? nasemTee(weightKg, heightCm, age, sexAtBirth, activityLevel) : ree * pal;
+  if (tdee <= 0) return { status: 'missing_input' };
   return {
     status: 'ok',
     reeKcal: Math.round(ree),
@@ -91,6 +121,6 @@ export function estimateEnergy(
     tdeeKcal: Math.round(tdee),
     tdeeLowKcal: Math.round(tdee * (1 - ESTIMATE_UNCERTAINTY)),
     tdeeHighKcal: Math.round(tdee * (1 + ESTIMATE_UNCERTAINTY)),
-    formulaVersion: ENERGY_FORMULA_VERSION,
+    formulaVersion: useNasem ? ENERGY_FORMULA_VERSION : FALLBACK_FORMULA_VERSION,
   };
 }

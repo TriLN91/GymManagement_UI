@@ -9,7 +9,6 @@ const training = {
   experienceLevel: 'intermediate',
   weeklyWorkoutDays: 4,
   sessionDurationMinutes: 60,
-  equipmentAccess: 'Bodyweight',
   hasLimitations: true,
   limitationNotes: 'Lower body injury; Prefer upper body training while lower body recovers',
 };
