@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -81,4 +81,33 @@ it('shows an API failure instead of stale local success and recovers on explicit
     await screen.findByRole('heading', { name: 'Awaiting payment confirmation' }),
   ).toBeInTheDocument();
   expect(getOrder).toHaveBeenCalledTimes(2);
+});
+
+it('displays the electronic invoice card and triggers invoice actions upon payment success', async () => {
+  const paidOrder: OrderView = {
+    ...pending,
+    paymentStatus: 'Paid',
+    status: 'PaidAwaitingGym',
+  };
+  vi.spyOn(marketplaceApi, 'getOrder').mockResolvedValue(paidOrder);
+  const downloadSpy = vi.spyOn(marketplaceApi, 'downloadInvoiceHtml').mockResolvedValue(undefined);
+  const resendSpy = vi.spyOn(marketplaceApi, 'resendInvoiceEmail').mockResolvedValue(true);
+
+  show();
+
+  expect(
+    await screen.findByText(/Electronic Invoice \(\.html\) Issued|Hóa đơn điện tử/i),
+  ).toBeInTheDocument();
+  const downloadBtn = screen.getByRole('button', { name: /Download invoice|Tải hóa đơn/i });
+  const resendBtn = screen.getByRole('button', { name: /Resend to Gmail|Gửi lại về Gmail/i });
+
+  act(() => {
+    fireEvent.click(downloadBtn);
+  });
+  expect(downloadSpy).toHaveBeenCalledWith(id, paidOrder.orderNumber);
+
+  act(() => {
+    fireEvent.click(resendBtn);
+  });
+  expect(resendSpy).toHaveBeenCalledWith(id);
 });

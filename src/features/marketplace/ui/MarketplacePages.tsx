@@ -8,8 +8,11 @@ import {
   ChevronRight,
   Clock3,
   CreditCard,
+  Download,
   Dumbbell,
+  FileText,
   Filter,
+  Mail,
   MapPin,
   Search,
   ShieldCheck,
@@ -1068,6 +1071,50 @@ export function MarketplacePaymentResultPage() {
   const [backendOrder, setBackendOrder] = useState<OrderView | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [isDownloadingInvoice, setIsDownloadingInvoice] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  const handleDownloadInvoice = async () => {
+    if (!orderId) return;
+    try {
+      setIsDownloadingInvoice(true);
+      await marketplaceApi.downloadInvoiceHtml(orderId, orderDisplayId);
+      toast.success(
+        language === 'vi'
+          ? 'Đã tải xuống hóa đơn điện tử thành công!'
+          : 'Invoice downloaded successfully!',
+      );
+    } catch {
+      toast.error(
+        language === 'vi'
+          ? 'Không thể tải hóa đơn. Vui lòng thử lại sau.'
+          : 'Could not download invoice. Please try again.',
+      );
+    } finally {
+      setIsDownloadingInvoice(false);
+    }
+  };
+
+  const handleResendInvoiceEmail = async () => {
+    if (!orderId) return;
+    try {
+      setIsSendingEmail(true);
+      await marketplaceApi.resendInvoiceEmail(orderId);
+      toast.success(
+        language === 'vi'
+          ? 'Hóa đơn đã được gửi lại về Gmail của bạn!'
+          : 'Invoice resent to your Gmail inbox!',
+      );
+    } catch {
+      toast.error(
+        language === 'vi'
+          ? 'Chưa thể gửi email lúc này. Vui lòng thử lại sau.'
+          : 'Could not send invoice email. Please try again later.',
+      );
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
   const isRealOrder = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
     orderId,
   );
@@ -1225,6 +1272,114 @@ export function MarketplacePaymentResultPage() {
             </>
           )}
         </dl>
+        {success && isRealOrder && (
+          <div
+            style={{
+              margin: '20px auto 10px',
+              maxWidth: '520px',
+              padding: '16px 20px',
+              borderRadius: '12px',
+              background: 'rgba(59, 130, 246, 0.08)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#2563eb',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                marginBottom: '6px',
+              }}
+            >
+              <FileText size={18} />
+              <span>
+                {language === 'vi'
+                  ? 'Hóa đơn điện tử (.html) đã phát hành'
+                  : 'Electronic Invoice (.html) Issued'}
+              </span>
+            </div>
+            <p
+              style={{
+                margin: '0 0 14px',
+                fontSize: '0.85rem',
+                color: 'var(--muted-foreground)',
+              }}
+            >
+              {language === 'vi'
+                ? 'Hóa đơn đã được tự động gửi trực tiếp về hòm thư Gmail của bạn. Bạn cũng có thể xem, tải về file .html hoặc gửi lại bên dưới.'
+                : 'Your electronic invoice has been emailed directly to your Gmail inbox. You can also view, download the .html file or resend it below.'}
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <button
+                type="button"
+                disabled={isDownloadingInvoice}
+                onClick={handleDownloadInvoice}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #3b82f6',
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: isDownloadingInvoice ? 'wait' : 'pointer',
+                }}
+              >
+                <Download size={15} />
+                {isDownloadingInvoice
+                  ? language === 'vi'
+                    ? 'Đang tải...'
+                    : 'Downloading...'
+                  : language === 'vi'
+                    ? 'Tải hóa đơn (.html)'
+                    : 'Download invoice (.html)'}
+              </button>
+
+              <button
+                type="button"
+                disabled={isSendingEmail}
+                onClick={handleResendInvoiceEmail}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  color: 'var(--foreground)',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: isSendingEmail ? 'wait' : 'pointer',
+                }}
+              >
+                <Mail size={15} />
+                {isSendingEmail
+                  ? language === 'vi'
+                    ? 'Đang gửi...'
+                    : 'Sending...'
+                  : language === 'vi'
+                    ? 'Gửi lại về Gmail'
+                    : 'Resend to Gmail'}
+              </button>
+            </div>
+          </div>
+        )}
         <div
           style={{
             display: 'flex',

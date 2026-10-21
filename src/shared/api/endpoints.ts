@@ -148,6 +148,8 @@ export const ENDPOINTS = {
       cancel: (id: string) => `/marketplace/orders/${id}/cancel`,
       consentReassign: (appointmentId: string) =>
         `/marketplace/orders/appointments/${appointmentId}/consent-reassign`,
+      invoiceHtml: (id: string) => `/marketplace/orders/${id}/invoice/html`,
+      sendInvoiceEmail: (id: string) => `/marketplace/orders/${id}/invoice/send-email`,
     },
   },
   gymOwner: {

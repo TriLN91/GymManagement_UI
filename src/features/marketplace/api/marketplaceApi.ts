@@ -402,6 +402,34 @@ export const marketplaceApi = {
     );
   },
 
+  async getInvoiceHtml(orderId: string): Promise<string> {
+    return apiGet<string>(ENDPOINTS.marketplace.orders.invoiceHtml(orderId));
+  },
+
+  async downloadInvoiceHtml(orderId: string, orderNumber: string): Promise<void> {
+    const html = await apiGet<string>(ENDPOINTS.marketplace.orders.invoiceHtml(orderId));
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `HoaDon_FitFlex_${orderNumber}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  },
+
+  async openInvoiceHtml(orderId: string): Promise<void> {
+    const html = await apiGet<string>(ENDPOINTS.marketplace.orders.invoiceHtml(orderId));
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  },
+
+  async resendInvoiceEmail(orderId: string): Promise<boolean> {
+    return apiPost<boolean>(ENDPOINTS.marketplace.orders.sendInvoiceEmail(orderId), {});
+  },
+
   // Gym Owner Portal
   async getMyBrands(): Promise<GymBrandView[]> {
     return apiGet<GymBrandView[]>(ENDPOINTS.gymOwner.myBrands);
