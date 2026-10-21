@@ -15,7 +15,12 @@
   "loading": "Loading…",
   "loadFailed": "Could not load the invitations.",
   "empty": "No invitations sent yet.",
-  "status": { "Pending": "Pending", "Accepted": "Accepted", "Revoked": "Revoked", "Expired": "Expired" },
+  "status": {
+    "Pending": "Pending",
+    "Accepted": "Accepted",
+    "Revoked": "Revoked",
+    "Expired": "Expired"
+  },
   "expires": "expires {{when}}",
   "revoke": "Revoke",
   "revoked": "Invitation revoked.",

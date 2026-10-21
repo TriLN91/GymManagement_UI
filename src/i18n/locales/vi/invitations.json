@@ -15,7 +15,12 @@
   "loading": "Đang tải…",
   "loadFailed": "Không tải được danh sách lời mời.",
   "empty": "Chưa gửi lời mời nào.",
-  "status": { "Pending": "Đang chờ", "Accepted": "Đã nhận", "Revoked": "Đã thu hồi", "Expired": "Hết hạn" },
+  "status": {
+    "Pending": "Đang chờ",
+    "Accepted": "Đã nhận",
+    "Revoked": "Đã thu hồi",
+    "Expired": "Hết hạn"
+  },
   "expires": "hết hạn {{when}}",
   "revoke": "Thu hồi",
   "revoked": "Đã thu hồi lời mời.",
