@@ -13,6 +13,7 @@ import {
   useDeclineAppointment,
   useNoShowAppointment,
   useRescheduleAppointment,
+  useTrainerNoShowAppointment,
 } from '../model/useAppointments';
 
 import { Button } from '@/shared/ui/button';
@@ -26,10 +27,12 @@ interface Props {
   appointment: AppointmentDto;
   role: Role;
   locale: string;
+  /** Called when the user wants to book the replacement for a session that has `needsMakeup`. */
+  onBookMakeup?: (appointment: AppointmentDto) => void;
 }
 
 /** One session with the actions the signed-in Member or Trainer may take on it. */
-export function AppointmentCard({ appointment, role, locale }: Props) {
+export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Props) {
   const { t } = useTranslation('appointments');
   const [panel, setPanel] = useState<Panel>(null);
   const [reason, setReason] = useState('');
@@ -41,6 +44,7 @@ export function AppointmentCard({ appointment, role, locale }: Props) {
   const cancel = useCancelAppointment();
   const complete = useCompleteAppointment();
   const noShow = useNoShowAppointment();
+  const trainerNoShow = useTrainerNoShowAppointment();
   const reschedule = useRescheduleAppointment();
   const answer = useAnswerReschedule();
   const consent = useConsentReassign();
@@ -54,6 +58,7 @@ export function AppointmentCard({ appointment, role, locale }: Props) {
     cancel.isPending ||
     complete.isPending ||
     noShow.isPending ||
+    trainerNoShow.isPending ||
     reschedule.isPending ||
     answer.isPending ||
     consent.isPending;
@@ -99,6 +104,12 @@ export function AppointmentCard({ appointment, role, locale }: Props) {
         </p>
       ) : null}
       {a.notes ? <p className="appointment-note">{a.notes}</p> : null}
+      {a.makeupOfAppointmentId ? <p className="appointment-note">{t('list.makeupOf')}</p> : null}
+      {a.needsMakeup ? (
+        <p className="appointment-note" role="status">
+          {t('list.needsMakeup')}
+        </p>
+      ) : null}
       {a.status === 'Cancelled' && a.cancelReason ? (
         <p className="appointment-note">{t('list.cancelReason', { reason: a.cancelReason })}</p>
       ) : null}
@@ -301,6 +312,21 @@ export function AppointmentCard({ appointment, role, locale }: Props) {
                 </Button>
               ) : null}
             </>
+          ) : null}
+          {a.needsMakeup && onBookMakeup && role === 'Member' ? (
+            <Button size="sm" disabled={busy} onClick={() => onBookMakeup(a)}>
+              {t('action.bookMakeup')}
+            </Button>
+          ) : null}
+          {!isTrainer && a.status === 'Scheduled' && started && !change ? (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={busy}
+              onClick={() => run(() => trainerNoShow.mutateAsync(a.id), t('toast.trainerNoShow'))}
+            >
+              {t('action.reportTrainerNoShow')}
+            </Button>
           ) : null}
           {open && !started ? (
             <Button size="sm" variant="outline" onClick={() => setPanel('cancel')}>

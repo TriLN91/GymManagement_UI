@@ -1,6 +1,6 @@
 // Bodies of the backend CF04 endpoints (AppointmentDtos.cs): camelCase JSON, enums as strings.
 export type AppointmentStatus =
-  'Proposed' | 'Scheduled' | 'Completed' | 'NoShow' | 'Cancelled' | 'Reassigned';
+  'Proposed' | 'Scheduled' | 'Completed' | 'NoShow' | 'Cancelled' | 'Reassigned' | 'TrainerNoShow';
 export type ChangeRequestStatus = 'Pending' | 'Accepted' | 'Declined' | 'Withdrawn';
 export type TrainerChangeStatus =
   'PendingManager' | 'PendingMember' | 'Applied' | 'DeclinedByMember' | 'Withdrawn';
@@ -45,6 +45,10 @@ export interface AppointmentDto {
   cancelReason: string | null;
   cancelledAtUtc: string | null;
   completedAtUtc: string | null;
+  /** True while the Member is owed a replacement session (the Trainer side ended this one, nothing was charged). */
+  needsMakeup: boolean;
+  /** For a make-up session: the earlier session it replaces. */
+  makeupOfAppointmentId: string | null;
   pendingChange: AppointmentChangeDto | null;
 }
 
@@ -80,6 +84,8 @@ export interface SessionAssignmentDto {
   sessionsUsed: number;
   /** Null when the package has no session limit. */
   sessionsRemaining: number | null;
+  /** Hours of notice needed to cancel or move a session free of charge (set by the Offering). */
+  minNoticeHours: number;
   openTrainerChange: TrainerChangeDto | null;
 }
 
@@ -120,6 +126,8 @@ export interface ProposeAppointmentBody {
   scheduledAtUtc: string;
   durationMinutes: number;
   notes?: string;
+  /** Book the replacement for a session that has `needsMakeup`. */
+  makeupOfAppointmentId?: string;
 }
 export interface CancelAppointmentBody {
   reason: string;

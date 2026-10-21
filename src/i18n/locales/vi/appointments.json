@@ -10,6 +10,7 @@
     "Completed": "Đã hoàn thành",
     "NoShow": "Vắng mặt",
     "Cancelled": "Đã huỷ",
+    "TrainerNoShow": "Huấn luyện viên vắng mặt",
     "Reassigned": "Chờ xác nhận người dạy thay"
   },
   "assignments": {
@@ -18,6 +19,7 @@
     "period": "{{from}} – {{to}}",
     "remaining": "Còn {{count}} buổi (đã dùng {{used}}/{{total}})",
     "unlimited": "Không giới hạn số buổi (đã dùng {{used}})",
+    "minNotice": "Huỷ hoặc dời miễn phí trước buổi tập {{hours}} giờ",
     "trainer": "Huấn luyện viên: {{name}}",
     "member": "Học viên: {{name}}"
   },
@@ -29,6 +31,8 @@
     "notes": "Ghi chú",
     "submit": "Gửi đề xuất",
     "sent": "Đã gửi đề xuất. Chờ bên kia xác nhận.",
+    "makeupFor": "Hẹn bù cho buổi ngày {{when}}. Buổi bù không bị tính phí.",
+    "makeupCancel": "Không phải buổi bù",
     "availability": "Huấn luyện viên rảnh",
     "noAvailability": "Huấn luyện viên chưa giới hạn khung giờ.",
     "dayShort": {
@@ -42,6 +46,8 @@
     }
   },
   "list": {
+    "needsMakeup": "Buổi này không diễn ra do phía huấn luyện viên và không bị trừ. Hãy hẹn lịch khác.",
+    "makeupOf": "Buổi hẹn bù cho buổi không diễn ra",
     "awaiting": "Cần bạn phản hồi",
     "upcoming": "Sắp tới",
     "history": "Lịch sử",
@@ -64,6 +70,8 @@
     "reschedule": "Dời lịch",
     "complete": "Đánh dấu hoàn thành",
     "noShow": "Đánh dấu vắng mặt",
+    "reportTrainerNoShow": "Huấn luyện viên vắng mặt",
+    "bookMakeup": "Hẹn lịch khác",
     "withdraw": "Rút yêu cầu",
     "confirm": "Xác nhận",
     "back": "Quay lại",
@@ -83,6 +91,7 @@
     "cancelled": "Đã huỷ buổi tập.",
     "completed": "Đã hoàn thành buổi tập.",
     "noShow": "Đã ghi nhận vắng mặt.",
+    "trainerNoShow": "Đã ghi nhận. Buổi này không bị trừ, hãy hẹn lịch khác.",
     "rescheduleSent": "Đã gửi yêu cầu dời lịch.",
     "rescheduleAccepted": "Đã đồng ý dời lịch.",
     "rescheduleDeclined": "Đã từ chối dời lịch; giữ giờ cũ.",

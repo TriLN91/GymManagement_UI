@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import type { AppointmentDto, SessionAssignmentDto } from '../api/types';
-import { errorText, formatDate, localInputToUtcIso } from '../model/format';
+import { errorText, formatDate, formatDateTime, localInputToUtcIso } from '../model/format';
 import {
   useAssignmentAvailability,
   useMyAppointments,
@@ -52,18 +52,37 @@ function AssignmentSummary({
               total: assignment.totalSessions,
             })}
       </span>
+      <span>{t('assignments.minNotice', { hours: assignment.minNoticeHours })}</span>
     </li>
   );
 }
 
-function ProposeForm({ assignments }: { assignments: SessionAssignmentDto[] }) {
+function ProposeForm({
+  assignments,
+  makeupOf,
+  locale,
+  onDone,
+}: {
+  assignments: SessionAssignmentDto[];
+  /** The session this proposal replaces (not charged); null for a normal proposal. */
+  makeupOf: AppointmentDto | null;
+  locale: string;
+  onDone: () => void;
+}) {
   const { t } = useTranslation('appointments');
   const propose = useProposeAppointment();
-  const [assignmentId, setAssignmentId] = useState(assignments[0]?.id ?? '');
+  const formRef = useRef<HTMLFormElement>(null);
+  const [assignmentId, setAssignmentId] = useState(
+    makeupOf?.coachingAssignmentId ?? assignments[0]?.id ?? '',
+  );
   const [when, setWhen] = useState('');
   const [duration, setDuration] = useState(60);
   const [notes, setNotes] = useState('');
   const availability = useAssignmentAvailability(assignmentId);
+
+  useEffect(() => {
+    if (makeupOf) formRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+  }, [makeupOf]);
 
   const submit = async () => {
     try {
@@ -72,10 +91,12 @@ function ProposeForm({ assignments }: { assignments: SessionAssignmentDto[] }) {
         scheduledAtUtc: localInputToUtcIso(when),
         durationMinutes: duration,
         notes: notes.trim() || undefined,
+        makeupOfAppointmentId: makeupOf?.id,
       });
       toast.success(t('propose.sent'));
       setWhen('');
       setNotes('');
+      onDone();
     } catch (error) {
       toast.error(errorText(error, t('toast.failed')));
     }
@@ -85,6 +106,7 @@ function ProposeForm({ assignments }: { assignments: SessionAssignmentDto[] }) {
 
   return (
     <form
+      ref={formRef}
       className="appointment-form appointment-propose"
       onSubmit={(event) => {
         event.preventDefault();
@@ -92,6 +114,14 @@ function ProposeForm({ assignments }: { assignments: SessionAssignmentDto[] }) {
       }}
     >
       <h2>{t('propose.heading')}</h2>
+      {makeupOf ? (
+        <p className="appointment-note" role="status">
+          {t('propose.makeupFor', { when: formatDateTime(makeupOf.scheduledAtUtc, locale) })}{' '}
+          <Button type="button" size="sm" variant="outline" onClick={onDone}>
+            {t('propose.makeupCancel')}
+          </Button>
+        </p>
+      ) : null}
       {assignments.length > 1 ? (
         <label>
           {t('propose.assignment')}
@@ -168,6 +198,7 @@ export function SessionsBoard({ role }: { role: Role }) {
   const { locale } = useLocale();
   const appointments = useMyAppointments();
   const assignments = useSessionAssignments();
+  const [makeup, setMakeup] = useState<AppointmentDto | null>(null);
 
   const active = (assignments.data ?? []).filter((a) => a.status === 'Active');
   const groups = groupAppointments(appointments.data ?? []);
@@ -191,7 +222,15 @@ export function SessionsBoard({ role }: { role: Role }) {
         )}
       </section>
 
-      {active.length > 0 ? <ProposeForm key={active[0]?.id} assignments={active} /> : null}
+      {active.length > 0 ? (
+        <ProposeForm
+          key={`${active[0]?.id}-${makeup?.id ?? ''}`}
+          assignments={active}
+          makeupOf={makeup}
+          locale={locale}
+          onDone={() => setMakeup(null)}
+        />
+      ) : null}
 
       {appointments.isPending ? <p role="status">{t('list.loading')}</p> : null}
       {appointments.isError ? <p role="alert">{t('list.error')}</p> : null}
@@ -202,7 +241,13 @@ export function SessionsBoard({ role }: { role: Role }) {
           <section key={key} className="appointment-section" aria-label={t(`list.${key}`)}>
             <h2>{t(`list.${key}`)}</h2>
             {groups[key].map((item) => (
-              <AppointmentCard key={item.id} appointment={item} role={role} locale={locale} />
+              <AppointmentCard
+                key={item.id}
+                appointment={item}
+                role={role}
+                locale={locale}
+                onBookMakeup={setMakeup}
+              />
             ))}
           </section>
         ) : null,

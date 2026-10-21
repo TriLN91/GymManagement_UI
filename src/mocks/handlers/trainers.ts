@@ -10,6 +10,23 @@ const list = (): GymTrainerOverviewDto[] =>
 const ok = (data: unknown) =>
   HttpResponse.json({ isSuccess: true, message: 'Mock trainer API', data });
 export const trainerHandlers = [
+  // Read model used by the CF04 assignment screen (backend: GET /gym-owner/trainers).
+  http.get('*/gym-owner/trainers', () =>
+    ok(
+      list().map((t) => ({
+        userId: t.userId,
+        trainerProfileId: t.trainerProfileId,
+        email: t.email,
+        fullName: t.fullName,
+        phoneNumber: null,
+        gymId: 'brand-main',
+        gymName: 'Fit Central',
+        status: t.isActive ? 'Active' : 'Disabled',
+        yearsOfExperience: t.yearsOfExperience,
+        hourlyRate: null,
+      })),
+    ),
+  ),
   http.get('*/gym-owner/trainers/overview', () => {
     const trainers = list();
     return ok({

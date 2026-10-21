@@ -10,6 +10,7 @@
     "Completed": "Completed",
     "NoShow": "No-show",
     "Cancelled": "Cancelled",
+    "TrainerNoShow": "Trainer did not show up",
     "Reassigned": "Substitute Trainer pending"
   },
   "assignments": {
@@ -18,6 +19,7 @@
     "period": "{{from}} – {{to}}",
     "remaining": "{{count}} sessions left ({{used}}/{{total}} used)",
     "unlimited": "No session limit ({{used}} used)",
+    "minNotice": "Free cancel or reschedule up to {{hours}} h before a session",
     "trainer": "Trainer: {{name}}",
     "member": "Member: {{name}}"
   },
@@ -29,6 +31,8 @@
     "notes": "Notes",
     "submit": "Send proposal",
     "sent": "Proposal sent. Waiting for the other side to confirm.",
+    "makeupFor": "Making up the session of {{when}}. It is not charged.",
+    "makeupCancel": "Not a make-up",
     "availability": "Trainer is available",
     "noAvailability": "The Trainer has not restricted their hours.",
     "dayShort": {
@@ -42,6 +46,8 @@
     }
   },
   "list": {
+    "needsMakeup": "This session was not held by the Trainer side and is not charged. Book another time.",
+    "makeupOf": "Make-up session for one that was not held",
     "awaiting": "Needs your reply",
     "upcoming": "Upcoming",
     "history": "History",
@@ -64,6 +70,8 @@
     "reschedule": "Reschedule",
     "complete": "Mark completed",
     "noShow": "Mark no-show",
+    "reportTrainerNoShow": "Trainer did not show up",
+    "bookMakeup": "Book another time",
     "withdraw": "Withdraw request",
     "confirm": "Confirm",
     "back": "Back",
@@ -83,6 +91,7 @@
     "cancelled": "Session cancelled.",
     "completed": "Session completed.",
     "noShow": "No-show recorded.",
+    "trainerNoShow": "Recorded. This session is not charged; please book another time.",
     "rescheduleSent": "Reschedule request sent.",
     "rescheduleAccepted": "Reschedule accepted.",
     "rescheduleDeclined": "Reschedule declined; the original time stays.",

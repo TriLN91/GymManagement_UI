@@ -131,6 +131,8 @@ interface PackageDraft {
   sessionsIncluded: number;
   durationDays: number;
   servicePriceVnd: number;
+  /** Text so an empty box means "use the platform default". */
+  minNoticeHours: string;
   featuresEn: string;
   featuresVi: string;
 }
@@ -142,6 +144,7 @@ const emptyPackageForm: PackageDraft = {
   sessionsIncluded: 0,
   durationDays: 0,
   servicePriceVnd: 0,
+  minNoticeHours: '',
   featuresEn: '',
   featuresVi: '',
 };
@@ -172,6 +175,8 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
           sessionsIncluded: gymPackage.sessionsIncluded,
           durationDays: gymPackage.durationDays,
           servicePriceVnd: gymPackage.servicePriceVnd,
+          minNoticeHours:
+            gymPackage.minNoticeHours === undefined ? '' : String(gymPackage.minNoticeHours),
           featuresEn: gymPackage.features.map((feature) => feature.en).join('\n'),
           featuresVi: gymPackage.features.map((feature) => feature.vi).join('\n'),
         }
@@ -208,6 +213,11 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
       setError(copy.requiredPackage);
       return;
     }
+    const notice = form.minNoticeHours.trim() === '' ? undefined : Number(form.minNoticeHours);
+    if (notice !== undefined && (!Number.isInteger(notice) || notice < 0 || notice > 720)) {
+      setError(copy.invalidNotice);
+      return;
+    }
 
     const input: GymPTPackageInput = {
       trainerId: form.trainerId,
@@ -215,6 +225,7 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
       sessionsIncluded: form.sessionsIncluded,
       durationDays: form.durationDays,
       servicePriceVnd: form.servicePriceVnd,
+      minNoticeHours: notice,
       features: enFeatures.map((feature, index) => ({
         en: feature,
         vi: viFeatures[index]!,
@@ -244,6 +255,8 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
               plusDurationDays: 30,
               plusPrice: 199000,
               isPublished: true,
+              sessionsIncluded: input.sessionsIncluded,
+              minNoticeHours: input.minNoticeHours,
             });
           }
         } catch {
@@ -328,6 +341,20 @@ export function GymOwnerPTPackageFormPage({ mode }: { mode: 'create' | 'edit' })
                 value={form.durationDays || ''}
                 onChange={(event) => setForm({ ...form, durationDays: Number(event.target.value) })}
               />
+            </div>
+            <div className="gym-training-field">
+              <Label htmlFor="package-notice">{copy.minNoticeHours}</Label>
+              <Input
+                id="package-notice"
+                type="number"
+                min={0}
+                max={720}
+                placeholder="24"
+                aria-describedby="package-notice-hint"
+                value={form.minNoticeHours}
+                onChange={(event) => setForm({ ...form, minNoticeHours: event.target.value })}
+              />
+              <small id="package-notice-hint">{copy.minNoticeHint}</small>
             </div>
             <div className="gym-training-field is-wide">
               <Label htmlFor="package-price">{copy.servicePrice}</Label>

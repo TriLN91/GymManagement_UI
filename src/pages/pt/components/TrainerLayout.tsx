@@ -27,6 +27,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
+import { NotificationBell } from '@/features/notifications';
 import { useTrainerProfileStore } from '@/features/trainer-profile';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
@@ -444,6 +445,7 @@ export function TrainerLayout() {
               <Languages aria-hidden="true" size={16} />
               <span>{t('trainerShell.changeLanguage')}</span>
             </button>
+            <NotificationBell />
             <div className="member-topbar__profile">
               <div>
                 <strong>{userName}</strong>

@@ -55,7 +55,7 @@ it('registers via OTP, enforces resend cooldown, and recovers from send/verifica
   await user.click(screen.getByRole('button', { name: 'auth:register.submit' }));
   await screen.findByText('Email service unavailable');
   await user.dblClick(screen.getByRole('button', { name: 'auth:register.submit' }));
-  await screen.findByLabelText('Mã xác thực OTP (6 chữ số)');
+  await screen.findByLabelText('auth:register.otp.label');
   expect(authApi.sendRegisterOtp).toHaveBeenCalledTimes(2);
   expect(authApi.sendRegisterOtp).toHaveBeenLastCalledWith({
     email: 'member@example.test',
@@ -63,18 +63,18 @@ it('registers via OTP, enforces resend cooldown, and recovers from send/verifica
     fullName: 'member',
     role: 'Member',
   });
-  expect(screen.getByRole('button', { name: /Gửi lại sau/ })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /auth:register.otp.resendIn/ })).toBeDisabled();
   act(() => {
     for (let second = 0; second < 60; second++) tick();
   });
-  await user.click(screen.getByRole('button', { name: 'Gửi lại mã OTP' }));
+  await user.click(screen.getByRole('button', { name: 'auth:register.otp.resend' }));
   await waitFor(() => expect(authApi.sendRegisterOtp).toHaveBeenCalledTimes(3));
-  await user.type(screen.getByLabelText('Mã xác thực OTP (6 chữ số)'), '000000');
-  await user.click(screen.getByRole('button', { name: 'Xác thực & Hoàn tất đăng ký' }));
+  await user.type(screen.getByLabelText('auth:register.otp.label'), '000000');
+  await user.click(screen.getByRole('button', { name: 'auth:register.otp.verify' }));
   await screen.findByText('Invalid OTP');
-  await user.clear(screen.getByLabelText('Mã xác thực OTP (6 chữ số)'));
-  await user.type(screen.getByLabelText('Mã xác thực OTP (6 chữ số)'), '123456');
-  await user.click(screen.getByRole('button', { name: 'Xác thực & Hoàn tất đăng ký' }));
+  await user.clear(screen.getByLabelText('auth:register.otp.label'));
+  await user.type(screen.getByLabelText('auth:register.otp.label'), '123456');
+  await user.click(screen.getByRole('button', { name: 'auth:register.otp.verify' }));
   await waitFor(() =>
     expect(mocks.navigate).toHaveBeenCalledWith('/app/profile/setup', { replace: true }),
   );

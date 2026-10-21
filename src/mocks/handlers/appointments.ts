@@ -100,6 +100,7 @@ const assignmentView = (): SessionAssignmentDto => ({
   totalSessions: assignment.totalSessions,
   sessionsUsed: assignment.sessionsUsed,
   sessionsRemaining: remaining(),
+  minNoticeHours: 24,
   openTrainerChange: openChange(),
 });
 
@@ -135,6 +136,12 @@ const overlaps = (iso: string, duration: number, ignoreId?: string) => {
 const insideNotice = (iso: string) => new Date(iso).getTime() - Date.now() < MIN_NOTICE_MS;
 
 const find = (id: string) => appointments.find((a) => a.id === id);
+
+/** A cancelled or declined make-up session gives the Member the make-up right back on the session it replaced. */
+const reopenMakeup = (a: AppointmentDto) => {
+  const missed = a.makeupOfAppointmentId ? find(a.makeupOfAppointmentId) : undefined;
+  if (missed && !a.consumedSession) missed.needsMakeup = true;
+};
 
 export const appointmentHandlers = [
   http.get(path(ENDPOINTS.appointments.mine), () => {
@@ -176,7 +183,11 @@ export const appointmentHandlers = [
       scheduledAtUtc: string;
       durationMinutes: number;
       notes?: string;
+      makeupOfAppointmentId?: string;
     };
+    const missed = body.makeupOfAppointmentId ? find(body.makeupOfAppointmentId) : undefined;
+    if (body.makeupOfAppointmentId && !missed?.needsMakeup)
+      return fail(409, 'Buổi này không cần hẹn bù hoặc đã được hẹn bù.');
     if (insideNotice(body.scheduledAtUtc))
       return fail(409, 'Buổi hẹn phải đặt trước ít nhất 24 giờ.');
     if (!fitsAvailability(body.scheduledAtUtc, body.durationMinutes))
@@ -209,8 +220,11 @@ export const appointmentHandlers = [
       cancelReason: null,
       cancelledAtUtc: null,
       completedAtUtc: null,
+      needsMakeup: false,
+      makeupOfAppointmentId: missed?.id ?? null,
       pendingChange: null,
     };
+    if (missed) missed.needsMakeup = false;
     appointments.push(created);
     return ok(withViewer(created, role));
   }),
@@ -229,6 +243,7 @@ export const appointmentHandlers = [
     if (!a || a.status !== 'Proposed') return fail(409, 'Chỉ đề xuất đang chờ mới từ chối được.');
     a.status = 'Cancelled';
     a.cancelReason = 'Declined';
+    reopenMakeup(a);
     return ok(withViewer(a, roleOf()));
   }),
 
@@ -240,6 +255,8 @@ export const appointmentHandlers = [
     const late = insideNotice(a.scheduledAtUtc);
     if (late && role === 'Trainer' && !body.isEmergency)
       return fail(409, 'Trong 24 giờ cuối chỉ huấn luyện viên báo khẩn cấp mới huỷ được.');
+    // The Trainer side cancelled a confirmed session: nothing is charged and the Member is owed a make-up.
+    if (role === 'Trainer' && a.status === 'Scheduled') a.needsMakeup = true;
     a.status = 'Cancelled';
     a.cancelReason = body.reason;
     a.cancelledAtUtc = new Date().toISOString();
@@ -249,6 +266,7 @@ export const appointmentHandlers = [
       a.consumedSession = true;
       assignment.sessionsUsed += 1;
     }
+    reopenMakeup(a);
     return ok(withViewer(a, role));
   }),
 
@@ -272,6 +290,17 @@ export const appointmentHandlers = [
     a.consumedSession = true;
     assignment.sessionsUsed += 1;
     return ok(withViewer(a, 'Trainer'));
+  }),
+
+  http.post(path('/appointments/:id/trainer-no-show'), ({ params }) => {
+    const a = find(String(params.id));
+    if (!a || a.status !== 'Scheduled')
+      return fail(409, 'Chỉ buổi đã xác nhận mới báo được Trainer vắng mặt.');
+    if (new Date(a.scheduledAtUtc).getTime() > Date.now()) return fail(409, 'Buổi chưa bắt đầu.');
+    a.status = 'TrainerNoShow';
+    a.needsMakeup = true;
+    a.pendingChange = null;
+    return ok(withViewer(a, 'Member'));
   }),
 
   http.post(path('/appointments/:id/reschedule'), async ({ params, request }) => {

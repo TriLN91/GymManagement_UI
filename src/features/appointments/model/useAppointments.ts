@@ -72,6 +72,8 @@ export const useCompleteAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.complete(id));
 export const useNoShowAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.noShow(id));
+export const useTrainerNoShowAppointment = () =>
+  useAppointmentMutation((id: string) => appointmentsApi.trainerNoShow(id));
 export const useRescheduleAppointment = () =>
   useAppointmentMutation((v: { id: string; body: RescheduleAppointmentBody }) =>
     appointmentsApi.reschedule(v.id, v.body),

@@ -17,16 +17,3 @@ export interface TrainerAccountDto {
   yearsOfExperience: number;
   hourlyRate: number | null;
 }
-
-/** The backend rejects unknown fields: send exactly these keys. */
-export interface CreateTrainerBody {
-  email: string;
-  password: string;
-  fullName: string;
-  phoneNumber?: string;
-  bio?: string;
-  certificationSummary?: string;
-  yearsOfExperience: number;
-  hourlyRate?: number;
-  gymId?: string;
-}

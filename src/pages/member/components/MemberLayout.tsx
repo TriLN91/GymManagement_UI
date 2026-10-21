@@ -33,6 +33,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
+import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -456,14 +457,7 @@ export function MemberLayout() {
               <Languages aria-hidden="true" size={16} />
               <span>{t('memberShell.changeLanguage')}</span>
             </button>
-            <button
-              type="button"
-              className="member-icon-button"
-              aria-label={t('memberShell.notifications')}
-              onClick={() => navigate(ROUTES.member.profileNotifications)}
-            >
-              <Bell aria-hidden="true" size={18} />
-            </button>
+            <NotificationBell />
             <div className="member-topbar__profile">
               <div>
                 <strong>{userName}</strong>

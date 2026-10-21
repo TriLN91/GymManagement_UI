@@ -1,6 +1,11 @@
 // Every URL string in the app lives here. Importing the constant is the only way to make a request.
 // Paths are relative to VITE_API_BASE_URL (the backend serves everything under /api).
 export const ENDPOINTS = {
+  notifications: {
+    mine: '/notifications/mine',
+    read: (id: string) => `/notifications/${id}/read`,
+    readAll: '/notifications/read-all',
+  },
   assistant: {
     conversations: '/assistant/conversations',
   },
@@ -56,6 +61,7 @@ export const ENDPOINTS = {
     cancel: (id: string) => `/appointments/${id}/cancel`,
     complete: (id: string) => `/appointments/${id}/complete`,
     noShow: (id: string) => `/appointments/${id}/no-show`,
+    trainerNoShow: (id: string) => `/appointments/${id}/trainer-no-show`,
     reschedule: (id: string) => `/appointments/${id}/reschedule`,
     changeAccept: (changeId: string) => `/appointments/changes/${changeId}/accept`,
     changeDecline: (changeId: string) => `/appointments/changes/${changeId}/decline`,
@@ -130,7 +136,6 @@ export const ENDPOINTS = {
     removeTrainer: (branchId: string, trainerProfileId: string) =>
       `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
     trainers: '/gym-owner/trainers',
-    trainerAccounts: '/gym-owner/trainer-accounts',
     trainersOverview: '/gym-owner/trainers/overview',
     updateTrainerStatus: (trainerProfileId: string) =>
       `/gym-owner/trainers/${trainerProfileId}/status`,

@@ -169,6 +169,7 @@ export const STORAGE_KEYS = Object.freeze({
 
 export const QUERY_KEYS = Object.freeze({
   currentUser: () => ['auth', 'me'] as const,
+  notifications: () => ['notifications'] as const,
   currentPlan: () => ['coaching', 'plan', 'current'] as const,
   assistantConversations: () => ['assistant', 'conversations'] as const,
   assistantConversation: (id: string) => ['assistant', 'conversation', id] as const,

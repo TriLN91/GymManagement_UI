@@ -9,6 +9,7 @@ import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
 import { gymOwnerHandlers } from './gymOwner';
 import { movementReferenceHandlers } from './movementReferences';
+import { notificationHandlers } from './notifications';
 import { studioHandlers } from './studio';
 import { trainerHandlers } from './trainers';
 import { workoutHandlers } from './workouts';
@@ -27,6 +28,7 @@ export const handlers = [
   ...assignmentHandlers,
   ...appointmentHandlers,
   ...gymOwnerHandlers,
+  ...notificationHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
   ...assistantHandlers,

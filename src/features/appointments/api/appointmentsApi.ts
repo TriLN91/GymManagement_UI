@@ -28,6 +28,8 @@ export const appointmentsApi = {
   cancel: (id: string, body: CancelAppointmentBody) => apiPost<AppointmentDto>(E.cancel(id), body),
   complete: (id: string) => apiPost<AppointmentDto>(E.complete(id)),
   noShow: (id: string) => apiPost<AppointmentDto>(E.noShow(id)),
+  /** Member reports that the Trainer did not show up: not charged, a make-up session is offered. */
+  trainerNoShow: (id: string) => apiPost<AppointmentDto>(E.trainerNoShow(id)),
   reschedule: (id: string, body: RescheduleAppointmentBody) =>
     apiPost<AppointmentDto>(E.reschedule(id), body),
   acceptChange: (changeId: string) => apiPost<AppointmentDto>(E.changeAccept(changeId), {}),

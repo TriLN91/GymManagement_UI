@@ -1,7 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { trainersApi } from '../api/trainersApi';
-import type { CreateTrainerBody } from '../api/types';
 
 import { QUERY_KEYS } from '@/shared/config/constants';
 
@@ -16,18 +15,10 @@ export function useMyGyms(enabled = true) {
   });
 }
 
-/** Trainer accounts that belong to the Gym Admin's gyms. */
+/** Trainers that belong to the Gym Admin's gyms (creation lives in the marketplace API, `createGymTrainer`). */
 export function useOwnerTrainers(gymId?: string) {
   return useQuery({
     queryKey: QUERY_KEYS.ownerTrainers(gymId),
     queryFn: () => trainersApi.listTrainers(gymId),
-  });
-}
-
-export function useCreateOwnerTrainer() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (body: CreateTrainerBody) => trainersApi.createTrainer(body),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['gym-owner', 'trainers'] }),
   });
 }
