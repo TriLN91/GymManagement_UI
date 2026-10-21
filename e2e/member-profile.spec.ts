@@ -2,6 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 
 async function openAsMember(page: Page, path: string) {
   await page.addInitScript(() => {
+    // Seed once per tab. Clearing storage on later document navigations would
+    // invalidate the live session epoch and correctly sign this fixture out.
+    if (window.sessionStorage.getItem('gmc.session')) return;
     const user = {
       id: 'profile-center-member',
       email: 'member@fit.local',
