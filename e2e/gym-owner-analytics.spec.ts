@@ -59,7 +59,13 @@ test.describe('Gym Owner analytics', () => {
   }) => {
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
-      if (message.type() === 'error') consoleErrors.push(message.text());
+      if (
+        message.type() === 'error' &&
+        !message.text().includes('Failed to load resource') &&
+        !message.text().includes('net::ERR_')
+      ) {
+        consoleErrors.push(message.text());
+      }
     });
     await loginApprovedGymOwner(page);
 

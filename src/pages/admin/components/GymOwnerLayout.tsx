@@ -59,7 +59,9 @@ interface OwnerNavGroup {
     | 'dashboard'
     | 'profile'
     | 'trainers'
-    | 'business'
+    | 'packages'
+    | 'customers'
+    | 'orders'
     | 'analytics'
     | 'notifications'
     | 'security'
@@ -108,8 +110,13 @@ export function GymOwnerLayout() {
         id: 'dashboard',
         label: t('shell.nav.dashboard'),
         icon: LayoutDashboard,
-        to: ROUTES.admin.root,
-        items: [],
+        items: [
+          {
+            label: t('shell.nav.dashboardOverview'),
+            to: ROUTES.admin.root,
+            icon: LayoutDashboard,
+          },
+        ],
       });
       groups.push({
         id: 'profile',
@@ -151,8 +158,8 @@ export function GymOwnerLayout() {
         ],
       });
       groups.push({
-        id: 'business',
-        label: isVi ? 'Kinh doanh & Hội viên' : 'Business & Members',
+        id: 'packages',
+        label: t('shell.nav.packages'),
         icon: PackageCheck,
         items: [
           {
@@ -160,11 +167,25 @@ export function GymOwnerLayout() {
             to: ROUTES.admin.packages,
             icon: PackageCheck,
           },
+        ],
+      });
+      groups.push({
+        id: 'customers',
+        label: isVi ? 'Khách hàng / Người mua' : 'Customers / Purchasers',
+        icon: ShoppingBag,
+        items: [
           {
-            label: isVi ? 'Hội viên & Khách hàng' : 'Members & Customers',
+            label: t('shell.nav.customerList'),
             to: ROUTES.admin.customers,
             icon: ShoppingBag,
           },
+        ],
+      });
+      groups.push({
+        id: 'orders',
+        label: isVi ? 'Đơn hàng & đối soát' : 'Orders & Settlement',
+        icon: ReceiptText,
+        items: [
           {
             label: t('shell.nav.orderList'),
             to: ROUTES.admin.orders,
@@ -253,7 +274,11 @@ export function GymOwnerLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(item.label, query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(group.label, query))),
+    );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
@@ -294,11 +319,10 @@ export function GymOwnerLayout() {
 
   const mobileItems = navGroups
     .flatMap((group) => {
-      if (group.to) return [{ label: group.label, to: group.to, icon: group.icon }];
       const [item] = group.items;
-      return item ? [{ label: group.label, to: item.to, icon: group.icon }] : [];
+      return item ? [item] : [];
     })
-    .slice(0, 5);
+    .slice(0, 4);
 
   return (
     <div className={cn('member-shell owner-shell', isSidebarCollapsed && 'is-sidebar-collapsed')}>

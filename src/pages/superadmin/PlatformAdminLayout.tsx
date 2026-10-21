@@ -149,8 +149,13 @@ const groups: ReadonlyArray<NavGroup> = [
   {
     id: 'movement',
     icon: Dumbbell,
-    to: ROUTES.superadmin.movementAssessment,
-    items: [],
+    items: [
+      {
+        label: 'movementAssessment',
+        to: ROUTES.superadmin.movementAssessment,
+        icon: ClipboardCheck,
+      },
+    ],
   },
   {
     id: 'security',
@@ -190,7 +195,11 @@ export function PlatformAdminLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(copy[item.label], query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(copy[group.id], query))),
+    );
 
   const activeItem = groups
     .flatMap((group) => group.items)

@@ -220,7 +220,11 @@ export function MemberLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(t(item.labelKey), query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(t(group.labelKey), query))),
+    );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 

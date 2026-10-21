@@ -49,7 +49,7 @@ export interface GymOfferView {
   gymBranchId?: string | null;
   title: string;
   description: string;
-  durationType: 'Day' | 'Month' | 'Year' | string;
+  durationType: string;
   durationValue: number;
   gymServicePrice: number;
   includesPlus: boolean;
@@ -269,7 +269,6 @@ export interface UpdateTrainerSelfProfileRequest {
   hourlyRate?: number | null;
 }
 
-
 export interface CreateGymBrandRequest {
   name: string;
   legalName?: string | null;
@@ -412,7 +411,10 @@ export const marketplaceApi = {
   },
 
   async updateBrand(brandId: string, req: UpdateGymBrandRequest): Promise<GymBrandView> {
-    return apiPut<GymBrandView, UpdateGymBrandRequest>(ENDPOINTS.gymOwner.brandDetail(brandId), req);
+    return apiPut<GymBrandView, UpdateGymBrandRequest>(
+      ENDPOINTS.gymOwner.brandDetail(brandId),
+      req,
+    );
   },
 
   async createBranch(brandId: string, req: CreateGymBranchRequest): Promise<GymBranchDetailView> {
@@ -459,7 +461,9 @@ export const marketplaceApi = {
   },
 
   async updateTrainerBranches(trainerProfileId: string, branchIds: string[]): Promise<boolean> {
-    return apiPut<boolean>(ENDPOINTS.gymOwner.updateTrainerBranches(trainerProfileId), { branchIds });
+    return apiPut<boolean>(ENDPOINTS.gymOwner.updateTrainerBranches(trainerProfileId), {
+      branchIds,
+    });
   },
 
   async unlinkTrainer(trainerProfileId: string): Promise<boolean> {
@@ -474,7 +478,9 @@ export const marketplaceApi = {
     return apiGet<TrainerProfileStatusDto>(ENDPOINTS.trainer.profileStatus);
   },
 
-  async updateTrainerSelfProfile(req: UpdateTrainerSelfProfileRequest): Promise<TrainerProfileStatusDto> {
+  async updateTrainerSelfProfile(
+    req: UpdateTrainerSelfProfileRequest,
+  ): Promise<TrainerProfileStatusDto> {
     return apiPut<TrainerProfileStatusDto, UpdateTrainerSelfProfileRequest>(
       ENDPOINTS.trainer.updateProfile,
       req,
@@ -501,10 +507,7 @@ export const marketplaceApi = {
     );
   },
 
-  async updateOffer(
-    offerId: string,
-    req: Partial<CreateGymOfferRequest>,
-  ): Promise<GymOfferView> {
+  async updateOffer(offerId: string, req: Partial<CreateGymOfferRequest>): Promise<GymOfferView> {
     return apiPut<GymOfferView>(ENDPOINTS.branchManager.updateOffer(offerId), req);
   },
 

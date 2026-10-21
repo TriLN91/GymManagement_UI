@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { authApi } from '../../api/authApi';
+
 import { EmailStep } from './EmailStep';
 import { NewPasswordStep } from './NewPasswordStep';
 import { OtpVerificationStep } from './OtpVerificationStep';
@@ -39,13 +40,14 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
       }
       setCooldown(60);
       toast.success('Mã OTP mới đã được gửi!');
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể gửi lại mã OTP.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể gửi lại mã OTP.';
+      toast.error(message);
     }
   };
 
   return (
-    <div className="flex w-full flex-col items-center max-w-md mx-auto">
+    <div className="mx-auto flex w-full max-w-md flex-col items-center">
       {/* Brand Header */}
       <div className="mb-6 flex flex-col items-center text-center">
         <div className="mb-3 flex items-center font-syne text-4xl font-extrabold tracking-tight text-forest dark:text-emerald-400">
@@ -57,7 +59,7 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
           {step === 'new_password' && 'Thiết lập mật khẩu mới'}
           {step === 'success' && 'Hoàn tất đặt lại mật khẩu'}
         </h1>
-        <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+        <p className="mt-1 max-w-xs text-xs text-muted-foreground">
           {step === 'email' && 'Nhập email đã đăng ký để nhận mã OTP khôi phục mật khẩu an toàn.'}
           {step === 'otp' && `Hệ thống đã gửi mã OTP 6 số về email ${email}.`}
           {step === 'new_password' && 'Vui lòng nhập mật khẩu mới cho tài khoản của bạn.'}
@@ -67,10 +69,10 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
 
       {/* Step Indicator */}
       {step !== 'success' && (
-        <div className="w-full flex items-center justify-between mb-6 px-4">
+        <div className="mb-6 flex w-full items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <span
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                 step === 'email'
                   ? 'bg-forest text-white dark:bg-emerald-500'
                   : 'bg-emerald-500/20 text-emerald-600'
@@ -80,10 +82,10 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
             </span>
             <span className="text-xs font-medium text-foreground">Email</span>
           </div>
-          <div className="flex-1 h-0.5 mx-2 bg-muted-foreground/20" />
+          <div className="mx-2 h-0.5 flex-1 bg-muted-foreground/20" />
           <div className="flex items-center gap-2">
             <span
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                 step === 'otp'
                   ? 'bg-forest text-white dark:bg-emerald-500'
                   : step === 'new_password'
@@ -95,10 +97,10 @@ export function ForgotPasswordWizard({ onSuccess }: ForgotPasswordWizardProps) {
             </span>
             <span className="text-xs font-medium text-foreground">OTP</span>
           </div>
-          <div className="flex-1 h-0.5 mx-2 bg-muted-foreground/20" />
+          <div className="mx-2 h-0.5 flex-1 bg-muted-foreground/20" />
           <div className="flex items-center gap-2">
             <span
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                 step === 'new_password'
                   ? 'bg-forest text-white dark:bg-emerald-500'
                   : 'bg-muted text-muted-foreground'

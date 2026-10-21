@@ -1,188 +1,267 @@
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 
+import type { ProgressionState, ScheduleOverview } from '@/features/gamification/api/types';
+import type {
+  ExerciseView,
+  PlansView,
+  SessionInput,
+  SessionView,
+} from '@/features/workout-plans/api/types';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
-// Mirrors CoachingController GET me/plans and WorkoutController /workouts/** (CF01) for the Member workout flow.
-// State lives in memory: a page reload keeps it, a new browser context starts fresh.
-const path = (p: string) => `*${p}`;
-
-const ok = (data: unknown, status = 200) =>
-  HttpResponse.json({ isSuccess: true, message: `${status}: OK`, data }, { status });
-
-const fail = (status: number, errorCode: string, message: string) =>
-  HttpResponse.json({ isSuccess: false, message, data: null, errorCode }, { status });
-
-export const MOCK_PLAN_ID = 'plan-demo';
-export const MOCK_VERSION_ID = 'plan-demo-v1';
-
-export const mockExercises = [
+// Deterministic API fixtures, loaded only with MSW; these are never a product fallback.
+export const mockBusinessDate = '2026-10-20';
+const versionId = '10000000-0000-4000-8000-000000000001';
+export const mockCatalog: ExerciseView[] = [
   {
-    id: 'ex-row',
-    code: 'bent-over-row',
-    name: 'Bent-over barbell row',
-    equipment: 'Barbell',
-    muscleGroup: 'Back',
-    instructions: 'Hinge at the hips and pull the bar to the lower ribs.',
+    id: '20000000-0000-4000-8000-000000000001',
+    code: 'HIP-HINGE',
+    name: 'Hip hinge',
+    equipment: 'Bodyweight',
+    muscleGroup: 'Hips',
+    instructions: 'Move under control.',
   },
   {
-    id: 'ex-hang',
-    code: 'dead-hang',
+    id: '20000000-0000-4000-8000-000000000002',
+    code: 'DEAD-HANG',
     name: 'Dead hang',
     equipment: 'Pull-up bar',
     muscleGroup: 'Back',
-    instructions: 'Hang with straight arms and a packed shoulder.',
+    instructions: 'Breathe steadily.',
   },
   {
-    id: 'ex-bench',
+    id: '20000000-0000-4000-8000-000000000003',
     code: 'barbell-bench-press',
     name: 'Barbell Bench Press',
     equipment: 'Barbell',
     muscleGroup: 'Chest',
-    instructions: 'Lower the bar to the chest and press up.',
+    instructions: 'Use a controlled load.',
   },
 ];
-
-const plans = {
+export const mockPlans: PlansView = {
   workout: [
     {
-      id: MOCK_PLAN_ID,
-      name: 'Back and chest block',
+      id: '30000000-0000-4000-8000-000000000001',
+      name: 'Member API plan',
       status: 'Active',
       managedByTrainerProfileId: null,
       versions: [
         {
-          id: MOCK_VERSION_ID,
+          id: versionId,
           versionNumber: 1,
           status: 'Active',
-          effectiveFromUtc: '2026-10-01T00:00:00.000Z',
+          effectiveFromUtc: '2026-10-01T00:00:00Z',
           effectiveToUtc: null,
-          name: 'Back and chest block',
+          name: 'Member API plan',
+          dayDurations: [
+            { dayNumber: 1, estimatedMinutes: 30 },
+            { dayNumber: 2, estimatedMinutes: 30 },
+          ],
           exercises: [
             {
-              exerciseId: 'ex-row',
+              exerciseId: mockCatalog[0]!.id,
               dayNumber: 1,
               sortOrder: 1,
-              sets: 3,
-              reps: 10,
+              sets: 2,
+              reps: 8,
               durationSeconds: null,
               notes: null,
             },
             {
-              exerciseId: 'ex-hang',
+              exerciseId: mockCatalog[1]!.id,
               dayNumber: 1,
               sortOrder: 2,
               sets: 2,
               reps: null,
-              durationSeconds: 45,
+              durationSeconds: 60,
               notes: null,
             },
             {
-              exerciseId: 'ex-bench',
+              exerciseId: mockCatalog[0]!.id,
               dayNumber: 2,
               sortOrder: 1,
-              sets: 3,
+              sets: 2,
               reps: 8,
               durationSeconds: null,
               notes: null,
             },
           ],
-          dayDurations: [
-            { dayNumber: 1, estimatedMinutes: 40 },
-            { dayNumber: 2, estimatedMinutes: 35 },
-          ],
         },
       ],
     },
   ],
-  nutrition: [],
 };
-
-interface StoredLog {
-  setNumber: number;
-  repsCompleted: number | null;
-  weightKg: number | null;
-  durationSeconds: number | null;
-  perceivedExertion: number | null;
-  notes: string | null;
+export const mockProgression: ProgressionState = {
+  stateVersion: 'fixture-v1',
+  businessDate: mockBusinessDate,
+  timeZone: 'UTC+07:00',
+  ruleVersion: 'cf05-proposed-2026-10-16',
+  streak: { current: 4, best: 9, scheduleConfigured: true, today: 'Pending' },
+  xp: { totalConfirmed: 150, pending: [] },
+  completedWorkouts: 12,
+  distance: {
+    totalKm: null,
+    primaryProvider: null,
+    availableProviders: [],
+    sourceSelectionRequired: false,
+    quarantinedActivities: 0,
+  },
+  badges: [
+    {
+      id: 'badge-1',
+      code: 'WORKOUT_COUNT',
+      name: 'Workout Milestone',
+      tier: 'Bronze',
+      threshold: 10,
+      reason: 'Completed 10 workouts',
+      awardedAtUtc: '2026-10-19T03:00:00Z',
+      seen: true,
+      ruleVersion: 'cf05-proposed-2026-10-16',
+    },
+  ],
+  nextBadges: [
+    {
+      code: 'WORKOUT_COUNT',
+      name: 'Workout Milestone',
+      tier: 'Silver',
+      threshold: 20,
+      current: 12,
+    },
+  ],
+  activePause: null,
+  days: [
+    { day: '2026-10-19', status: 'Completed', expectedDayNumber: 2, versionId },
+    { day: mockBusinessDate, status: 'Pending', expectedDayNumber: 1, versionId },
+    { day: '2026-10-21', status: 'Upcoming', expectedDayNumber: 2, versionId },
+    { day: '2026-10-22', status: 'Rest', expectedDayNumber: null },
+    { day: '2026-10-23', status: 'Upcoming', expectedDayNumber: 1, versionId },
+    { day: '2026-10-24', status: 'Upcoming', expectedDayNumber: 2, versionId },
+    { day: '2026-10-25', status: 'Rest', expectedDayNumber: null },
+  ],
+};
+const schedule: ScheduleOverview = {
+  current: {
+    id: 'schedule-1',
+    workoutPlanId: mockPlans.workout[0]!.id,
+    isoWeekdays: [1, 2, 3, 5, 6],
+    effectiveFromDay: '2026-10-01',
+    effectiveToDay: null,
+  },
+  upcoming: null,
+  hasActivePlan: true,
+  planDayNumbers: [1, 2],
+  businessDate: mockBusinessDate,
+};
+type Stored = { sessions: SessionView[]; requests: Record<string, string>; completedMain: boolean };
+function key() {
+  const auth = JSON.parse(localStorage.getItem('app:auth') ?? '{}') as {
+    state?: { user?: { id?: string } };
+  };
+  return `fitflex:mock-workouts:${auth.state?.user?.id ?? 'anonymous'}`;
 }
-
-interface StoredSession {
-  id: string;
-  clientRequestId: string;
-  revision: number;
-  workoutPlanVersionId: string | null;
-  planDayNumber: number | null;
-  status: 'InProgress' | 'Completed';
-  scheduledAtUtc: string;
-  completedAtUtc: string | null;
-  notes: string | null;
-  exercises: Array<{
-    id: string;
-    exerciseId: string;
-    sortOrder: number;
-    plannedSets: number | null;
-    plannedReps: number | null;
-    plannedDurationSeconds: number | null;
-    logs: StoredLog[];
-  }>;
+function load(): Stored {
+  return JSON.parse(
+    localStorage.getItem(key()) ?? '{"sessions":[],"requests":{},"completedMain":false}',
+  ) as Stored;
 }
-
-export const mockSessions: StoredSession[] = [];
-
-export function resetMockWorkouts() {
-  mockSessions.length = 0;
+function save(value: Stored) {
+  localStorage.setItem(key(), JSON.stringify(value));
 }
-
+const ok = (data: unknown) =>
+  HttpResponse.json({ isSuccess: true, message: 'Mock API success', data });
+const fail = (status: number, code: string) =>
+  HttpResponse.json({ isSuccess: false, errorCode: code, message: code, data: null }, { status });
+const path = (p: string) => `*${p}`;
 export const workoutHandlers = [
-  http.get(path(ENDPOINTS.coaching.me.plans), () => ok(plans)),
-  http.get(path(ENDPOINTS.workouts.exercises), () => ok(mockExercises)),
-  http.get(path(ENDPOINTS.workouts.sessions), () => ok([...mockSessions].reverse())),
-
+  http.get(path(ENDPOINTS.progression.state), async () => {
+    await delay(120);
+    if (sessionStorage.getItem('fitflex:mock:progression-fail'))
+      return fail(503, 'ProgressionUnavailable');
+    const state = structuredClone(mockProgression);
+    if (load().completedMain) {
+      state.days.find((d) => d.day === mockBusinessDate)!.status = 'Completed';
+      state.streak.today = 'Completed';
+    }
+    return ok(state);
+  }),
+  http.get(path(ENDPOINTS.progression.schedule), () => ok(schedule)),
+  http.put(path(ENDPOINTS.progression.schedule), async ({ request }) => {
+    const body = (await request.json()) as { isoWeekdays: number[] };
+    return ok({
+      ...schedule,
+      upcoming: {
+        ...schedule.current,
+        id: 'upcoming',
+        isoWeekdays: body.isoWeekdays,
+        effectiveFromDay: '2026-10-21',
+      },
+    });
+  }),
+  http.get(path(ENDPOINTS.progression.recovery), () => ok([])),
+  http.get(path(ENDPOINTS.progression.history), () =>
+    ok({
+      from: '2026-09-20',
+      to: mockBusinessDate,
+      summary: {
+        fitFlexWorkouts: 12,
+        ptSessions: 0,
+        externalActivities: 0,
+        distanceKm: 0,
+        scheduledCompleted: 1,
+        scheduledMissed: 0,
+        scheduledPaused: 0,
+        xpConfirmed: 150,
+      },
+      items: [],
+      days: mockProgression.days,
+    }),
+  ),
+  http.post('*/progression/me/badges/:id/seen', () => ok(mockProgression.badges[0])),
+  http.get(path(ENDPOINTS.coaching.me.plans), () => ok(mockPlans)),
+  http.get(path(ENDPOINTS.workouts.exercises), () => ok(mockCatalog)),
+  http.get(path(ENDPOINTS.workouts.sessions), () => ok(load().sessions)),
   http.post(path(ENDPOINTS.workouts.sessions), async ({ request }) => {
-    const input = (await request.json()) as {
-      clientRequestId: string;
-      workoutPlanVersionId: string | null;
-      planDayNumber: number | null;
-      scheduledAtUtc: string;
-      notes: string | null;
-      exercises: Array<{ exerciseId: string; sortOrder: number; logs: StoredLog[] }>;
-    };
-    const existing = mockSessions.find((item) => item.clientRequestId === input.clientRequestId);
-    if (existing) return ok(existing);
-    const session: StoredSession = {
-      id: `session-${mockSessions.length + 1}`,
-      clientRequestId: input.clientRequestId,
+    const body = (await request.json()) as SessionInput;
+    const state = load();
+    const old = state.sessions.find((s) => s.id === state.requests[body.clientRequestId]);
+    if (old) return ok(old);
+    if (body.exercises.some((e) => !mockCatalog.some((c) => c.id === e.exerciseId)))
+      return fail(400, 'UnknownExercise');
+    const session: SessionView = {
+      id: crypto.randomUUID(),
       revision: 1,
-      workoutPlanVersionId: input.workoutPlanVersionId,
-      planDayNumber: input.planDayNumber,
-      status: 'InProgress',
-      scheduledAtUtc: input.scheduledAtUtc,
+      workoutPlanVersionId: body.workoutPlanVersionId,
+      status: 'Planned',
+      scheduledAtUtc: body.scheduledAtUtc,
       completedAtUtc: null,
-      notes: input.notes,
-      exercises: input.exercises.map((exercise, index) => ({
-        id: `session-${mockSessions.length + 1}-ex-${index + 1}`,
-        exerciseId: exercise.exerciseId,
-        sortOrder: exercise.sortOrder,
+      notes: body.notes,
+      exercises: body.exercises.map((e) => ({
+        ...e,
+        id: crypto.randomUUID(),
         plannedSets: null,
         plannedReps: null,
         plannedDurationSeconds: null,
-        logs: exercise.logs,
       })),
     };
-    mockSessions.push(session);
-    return ok(session, 201);
+    state.sessions.push(session);
+    state.requests[body.clientRequestId] = session.id;
+    save(state);
+    return ok(session);
   }),
-
-  http.post(path('/workouts/me/sessions/:sessionId/complete'), async ({ params, request }) => {
-    const session = mockSessions.find((item) => item.id === params.sessionId);
-    if (!session) return fail(404, 'NotFound', 'Session not found.');
-    if (session.status === 'Completed') return ok(session);
-    if (!session.exercises.some((exercise) => exercise.logs.length > 0))
-      return fail(400, 'Invalid', 'Log at least one set before completing.');
-    const body = (await request.json().catch(() => null)) as { completedAtUtc?: string } | null;
-    session.status = 'Completed';
-    session.completedAtUtc = body?.completedAtUtc ?? new Date().toISOString();
-    session.revision += 1;
+  http.post('*/workouts/me/sessions/:id/complete', async ({ params, request }) => {
+    if (sessionStorage.getItem('fitflex:mock:completion-fail'))
+      return fail(503, 'UploadUnavailable');
+    const state = load();
+    const session = state.sessions.find((s) => s.id === params.id);
+    if (!session) return fail(404, 'SessionNotFound');
+    const body = (await request.json()) as { completedAtUtc: string };
+    if (session.status !== 'Completed') {
+      session.status = 'Completed';
+      session.completedAtUtc = body.completedAtUtc;
+      session.revision++;
+      if (session.workoutPlanVersionId) state.completedMain = true;
+      save(state);
+    }
     return ok(session);
   }),
 ];

@@ -1,5 +1,7 @@
 import { toast } from 'sonner';
 
+import { errorMessage } from '@/shared/lib/errorMessage';
+
 export interface RollbackAction {
   id: string;
   title: string;
@@ -170,8 +172,7 @@ class ActionRollbackManager {
       );
       this.notify();
 
-      const successNotice =
-        action.rollbackSuccessMessage || `Đã hoàn tác: ${action.title}!`;
+      const successNotice = action.rollbackSuccessMessage || `Đã hoàn tác: ${action.title}!`;
       toast.success(successNotice, { duration: 4000 });
 
       if (action.onAfterRollback) {
@@ -179,14 +180,13 @@ class ActionRollbackManager {
       }
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.actions = this.actions.map((a) =>
         a.id === actionId ? { ...a, status: 'available' } : a,
       );
       this.notify();
 
-      const errMsg =
-        err?.message || 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
+      const errMsg = errorMessage(err) || 'Không thể hoàn tác thao tác. Vui lòng kiểm tra lại.';
       toast.error(errMsg);
       return false;
     }

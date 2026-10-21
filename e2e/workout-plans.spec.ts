@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openWorkoutPlans(page: Page) {
+  await page.clock.setFixedTime(new Date('2026-10-20T03:00:00Z'));
   await page.addInitScript(() => {
     const user = {
       id: 'workout-e2e-member',
@@ -59,15 +60,13 @@ test.describe('Member workout plans', () => {
 
     await page.getByRole('link', { name: /Xem lịch tập tuần/i }).click();
     await expect(page.getByRole('heading', { name: 'Lịch Tập Trong Tuần' })).toHaveCount(0);
-    // Today's plan day comes from the MSW schedule; its title is localised.
-    const today = page.getByRole('link', { name: /Ngày 1.*Buổi hôm nay/i });
-    await expect(today).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Ngày nghỉ' }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Ngày 1' }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Ngày nghỉ' })).toHaveCount(2);
 
-    await today.click();
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await page.getByRole('link', { name: /Thứ Ba.*Ngày 1/i }).click();
+    await expect(page.getByText('Hip hinge')).toBeVisible();
     await page.getByRole('button', { name: 'Bắt đầu buổi tập' }).click();
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Hip hinge' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Ghi kết quả thực tế' })).toBeVisible();
     await expect(page.getByRole('img', { name: 'Video hướng dẫn bài tập' })).toBeVisible();
   });

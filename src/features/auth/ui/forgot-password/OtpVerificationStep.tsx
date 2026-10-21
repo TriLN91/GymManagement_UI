@@ -1,5 +1,5 @@
 import { AlertCircle, ArrowLeft, KeyRound, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { authApi } from '../../api/authApi';
@@ -25,16 +25,19 @@ export function OtpVerificationStep({
   onBackToEmail,
   onSuccess,
 }: OtpVerificationStepProps) {
+  const isSubmittingRef = useRef(false);
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState('');
 
   const onVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isVerifyingOtp) return;
     if (!otpCode.trim() || otpCode.trim().length < 4) {
       setOtpError('Vui lòng nhập đầy đủ mã OTP 6 số.');
       return;
     }
+    isSubmittingRef.current = true;
     setOtpError('');
     setIsVerifyingOtp(true);
     try {
@@ -45,23 +48,26 @@ export function OtpVerificationStep({
       } else {
         setOtpError(res?.message || 'Mã OTP không hợp lệ.');
       }
-    } catch (err: any) {
-      setOtpError(err?.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
+      setOtpError(message);
     } finally {
+      isSubmittingRef.current = false;
       setIsVerifyingOtp(false);
     }
   };
 
   return (
     <form onSubmit={onVerifyOtp} className="w-full space-y-5">
-      <div className="p-3 rounded-xl bg-muted/60 border flex items-center justify-between text-xs">
+      <div className="flex items-center justify-between rounded-xl border bg-muted/60 p-3 text-xs">
         <span className="text-muted-foreground">
           Gửi đến: <strong className="text-foreground">{email}</strong>
         </span>
         <button
           type="button"
           onClick={onBackToEmail}
-          className="text-primary hover:underline font-semibold"
+          className="font-semibold text-primary hover:underline"
         >
           Đổi email
         </button>
@@ -69,15 +75,15 @@ export function OtpVerificationStep({
 
       {/* Dev Quick-Fill Helper */}
       {debugOtpCode && (
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
-          <span className="text-xs text-emerald-800 dark:text-emerald-300 font-mono">
+        <div className="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3">
+          <span className="font-mono text-xs text-emerald-800 dark:text-emerald-300">
             ⚡ Mã OTP Dev: <strong>{debugOtpCode}</strong>
           </span>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 text-xs bg-emerald-600 text-white hover:bg-emerald-700 px-2.5 py-0 border-transparent"
+            className="h-7 border-transparent bg-emerald-600 px-2.5 py-0 text-xs text-white hover:bg-emerald-700"
             onClick={() => {
               setOtpCode(debugOtpCode);
               setOtpError('');
@@ -91,7 +97,7 @@ export function OtpVerificationStep({
       <div className="space-y-2">
         <Label
           htmlFor="otpCode"
-          className="text-xs font-bold uppercase tracking-wider text-foreground text-center block"
+          className="block text-center text-xs font-bold uppercase tracking-wider text-foreground"
         >
           Nhập mã OTP (6 chữ số)
         </Label>
@@ -105,13 +111,13 @@ export function OtpVerificationStep({
               setOtpCode(e.target.value.replace(/\D/g, ''));
               setOtpError('');
             }}
-            className="h-14 text-center font-mono text-2xl tracking-[0.5em] font-extrabold border-input bg-background/50 focus-visible:ring-forest dark:focus-visible:ring-emerald-500"
+            className="h-14 border-input bg-background/50 text-center font-mono text-2xl font-extrabold tracking-[0.5em] focus-visible:ring-forest dark:focus-visible:ring-emerald-500"
             placeholder="••••••"
             autoFocus
           />
         </div>
         {otpError && (
-          <p className="text-xs font-medium text-destructive flex items-center gap-1.5 justify-center">
+          <p className="flex items-center justify-center gap-1.5 text-xs font-medium text-destructive">
             <AlertCircle size={14} />
             {otpError}
           </p>
@@ -120,7 +126,7 @@ export function OtpVerificationStep({
 
       <Button
         type="submit"
-        className="h-12 w-full rounded-xl bg-forest dark:bg-emerald-600 font-bold text-white hover:bg-forest/90 dark:hover:bg-emerald-700 shadow-md transition-all gap-2"
+        className="h-12 w-full gap-2 rounded-xl bg-forest font-bold text-white shadow-md transition-all hover:bg-forest/90 dark:bg-emerald-600 dark:hover:bg-emerald-700"
         disabled={isVerifyingOtp}
       >
         {isVerifyingOtp ? (
@@ -140,7 +146,7 @@ export function OtpVerificationStep({
         <button
           type="button"
           onClick={onBackToEmail}
-          className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft size={13} />
           Quay lại

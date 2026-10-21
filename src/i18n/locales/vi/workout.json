@@ -363,5 +363,10 @@
   "aria": {
     "trainingStations": "Các trạm tập luyện",
     "loadingPlans": "Đang tải kế hoạch tập luyện"
+  },
+  "optional": {
+    "title": "Bài tập bổ sung",
+    "accounting": "Không tính vào tiến độ kế hoạch AI/PT",
+    "unavailable": "Buổi bổ sung có bài tập hoặc kiểu theo dõi API hiện chưa hỗ trợ. Bản đã lưu được giữ nguyên; hãy kiểm tra trước khi bắt đầu."
   }
 }

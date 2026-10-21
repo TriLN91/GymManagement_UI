@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openAsMember(page: Page, path: string) {
+  await page.clock.setFixedTime(new Date('2026-10-20T03:00:00Z'));
   await page.addInitScript(() => {
     const user = {
       id: 'workout-flow-member',
@@ -19,22 +20,22 @@ async function openAsMember(page: Page, path: string) {
   await page.goto(path);
 }
 
-// The plan, catalog, schedule and sessions come from the MSW handlers (workouts.ts, progression.ts).
 test.describe('Member workout vertical slice', () => {
-  test('logs a scheduled plan day, syncs it and shows it in history and progress', async ({
+  test('records supported strength and duration types and persists completion through the API', async ({
     page,
   }) => {
     await openAsMember(page, '/app/workout');
 
     await page.getByRole('link', { name: /view weekly schedule/i }).click();
     await expect(page).toHaveURL(/\/app\/workout\/schedule$/);
+    await expect(page.getByRole('heading', { name: 'Weekly Schedule' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Rest Day' })).toHaveCount(2);
 
-    await page.getByRole('link', { name: /Day 1.*Today's session/i }).click();
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Dead hang' })).toBeVisible();
+    await page.getByRole('link', { name: /Tuesday.*Day 1/i }).click();
+    await expect(page.getByText('Hip hinge')).toBeVisible();
 
     await page.getByRole('button', { name: /start session/i }).click();
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Hip hinge' })).toBeVisible();
     await page.getByLabel('Set 1 load').fill('62.5');
     await page.getByRole('button', { name: /save actual & continue/i }).click();
 
@@ -42,20 +43,58 @@ test.describe('Member workout vertical slice', () => {
     await page.getByLabel('Set 1 duration').fill('52');
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Dead hang' })).toBeVisible();
-    await page.getByLabel('Set 1 duration').fill('52');
+    await expect(page.getByLabel('Set 1 duration')).toHaveValue('52');
+    await page.evaluate(() => sessionStorage.setItem('fitflex:mock:completion-fail', 'true'));
     await page.getByRole('button', { name: /save actual & continue/i }).click();
 
     await expect(page).toHaveURL(/\/app\/workout\/complete\//);
-    await expect(page.getByText('Saved to your account.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Day 1' })).toBeVisible();
+
     await expect(page.getByText(/kg volume/)).toBeVisible();
     await expect(page.getByText('No actual data')).toHaveCount(0);
 
-    // MSW state lives in the page, so move around in-app (no reload) to read what was stored.
-    await page.getByRole('link', { name: 'History' }).first().click();
-    await expect(page).toHaveURL(/\/app\/workout\/history$/);
-    await expect(page.getByText('Plan workout')).toBeVisible();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            JSON.parse(localStorage.getItem('fitflex:mock-workouts:workout-flow-member') ?? '{}')
+              .sessions?.[0]?.status,
+        ),
+      )
+      .toBe('Planned');
+    const completionUrl = page.url();
+    await page.reload();
+    await expect(page).toHaveURL(completionUrl);
+    await expect(page.getByRole('heading', { name: 'Day 1' })).toBeVisible();
+    await page.evaluate(() => {
+      sessionStorage.removeItem('fitflex:mock:completion-fail');
+      window.dispatchEvent(new Event('online'));
+    });
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            JSON.parse(localStorage.getItem('fitflex:mock-workouts:workout-flow-member') ?? '{}')
+              .sessions?.[0]?.status,
+        ),
+      )
+      .toBe('Completed');
+    await page.goto('/app/workout/history');
+    await expect(page.getByRole('heading', { name: 'Workout history' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Plan workout' })).toBeVisible();
 
-    await page.getByRole('link', { name: 'Progress' }).first().click();
+    await expect
+      .poll(async () =>
+        page.evaluate(() => {
+          const data = JSON.parse(
+            localStorage.getItem('fitflex:mock-workouts:workout-flow-member') ?? '{}',
+          );
+          return data.sessions?.filter((s: { status: string }) => s.status === 'Completed').length;
+        }),
+      )
+      .toBe(1);
+    await page.goto('/app/progress');
+    await expect(page.getByRole('heading', { name: 'Workout progress' })).toHaveCount(0);
     await expect(page.getByText('Completed sessions')).toBeVisible();
   });
 });

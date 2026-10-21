@@ -9,7 +9,8 @@ import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
 import { gymOwnerHandlers } from './gymOwner';
 import { movementReferenceHandlers } from './movementReferences';
-import { progressionHandlers } from './progression';
+import { studioHandlers } from './studio';
+import { trainerHandlers } from './trainers';
 import { workoutHandlers } from './workouts';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
@@ -18,6 +19,9 @@ import { ENDPOINTS } from '@/shared/api/endpoints';
 const path = (p: string) => `*${p}`;
 
 export const handlers = [
+  ...trainerHandlers,
+  ...studioHandlers,
+  ...workoutHandlers,
   ...authHandlers,
   ...adminRegistrationHandlers,
   ...assignmentHandlers,
@@ -25,8 +29,6 @@ export const handlers = [
   ...gymOwnerHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
-  ...workoutHandlers,
-  ...progressionHandlers,
   ...assistantHandlers,
 
   http.get(path(ENDPOINTS.coaching.plan), () => HttpResponse.json({ data: sampleCoachingPlan })),

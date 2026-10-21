@@ -1,4 +1,9 @@
-import axios, { type AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from 'axios';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 import { ApiError, AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
@@ -25,6 +30,11 @@ const AUTH_PATHS: ReadonlyArray<string> = [
   ENDPOINTS.auth.login,
   ENDPOINTS.auth.register,
   ENDPOINTS.auth.refresh,
+  ENDPOINTS.auth.registerSendOtp,
+  ENDPOINTS.auth.registerVerifyOtp,
+  ENDPOINTS.auth.forgotPassword,
+  ENDPOINTS.auth.verifyOtp,
+  ENDPOINTS.auth.resetPassword,
 ];
 
 // Backend validation message: "400: ... thất bại - Email: msg | Password: msg".
@@ -58,6 +68,7 @@ class TokenManager {
   private refreshToken: string | null = null;
   private refreshQueue: Array<(token: string | null) => void> = [];
   private isRefreshing = false;
+  private refreshingOwner: string | null = null;
   private sessionExpiredHandler: (() => void) | null = null;
 
   // Registered by the app shell so this module does not import the auth store (no cycle).
@@ -100,12 +111,26 @@ class TokenManager {
   async refresh(): Promise<string | null> {
     if (!this.refreshToken) return null;
 
+    if (this.isRefreshing && this.refreshToken !== this.refreshingOwner) {
+      const owner = this.refreshToken;
+      // Keep the existing queue, but do not give another login its predecessor's
+      // rotated token. Start its own refresh after the old flight's finally runs.
+      return new Promise<string | null>((resolve) => {
+        this.refreshQueue.push(() =>
+          queueMicrotask(() => {
+            resolve(this.refreshToken === owner ? this.refresh() : null);
+          }),
+        );
+      });
+    }
     if (this.isRefreshing) {
       return new Promise<string | null>((resolve) => {
         this.refreshQueue.push(resolve);
       });
     }
 
+    const ownerRefresh = this.refreshToken;
+    this.refreshingOwner = ownerRefresh;
     this.isRefreshing = true;
     try {
       const response = await axios.post<ApiEnvelope<{ accessToken: string; refreshToken: string }>>(
@@ -113,15 +138,21 @@ class TokenManager {
         { accessToken: this.accessToken ?? '', refreshToken: this.refreshToken },
       );
       const { accessToken, refreshToken } = response.data.data;
+      // A refresh started by a previous login cannot replace the current account.
+      if (this.refreshToken !== ownerRefresh) {
+        this.flushQueue(null);
+        return null;
+      }
       this.setTokens(accessToken, refreshToken);
       this.flushQueue(accessToken);
       return accessToken;
     } catch {
-      this.clear();
+      if (this.refreshToken === ownerRefresh) this.clear();
       this.flushQueue(null);
       return null;
     } finally {
       this.isRefreshing = false;
+      this.refreshingOwner = null;
     }
   }
 
@@ -135,9 +166,12 @@ class TokenManager {
 
 export const tokenManager = new TokenManager();
 
+// Default timeout for standard interactive API requests to prevent hanging requests.
+const DEFAULT_API_TIMEOUT_MS = 20_000;
+
 const instance: AxiosInstance = axios.create({
   baseURL: env.VITE_API_BASE_URL,
-  timeout: env.VITE_API_TIMEOUT_MS,
+  timeout: DEFAULT_API_TIMEOUT_MS,
 });
 
 instance.interceptors.request.use((config) => {
@@ -146,6 +180,16 @@ instance.interceptors.request.use((config) => {
 
   const tenantId = sessionStorage.getItem(STORAGE_KEYS.tenantId);
   if (tenantId) config.headers.set('X-Tenant-Id', tenantId);
+
+  // Allow long-running endpoints (like video analysis) to use extended timeout
+  if (!config.timeout || config.timeout === DEFAULT_API_TIMEOUT_MS) {
+    const isLongRunning =
+      config.url &&
+      (config.url.includes('/reference-sets') ||
+        config.url.includes('/analyze') ||
+        config.url.includes('/video'));
+    config.timeout = isLongRunning ? env.VITE_API_TIMEOUT_MS : DEFAULT_API_TIMEOUT_MS;
+  }
 
   // FR: idempotency for mutating requests — interceptor owns this, callers do not.
   if (config.method && MUTATING_METHODS.has(config.method.toLowerCase())) {
@@ -159,12 +203,34 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response: AxiosResponse<ApiEnvelope<unknown>>) => response,
   async (error: AxiosError<ApiEnvelope<unknown>>) => {
-    if (!error.response) throw new NetworkError(error.message);
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
+        throw new NetworkError(
+          'Yêu cầu đã hết thời gian chờ (Server Timeout). Vui lòng thử lại sau.',
+        );
+      }
+      if (typeof window !== 'undefined' && !window.navigator.onLine) {
+        throw new NetworkError('Mất kết nối Internet. Vui lòng kiểm tra lại đường truyền mạng.');
+      }
+      throw new NetworkError(
+        error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
+      );
+    }
 
     const { status, data } = error.response;
     const body = data as { message?: string; errorCode?: string; code?: string } | undefined;
     const message = body?.message ?? error.message;
     const code = body?.errorCode ?? body?.code;
+
+    // Handle Idempotency in-flight conflicts
+    if (status === 409 && (code === 'IdempotencyInFlight' || code === 'Conflict')) {
+      throw new ApiError(
+        status,
+        message || 'Thao tác đang được xử lý, vui lòng không gửi lại liên tục.',
+        code,
+        data,
+      );
+    }
 
     // Credential errors on login/register/refresh must not trigger a refresh or a sign-out.
     if (status === 401 && isAuthRequest(error.config?.url)) {
@@ -172,13 +238,18 @@ instance.interceptors.response.use(
     }
 
     if (status === 401 && error.config && !(error.config as { _retried?: boolean })._retried) {
+      const requestAccess = error.config.headers.get('Authorization');
+      if (requestAccess !== `Bearer ${tokenManager.getAccess()}`)
+        throw new AuthError(status, message, code);
+      const ownerRefresh = tokenManager.getRefresh();
       const newToken = await tokenManager.refresh();
       if (newToken) {
         (error.config as { _retried?: boolean })._retried = true;
         error.config.headers.set('Authorization', `Bearer ${newToken}`);
         return instance.request(error.config);
       }
-      tokenManager.notifySessionExpired();
+      if (tokenManager.getRefresh() === null || tokenManager.getRefresh() === ownerRefresh)
+        tokenManager.notifySessionExpired();
       throw new AuthError(status, message, code);
     }
 
@@ -210,6 +281,54 @@ function unwrap<T>(response: AxiosResponse<ApiEnvelope<T> | T>): T {
   return unwrapApiResponse(response.data);
 }
 
+// In-flight mutation cache: prevents duplicate rapid triggers from firing duplicate HTTP network calls.
+const inFlightMutations = new Map<string, Promise<unknown>>();
+
+function getMutationKey(method: string, url: string, body?: unknown): string {
+  try {
+    return `${method.toLowerCase()}:${url}:${JSON.stringify(body ?? {})}`;
+  } catch {
+    return generateUuid();
+  }
+}
+
+async function executeMutatingRequest<T>(
+  method: 'post' | 'put' | 'patch' | 'delete',
+  url: string,
+  body?: unknown,
+  config?: AxiosRequestConfig,
+): Promise<T> {
+  // Explicit transport options (signals, idempotency keys, timeouts) belong to
+  // independent requests. Never share an account's in-flight mutation with another.
+  const scope = `${tokenManager.getAccess()}:${sessionStorage.getItem(STORAGE_KEYS.tenantId)}`;
+  const key = config ? generateUuid() : `${scope}:${getMutationKey(method, url, body)}`;
+  const existing = inFlightMutations.get(key);
+  if (existing) {
+    return existing as Promise<T>;
+  }
+
+  const executionPromise = (async () => {
+    try {
+      let res: AxiosResponse<ApiEnvelope<T> | T>;
+      if (method === 'post') {
+        res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'put') {
+        res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'patch') {
+        res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
+      } else {
+        res = await instance.delete<ApiEnvelope<T> | T>(url, config);
+      }
+      return unwrap(res);
+    } finally {
+      inFlightMutations.delete(key);
+    }
+  })();
+
+  inFlightMutations.set(key, executionPromise);
+  return executionPromise;
+}
+
 export async function apiGet<T>(
   url: string,
   config?: Parameters<AxiosInstance['get']>[1],
@@ -223,8 +342,7 @@ export async function apiPost<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['post']>[2],
 ): Promise<T> {
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('post', url, body, config);
 }
 
 export async function apiPut<T, B = unknown>(
@@ -232,8 +350,7 @@ export async function apiPut<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['put']>[2],
 ): Promise<T> {
-  const res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('put', url, body, config);
 }
 
 export async function apiPatch<T, B = unknown>(
@@ -241,21 +358,23 @@ export async function apiPatch<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['patch']>[2],
 ): Promise<T> {
-  const res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('patch', url, body, config);
 }
 
 export async function apiDelete<T>(
   url: string,
   config?: Parameters<AxiosInstance['delete']>[1],
 ): Promise<T> {
-  const res = await instance.delete<ApiEnvelope<T> | T>(url, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('delete', url, undefined, config);
 }
 
-export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+export async function apiPostForm<T>(
+  url: string,
+  body: FormData,
+  config?: Parameters<AxiosInstance['post']>[2],
+): Promise<T> {
   // Do not set Content-Type: the browser must add the multipart boundary.
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 

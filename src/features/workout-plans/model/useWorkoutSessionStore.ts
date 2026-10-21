@@ -24,6 +24,8 @@ interface WorkoutSessionState {
   startSession: (input: StartInput) => string;
   saveExerciseLog: (exerciseId: string, log: ExerciseLog) => void;
   goToExercise: (index: number) => void;
+  saveDraft: (exerciseId: string, draft: ExerciseLog) => void;
+  selectSet: (exerciseId: string, index: number) => void;
   finishSession: () => CompletedWorkoutSession | null;
   clearActiveSession: () => void;
   updateSync: (id: string, sync: CompletedWorkoutSession['sync']) => void;
@@ -99,6 +101,28 @@ export const useWorkoutSessionStore = create<WorkoutSessionState>()(
                 activeSession: {
                   ...state.activeSession,
                   logs: { ...state.activeSession.logs, [exerciseId]: log },
+                },
+              }
+            : state,
+        ),
+      saveDraft: (exerciseId, draft) =>
+        set((state) =>
+          state.activeSession
+            ? {
+                activeSession: {
+                  ...state.activeSession,
+                  drafts: { ...state.activeSession.drafts, [exerciseId]: draft },
+                },
+              }
+            : state,
+        ),
+      selectSet: (exerciseId, index) =>
+        set((state) =>
+          state.activeSession
+            ? {
+                activeSession: {
+                  ...state.activeSession,
+                  selectedSets: { ...state.activeSession.selectedSets, [exerciseId]: index },
                 },
               }
             : state,

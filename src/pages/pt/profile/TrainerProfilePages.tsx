@@ -22,8 +22,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { ChangePasswordDialog } from '@/features/auth/ui/ChangePasswordDialog';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
+import { ChangePasswordDialog } from '@/features/auth/ui/ChangePasswordDialog';
 import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
 import { getGym } from '@/features/marketplace/model/marketplaceData';
 import { useTrainerProfileStore } from '@/features/trainer-profile';
@@ -150,7 +150,7 @@ export function TrainerProfilePage() {
         <button
           type="button"
           onClick={() => setIsChangePasswordOpen(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
         >
           <KeyRound size={14} />
           Đổi mật khẩu
@@ -161,10 +161,7 @@ export function TrainerProfilePage() {
         </Link>
       </div>
 
-      <ChangePasswordDialog
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
+      <ChangePasswordDialog open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen} />
       <section className="trainer-profile-hero">
         <TrainerAvatar name={name} source={profile.avatarDataUrl ?? user?.avatarUrl} large />
         <div>
@@ -290,7 +287,8 @@ export function EditTrainerProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    marketplaceApi.getTrainerProfileStatus()
+    marketplaceApi
+      .getTrainerProfileStatus()
       .then((status) => {
         if (status) {
           setIsProfileComplete(status.isProfileComplete);
@@ -300,7 +298,8 @@ export function EditTrainerProfilePage() {
             email: status.email || prev.email,
             phone: status.phoneNumber || prev.phone,
             bio: status.bio || prev.bio,
-            experienceYears: status.yearsOfExperience > 0 ? status.yearsOfExperience : prev.experienceYears,
+            experienceYears:
+              status.yearsOfExperience > 0 ? status.yearsOfExperience : prev.experienceYears,
           }));
         }
       })
@@ -353,15 +352,16 @@ export function EditTrainerProfilePage() {
   return (
     <div className="trainer-profile-page">
       {!isProfileComplete && (
-        <div className="mb-6 p-4 rounded-xl border border-amber-500/50 bg-amber-500/10 flex items-start gap-3 text-amber-900 dark:text-amber-200">
-          <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={20} />
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 text-amber-900 dark:text-amber-200">
+          <AlertTriangle className="mt-0.5 shrink-0 text-amber-500" size={20} />
           <div>
             <strong className="block text-sm font-semibold">
               Yêu cầu hoàn tất hồ sơ cá nhân (Bắt buộc cho PT mới)
             </strong>
-            <p className="text-xs mt-1 text-muted-foreground">
-              Tài khoản của bạn đã được chủ phòng gym tạo. Vui lòng hoàn thành các thông tin chuyên môn
-              (Số điện thoại, Số năm kinh nghiệm, Giới thiệu bản thân) để được phân bổ học viên và mở khóa lịch làm việc.
+            <p className="mt-1 text-xs text-muted-foreground">
+              Tài khoản của bạn đã được chủ phòng gym tạo. Vui lòng hoàn thành các thông tin chuyên
+              môn (Số điện thoại, Số năm kinh nghiệm, Giới thiệu bản thân) để được phân bổ học viên
+              và mở khóa lịch làm việc.
             </p>
           </div>
         </div>

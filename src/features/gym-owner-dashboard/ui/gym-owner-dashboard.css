@@ -1,5 +1,7 @@
 .gym-dashboard-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -451,8 +453,15 @@
 
 .gym-dashboard-customization {
   max-height: min(90vh, 720px);
-  max-width: 620px;
+  max-width: calc(100vw - 2rem);
+  width: 100%;
   overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .gym-dashboard-customization {
+    max-width: 620px;
+  }
 }
 
 .gym-dashboard-customization__list {

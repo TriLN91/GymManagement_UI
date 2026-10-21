@@ -72,8 +72,9 @@ export function countSourceOutcomes(sources: ReferenceSetSourceDto[]): SourceOut
 
 export function selectProfilesForView(profiles: ReferenceSetProfileDto[]) {
   const ordered = profiles.slice().sort(profileVersionDescending);
-  const liveProfile = ordered.find((profile) => profile.status === 'ACTIVE');
-  const newest = ordered[0];
+  const eligible = ordered.filter((profile) => !profile.qualitySummary.withdrawnReason);
+  const liveProfile = eligible.find((profile) => profile.status === 'ACTIVE');
+  const newest = eligible[0];
   const currentCandidate = newest && newest.id !== liveProfile?.id ? newest : undefined;
   const promoted = new Set([liveProfile?.id, currentCandidate?.id].filter(Boolean));
   return {

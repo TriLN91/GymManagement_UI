@@ -1,5 +1,5 @@
 import { mapAuthResponse } from './mappers';
-import type { AuthResponseDto } from './types';
+import type { AuthResponseDto, RegisterOtpSentResponse, VerifyRegisterOtpPayload } from './types';
 
 import type {
   AuthSession,
@@ -23,6 +23,16 @@ export const sessionApi = {
   // Returns no tokens: the account stays pending until a Platform Admin approves it.
   registerGymAdmin: (payload: RegisterGymAdminPayload) =>
     apiPost<PendingRegistration, RegisterGymAdminPayload>(ENDPOINTS.auth.registerGymAdmin, payload),
+  sendRegisterOtp: (payload: RegisterPayload): Promise<RegisterOtpSentResponse> =>
+    apiPost<RegisterOtpSentResponse, RegisterPayload>(ENDPOINTS.auth.registerSendOtp, payload),
+
+  verifyRegisterOtp: async (payload: VerifyRegisterOtpPayload): Promise<AuthSession> =>
+    mapAuthResponse(
+      await apiPost<AuthResponseDto, VerifyRegisterOtpPayload>(
+        ENDPOINTS.auth.registerVerifyOtp,
+        payload,
+      ),
+    ),
 
   logout: (refreshToken: string) => apiPost<void>(ENDPOINTS.auth.logout, { refreshToken }),
 };

@@ -1,5 +1,6 @@
-import type { AuthSession, Role } from '@/entities/user';
 import type { AuthResponseDto } from './types';
+
+import type { AuthSession, Role } from '@/entities/user';
 
 export type { AuthResponseDto };
 
