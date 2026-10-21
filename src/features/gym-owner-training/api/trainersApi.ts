@@ -7,10 +7,10 @@ export const trainersApi = {
   listMyGyms: () => apiGet<OwnerGymDto[]>(ENDPOINTS.gymOwner.myGyms),
 
   listTrainers: (gymId?: string) =>
-    apiGet<TrainerAccountDto[]>(ENDPOINTS.gymOwner.trainers, {
+    apiGet<TrainerAccountDto[]>(ENDPOINTS.gymOwner.trainerAccounts, {
       params: gymId ? { gymId } : undefined,
     }),
 
   createTrainer: (body: CreateTrainerBody) =>
-    apiPost<TrainerAccountDto, CreateTrainerBody>(ENDPOINTS.gymOwner.trainers, body),
+    apiPost<TrainerAccountDto, CreateTrainerBody>(ENDPOINTS.gymOwner.trainerAccounts, body),
 };

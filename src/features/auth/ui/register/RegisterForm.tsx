@@ -10,26 +10,54 @@ import { z } from 'zod';
 import { authApi } from '../../api/authApi';
 import { useVerifyRegisterOtp } from '../../model/useAuth';
 
+import type { RegisterPayload } from '@/entities/user';
 import { ValidationError } from '@/shared/api/errorTypes';
 import { ROUTES } from '@/shared/config/constants';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 
-const schema = z
-  .object({
-    email: z.string().email('auth:register.errors.email'),
-    password: z.string().min(6, 'auth:register.errors.min').max(128, 'auth:register.errors.max'),
-    confirmPassword: z.string().min(1, 'auth:register.errors.confirmRequired'),
-  })
-  .refine((values) => values.password === values.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'auth:register.errors.mismatch',
-  });
+// Trainer accounts are not self-registered: a Gym Admin creates them for their own gym.
+type Role = 'member' | 'gym_admin';
+const ROLES: Role[] = ['member', 'gym_admin'];
 
-type FormValues = z.infer<typeof schema>;
-type Role = 'member' | 'pt' | 'gym_admin';
-const ROLES: Role[] = ['member', 'pt', 'gym_admin'];
+const baseFields = {
+  email: z.string().email('auth:register.errors.email'),
+  password: z.string().min(6, 'auth:register.errors.min').max(128, 'auth:register.errors.max'),
+  confirmPassword: z.string().min(1, 'auth:register.errors.confirmRequired'),
+  fullName: z.string().max(200),
+  gymName: z.string().max(200),
+};
+
+// Gym Admin additionally needs a contact name and the gym (organization) name.
+function buildSchema(role: Role) {
+  return z
+    .object(baseFields)
+    .refine((values) => values.password === values.confirmPassword, {
+      path: ['confirmPassword'],
+      message: 'auth:register.errors.mismatch',
+    })
+    .superRefine((values, ctx) => {
+      if (role !== 'gym_admin') return;
+      if (!values.fullName.trim()) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['fullName'],
+          message: 'auth:register.errors.fullName',
+        });
+      }
+      if (!values.gymName.trim()) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['gymName'],
+          message: 'auth:register.errors.gymName',
+        });
+      }
+    });
+}
+type FormValues = z.infer<ReturnType<typeof buildSchema>>;
+
+const backendRoleOf = (role: Role) => (role === 'gym_admin' ? 'GymAdmin' : 'Member');
 
 export function RegisterForm() {
   const { t } = useTranslation();
@@ -37,6 +65,8 @@ export function RegisterForm() {
   const verifyRegisterOtp = useVerifyRegisterOtp();
 
   const [role, setRole] = useState<Role>('member');
+  const roleRef = useRef<Role>(role);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [step, setStep] = useState<'form' | 'otp'>('form');
   const [otpCode, setOtpCode] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -51,8 +81,10 @@ export function RegisterForm() {
     setError,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '', confirmPassword: '' },
+    // The schema depends on the selected role, so resolve it at submit time.
+    resolver: (values, context, options) =>
+      zodResolver(buildSchema(roleRef.current))(values, context, options),
+    defaultValues: { email: '', password: '', confirmPassword: '', fullName: '', gymName: '' },
   });
 
   // Cooldown countdown timer
@@ -66,21 +98,22 @@ export function RegisterForm() {
 
   const isSubmittingRef = useRef(false);
 
+  const toPayload = (values: FormValues, selected: Role): RegisterPayload => ({
+    email: values.email,
+    password: values.password,
+    fullName:
+      selected === 'gym_admin' ? values.fullName.trim() : values.email.split('@')[0] || 'User',
+    role: backendRoleOf(selected),
+    ...(selected === 'gym_admin' ? { gymName: values.gymName.trim() } : {}),
+  });
+
   const onSendOtp = handleSubmit(async (values) => {
     if (isSubmittingRef.current || isSendingOtp) return;
     isSubmittingRef.current = true;
     setIsSendingOtp(true);
     setOtpError('');
     try {
-      const backendRole = role === 'gym_admin' ? 'GymAdmin' : role === 'pt' ? 'Trainer' : 'Member';
-      const fullName = values.email.split('@')[0] || 'User';
-
-      const res = await authApi.sendRegisterOtp({
-        email: values.email,
-        password: values.password,
-        fullName,
-        role: backendRole,
-      });
+      const res = await authApi.sendRegisterOtp(toPayload(values, roleRef.current));
 
       setSavedValues(values);
       if (res.debugOtpCode) {
@@ -92,7 +125,13 @@ export function RegisterForm() {
     } catch (error: unknown) {
       if (error instanceof ValidationError) {
         for (const [field, messages] of Object.entries(error.fieldErrors)) {
-          if ((field === 'email' || field === 'password') && messages[0]) {
+          if (
+            (field === 'email' ||
+              field === 'password' ||
+              field === 'fullName' ||
+              field === 'gymName') &&
+            messages[0]
+          ) {
             setError(field, { message: messages[0] });
           }
         }
@@ -113,13 +152,7 @@ export function RegisterForm() {
     setOtpError('');
     setIsSendingOtp(true);
     try {
-      const backendRole = role === 'gym_admin' ? 'GymAdmin' : role === 'pt' ? 'Trainer' : 'Member';
-      const res = await authApi.sendRegisterOtp({
-        email: savedValues.email,
-        password: savedValues.password,
-        fullName: savedValues.email.split('@')[0] || 'User',
-        role: backendRole,
-      });
+      const res = await authApi.sendRegisterOtp(toPayload(savedValues, roleRef.current));
       if (res.debugOtpCode) {
         setDebugOtpCode(res.debugOtpCode);
       }
@@ -146,20 +179,18 @@ export function RegisterForm() {
     isSubmittingRef.current = true;
     setOtpError('');
     try {
-      await verifyRegisterOtp.mutateAsync({
+      const result = await verifyRegisterOtp.mutateAsync({
         email: savedValues.email,
         otpCode: otpCode.trim(),
       });
 
-      toast.success('Đăng ký tài khoản thành công!');
-
-      if (role === 'gym_admin') {
-        void navigate(ROUTES.admin.onboarding, { replace: true });
-      } else if (role === 'pt') {
-        void navigate(ROUTES.pt.root, { replace: true });
-      } else {
-        void navigate(ROUTES.member.profileSetup, { replace: true });
+      if (result.status === 'pending') {
+        // No session: a Platform Admin must approve the Gym Admin account first.
+        setPendingEmail(result.email);
+        return;
       }
+      toast.success('Đăng ký tài khoản thành công!');
+      void navigate(ROUTES.member.profileSetup, { replace: true });
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : 'Mã OTP không chính xác hoặc đã hết hạn.';
@@ -168,6 +199,26 @@ export function RegisterForm() {
       isSubmittingRef.current = false;
     }
   };
+
+  if (pendingEmail) {
+    return (
+      <div className="flex w-full flex-col items-center text-center" role="status">
+        <h1 className="mb-3 font-syne text-3xl font-bold text-forest">
+          {t('auth:register.pending.title')}
+        </h1>
+        <p className="mb-2 text-sm font-medium text-forest/80">
+          {t('auth:register.pending.message', { email: pendingEmail })}
+        </p>
+        <p className="mb-8 text-xs text-forest/60">{t('auth:register.pending.hint')}</p>
+        <Link
+          to={ROUTES.public.login}
+          className="text-sm font-bold text-forest underline hover:text-forest/80"
+        >
+          {t('auth:register.pending.backToLogin')}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -198,7 +249,10 @@ export function RegisterForm() {
                   type="button"
                   role="radio"
                   aria-checked={selected}
-                  onClick={() => setRole(item)}
+                  onClick={() => {
+                    roleRef.current = item;
+                    setRole(item);
+                  }}
                   className={`flex items-center justify-between rounded-xl border p-4 transition-colors ${
                     selected
                       ? 'border-forest bg-forest/5'
@@ -226,6 +280,36 @@ export function RegisterForm() {
           </div>
 
           <form onSubmit={onSendOtp} className="w-full space-y-4" noValidate>
+            {role === 'gym_admin' ? (
+              <>
+                {(
+                  [
+                    ['fullName', 'auth:register.fullName'],
+                    ['gymName', 'auth:register.gymName'],
+                  ] as const
+                ).map(([name, label]) => (
+                  <div key={name} className="space-y-1.5">
+                    <Label
+                      htmlFor={name}
+                      className="text-xs font-bold uppercase tracking-wider text-forest"
+                    >
+                      {t(label)}
+                    </Label>
+                    <Input
+                      id={name}
+                      {...registerField(name)}
+                      className="h-12 border-forest/20 bg-transparent text-forest focus-visible:ring-forest"
+                    />
+                    {errors[name] ? (
+                      <p className="text-xs font-medium text-red-500">
+                        {t(errors[name]?.message ?? '')}
+                      </p>
+                    ) : null}
+                  </div>
+                ))}
+                <p className="text-xs text-forest/60">{t('auth:register.gymAdminNote')}</p>
+              </>
+            ) : null}
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"

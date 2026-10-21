@@ -168,7 +168,22 @@ export const authHandlers = [
       password?: string;
       fullName?: string;
       role?: string;
+      gymName?: string;
     };
+    const requested = (body.role ?? 'Member').toLowerCase();
+    if (requested === 'trainer' || requested === 'pt') {
+      return failure(
+        400,
+        'Validation',
+        '400: Tài khoản huấn luyện viên do Gym Admin tạo; không thể tự đăng ký.',
+      );
+    }
+    const isGymAdmin = requested === 'gymadmin' || requested === 'gym_admin';
+    if (isGymAdmin && !(body.gymName ?? '').trim()) {
+      return failure(400, 'Validation', '400: Cần nhập tên phòng gym khi đăng ký Gym Admin.');
+    }
+    if (emailTaken(body.email ?? ''))
+      return failure(409, 'Conflict', '409: Email đã được đăng ký.');
     if ((body.password ?? '').length < MIN_PASSWORD_LENGTH) {
       return failure(
         400,
@@ -178,7 +193,13 @@ export const authHandlers = [
     }
     sessionStorage.setItem(
       'fitflex:mock-registration',
-      JSON.stringify({ email: body.email, fullName: body.fullName, role: body.role }),
+      JSON.stringify({
+        email: body.email,
+        password: body.password,
+        fullName: body.fullName,
+        role: isGymAdmin ? 'GymAdmin' : 'Member',
+        gymName: body.gymName,
+      }),
     );
     return success({
       email: body.email,
@@ -194,22 +215,44 @@ export const authHandlers = [
     if (body.otpCode !== '123456' && body.otpCode !== '888888') {
       return failure(400, 'InvalidOtp', 'Mã OTP không chính xác. Vui lòng kiểm tra lại.');
     }
+    const stored = JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
+      password?: string;
+      fullName?: string;
+      role?: string;
+      gymName?: string;
+    };
+    const email = body.email ?? '';
+    if (stored.role === 'GymAdmin') {
+      // Like the backend, no tokens are returned: the account waits for a Platform Admin.
+      const userId = crypto.randomUUID();
+      gymAdminRegistry.push({
+        userId,
+        email,
+        password: stored.password ?? '',
+        fullName: stored.fullName ?? '',
+        phoneNumber: null,
+        gymId: crypto.randomUUID(),
+        gymName: stored.gymName ?? '',
+        legalName: null,
+        taxCode: null,
+        status: 'PendingApproval' as const,
+        createdAtUtc: new Date().toISOString(),
+      });
+      return success({
+        userId,
+        email,
+        fullName: stored.fullName ?? '',
+        accessToken: '',
+        refreshToken: '',
+        roles: ['GymAdmin'],
+        pendingApproval: true,
+      });
+    }
     const account: MockAccount = {
       userId: `u-${Date.now()}`,
-      email: body.email ?? '',
-      fullName:
-        (
-          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
-            fullName?: string;
-          }
-        ).fullName ?? 'User',
-      roles: [
-        (
-          JSON.parse(sessionStorage.getItem('fitflex:mock-registration') ?? '{}') as {
-            role?: string;
-          }
-        ).role ?? 'Member',
-      ],
+      email,
+      fullName: stored.fullName ?? 'User',
+      roles: ['Member'],
     };
     return success(tokensFor(account), 201);
   }),

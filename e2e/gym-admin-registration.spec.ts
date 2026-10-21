@@ -38,6 +38,9 @@ test.describe('Gym Admin registration and approval', () => {
     await page.getByLabel('Initial password', { exact: true }).fill('Pass-12345');
     await page.getByLabel('Confirm password').fill('Pass-12345');
     await page.getByRole('button', { name: /continue creating account/i }).click();
+    // Register is OTP-verified; the MSW dev code is offered on screen.
+    await page.getByRole('button', { name: 'Nhập nhanh' }).click();
+    await page.getByRole('button', { name: /Xác thực & Hoàn tất đăng ký/ }).click();
 
     await expect(page.getByRole('heading', { name: 'Registration received' })).toBeVisible();
     await page.getByRole('link', { name: 'Back to sign in' }).click();
@@ -83,6 +86,8 @@ test.describe('Gym Admin registration and approval', () => {
     await page.getByLabel('Initial password', { exact: true }).fill('Pass-12345');
     await page.getByLabel('Confirm password').fill('Pass-12345');
     await page.getByRole('button', { name: /continue creating account/i }).click();
+    await page.getByRole('button', { name: 'Nhập nhanh' }).click();
+    await page.getByRole('button', { name: /Xác thực & Hoàn tất đăng ký/ }).click();
     await page.getByRole('link', { name: 'Back to sign in' }).click();
 
     await signIn(page, 'super@demo.gym', 'Password1!');

@@ -44,9 +44,10 @@ export function useVerifyRegisterOtp() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
     mutationFn: (payload: { email: string; otpCode: string }) => authApi.verifyRegisterOtp(payload),
-    onSuccess: (session: AuthSession) => {
-      tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
-      setSession(session.user);
+    onSuccess: (result) => {
+      if (result.status !== 'signedIn') return;
+      tokenManager.setTokens(result.session.tokens.accessToken, result.session.tokens.refreshToken);
+      setSession(result.session.user);
     },
   });
 }

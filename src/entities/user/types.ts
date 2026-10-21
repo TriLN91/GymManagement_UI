@@ -34,6 +34,8 @@ export interface RegisterPayload {
   password: string;
   fullName: string;
   role?: string;
+  /** Required when role is GymAdmin. */
+  gymName?: string;
 }
 
 /** Gym Admin self-registration; the account must be approved by a Platform Admin before sign-in. */

@@ -130,6 +130,7 @@ export const ENDPOINTS = {
     removeTrainer: (branchId: string, trainerProfileId: string) =>
       `/gym-owner/branches/${branchId}/trainers/${trainerProfileId}`,
     trainers: '/gym-owner/trainers',
+    trainerAccounts: '/gym-owner/trainer-accounts',
     trainersOverview: '/gym-owner/trainers/overview',
     updateTrainerStatus: (trainerProfileId: string) =>
       `/gym-owner/trainers/${trainerProfileId}/status`,
