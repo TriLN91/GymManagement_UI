@@ -29,13 +29,13 @@ The API provides ordered, replayable events over authenticated SSE for web. The 
 
 ## Business tools
 
-| Tool | Application boundary | Authorization and bounds | Status |
-|---|---|---|---|
-| `get_my_profile` | `ICf01Service.GetProfileAsync` | Authenticated actor; no member ID argument | PASS |
-| `get_current_training_plan` | `ICf01Service.GetPlansAsync` | Authenticated actor; active plans only, at most three per domain | PASS |
-| `search_exercises` | `ICf01Service.GetExercisesAsync` | Validated 1–120 character query; at most 20 results | PASS |
-| `get_my_assessments` | `IMovementAssessmentService.ListOwnedAsync` | Actor user ID supplied on server; optional UUID filter; at most 20 results | PASS |
-| `search_approved_knowledge` | `IKnowledgeService.RetrieveAsync` | Only `workout`/`nutrition`; query max 300; at most eight published results | PASS |
+| Tool                        | Application boundary                        | Authorization and bounds                                                   | Status |
+| --------------------------- | ------------------------------------------- | -------------------------------------------------------------------------- | ------ |
+| `get_my_profile`            | `ICf01Service.GetProfileAsync`              | Authenticated actor; no member ID argument                                 | PASS   |
+| `get_current_training_plan` | `ICf01Service.GetPlansAsync`                | Authenticated actor; active plans only, at most three per domain           | PASS   |
+| `search_exercises`          | `ICf01Service.GetExercisesAsync`            | Validated 1–120 character query; at most 20 results                        | PASS   |
+| `get_my_assessments`        | `IMovementAssessmentService.ListOwnedAsync` | Actor user ID supplied on server; optional UUID filter; at most 20 results | PASS   |
+| `search_approved_knowledge` | `IKnowledgeService.RetrieveAsync`           | Only `workout`/`nutrition`; query max 300; at most eight published results | PASS   |
 
 Tools are read-only. Tool audit records store tool name, validated arguments, status, duration, error code, and result byte count. Personal tool result payloads are not copied into audit rows. Future write tools must use explicit confirmation, reauthorization at confirmation time, idempotency, and resource audit; payment, OAuth, and account administration tools are not implemented.
 
@@ -80,31 +80,31 @@ Status: PASS for lint, typecheck, 88-test suite, navigation ownership, and assis
 
 ## Demonstration scenarios
 
-| Scenario | Implemented behavior | Validation |
-|---|---|---|
-| A — personalize | Dynamic goal choice, then routine form, then completion message; every step persists and duplicate submission is rejected/idempotent | Automated round-trip test implemented; database execution BLOCKED by unavailable Docker daemon |
-| B — current plan | Orchestrator executes `get_current_training_plan` and returns a real account-backed data card or truthful empty collections | Tool implementation/unit boundaries PASS; live API/database E2E BLOCKED |
-| C — grounded guidance | Orchestrator retrieves approved knowledge, returns evidence/citations in a read-only card, and refuses to fabricate when retrieval is unavailable | Tool validation PASS; live seeded-corpus E2E BLOCKED |
+| Scenario              | Implemented behavior                                                                                                                              | Validation                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| A — personalize       | Dynamic goal choice, then routine form, then completion message; every step persists and duplicate submission is rejected/idempotent              | Automated round-trip test implemented; database execution BLOCKED by unavailable Docker daemon |
+| B — current plan      | Orchestrator executes `get_current_training_plan` and returns a real account-backed data card or truthful empty collections                       | Tool implementation/unit boundaries PASS; live API/database E2E BLOCKED                        |
+| C — grounded guidance | Orchestrator retrieves approved knowledge, returns evidence/citations in a read-only card, and refuses to fabricate when retrieval is unavailable | Tool validation PASS; live seeded-corpus E2E BLOCKED                                           |
 
 The real OpenAI adapter is supported when `OPENAI_API_KEY` or `AI:OpenAiApiKey` is configured. No credential was available for this run; live-provider validation is NOT RUN. The three delivery scenarios deliberately have safe deterministic orchestration paths and do not require a production mock.
 
 ## Validation evidence
 
-| Check | Result | Evidence |
-|---|---|---|
-| Backend solution build | PASS | 0 warnings, 0 errors |
-| Backend unit tests | PASS | 74/74 |
-| EF pending model changes | PASS | No changes since migration |
-| Assistant PostgreSQL integration tests | BLOCKED | Tests compile; Docker service is stopped and cannot be started under current service permissions |
-| Existing backend PostgreSQL integration suite | NOT RUN | Same Docker blocker |
-| Web lint/typecheck | PASS | zero warnings/errors |
-| Web tests | PASS | 180/180 across 54 files |
-| Web production build | PASS | Vite build completed; assistant emitted as lazy chunk |
-| Mobile lint/typecheck | PASS | zero errors |
-| Mobile tests | PASS | 88/88 |
-| Live OpenAI smoke | NOT RUN | No configured credential; no claim of live validation |
-| Browser/native real-API walkthrough | BLOCKED | No running backend/PostgreSQL environment |
-| Pull-request creation | BLOCKED | GitHub CLI is unavailable; connected GitHub integration returned 403 for PR creation |
+| Check                                         | Result  | Evidence                                                                                         |
+| --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| Backend solution build                        | PASS    | 0 warnings, 0 errors                                                                             |
+| Backend unit tests                            | PASS    | 74/74                                                                                            |
+| EF pending model changes                      | PASS    | No changes since migration                                                                       |
+| Assistant PostgreSQL integration tests        | BLOCKED | Tests compile; Docker service is stopped and cannot be started under current service permissions |
+| Existing backend PostgreSQL integration suite | NOT RUN | Same Docker blocker                                                                              |
+| Web lint/typecheck                            | PASS    | zero warnings/errors                                                                             |
+| Web tests                                     | PASS    | 180/180 across 54 files                                                                          |
+| Web production build                          | PASS    | Vite build completed; assistant emitted as lazy chunk                                            |
+| Mobile lint/typecheck                         | PASS    | zero errors                                                                                      |
+| Mobile tests                                  | PASS    | 88/88                                                                                            |
+| Live OpenAI smoke                             | NOT RUN | No configured credential; no claim of live validation                                            |
+| Browser/native real-API walkthrough           | BLOCKED | No running backend/PostgreSQL environment                                                        |
+| Pull-request creation                         | BLOCKED | GitHub CLI is unavailable; connected GitHub integration returned 403 for PR creation             |
 
 ## Deferred work and risks
 

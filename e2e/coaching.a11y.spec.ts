@@ -1,9 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Coaching — accessibility wiring', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
-    await page.evaluate(() => { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); });
+    await page.evaluate(() => {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    });
     await page.evaluate(() => window.sessionStorage.clear());
     await page.reload();
     await page.getByLabel(/email/i).fill('member@demo.gym');
@@ -12,7 +15,9 @@ test.describe('Coaching — accessibility wiring', () => {
     await expect(page).toHaveURL(/\/app$/);
   });
 
-  test('plan region is announced via aria-labelledby pointing at the h2 heading', async ({ page }) => {
+  test('plan region is announced via aria-labelledby pointing at the h2 heading', async ({
+    page,
+  }) => {
     await page.goto('/app/coaching');
 
     const region = page.getByTestId('coaching-plan-region');
