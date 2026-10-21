@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { extractFieldErrors, tokenManager, unwrapApiResponse } from './client';
@@ -59,7 +59,9 @@ describe('tokenManager', () => {
 
   it('refresh clears tokens and returns null when the backend rejects it', async () => {
     tokenManager.setTokens('old-access', 'old-refresh');
-    vi.spyOn(axios, 'post').mockRejectedValue(new Error('401'));
+    vi.spyOn(axios, 'post').mockRejectedValue(
+      new AxiosError('401', undefined, undefined, undefined, { status: 401 } as never),
+    );
 
     await expect(tokenManager.refresh()).resolves.toBeNull();
     expect(tokenManager.getAccess()).toBeNull();

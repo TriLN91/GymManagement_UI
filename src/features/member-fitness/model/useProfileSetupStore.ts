@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 
 import { EMPTY_PROFILE, type MemberFitnessProfile } from './profileSetupModel';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 interface ProfileSetupState {
   profile: MemberFitnessProfile;
   currentStep: number;
@@ -26,6 +28,8 @@ export const useProfileSetupStore = create<ProfileSetupState>()(
           profile: { ...state.profile, updatedAt: new Date().toISOString() },
         })),
     }),
-    { name: 'fit:member-fitness-profile:v8', version: 8 },
+    { storage: accountStorage, name: 'fit:member-fitness-profile:v8', version: 8 },
   ),
 );
+
+registerAccountStore(useProfileSetupStore);

@@ -1,6 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
-import { AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
+import { ApiError, AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
 import { notifyError } from '@/shared/lib/errorNotifier';
 
 function reportQuery(error: unknown): void {
@@ -34,6 +34,7 @@ export const queryClient = new QueryClient({
       refetchOnReconnect: true,
       retry: (failureCount, error) => {
         if (error instanceof AuthError || error instanceof ValidationError) return false;
+        if (error instanceof ApiError && error.status >= 400 && error.status < 500) return false;
         return failureCount < 2;
       },
     },

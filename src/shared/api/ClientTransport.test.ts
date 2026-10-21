@@ -121,3 +121,92 @@ it('keeps explicit video upload timeout and does not retry network failures', as
   expect(captured?.timeout).toBe(330000);
   expect(adapter).toHaveBeenCalledOnce();
 });
+
+it('preserves the session on genuine 403 and never refreshes it', async () => {
+  const api = await client((config) =>
+    Promise.reject(
+      new AxiosError('Forbidden', undefined, config, undefined, {
+        data: { message: 'Forbidden' },
+        status: 403,
+        statusText: 'Forbidden',
+        headers: {},
+        config,
+      }),
+    ),
+  );
+  api.tokenManager.setTokens('member', 'refresh');
+  const post = vi.spyOn(axios, 'post');
+  const expired = vi.fn();
+  api.tokenManager.onSessionExpired(expired);
+  await expect(api.apiGet('/admin-only')).rejects.toMatchObject({ status: 403 });
+  expect(api.tokenManager.getAccess()).toBe('member');
+  expect(post).not.toHaveBeenCalled();
+  expect(expired).not.toHaveBeenCalled();
+});
+
+it('retries a late 401 with the already rotated token instead of refreshing twice', async () => {
+  let release!: () => void;
+  let rotated = false;
+  const api = await client((config) => {
+    if (config.headers.get('Authorization') === 'Bearer rotated')
+      return Promise.resolve({
+        data: { data: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config,
+      });
+    const fail = () =>
+      new AxiosError('Expired', undefined, config, undefined, {
+        data: {},
+        status: 401,
+        statusText: 'Unauthorized',
+        headers: {},
+        config,
+      });
+    if (config.url === '/late')
+      return new Promise((_resolve, reject) => {
+        release = () => reject(fail());
+      });
+    return Promise.reject(fail());
+  });
+  api.tokenManager.setTokens('old', 'refresh');
+  const post = vi.spyOn(axios, 'post').mockImplementation(() => {
+    rotated = true;
+    return Promise.resolve({
+      data: { data: { accessToken: 'rotated', refreshToken: 'rotated-refresh' } },
+    });
+  });
+  const late = api.apiGet('/late');
+  await vi.waitFor(() => expect(release).toBeDefined());
+  await expect(api.apiGet('/first')).resolves.toBe(true);
+  expect(rotated).toBe(true);
+  release();
+  await expect(late).resolves.toBe(true);
+  expect(post).toHaveBeenCalledOnce();
+});
+
+it('stops after one refresh when the retried request is still unauthorized', async () => {
+  const adapter = vi.fn((config: InternalAxiosRequestConfig) =>
+    Promise.reject(
+      new AxiosError('Expired', undefined, config, undefined, {
+        data: {},
+        status: 401,
+        statusText: 'Unauthorized',
+        headers: {},
+        config,
+      }),
+    ),
+  );
+  const api = await client(adapter);
+  api.tokenManager.setTokens('old', 'refresh');
+  const post = vi
+    .spyOn(axios, 'post')
+    .mockResolvedValue({ data: { data: { accessToken: 'new', refreshToken: 'new-refresh' } } });
+  const expired = vi.fn();
+  api.tokenManager.onSessionExpired(expired);
+  await expect(api.apiGet('/protected')).rejects.toMatchObject({ status: 401 });
+  expect(adapter).toHaveBeenCalledTimes(2);
+  expect(post).toHaveBeenCalledOnce();
+  expect(expired).toHaveBeenCalledOnce();
+});

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export interface TrainerProfileData {
   phone: string;
   bio: string;
@@ -40,6 +42,8 @@ export const useTrainerProfileStore = create<TrainerProfileState>()(
         }),
       setIsProfileComplete: (isProfileComplete) => set({ isProfileComplete }),
     }),
-    { name: 'fit:trainer-profile:v2', version: 2 },
+    { storage: accountStorage, name: 'fit:trainer-profile:v2', version: 2 },
   ),
 );
+
+registerAccountStore(useTrainerProfileStore);

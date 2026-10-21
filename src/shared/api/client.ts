@@ -5,6 +5,8 @@ import axios, {
   type AxiosResponse,
 } from 'axios';
 
+import { TokenManager } from './session';
+
 import { ENDPOINTS } from '@/shared/api/endpoints';
 import { ApiError, AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
 import { STORAGE_KEYS } from '@/shared/config/constants';
@@ -63,107 +65,6 @@ function isAuthRequest(url: string | undefined): boolean {
   return url !== undefined && AUTH_PATHS.some((path) => url.endsWith(path));
 }
 
-class TokenManager {
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
-  private refreshQueue: Array<(token: string | null) => void> = [];
-  private isRefreshing = false;
-  private refreshingOwner: string | null = null;
-  private sessionExpiredHandler: (() => void) | null = null;
-
-  // Registered by the app shell so this module does not import the auth store (no cycle).
-  onSessionExpired(handler: () => void): void {
-    this.sessionExpiredHandler = handler;
-  }
-
-  notifySessionExpired(): void {
-    this.sessionExpiredHandler?.();
-  }
-
-  hydrate(): void {
-    this.accessToken = sessionStorage.getItem(STORAGE_KEYS.accessToken);
-    this.refreshToken = sessionStorage.getItem(STORAGE_KEYS.refreshToken);
-  }
-
-  setTokens(access: string, refresh: string): void {
-    this.accessToken = access;
-    this.refreshToken = refresh;
-    sessionStorage.setItem(STORAGE_KEYS.accessToken, access);
-    sessionStorage.setItem(STORAGE_KEYS.refreshToken, refresh);
-  }
-
-  clear(): void {
-    this.accessToken = null;
-    this.refreshToken = null;
-    sessionStorage.removeItem(STORAGE_KEYS.accessToken);
-    sessionStorage.removeItem(STORAGE_KEYS.refreshToken);
-  }
-
-  getAccess(): string | null {
-    return this.accessToken;
-  }
-
-  getRefresh(): string | null {
-    return this.refreshToken;
-  }
-
-  // FR-IAM-04: single-use rotation; concurrent 401s queue behind one refresh call.
-  async refresh(): Promise<string | null> {
-    if (!this.refreshToken) return null;
-
-    if (this.isRefreshing && this.refreshToken !== this.refreshingOwner) {
-      const owner = this.refreshToken;
-      // Keep the existing queue, but do not give another login its predecessor's
-      // rotated token. Start its own refresh after the old flight's finally runs.
-      return new Promise<string | null>((resolve) => {
-        this.refreshQueue.push(() =>
-          queueMicrotask(() => {
-            resolve(this.refreshToken === owner ? this.refresh() : null);
-          }),
-        );
-      });
-    }
-    if (this.isRefreshing) {
-      return new Promise<string | null>((resolve) => {
-        this.refreshQueue.push(resolve);
-      });
-    }
-
-    const ownerRefresh = this.refreshToken;
-    this.refreshingOwner = ownerRefresh;
-    this.isRefreshing = true;
-    try {
-      const response = await axios.post<ApiEnvelope<{ accessToken: string; refreshToken: string }>>(
-        `${env.VITE_API_BASE_URL}${ENDPOINTS.auth.refresh}`,
-        { accessToken: this.accessToken ?? '', refreshToken: this.refreshToken },
-      );
-      const { accessToken, refreshToken } = response.data.data;
-      // A refresh started by a previous login cannot replace the current account.
-      if (this.refreshToken !== ownerRefresh) {
-        this.flushQueue(null);
-        return null;
-      }
-      this.setTokens(accessToken, refreshToken);
-      this.flushQueue(accessToken);
-      return accessToken;
-    } catch {
-      if (this.refreshToken === ownerRefresh) this.clear();
-      this.flushQueue(null);
-      return null;
-    } finally {
-      this.isRefreshing = false;
-      this.refreshingOwner = null;
-    }
-  }
-
-  private flushQueue(token: string | null): void {
-    while (this.refreshQueue.length > 0) {
-      const next = this.refreshQueue.shift();
-      if (next) next(token);
-    }
-  }
-}
-
 export const tokenManager = new TokenManager();
 
 // Default timeout for standard interactive API requests to prevent hanging requests.
@@ -174,7 +75,17 @@ const instance: AxiosInstance = axios.create({
   timeout: DEFAULT_API_TIMEOUT_MS,
 });
 
+type SessionRequest = { _retried?: boolean; _sessionVersion?: number };
+
 instance.interceptors.request.use((config) => {
+  tokenManager.checkCurrent();
+  const request = config as typeof config & SessionRequest;
+  if (
+    request._sessionVersion !== undefined &&
+    request._sessionVersion !== tokenManager.getVersion()
+  )
+    throw new AuthError(401, 'Session changed', 'SessionChanged');
+  request._sessionVersion ??= tokenManager.getVersion();
   const token = tokenManager.getAccess();
   if (token) config.headers.set('Authorization', `Bearer ${token}`);
 
@@ -201,8 +112,16 @@ instance.interceptors.request.use((config) => {
 });
 
 instance.interceptors.response.use(
-  (response: AxiosResponse<ApiEnvelope<unknown>>) => response,
+  (response: AxiosResponse<ApiEnvelope<unknown>>) => {
+    if (
+      !isAuthRequest(response.config.url) &&
+      (response.config as SessionRequest)._sessionVersion !== tokenManager.getVersion()
+    )
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+    return response;
+  },
   async (error: AxiosError<ApiEnvelope<unknown>>) => {
+    if (error instanceof AuthError) throw error;
     if (!error.response) {
       if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
         throw new NetworkError(
@@ -238,11 +157,14 @@ instance.interceptors.response.use(
     }
 
     if (status === 401 && error.config && !(error.config as { _retried?: boolean })._retried) {
-      const requestAccess = error.config.headers.get('Authorization');
-      if (requestAccess !== `Bearer ${tokenManager.getAccess()}`)
+      if ((error.config as SessionRequest)._sessionVersion !== tokenManager.getVersion())
         throw new AuthError(status, message, code);
+      const requestAccess = error.config.headers.get('Authorization');
       const ownerRefresh = tokenManager.getRefresh();
-      const newToken = await tokenManager.refresh();
+      const newToken =
+        requestAccess !== `Bearer ${tokenManager.getAccess()}`
+          ? tokenManager.getAccess()
+          : await tokenManager.refresh();
       if (newToken) {
         (error.config as { _retried?: boolean })._retried = true;
         error.config.headers.set('Authorization', `Bearer ${newToken}`);
@@ -253,7 +175,15 @@ instance.interceptors.response.use(
       throw new AuthError(status, message, code);
     }
 
-    if (status === 401) throw new AuthError(status, message, code);
+    if (status === 401) {
+      if (
+        (error.config as SessionRequest | undefined)?._sessionVersion === tokenManager.getVersion()
+      ) {
+        tokenManager.clear();
+        tokenManager.notifySessionExpired();
+      }
+      throw new AuthError(status, message, code);
+    }
 
     if (status === 422 || status === 400) {
       const fieldErrors = extractFieldErrors(data, code, message);
@@ -382,14 +312,34 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
   url: string,
   signal: AbortSignal,
 ): Promise<T[]> {
+  const version = tokenManager.getVersion();
+  const initialToken = tokenManager.getAccess();
+  const assertOwner = () => {
+    if (version !== tokenManager.getVersion())
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+  };
   const request = async (token: string | null) =>
     fetch(`${env.VITE_API_BASE_URL}${url}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       cache: 'no-store',
       signal,
     });
-  let response = await request(tokenManager.getAccess());
-  if (response.status === 401) response = await request(await tokenManager.refresh());
+  let response = await request(initialToken);
+  assertOwner();
+  if (response.status === 401) {
+    const token =
+      initialToken === tokenManager.getAccess()
+        ? await tokenManager.refresh()
+        : tokenManager.getAccess();
+    assertOwner();
+    if (token) response = await request(token);
+    if (!token || response.status === 401) {
+      tokenManager.clear();
+      tokenManager.notifySessionExpired();
+      throw new AuthError(401, 'Session expired');
+    }
+  }
+  assertOwner();
   if (!response.ok || !response.body)
     throw new ApiError(response.status, 'Assistant stream failed');
   const reader = response.body.getReader();
@@ -398,6 +348,10 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
   let buffer = '';
   while (true) {
     const chunk = await reader.read();
+    if (version !== tokenManager.getVersion()) {
+      await reader.cancel();
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+    }
     if (chunk.done) break;
     buffer += decoder.decode(chunk.value, { stream: true }).replace(/\r\n/g, '\n');
     let boundary = buffer.indexOf('\n\n');

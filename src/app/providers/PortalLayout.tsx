@@ -1,7 +1,7 @@
 import { LogOut } from 'lucide-react';
 import { Suspense, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
@@ -93,13 +93,11 @@ export function PortalLayout({ titleKey, nav }: PortalLayoutProps) {
   // Title and nav keys are written as plain keys inside the `common` namespace
   // (e.g. "portals.member"), so we use a single useTranslation hook.
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const logout = useLogout();
   const userFullName = useAuthStore((s) => s.user?.fullName);
 
   const onLogout = () => {
     logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   return (

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 import { initialDisputes } from './mockData';
 import type { DisputeCase, DisputeStatus } from './types';
+
+import { registerAccountStore } from '@/shared/lib/accountState';
 const next: Record<DisputeStatus, ReadonlyArray<DisputeStatus>> = {
   submitted: ['under_review'],
   under_review: ['need_information', 'approved', 'rejected'],
@@ -56,3 +58,5 @@ export const usePlatformGovernanceStore = create<State>((set) => ({
     return true;
   },
 }));
+
+registerAccountStore(usePlatformGovernanceStore);

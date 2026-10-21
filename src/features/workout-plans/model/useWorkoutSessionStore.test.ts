@@ -22,6 +22,7 @@ const squat: WorkoutExercise = {
 describe('workout session store', () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.setItem('gmc.session', JSON.stringify({ user: { id: 'workout-store-test' } }));
     useWorkoutSessionStore.setState({ activeSession: null, completedSessions: [] });
   });
 
@@ -68,7 +69,9 @@ describe('workout session store', () => {
     });
     const active = useWorkoutSessionStore.getState().activeSession;
     expect(active?.exercises).toEqual([squat]);
-    expect(localStorage.getItem('fit:member-workout-session:v2')).toContain(squat.id);
+    expect(
+      localStorage.getItem('fit:member-workout-session:v2:account:workout-store-test'),
+    ).toContain(squat.id);
   });
 
   it('finishes into a pending outbox entry that keeps the device completion time', () => {

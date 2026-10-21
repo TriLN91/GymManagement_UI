@@ -57,4 +57,22 @@ describe('marketplace checkout', () => {
     });
     expect(useMarketplaceStore.getState().orders).toHaveLength(1);
   });
+
+  it('records a real checkout as pending and never grants local Plus coverage', () => {
+    useMarketplaceStore.setState({ currentPlusCoverageDays: 60 });
+    useMarketplaceStore.getState().selectGymOffer('fit-district-90', true);
+    const order = useMarketplaceStore.getState().completeCheckout('card', {
+      id: 'real-order',
+      orderNumber: 'FF-1',
+      totalAmount: 2_290_000,
+    });
+    expect(order).toMatchObject({
+      paymentStatus: 'pending',
+      isDemo: false,
+      totalVnd: 2_290_000,
+      plusAmountVnd: 0,
+      uncoveredPlusDays: 0,
+    });
+    expect(useMarketplaceStore.getState().currentPlusCoverageDays).toBe(60);
+  });
 });

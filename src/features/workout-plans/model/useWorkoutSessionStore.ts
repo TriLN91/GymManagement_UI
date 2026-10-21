@@ -10,6 +10,8 @@ import type {
   WorkoutTotals,
 } from './workoutFlowTypes';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 interface StartInput {
   dayId: string;
   source: WorkoutSource;
@@ -164,8 +166,11 @@ export const useWorkoutSessionStore = create<WorkoutSessionState>()(
         })),
     }),
     {
+      storage: accountStorage,
       name: 'fit:member-workout-session:v2',
       version: 2,
     },
   ),
 );
+
+registerAccountStore(useWorkoutSessionStore);

@@ -9,6 +9,7 @@ import {
 import type { CommissionVersion, PlatformOrder, PlatformSettlement, PlusPricing } from './types';
 
 import { usePlatformApprovalStore } from '@/features/platform-admin-approvals/model/store';
+import { registerAccountStore } from '@/shared/lib/accountState';
 
 interface CommercialState {
   commissionVersions: ReadonlyArray<CommissionVersion>;
@@ -65,3 +66,5 @@ export const usePlatformCommercialStore = create<CommercialState>((set) => ({
     return true;
   },
 }));
+
+registerAccountStore(usePlatformCommercialStore);

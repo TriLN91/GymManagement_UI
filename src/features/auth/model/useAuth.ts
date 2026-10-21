@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { authApi } from '../api/authApi';
 
@@ -6,11 +6,20 @@ import { useAuthStore } from './useAuthStore';
 
 import type { AuthSession, LoginPayload, RegisterPayload } from '@/entities/user';
 import { tokenManager } from '@/shared/api/client';
+import { AuthError } from '@/shared/api/errorTypes';
+
+async function authenticate(request: () => Promise<AuthSession>): Promise<AuthSession> {
+  const version = tokenManager.getVersion();
+  const session = await request();
+  if (version !== tokenManager.getVersion())
+    throw new AuthError(401, 'Session changed', 'SessionChanged');
+  return session;
+}
 
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
-    mutationFn: (payload: LoginPayload) => authApi.login(payload),
+    mutationFn: (payload: LoginPayload) => authenticate(() => authApi.login(payload)),
     onSuccess: (session: AuthSession) => {
       tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
       setSession(session.user);
@@ -21,7 +30,7 @@ export function useLogin() {
 export function useRegister() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
-    mutationFn: (payload: RegisterPayload) => authApi.register(payload),
+    mutationFn: (payload: RegisterPayload) => authenticate(() => authApi.register(payload)),
     onSuccess: (session: AuthSession) => {
       tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
       setSession(session.user);
@@ -32,7 +41,8 @@ export function useRegister() {
 export function useVerifyRegisterOtp() {
   const setSession = useAuthStore((s) => s.setSession);
   return useMutation({
-    mutationFn: (payload: { email: string; otpCode: string }) => authApi.verifyRegisterOtp(payload),
+    mutationFn: (payload: { email: string; otpCode: string }) =>
+      authenticate(() => authApi.verifyRegisterOtp(payload)),
     onSuccess: (session: AuthSession) => {
       tokenManager.setTokens(session.tokens.accessToken, session.tokens.refreshToken);
       setSession(session.user);
@@ -41,17 +51,11 @@ export function useVerifyRegisterOtp() {
 }
 
 export function useLogout() {
-  const clear = useAuthStore((s) => s.clear);
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      // Backend revokes the refresh-token family; a failure must not block local sign-out.
-      const refreshToken = tokenManager.getRefresh();
-      if (refreshToken) await authApi.logout(refreshToken);
-    },
-    onSettled: () => {
-      clear();
-      queryClient.clear();
+      const revocation = tokenManager.signOut();
+      useAuthStore.getState().syncSession(null);
+      await revocation;
     },
   });
 }

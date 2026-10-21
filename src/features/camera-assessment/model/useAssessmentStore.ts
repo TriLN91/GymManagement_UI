@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export interface PendingAssessment {
   id: string;
   exerciseId: string;
@@ -33,6 +35,8 @@ export const useAssessmentStore = create<AssessmentState>()(
         return assessment;
       },
     }),
-    { name: 'fit:ai-assessments:v1', version: 1 },
+    { storage: accountStorage, name: 'fit:ai-assessments:v1', version: 1 },
   ),
 );
+
+registerAccountStore(useAssessmentStore);
