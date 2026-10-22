@@ -57,6 +57,51 @@ test('Assistant survives Promise-returning scroll, conversation updates, navigat
   expect(errors).toEqual([]);
 });
 
+for (const viewport of [
+  { width: 1280, height: 720 },
+  { width: 390, height: 844 },
+]) {
+  test(`long Assistant history scrolls independently at ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await promiseReturningScroll(page);
+    await login(page, 'member@demo.gym', 'Password1!');
+    await page.goto('/app/assistant');
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page
+      .getByLabel('Message FitFlex Assistant')
+      .fill('Scroll regression sample message. '.repeat(75));
+    await page.getByRole('button', { name: 'Send message' }).click();
+    await expect(page.getByText('This is a mock reply from the MSW assistant.')).toBeVisible();
+    const history = page.locator('.assistant-messages');
+    await expect
+      .poll(() => history.evaluate((element) => element.scrollHeight > element.clientHeight))
+      .toBe(true);
+    await expect
+      .poll(() =>
+        history.evaluate(
+          (element) => element.scrollHeight - element.clientHeight - element.scrollTop,
+        ),
+      )
+      .toBeLessThan(2);
+    const bottom = await history.evaluate((element) => element.scrollTop);
+    await history.hover();
+    await page.mouse.wheel(0, -350);
+    await expect
+      .poll(() => history.evaluate((element) => element.scrollTop))
+      .toBeLessThan(bottom - 100);
+    const scrolledUp = await history.evaluate((element) => element.scrollTop);
+    await page.mouse.wheel(0, 350);
+    await expect
+      .poll(() => history.evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(scrolledUp + 100);
+    const composer = await page.locator('.assistant-composer').boundingBox();
+    expect(composer).not.toBeNull();
+    expect(composer!.y).toBeGreaterThanOrEqual(0);
+    expect(composer!.y + composer!.height).toBeLessThanOrEqual(viewport.height);
+    await expect(page.getByLabel('Message FitFlex Assistant')).toBeVisible();
+  });
+}
+
 test('real Backend preserves Assistant interactions across route changes and reload', async ({
   page,
   request,

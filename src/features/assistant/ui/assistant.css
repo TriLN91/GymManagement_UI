@@ -50,6 +50,7 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-width: 0;
+  min-height: 0;
 }
 .assistant-chat > header {
   padding: 1rem 1.25rem;
@@ -244,8 +245,5 @@
   .assistant-conversations > button {
     min-width: 10rem;
     margin: 0;
-  }
-  .assistant-chat {
-    min-height: 0;
   }
 }
