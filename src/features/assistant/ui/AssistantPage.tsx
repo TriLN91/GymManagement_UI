@@ -181,7 +181,9 @@ export function AssistantPage() {
     if (activeId)
       void loadDetail(activeId).catch(() => setError('Could not restore this conversation.'));
   }, [activeId, loadDetail]);
-  useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), [detail, activeRun]);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [detail, activeRun]);
   useEffect(() => () => abortRef.current?.abort(), []);
 
   const finishRun = async (run: AssistantRun) => {
