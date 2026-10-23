@@ -33,6 +33,7 @@ const AUTH_PATHS: ReadonlyArray<string> = [
   ENDPOINTS.auth.register,
   ENDPOINTS.auth.refresh,
   ENDPOINTS.auth.registerSendOtp,
+  ENDPOINTS.auth.registerResendOtp,
   ENDPOINTS.auth.registerVerifyOtp,
   ENDPOINTS.auth.forgotPassword,
   ENDPOINTS.auth.verifyOtp,

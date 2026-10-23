@@ -30,6 +30,9 @@ export const sessionApi = {
   sendRegisterOtp: (payload: RegisterPayload): Promise<RegisterOtpSentResponse> =>
     apiPost<RegisterOtpSentResponse, RegisterPayload>(ENDPOINTS.auth.registerSendOtp, payload),
 
+  resendRegisterOtp: (payload: { email: string }): Promise<RegisterOtpSentResponse> =>
+    apiPost<RegisterOtpSentResponse, { email: string }>(ENDPOINTS.auth.registerResendOtp, payload),
+
   verifyRegisterOtp: async (
     payload: VerifyRegisterOtpPayload,
   ): Promise<VerifyRegisterOtpResult> => {

@@ -151,6 +151,7 @@ export interface TrainerAppointmentView {
   gymBranchId?: string | null;
   gymBranchName?: string | null;
   memberProfileId: string;
+  memberName?: string;
   originalTrainerProfileId: string;
   originalTrainerName: string;
   currentTrainerProfileId: string;
@@ -164,6 +165,19 @@ export interface TrainerAppointmentView {
   completedAtUtc?: string | null;
   rating?: number | null;
   memberFeedback?: string | null;
+  notes?: string | null;
+}
+
+export interface UpdateAppointmentAttendanceRequest {
+  status:
+    | 'Scheduled'
+    | 'Completed'
+    | 'NoShow'
+    | 'TrainerNoShow'
+    | 'Cancelled'
+    | 'Proposed'
+    | 'Reassigned';
+  notes?: string;
 }
 
 export interface ReassignAppointmentRequest {
@@ -337,7 +351,11 @@ export interface CreateGymOfferRequest {
   plusDurationDays: number;
   plusPrice: number;
   isPublished: boolean;
+  usageScope?: 'SingleBranch' | 'SelectedBranches' | 'EligibleOrganizationBranches';
+  eligibleBranchIds?: string[];
   sessionsIncluded?: number;
+  cancellationPolicyJson?: string | null;
+  preservationPolicyJson?: string | null;
   /** 0 to 720 hours; omit to use the platform default (24). */
   minNoticeHours?: number;
 }
@@ -554,6 +572,16 @@ export const marketplaceApi = {
   ): Promise<TrainerAppointmentView> {
     return apiPost<TrainerAppointmentView, ReassignAppointmentRequest>(
       ENDPOINTS.branchManager.reassignAppointment(appointmentId),
+      req,
+    );
+  },
+
+  async updateAppointmentAttendance(
+    appointmentId: string,
+    req: UpdateAppointmentAttendanceRequest,
+  ): Promise<TrainerAppointmentView> {
+    return apiPost<TrainerAppointmentView, UpdateAppointmentAttendanceRequest>(
+      ENDPOINTS.branchManager.appointmentAttendance(appointmentId),
       req,
     );
   },

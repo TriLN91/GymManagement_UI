@@ -8,7 +8,9 @@ import { authApi } from '../../api/authApi';
 
 import { RegisterForm } from './RegisterForm';
 const mocks = vi.hoisted(() => ({ verify: vi.fn(), navigate: vi.fn() }));
-vi.mock('../../api/authApi', () => ({ authApi: { sendRegisterOtp: vi.fn() } }));
+vi.mock('../../api/authApi', () => ({
+  authApi: { sendRegisterOtp: vi.fn(), resendRegisterOtp: vi.fn() },
+}));
 vi.mock('../../model/useAuth', () => ({
   useVerifyRegisterOtp: () => ({ mutateAsync: mocks.verify, isPending: false }),
 }));
@@ -43,6 +45,13 @@ it('registers via OTP, enforces resend cooldown, and recovers from send/verifica
       isEmailSent: true,
       debugOtpCode: '123456',
     });
+  vi.mocked(authApi.resendRegisterOtp).mockResolvedValue({
+    email: 'member@example.test',
+    expiryMinutes: 15,
+    message: 'OTP resent',
+    isEmailSent: true,
+    debugOtpCode: '123456',
+  });
   mocks.verify.mockRejectedValueOnce(new Error('Invalid OTP')).mockResolvedValueOnce({});
   render(
     <MemoryRouter>
@@ -68,7 +77,9 @@ it('registers via OTP, enforces resend cooldown, and recovers from send/verifica
     for (let second = 0; second < 60; second++) tick();
   });
   await user.click(screen.getByRole('button', { name: 'auth:register.otp.resend' }));
-  await waitFor(() => expect(authApi.sendRegisterOtp).toHaveBeenCalledTimes(3));
+  await waitFor(() =>
+    expect(authApi.resendRegisterOtp).toHaveBeenCalledWith({ email: 'member@example.test' }),
+  );
   await user.type(screen.getByLabelText('auth:register.otp.label'), '000000');
   await user.click(screen.getByRole('button', { name: 'auth:register.otp.verify' }));
   await screen.findByText('Invalid OTP');

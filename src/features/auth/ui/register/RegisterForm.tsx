@@ -152,12 +152,12 @@ export function RegisterForm() {
     setOtpError('');
     setIsSendingOtp(true);
     try {
-      const res = await authApi.sendRegisterOtp(toPayload(savedValues, roleRef.current));
+      const res = await authApi.resendRegisterOtp({ email: savedValues.email });
       if (res.debugOtpCode) {
         setDebugOtpCode(res.debugOtpCode);
       }
       setCooldown(60);
-      toast.success(t('auth:register.otp.resent'));
+      toast.success(res.message || t('auth:register.otp.resent'));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t('auth:register.otp.resendFailed');
       setOtpError(message);

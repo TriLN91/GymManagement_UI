@@ -1,12 +1,21 @@
-import { ArrowLeft, CalendarDays, CircleDollarSign, PackagePlus, Send } from 'lucide-react';
+import {
+  ArrowLeft,
+  CalendarDays,
+  CircleDollarSign,
+  Dumbbell,
+  PackagePlus,
+  Send,
+  UsersRound,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import type { GymPTPackageInput } from '../model/types';
 import { useGymOwnerTrainingStore } from '../model/useGymOwnerTrainingStore';
 
+import { BranchGymOffersManager } from './BranchGymOffersManager';
 import { gymOwnerTrainingCopy } from './copy';
 import { ManagementState } from './ManagementState';
 import { TrainerAvatar } from './TrainingShared';
@@ -51,75 +60,166 @@ export function GymOwnerPTPackageListPage() {
   const { copy, locale } = usePackageCopy();
   const packages = useGymOwnerTrainingStore((state) => state.packages);
   const trainers = useGymOwnerTrainingStore((state) => state.trainers);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: 'membership' | 'pt' = tabParam === 'membership' ? 'membership' : 'pt';
+
+  const handleTabChange = (tab: 'membership' | 'pt') => {
+    if (tab === 'pt') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ tab: 'membership' });
+    }
+  };
 
   return (
     <WorkspacePage width="wide" className="gym-training-page">
       <h1 className="sr-only">{copy.packages}</h1>
-      <div className="gym-training-toolbar">
-        <span />
-        <Button asChild>
-          <Link to={ROUTES.admin.packageCreate}>
-            <PackagePlus aria-hidden="true" size={16} />
-            {copy.createPackage}
-          </Link>
-        </Button>
+
+      {/* Segmented Tab Switcher */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginBottom: '8px',
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-flex',
+            padding: '4px',
+            background: 'hsl(var(--muted))',
+            borderRadius: '10px',
+            gap: '4px',
+            border: '1px solid hsl(var(--border))',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => handleTabChange('membership')}
+            style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: activeTab === 'membership' ? 'hsl(var(--card))' : 'transparent',
+              color:
+                activeTab === 'membership'
+                  ? 'hsl(var(--foreground))'
+                  : 'hsl(var(--muted-foreground))',
+              boxShadow: activeTab === 'membership' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Dumbbell size={16} />
+            <span>{language === 'vi' ? 'Gói hội viên phòng gym' : 'Gym Membership Offers'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange('pt')}
+            style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: activeTab === 'pt' ? 'hsl(var(--card))' : 'transparent',
+              color: activeTab === 'pt' ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))',
+              boxShadow: activeTab === 'pt' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <UsersRound size={16} />
+            <span>{language === 'vi' ? 'Gói huấn luyện viên (PT)' : 'PT Packages'}</span>
+          </button>
+        </div>
       </div>
 
-      <WorkspacePanel className="gym-training-list-panel">
-        <div className="gym-package-list-head" aria-hidden="true">
-          <span>{copy.packages}</span>
-          <span>{copy.packageTrainer}</span>
-          <span>{copy.sessions}</span>
-          <span>{copy.durationDays}</span>
-          <span>{copy.servicePrice}</span>
-          <span>{copy.packageStatus}</span>
-          <span />
-        </div>
-        <ManagementState
-          state="loaded"
-          isEmpty={packages.length === 0}
-          loadingLabel={copy.loading}
-          emptyLabel={copy.noPackages}
-          errorLabel={copy.packageListError}
-        >
-          <div className="gym-package-list">
-            {packages.map((gymPackage) => {
-              const trainer = trainers.find((item) => item.id === gymPackage.trainerId);
-              return (
-                <article key={gymPackage.id}>
-                  <div className="gym-package-name">
-                    <strong>{gymPackage.name[language]}</strong>
-                    <span>{gymPackage.name[language]}</span>
-                  </div>
-                  <div className="gym-package-trainer">
-                    {trainer ? (
-                      <>
-                        <TrainerAvatar name={trainer.fullName} source={trainer.avatarDataUrl} />
-                        <strong>{trainer.fullName}</strong>
-                      </>
-                    ) : (
-                      '—'
-                    )}
-                  </div>
-                  <strong>{gymPackage.sessionsIncluded}</strong>
-                  <span>{gymPackage.durationDays}</span>
-                  <strong>{formatVnd(gymPackage.servicePriceVnd, locale)}</strong>
-                  <Badge
-                    variant={gymPackage.publicationStatus === 'published' ? 'accent' : 'neutral'}
-                  >
-                    {gymPackage.publicationStatus === 'published' ? copy.published : copy.draft}
-                  </Badge>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link to={ROUTES.admin.packageDetailPath(gymPackage.id)}>
-                      {copy.viewDetail}
-                    </Link>
-                  </Button>
-                </article>
-              );
-            })}
+      {activeTab === 'membership' ? (
+        <BranchGymOffersManager />
+      ) : (
+        <>
+          <div className="gym-training-toolbar">
+            <span />
+            <Button asChild>
+              <Link to={ROUTES.admin.packageCreate}>
+                <PackagePlus aria-hidden="true" size={16} />
+                {copy.createPackage}
+              </Link>
+            </Button>
           </div>
-        </ManagementState>
-      </WorkspacePanel>
+
+          <WorkspacePanel className="gym-training-list-panel">
+            <div className="gym-package-list-head" aria-hidden="true">
+              <span>{copy.packages}</span>
+              <span>{copy.packageTrainer}</span>
+              <span>{copy.sessions}</span>
+              <span>{copy.durationDays}</span>
+              <span>{copy.servicePrice}</span>
+              <span>{copy.packageStatus}</span>
+              <span />
+            </div>
+            <ManagementState
+              state="loaded"
+              isEmpty={packages.length === 0}
+              loadingLabel={copy.loading}
+              emptyLabel={copy.noPackages}
+              errorLabel={copy.packageListError}
+            >
+              <div className="gym-package-list">
+                {packages.map((gymPackage) => {
+                  const trainer = trainers.find((item) => item.id === gymPackage.trainerId);
+                  return (
+                    <article key={gymPackage.id}>
+                      <div className="gym-package-name">
+                        <strong>{gymPackage.name[language]}</strong>
+                        <span>{gymPackage.name[language]}</span>
+                      </div>
+                      <div className="gym-package-trainer">
+                        {trainer ? (
+                          <>
+                            <TrainerAvatar name={trainer.fullName} source={trainer.avatarDataUrl} />
+                            <strong>{trainer.fullName}</strong>
+                          </>
+                        ) : (
+                          '—'
+                        )}
+                      </div>
+                      <strong>{gymPackage.sessionsIncluded}</strong>
+                      <span>{gymPackage.durationDays}</span>
+                      <strong>{formatVnd(gymPackage.servicePriceVnd, locale)}</strong>
+                      <Badge
+                        variant={
+                          gymPackage.publicationStatus === 'published' ? 'accent' : 'neutral'
+                        }
+                      >
+                        {gymPackage.publicationStatus === 'published' ? copy.published : copy.draft}
+                      </Badge>
+                      <Button asChild variant="ghost" size="sm">
+                        <Link to={ROUTES.admin.packageDetailPath(gymPackage.id)}>
+                          {copy.viewDetail}
+                        </Link>
+                      </Button>
+                    </article>
+                  );
+                })}
+              </div>
+            </ManagementState>
+          </WorkspacePanel>
+        </>
+      )}
     </WorkspacePage>
   );
 }

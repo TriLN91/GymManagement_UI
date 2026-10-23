@@ -210,6 +210,20 @@ export const authHandlers = [
     });
   }),
 
+  http.post(path(ENDPOINTS.auth.registerResendOtp), async ({ request }) => {
+    const body = (await request.json()) as { email?: string };
+    if (!body.email) {
+      return failure(400, 'Validation', '400: Cần nhập email để gửi lại mã OTP.');
+    }
+    return success({
+      email: body.email,
+      expiryMinutes: 15,
+      message: 'Mã OTP xác thực mới đã được gửi về email của bạn.',
+      isEmailSent: true,
+      debugOtpCode: '123456',
+    });
+  }),
+
   http.post(path(ENDPOINTS.auth.registerVerifyOtp), async ({ request }) => {
     const body = (await request.json()) as { email?: string; otpCode?: string };
     if (body.otpCode !== '123456' && body.otpCode !== '888888') {

@@ -32,6 +32,7 @@ export const ENDPOINTS = {
     register: '/identity/register',
     registerGymAdmin: '/identity/register/gym-admin',
     registerSendOtp: '/identity/register/send-otp',
+    registerResendOtp: '/identity/register/resend-otp',
     registerVerifyOtp: '/identity/register/verify-otp',
     refresh: '/identity/refresh',
     logout: '/identity/logout',
@@ -39,6 +40,15 @@ export const ENDPOINTS = {
     verifyOtp: '/identity/verify-otp',
     resetPassword: '/identity/reset-password',
     changePassword: '/identity/change-password',
+  },
+  gymSubscription: {
+    packages: '/gym-subscription/packages',
+    current: '/gym-subscription/current',
+    history: (gymId: string) => `/gym-subscription/history/${gymId}`,
+    checkout: '/gym-subscription/checkout',
+    sandboxConfirm: '/gym-subscription/sandbox/confirm',
+    checkAccess: (featureCode: string) =>
+      `/gym-subscription/check-access?featureCode=${encodeURIComponent(featureCode)}`,
   },
   // `me.*` are CF01 member endpoints (backend CoachingController); the rest is mock-only
   // until the backend exposes a FE-shaped coaching API (AI work is deferred).
@@ -184,6 +194,8 @@ export const ENDPOINTS = {
     appointments: (branchId: string) => `/branch-manager/branches/${branchId}/appointments`,
     reassignAppointment: (appointmentId: string) =>
       `/branch-manager/appointments/${appointmentId}/reassign`,
+    appointmentAttendance: (appointmentId: string) =>
+      `/branch-manager/appointments/${appointmentId}/attendance`,
     trainersKpi: (branchId: string) => `/branch-manager/branches/${branchId}/trainers/kpi`,
   },
 } as const;

@@ -30,6 +30,7 @@ import { BrandFinancialOverview } from './BrandFinancialOverview';
 import { gymOwnerDashboardCopy, type GymOwnerDashboardCopy } from './copy';
 import { DashboardCustomizationDialog } from './DashboardCustomizationDialog';
 import { DashboardWidgetState } from './DashboardWidgetState';
+import { TrainerScheduleMatrix } from './TrainerScheduleMatrix';
 
 import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
@@ -380,6 +381,7 @@ export function GymOwnerDashboardPage() {
       </div>
 
       <BrandFinancialOverview />
+      <TrainerScheduleMatrix />
 
       {visibleWidgets.length > 0 ? (
         <div className="gym-dashboard-grid">
