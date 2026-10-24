@@ -57,7 +57,8 @@ async function loginApprovedGymOwner(page: Page) {
   }
 }
 
-test.describe('Gym Owner orders and settlement', () => {
+// Retained AS-IS regression during SRS 2.4.0 migration; not AI pass acceptance.
+test.describe('Gym Owner orders and settlement', { tag: '@legacy-marketplace' }, () => {
   test('shows backend-provided financial components and opens order detail', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
