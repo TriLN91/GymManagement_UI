@@ -134,6 +134,12 @@ const TrainerServicesPage = lazy(() =>
 const StaffInvitationsPage = lazy(() =>
   import('@/features/staff-invitations').then((m) => ({ default: m.StaffInvitationsPage })),
 );
+const GymOwnerWalletPage = lazy(() =>
+  import('@/features/wallet-payouts').then((m) => ({ default: m.GymOwnerWalletPage })),
+);
+const AdminWithdrawalsPage = lazy(() =>
+  import('@/features/wallet-payouts').then((m) => ({ default: m.AdminWithdrawalsPage })),
+);
 const TrainerAssignmentsPage = lazy(() =>
   import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.TrainerAssignmentsPage,
@@ -630,6 +636,10 @@ const router = createBrowserRouter([
                     element: <GymOwnerSettlementsPage />,
                   },
                   {
+                    path: ROUTES.admin.wallet,
+                    element: <GymOwnerWalletPage />,
+                  },
+                  {
                     path: ROUTES.admin.analytics,
                     element: <GymOwnerAnalyticsPage />,
                   },
@@ -697,6 +707,7 @@ const router = createBrowserRouter([
               { path: ROUTES.superadmin.orders, element: <PlatformOrdersPage /> },
               { path: ROUTES.superadmin.orderDetail, element: <PlatformOrderDetailPage /> },
               { path: ROUTES.superadmin.settlements, element: <PlatformSettlementsPage /> },
+              { path: ROUTES.superadmin.payouts, element: <AdminWithdrawalsPage /> },
               { path: ROUTES.superadmin.disputes, element: <PlatformDisputesPage /> },
               { path: ROUTES.superadmin.disputeDetail, element: <PlatformDisputeDetailPage /> },
               { path: ROUTES.superadmin.platformAnalytics, element: <PlatformAnalyticsPage /> },
