@@ -16,12 +16,39 @@ export function WorkoutProgress() {
   const live = useLiveWorkoutWeek();
   const sessionsQuery = useWorkoutSessions();
   const [metric, setMetric] = useState<ProgressMetric>('volume');
+  if (live.isError || sessionsQuery.isError) {
+    return (
+      <WorkoutFlowShell
+        backTo={ROUTES.member.workoutSchedule}
+        backLabel={t('workoutProgress.copy.back')}
+      >
+        <div className="workout-live-notice" role="alert">
+          <span>{t('flow.live.error')}</span>
+          <button
+            type="button"
+            onClick={() => void Promise.all([live.refetch(), sessionsQuery.refetch()])}
+          >
+            {t('flow.live.retry')}
+          </button>
+        </div>
+      </WorkoutFlowShell>
+    );
+  }
+  if (live.isPending || sessionsQuery.isPending) {
+    return (
+      <WorkoutFlowShell
+        backTo={ROUTES.member.workoutSchedule}
+        backLabel={t('workoutProgress.copy.back')}
+      >
+        <p className="workout-live-notice" role="status">
+          {t('flow.live.loading')}
+        </p>
+      </WorkoutFlowShell>
+    );
+  }
   const copy = {
     back: t('workout:workoutProgress.copy.back'),
     week: t('workout:workoutProgress.copy.week'),
-    completed: t('workout:workoutProgress.copy.completed'),
-    planned: t('workout:workoutProgress.copy.planned'),
-    rest: t('workout:workoutProgress.copy.rest'),
     data: t('workout:workoutProgress.copy.data'),
     chart: t('workout:workoutProgress.copy.chart'),
     volume: t('workout:workoutProgress.copy.volume'),
@@ -61,11 +88,6 @@ export function WorkoutProgress() {
 
   return (
     <WorkoutFlowShell backTo={ROUTES.member.workoutSchedule} backLabel={copy.back}>
-      {(live.isError || sessionsQuery.isError) && (
-        <p className="workout-live-notice" role="alert">
-          {t('flow.live.error')}
-        </p>
-      )}
       <section className="workout-progress__week">
         <header>
           <CalendarDays size={19} />
@@ -73,25 +95,14 @@ export function WorkoutProgress() {
         </header>
         <div>
           {live.week.map((day) => {
-            const status =
-              day.status === 'completed'
-                ? 'completed'
-                : day.status === 'rest' || day.status === 'paused'
-                  ? 'rest'
-                  : 'planned';
+            const status = day.status === 'paused' ? 'rest' : day.status;
             return (
               <article className={`is-${status}`} key={day.id}>
                 <span>{t(`flow.weekdays.${day.weekday}`)}</span>
                 <strong>
                   {day.dayNumber !== null ? String(day.dayNumber).padStart(2, '0') : '—'}
                 </strong>
-                <small>
-                  {status === 'completed'
-                    ? copy.completed
-                    : status === 'rest'
-                      ? copy.rest
-                      : copy.planned}
-                </small>
+                <small>{t(`flow.live.status.${day.status}`)}</small>
               </article>
             );
           })}
@@ -106,7 +117,7 @@ export function WorkoutProgress() {
         <div>
           <article>
             <span>{copy.sessions}</span>
-            <strong>{sessionsQuery.isPending ? '…' : sessions.length}</strong>
+            <strong>{sessions.length}</strong>
           </article>
           <article>
             <span>{copy.volume}</span>

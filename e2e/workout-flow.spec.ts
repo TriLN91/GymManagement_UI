@@ -20,17 +20,36 @@ async function openAsMember(page: Page, path: string) {
 }
 
 test.describe('Member workout vertical slice', () => {
-  test('records all four tracking types and persists completion locally', async ({ page }) => {
+  test('keeps unavailable progress distinct from a successful empty result', async ({ page }) => {
+    await page.addInitScript(() => window.sessionStorage.setItem('msw:fail', 'progression-state'));
+    await openAsMember(page, '/app/progress');
+
+    await expect(
+      page.getByRole('alert').filter({ hasText: /couldn't load your plan or schedule/ }),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: 'Workout data' })).toHaveCount(0);
+    await expect(page.getByText('0 kg', { exact: true })).toHaveCount(0);
+
+    await page.evaluate(() => window.sessionStorage.removeItem('msw:fail'));
+    await page.getByRole('button', { name: 'Try again' }).click();
+    await expect(page.getByRole('heading', { name: 'Workout data' })).toBeVisible();
+    await expect(page.getByText('0 kg', { exact: true })).toBeVisible();
+    await expect(page.getByText('Complete your first workout to see progress data.')).toBeVisible();
+  });
+
+  // The live plan contract only prescribes strength (sets x reps) and timed (sets x seconds) exercises;
+  // distance and interval trackers are not reachable from a server plan until the Backend models them.
+  test('records strength and duration exercises and syncs the completion', async ({ page }) => {
     await openAsMember(page, '/app/workout');
 
     await page.getByRole('link', { name: /view weekly schedule/i }).click();
     await expect(page).toHaveURL(/\/app\/workout\/schedule$/);
-    await expect(page.getByRole('heading', { name: 'Weekly Schedule' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Rest Day' })).toHaveCount(2);
+    await expect(page.getByRole('heading', { name: 'Rest day' })).toHaveCount(4);
+    await expect(page.getByRole('heading', { name: 'Day 1' })).toHaveCount(2);
 
-    await page.getByRole('link', { name: /Tuesday.*Back & Lats/i }).click();
-    await expect(page.getByText('Bent-over barbell row')).toBeVisible();
-    await expect(page.getByText('Tabata row')).toBeVisible();
+    await page.getByRole('link', { name: /Tuesday.*Day 2/i }).click();
+    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dead hang' })).toBeVisible();
 
     await page.getByRole('button', { name: /start session/i }).click();
     await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
@@ -44,31 +63,40 @@ test.describe('Member workout vertical slice', () => {
     await page.getByLabel('Set 1 duration').fill('52');
     await page.getByRole('button', { name: /save actual & continue/i }).click();
 
-    await expect(page.getByRole('heading', { name: 'Ergometer row' })).toBeVisible();
-    await page.getByLabel('Actual distance (km)').fill('2.2');
-    await expect(page.getByText(/\/km$/)).toBeVisible();
-    await page.getByRole('button', { name: /save actual & continue/i }).click();
-
-    await expect(page.getByRole('heading', { name: 'Tabata row' })).toBeVisible();
-    await page.getByRole('button', { name: /save actual & finish/i }).click();
-
     await expect(page).toHaveURL(/\/app\/workout\/complete\//);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await expect(page.getByText('2.20 km', { exact: true })).toBeVisible();
-    await expect(page.getByText(/kg volume/)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Day 2' })).toBeVisible();
+    await expect(page.getByText('Saved to your account.')).toBeVisible();
+    await expect(page.getByText('625 kg', { exact: true })).toBeVisible();
     await expect(page.getByText('No actual data')).toHaveCount(0);
 
+    // The mock backend lives in the page, so navigate in-app instead of reloading to keep the synced session.
+    await page.getByRole('link', { name: 'Workout history' }).click();
+    await expect(page.getByRole('heading', { name: 'Plan workout' })).toBeVisible();
+
+    // The local outbox survives a reload: the completed workout is still reachable by its URL.
+    await page.goBack();
     const completionUrl = page.url();
     await page.reload();
     await expect(page).toHaveURL(completionUrl);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await page.goto('/app/workout/history');
-    await expect(page.getByRole('heading', { name: 'Workout history' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Back & Lats' })).toBeVisible();
-    await expect(page.getByText('2.20 km')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Day 2' })).toBeVisible();
+  });
 
-    await page.goto('/app/progress');
-    await expect(page.getByRole('heading', { name: 'Workout progress' })).toHaveCount(0);
-    await expect(page.getByText('Completed sessions')).toBeVisible();
+  test('keeps an unsynced workout and retries when the server is unavailable', async ({ page }) => {
+    await page.addInitScript(() =>
+      window.sessionStorage.setItem('msw:fail', 'workout-session-create'),
+    );
+    await openAsMember(page, '/app/workout/schedule');
+
+    await page.getByRole('link', { name: /Tuesday.*Day 2/i }).click();
+    await page.getByRole('button', { name: /start session/i }).click();
+    await page.getByRole('button', { name: /save actual & continue/i }).click();
+    await page.getByRole('button', { name: /save actual & continue/i }).click();
+
+    await expect(page).toHaveURL(/\/app\/workout\/complete\//);
+    await expect(page.getByText(/Not saved to your account yet/)).toBeVisible();
+
+    await page.evaluate(() => window.sessionStorage.removeItem('msw:fail'));
+    await page.getByRole('button', { name: 'Retry now' }).click();
+    await expect(page.getByText('Saved to your account.')).toBeVisible();
   });
 });
