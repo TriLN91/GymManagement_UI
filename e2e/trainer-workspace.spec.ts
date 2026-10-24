@@ -39,7 +39,7 @@ test.describe('Trainer workspace', () => {
     await page.goto('/pt/workout-builder/member-workout');
     await expect(page.getByRole('heading', { name: 'Alex Volkov' })).toBeVisible();
     await page.goto('/pt/appointments');
-    await expect(page.getByRole('columnheader', { name: 'Member' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Session schedule' })).toBeVisible();
     await page.goto('/pt/history/coaching');
     await expect(page.getByText('Progressive load updated')).toBeVisible();
     await page.goto('/pt/history/income');
@@ -82,18 +82,8 @@ test.describe('Trainer workspace', () => {
     await expect(page.getByText(/E2E Performance Plan · Week/)).toBeVisible();
   });
 
-  test('creates an appointment and exposes history and income data', async ({ page }) => {
-    await openAsTrainer(page, '/pt/appointments');
-    await page.getByRole('button', { name: 'Create appointment' }).click();
-    const dialog = page.getByRole('dialog');
-    await dialog.getByLabel('Appointment type').selectOption({ label: 'Video check-in' });
-    await dialog.getByLabel('Notes').fill('E2E movement review');
-    await dialog.getByRole('button', { name: 'Save appointment' }).click();
-    await expect(
-      page.locator('.trainer-appointments-table').getByText('E2E movement review'),
-    ).toBeVisible();
-
-    await page.goto('/pt/history/coaching');
+  test('exposes history and income data', async ({ page }) => {
+    await openAsTrainer(page, '/pt/history/coaching');
     await expect(page.getByText('Progressive load updated')).toBeVisible();
     await page.goto('/pt/history/income');
     await expect(page.getByText('Strength Foundation · 8 sessions').first()).toBeVisible();

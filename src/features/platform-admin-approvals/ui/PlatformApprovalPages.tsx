@@ -4,8 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { encodeRejectionReason } from '../api/mappers';
 import { usePlatformApprovalStore } from '../model/store';
-import type { PlatformApprovalKind, RejectionReason } from '../model/types';
+import type { PlatformApprovalKind, PlatformApprovalRecord, RejectionReason } from '../model/types';
+import {
+  useApproveGymApplication,
+  useGymApplication,
+  usePendingGymApplications,
+  useRejectGymApplication,
+} from '../model/useGymApplications';
 
 import {
   approvalKindLabel,
@@ -80,18 +87,26 @@ function statusVariant(status: 'pending' | 'approved' | 'rejected') {
 export function PlatformApprovalQueuePage({ kind }: ApprovalQueuePageProps) {
   const approvals = usePlatformApprovalStore((state) => state.approvals);
   const { copy, locale } = useCopy();
-  const records = approvals.filter((record) => record.kind === kind && record.status === 'pending');
+  const isLive = kind === 'gym_application';
+  const live = usePendingGymApplications(isLive);
+  const records: ReadonlyArray<PlatformApprovalRecord> = isLive
+    ? (live.data ?? [])
+    : approvals.filter((record) => record.kind === kind && record.status === 'pending');
 
   return (
     <WorkspacePage width="wide" className="platform-approvals-page">
       <h1 className="sr-only">{approvalKindLabel(kind, copy)}</h1>
       <div className="platform-approvals-toolbar">
-        <Badge variant="neutral">{copy.sample}</Badge>
+        {isLive ? null : <Badge variant="neutral">{copy.sample}</Badge>}
         <span>
           {records.length} {copy.pending.toLowerCase()}
         </span>
       </div>
-      {records.length === 0 ? (
+      {isLive && live.isPending ? (
+        <p role="status">{copy.loading}</p>
+      ) : isLive && live.isError ? (
+        <p role="alert">{copy.loadFailed}</p>
+      ) : records.length === 0 ? (
         <EmptyState className="platform-approvals-empty" title={copy.noRecords} />
       ) : (
         <div className="platform-approval-card-grid">
@@ -128,11 +143,16 @@ export function PlatformApprovalQueuePage({ kind }: ApprovalQueuePageProps) {
 
 export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
   const { applicationId } = useParams();
-  const record = usePlatformApprovalStore((state) =>
+  const isLive = kind === 'gym_application';
+  const storeRecord = usePlatformApprovalStore((state) =>
     state.approvals.find((approval) => approval.id === applicationId && approval.kind === kind),
   );
-  const approve = usePlatformApprovalStore((state) => state.approve);
-  const reject = usePlatformApprovalStore((state) => state.reject);
+  const liveQuery = useGymApplication(applicationId, isLive);
+  const record = isLive ? liveQuery.data : storeRecord;
+  const storeApprove = usePlatformApprovalStore((state) => state.approve);
+  const storeReject = usePlatformApprovalStore((state) => state.reject);
+  const approveRemote = useApproveGymApplication();
+  const rejectRemote = useRejectGymApplication();
   const { copy, language, locale } = useCopy();
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -140,6 +160,14 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
   const [note, setNote] = useState('');
   const [formError, setFormError] = useState('');
   const queue = queueRoute(kind);
+
+  if (isLive && liveQuery.isPending) {
+    return (
+      <WorkspacePage width="wide" className="platform-approvals-page">
+        <p role="status">{copy.loading}</p>
+      </WorkspacePage>
+    );
+  }
 
   if (!record) {
     return (
@@ -157,19 +185,43 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
   }
 
   const handleApprove = () => {
-    approve(record.id);
-    setApproveOpen(false);
-    toast.success(`${record.reference} · ${copy.approved}`);
+    if (!isLive) {
+      storeApprove(record.id);
+      setApproveOpen(false);
+      toast.success(`${record.reference} · ${copy.approved}`);
+      return;
+    }
+    approveRemote.mutate(record.id, {
+      onSuccess: () => {
+        setApproveOpen(false);
+        toast.success(`${record.reference} · ${copy.approved}`);
+      },
+      onError: () => toast.error(copy.decisionFailed),
+    });
   };
   const handleReject = () => {
     if (!reason || !note.trim()) {
       setFormError(copy.reasonRequired);
       return;
     }
-    reject(record.id, reason, note.trim());
-    setRejectOpen(false);
-    toast.success(`${record.reference} · ${copy.rejected}`);
+    if (!isLive) {
+      storeReject(record.id, reason, note.trim());
+      setRejectOpen(false);
+      toast.success(`${record.reference} · ${copy.rejected}`);
+      return;
+    }
+    rejectRemote.mutate(
+      { userId: record.id, reason: encodeRejectionReason(reason, note) },
+      {
+        onSuccess: () => {
+          setRejectOpen(false);
+          toast.success(`${record.reference} · ${copy.rejected}`);
+        },
+        onError: () => toast.error(copy.decisionFailed),
+      },
+    );
   };
+  const deciding = approveRemote.isPending || rejectRemote.isPending;
 
   return (
     <WorkspacePage width="wide" className="platform-approvals-page platform-approval-detail">
@@ -181,10 +233,12 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
             {copy.back}
           </Link>
         </Button>
-        <Badge variant="neutral">
-          <ShieldCheck aria-hidden="true" size={13} />
-          {copy.sample}
-        </Badge>
+        {isLive ? null : (
+          <Badge variant="neutral">
+            <ShieldCheck aria-hidden="true" size={13} />
+            {copy.sample}
+          </Badge>
+        )}
       </div>
       <section className="platform-detail-card" aria-labelledby="submission-heading">
         <div className="platform-detail-heading">
@@ -227,6 +281,7 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
           <h2 id="documents-heading">{copy.documents}</h2>
         </div>
         <div className="platform-document-list">
+          {record.documents.length === 0 ? <p>{copy.noDocuments}</p> : null}
           {record.documents.map((document) => (
             <div key={document.id}>
               <div>
@@ -284,7 +339,9 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
             <Button variant="outline" onClick={() => setApproveOpen(false)}>
               {copy.cancel}
             </Button>
-            <Button onClick={handleApprove}>{copy.approve}</Button>
+            <Button onClick={handleApprove} disabled={deciding}>
+              {copy.approve}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -333,7 +390,7 @@ export function PlatformApprovalDetailPage({ kind }: ApprovalQueuePageProps) {
             <Button variant="outline" onClick={() => setRejectOpen(false)}>
               {copy.cancel}
             </Button>
-            <Button variant="destructive" onClick={handleReject}>
+            <Button variant="destructive" onClick={handleReject} disabled={deciding}>
               {copy.reject}
             </Button>
           </DialogFooter>

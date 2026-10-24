@@ -1,0 +1,17 @@
+{
+  "title": "Review branches and offers",
+  "branches": "Branches waiting for review",
+  "offers": "Offers waiting for review",
+  "emptyBranches": "No branch is waiting for review.",
+  "emptyOffers": "No offer is waiting for review.",
+  "loading": "Loading…",
+  "loadFailed": "Could not load the list.",
+  "approve": "Approve",
+  "reject": "Reject",
+  "confirmReject": "Confirm rejection",
+  "back": "Back",
+  "reason": "Reason for rejection",
+  "approved": "Approved.",
+  "rejected": "Rejected. The Gym owner is notified.",
+  "failed": "Something went wrong. Please try again."
+}

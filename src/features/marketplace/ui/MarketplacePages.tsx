@@ -8,8 +8,11 @@ import {
   ChevronRight,
   Clock3,
   CreditCard,
+  Download,
   Dumbbell,
+  FileText,
   Filter,
+  Mail,
   MapPin,
   Search,
   ShieldCheck,
@@ -17,11 +20,19 @@ import {
   Star,
   Users,
 } from 'lucide-react';
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import {
+  marketplaceApi,
+  type BranchTrainerDto,
+  type GymBranchCardView,
+  type GymBranchDetailView,
+  type GymOfferView,
+  type OrderView,
+} from '../api/marketplaceApi';
 import {
   getGym,
   getTrainer,
@@ -43,6 +54,7 @@ import {
 } from '../model/useMarketplaceStore';
 
 import { BRAND_MARK, ROUTES, type Language } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { useLocale } from '@/shared/hooks/useLocale';
 
 import './marketplace.css';
@@ -196,27 +208,114 @@ function GymCard({ gym }: { gym: MarketplaceGym }) {
   );
 }
 
-function OfferCard({ offer }: { offer: GymOffer }) {
+function BranchCard({ branch }: { branch: GymBranchCardView }) {
+  const { copy } = useMarketplaceCopy();
+  return (
+    <article className="marketplace-gym-card">
+      <div
+        className="marketplace-gym-visual"
+        style={{ '--gym-accent': '#1c6a5b' } as CSSProperties}
+        aria-hidden="true"
+      >
+        <span>{branch.brandName.slice(0, 2).toUpperCase()}</span>
+        <Dumbbell size={34} strokeWidth={1.5} />
+        <i />
+      </div>
+      <div className="marketplace-gym-card__body">
+        <div className="marketplace-card-flags">
+          <span>
+            <BadgeCheck size={13} /> {copy.verified}
+          </span>
+          {branch.distanceKm != null && <span>{branch.distanceKm.toFixed(1)} km</span>}
+        </div>
+        <h2>
+          {branch.brandName} - {branch.branchName}
+        </h2>
+        <p>
+          <MapPin size={14} /> {branch.addressLine1},{' '}
+          {branch.district ? `${branch.district}, ` : ''}
+          {branch.city}
+        </p>
+        <div className="marketplace-rating">
+          <Star size={14} fill="currentColor" />{' '}
+          <strong>{Number(branch.averageRating).toFixed(1)}</strong>
+          <span>
+            ({branch.reviewCount} {copy.reviews})
+          </span>
+        </div>
+        <Link to={ROUTES.member.marketplaceGymPath(branch.id)}>
+          {copy.viewGym} <ArrowRight size={15} />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function BranchTrainerCard({ trainer }: { trainer: BranchTrainerDto }) {
+  const { copy } = useMarketplaceCopy();
+  return (
+    <article className="marketplace-trainer-card">
+      <div className="marketplace-trainer-avatar" style={{ background: '#1c6a5b' }}>
+        {trainer.fullName.slice(0, 2).toUpperCase()}
+      </div>
+      <div>
+        <h2>{trainer.fullName}</h2>
+        <p>{trainer.bio || 'Huấn luyện viên thể hình chuyên nghiệp'}</p>
+        <div>
+          <Star size={13} fill="currentColor" /> {Number(trainer.averageRating).toFixed(1)} ·{' '}
+          {copy.experience}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function OfferCard({
+  offer,
+  branchId,
+  branchName,
+}: {
+  offer: GymOffer | GymOfferView;
+  branchId?: string;
+  branchName?: string;
+}) {
   const { language, copy } = useMarketplaceCopy();
   const navigate = useNavigate();
   const selectGymOffer = useMarketplaceStore((state) => state.selectGymOffer);
+
+  const isBackend = 'gymServicePrice' in offer;
+  const title = isBackend ? offer.title : localize(offer.name, language);
+  const price = isBackend ? offer.gymServicePrice : offer.servicePriceVnd;
+  const discount = isBackend ? 0 : offer.serviceDiscountVnd;
+  const plusEligible = isBackend ? offer.includesPlus : offer.plusEligible;
+  const popular = !isBackend && Boolean(offer.popular);
+  const durationLabel = isBackend
+    ? `${offer.durationValue} ${offer.durationType}`
+    : `${offer.durationDays} ${copy.days}`;
+
   return (
-    <article className={`marketplace-offer ${offer.popular ? 'is-popular' : ''}`}>
+    <article className={`marketplace-offer ${popular ? 'is-popular' : ''}`}>
       <header>
-        <span>{offer.popular ? copy.popular : `${offer.durationDays} ${copy.days}`}</span>
-        {offer.plusEligible && <Sparkles size={17} />}
+        <span>{popular ? copy.popular : durationLabel}</span>
+        {plusEligible && <Sparkles size={17} />}
       </header>
-      <h3>{localize(offer.name, language)}</h3>
-      <strong>{money(offer.servicePriceVnd - offer.serviceDiscountVnd)}</strong>
-      {offer.serviceDiscountVnd > 0 && <del>{money(offer.servicePriceVnd)}</del>}
+      <h3>{title}</h3>
+      <strong>{money(price - discount)}</strong>
+      {discount > 0 && <del>{money(price)}</del>}
       <ul>
-        {offer.features.map((feature) => (
-          <li key={feature.en}>
-            <Check size={14} /> {localize(feature, language)}
+        {isBackend ? (
+          <li>
+            <Check size={14} /> {offer.description || title}
           </li>
-        ))}
+        ) : (
+          offer.features.map((feature) => (
+            <li key={feature.en}>
+              <Check size={14} /> {localize(feature, language)}
+            </li>
+          ))
+        )}
       </ul>
-      {offer.plusEligible && (
+      {plusEligible && (
         <p>
           <Sparkles size={13} /> {copy.includesPlus}
         </p>
@@ -224,7 +323,24 @@ function OfferCard({ offer }: { offer: GymOffer }) {
       <button
         type="button"
         onClick={() => {
-          selectGymOffer(offer.id, offer.plusEligible);
+          if (isBackend) {
+            selectGymOffer(
+              offer.id,
+              offer.includesPlus,
+              branchId ?? offer.gymBranchId ?? undefined,
+              {
+                title: offer.title,
+                providerName: branchName ?? 'Phòng Gym',
+                serviceAmountVnd: offer.gymServicePrice,
+                serviceDiscountVnd: 0,
+                plusAmountVnd: offer.plusPrice,
+                uncoveredPlusDays: offer.plusDurationDays,
+                totalVnd: offer.gymServicePrice + (offer.includesPlus ? offer.plusPrice : 0),
+              },
+            );
+          } else {
+            selectGymOffer(offer.id, offer.plusEligible);
+          }
           void navigate(ROUTES.member.marketplaceCheckout);
         }}
       >
@@ -304,7 +420,71 @@ export function MarketplaceHome() {
   const [query, setQuery] = useState('');
   const [city, setCity] = useState('all');
   const [type, setType] = useState('all');
-  const gyms = marketplaceGyms.filter((gym) => {
+  const [apiBranches, setApiBranches] = useState<GymBranchCardView[]>([]);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  const requestLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          toast.success(
+            `Đã định vị: ${pos.coords.latitude.toFixed(2)}, ${pos.coords.longitude.toFixed(2)}`,
+          );
+        },
+        () => {
+          toast.error('Không thể truy cập GPS, hiển thị kết quả theo điểm đánh giá');
+          setCoords(null);
+        },
+        { timeout: 6000 },
+      );
+    }
+  };
+
+  // Request browser location on mount
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        () => {
+          // Fallback: null coords triggers rating 4.5+ fallback in BE
+          setCoords(null);
+        },
+        { timeout: 6000 },
+      );
+    }
+  }, []);
+
+  // Fetch branches from API with GPS coordinates or Rating fallback
+  useEffect(() => {
+    let active = true;
+    marketplaceApi
+      .getBranches({
+        latitude: coords?.lat,
+        longitude: coords?.lng,
+        radiusKm: 10,
+        city: city === 'all' ? undefined : city,
+        searchTerm: query.trim() || undefined,
+        minRating: coords ? undefined : 4.5,
+      })
+      .then((branches) => {
+        if (active) setApiBranches(branches);
+      })
+      .catch(() => {
+        if (active) setApiBranches([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [coords, city, query]);
+
+  // Hybrid mode: If API returned branches, use them.
+  // If empty (e.g. database not seeded), gracefully fallback to mock gyms.
+  const hasApiData = apiBranches.length > 0;
+
+  const mockGyms = marketplaceGyms.filter((gym) => {
     const haystack = `${gym.name} ${localize(gym.area, language)}`.toLowerCase();
     return (
       haystack.includes(query.toLowerCase()) &&
@@ -312,6 +492,9 @@ export function MarketplaceHome() {
       (type === 'all' || gym.type === type)
     );
   });
+
+  const count = hasApiData ? apiBranches.length : mockGyms.length;
+
   return (
     <div className="marketplace-page">
       <section className="marketplace-filters" aria-label={copy.discover}>
@@ -351,15 +534,42 @@ export function MarketplaceHome() {
             <option value="full-service">{copy.fullService}</option>
           </select>
         </label>
+        <button
+          type="button"
+          onClick={requestLocation}
+          title="Định vị chi nhánh gần tôi"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 14px',
+            borderRadius: '8px',
+            border: '1px solid var(--border)',
+            background: coords ? '#e6f4ea' : 'transparent',
+            color: coords ? '#137333' : 'inherit',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <MapPin size={15} />
+          <span>{coords ? 'GPS Bật' : 'Gần tôi'}</span>
+        </button>
       </section>
       <div className="marketplace-result-count">
-        <strong>{gyms.length}</strong> {copy.results}
+        <strong>{count}</strong> {copy.results}
+        {coords && (
+          <span style={{ marginLeft: 8, fontSize: '0.85em', color: 'var(--brand)' }}>
+            📍 GPS: {coords.lat.toFixed(2)}, {coords.lng.toFixed(2)}
+          </span>
+        )}
       </div>
-      {gyms.length > 0 ? (
+      {count > 0 ? (
         <section className="marketplace-gym-grid">
-          {gyms.map((gym) => (
-            <GymCard gym={gym} key={gym.id} />
-          ))}
+          {hasApiData
+            ? apiBranches.map((branch) => <BranchCard branch={branch} key={branch.id} />)
+            : mockGyms.map((gym) => <GymCard gym={gym} key={gym.id} />)}
         </section>
       ) : (
         <div className="marketplace-empty">
@@ -374,30 +584,89 @@ export function MarketplaceHome() {
 export function GymDetailPage() {
   const { gymId = '' } = useParams();
   const { language, copy } = useMarketplaceCopy();
-  const gym = getGym(gymId);
-  if (!gym) return <Navigate to={ROUTES.member.marketplace} replace />;
-  const offers = gymOffers.filter((offer) => offer.gymId === gym.id && offer.published);
-  const trainers = marketplaceTrainers.filter((trainer) => trainer.gymId === gym.id);
+  const [apiBranch, setApiBranch] = useState<GymBranchDetailView | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    marketplaceApi
+      .getBranchDetail(gymId)
+      .then((data) => {
+        if (active) setApiBranch(data);
+      })
+      .catch(() => {
+        if (active) setApiBranch(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [gymId]);
+
+  // Fallback to mock gym
+  const mockGym = getGym(gymId);
+
+  if (!apiBranch && !mockGym) return <Navigate to={ROUTES.member.marketplace} replace />;
+
+  const isRealBranch = Boolean(apiBranch);
+  const name = isRealBranch ? `${apiBranch!.brandName} - ${apiBranch!.branchName}` : mockGym!.name;
+  const address = isRealBranch ? apiBranch!.addressLine1 : localize(mockGym!.address, language);
+  const rating = isRealBranch ? apiBranch!.averageRating : mockGym!.rating;
+  const reviewCount = isRealBranch ? apiBranch!.reviewCount : mockGym!.reviewCount;
+  const description = isRealBranch
+    ? `Chi nhánh ${apiBranch!.branchName} thuộc hệ sinh thái ${apiBranch!.brandName}. Tiện nghi chuẩn mực, trang thiết bị tối tân.`
+    : localize(mockGym!.description, language);
+
+  let facilitiesList: string[] = [];
+  if (isRealBranch && apiBranch!.facilitiesJson) {
+    try {
+      const parsed: unknown = JSON.parse(apiBranch!.facilitiesJson);
+      facilitiesList =
+        Array.isArray(parsed) && parsed.every((item): item is string => typeof item === 'string')
+          ? parsed
+          : ['Cardio', 'Free Weights', 'Locker Room'];
+    } catch {
+      facilitiesList = ['Cardio', 'Free Weights', 'Locker Room'];
+    }
+  }
+
+  const mockOffers = mockGym
+    ? gymOffers.filter((offer) => offer.gymId === mockGym.id && offer.published)
+    : [];
+  const mockTrainers = mockGym
+    ? marketplaceTrainers.filter((trainer) => trainer.gymId === mockGym.id)
+    : [];
+
   return (
     <div className="marketplace-page">
       <Link className="marketplace-back" to={ROUTES.member.marketplace}>
         <ArrowLeft size={15} /> {copy.backMarketplace}
       </Link>
       <section className="marketplace-gym-detail-hero">
-        <GymVisual gym={gym} />
+        {mockGym ? (
+          <GymVisual gym={mockGym} />
+        ) : (
+          <div
+            className="marketplace-gym-visual"
+            style={{ '--gym-accent': '#1c6a5b' } as CSSProperties}
+            aria-hidden="true"
+          >
+            <span>{apiBranch?.brandName.slice(0, 2).toUpperCase()}</span>
+            <Dumbbell size={34} strokeWidth={1.5} />
+            <i />
+          </div>
+        )}
         <div>
           <span>
             <BadgeCheck size={14} /> {copy.verified}
           </span>
-          <h1>{gym.name}</h1>
+          <h1>{name}</h1>
           <p>
-            <MapPin size={15} /> {localize(gym.address, language)}
+            <MapPin size={15} /> {address}
           </p>
-          <p>{localize(gym.description, language)}</p>
+          <p>{description}</p>
           <div className="marketplace-rating">
-            <Star size={15} fill="currentColor" /> <strong>{gym.rating}</strong>
+            <Star size={15} fill="currentColor" /> <strong>{Number(rating).toFixed(1)}</strong>
             <span>
-              ({gym.reviewCount} {copy.reviews})
+              ({reviewCount} {copy.reviews})
             </span>
           </div>
         </div>
@@ -410,11 +679,17 @@ export function GymDetailPage() {
           </div>
         </header>
         <div className="marketplace-facilities">
-          {gym.facilities.map((facility) => (
-            <span key={facility.en}>
-              <Check size={15} /> {localize(facility, language)}
-            </span>
-          ))}
+          {isRealBranch
+            ? facilitiesList.map((f) => (
+                <span key={f}>
+                  <Check size={15} /> {f}
+                </span>
+              ))
+            : mockGym!.facilities.map((facility) => (
+                <span key={facility.en}>
+                  <Check size={15} /> {localize(facility, language)}
+                </span>
+              ))}
         </div>
       </section>
       <section className="marketplace-section">
@@ -428,9 +703,16 @@ export function GymDetailPage() {
           </Link>
         </header>
         <div className="marketplace-offer-grid">
-          {offers.map((offer) => (
-            <OfferCard offer={offer} key={offer.id} />
-          ))}
+          {isRealBranch && apiBranch!.offers && apiBranch!.offers.length > 0
+            ? apiBranch!.offers.map((offer) => (
+                <OfferCard
+                  offer={offer}
+                  branchId={apiBranch!.id}
+                  branchName={name}
+                  key={offer.id}
+                />
+              ))
+            : mockOffers.map((offer) => <OfferCard offer={offer} key={offer.id} />)}
         </div>
       </section>
       <section className="marketplace-section">
@@ -444,9 +726,11 @@ export function GymDetailPage() {
           </Link>
         </header>
         <div className="marketplace-trainer-grid">
-          {trainers.map((trainer) => (
-            <TrainerCard trainer={trainer} key={trainer.id} />
-          ))}
+          {isRealBranch && apiBranch!.trainers && apiBranch!.trainers.length > 0
+            ? apiBranch!.trainers.map((trainer) => (
+                <BranchTrainerCard trainer={trainer} key={trainer.trainerProfileId} />
+              ))
+            : mockTrainers.map((trainer) => <TrainerCard trainer={trainer} key={trainer.id} />)}
         </div>
       </section>
     </div>
@@ -454,23 +738,46 @@ export function GymDetailPage() {
 }
 
 export function GymOffersPage() {
+  const [apiOffers, setApiOffers] = useState<GymOfferView[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    marketplaceApi
+      .getOffers()
+      .then((offers) => {
+        if (active && offers.length > 0) setApiOffers(offers);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const hasApiOffers = apiOffers.length > 0;
+
   return (
     <div className="marketplace-page">
       <section className="marketplace-offer-grid is-wide">
-        {gymOffers
-          .filter((offer) => offer.published)
-          .map((offer) => (
-            <div key={offer.id}>
-              <Link
-                className="marketplace-offer-gym"
-                to={ROUTES.member.marketplaceGymPath(offer.gymId)}
-              >
-                {getGym(offer.gymId)?.name}
-                <ChevronRight size={14} />
-              </Link>
-              <OfferCard offer={offer} />
-            </div>
-          ))}
+        {hasApiOffers
+          ? apiOffers.map((offer) => (
+              <div key={offer.id}>
+                <OfferCard offer={offer} />
+              </div>
+            ))
+          : gymOffers
+              .filter((offer) => offer.published)
+              .map((offer) => (
+                <div key={offer.id}>
+                  <Link
+                    className="marketplace-offer-gym"
+                    to={ROUTES.member.marketplaceGymPath(offer.gymId)}
+                  >
+                    {getGym(offer.gymId)?.name}
+                    <ChevronRight size={14} />
+                  </Link>
+                  <OfferCard offer={offer} />
+                </div>
+              ))}
       </section>
     </div>
   );
@@ -572,6 +879,7 @@ export function MarketplaceCheckoutPage() {
   const completeCheckout = useMarketplaceStore((state) => state.completeCheckout);
   const [method, setMethod] = useState<PaymentMethod>('card');
   const [accepted, setAccepted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const breakdown = resolveCheckout(selection, coverageDays);
   const selectedOffer =
     selection?.kind === 'gym_offer'
@@ -596,12 +904,54 @@ export function MarketplaceCheckoutPage() {
         </div>
       </div>
     );
-  const submit = () => {
-    if (!accepted) return;
-    const order = completeCheckout(method);
-    if (!order) return;
-    toast.success(copy.paymentDone);
-    void navigate(ROUTES.member.marketplacePaymentResultPath(order.id));
+
+  const submit = async () => {
+    if (!accepted || submitting) return;
+    setSubmitting(true);
+    try {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        selection.productId,
+      );
+      if (!isUuid && !env.VITE_ENABLE_MSW)
+        throw new Error(
+          language === 'vi'
+            ? 'Gói mẫu không thể thanh toán. Vui lòng chọn dịch vụ được công bố.'
+            : 'Sample packages cannot be purchased. Please select a published service.',
+        );
+      let beOrderRes: { id: string; orderNumber: string; totalAmount: number } | undefined;
+      if (isUuid) {
+        const res = await marketplaceApi.checkout({
+          gymOfferId: selection.kind === 'gym_offer' ? selection.productId : null,
+          trainerServiceId: selection.kind === 'pt_package' ? selection.productId : null,
+          trainerProfileId: selection.kind === 'pt_package' ? selection.trainerProfileId : null,
+          gymBranchId: selection.gymBranchId ?? null,
+          paymentProvider: method,
+          interestedInDiscountedPlus: selection.kind === 'gym_offer' && selection.includePlus,
+        });
+        beOrderRes = {
+          id: res.orderId,
+          orderNumber: res.orderNumber,
+          totalAmount: res.totalAmount,
+        };
+      }
+      const order = completeCheckout(method, beOrderRes);
+      if (!order) return;
+      toast.success(
+        beOrderRes
+          ? language === 'vi'
+            ? 'Đã tạo đơn. Thanh toán chưa được xác nhận.'
+            : 'Order created. Payment is not confirmed.'
+          : language === 'vi'
+            ? 'Đơn mẫu — không thu tiền.'
+            : 'Sample order — no payment processed.',
+      );
+      void navigate(ROUTES.member.marketplacePaymentResultPath(order.id));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Thanh toán thất bại';
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
   return (
     <div className="marketplace-page">
@@ -609,7 +959,7 @@ export function MarketplaceCheckoutPage() {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            submit();
+            void submit();
           }}
         >
           <section>
@@ -654,8 +1004,12 @@ export function MarketplaceCheckoutPage() {
               />
               <span>{copy.demoPayment}</span>
             </label>
-            <button className="marketplace-confirm" type="submit" disabled={!accepted}>
-              <ShieldCheck size={17} /> {copy.confirm}
+            <button
+              className="marketplace-confirm"
+              type="submit"
+              disabled={!accepted || submitting}
+            >
+              <ShieldCheck size={17} /> {submitting ? 'Đang xử lý...' : copy.confirm}
             </button>
           </section>
         </form>
@@ -714,14 +1068,127 @@ export function MarketplaceCheckoutPage() {
 export function MarketplacePaymentResultPage() {
   const { orderId = '' } = useParams();
   const { copy, language } = useMarketplaceCopy();
-  const order = useMarketplaceStore((state) => state.orders.find((item) => item.id === orderId));
-  if (!order) return <Navigate to={ROUTES.member.marketplace} replace />;
-  const success = order.paymentStatus === 'succeeded';
-  const orderedProduct =
-    order.selection.kind === 'gym_offer'
-      ? gymOffers.find((offer) => offer.id === order.selection.productId)
-      : ptPackages.find((trainerPackage) => trainerPackage.id === order.selection.productId);
-  const orderTitle = orderedProduct ? localize(orderedProduct.name, language) : order.title;
+  const [backendOrder, setBackendOrder] = useState<OrderView | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [isDownloadingInvoice, setIsDownloadingInvoice] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  const handleDownloadInvoice = async () => {
+    if (!orderId) return;
+    try {
+      setIsDownloadingInvoice(true);
+      await marketplaceApi.downloadInvoiceHtml(orderId, orderDisplayId);
+      toast.success(
+        language === 'vi'
+          ? 'Đã tải xuống hóa đơn điện tử thành công!'
+          : 'Invoice downloaded successfully!',
+      );
+    } catch {
+      toast.error(
+        language === 'vi'
+          ? 'Không thể tải hóa đơn. Vui lòng thử lại sau.'
+          : 'Could not download invoice. Please try again.',
+      );
+    } finally {
+      setIsDownloadingInvoice(false);
+    }
+  };
+
+  const handleResendInvoiceEmail = async () => {
+    if (!orderId) return;
+    try {
+      setIsSendingEmail(true);
+      await marketplaceApi.resendInvoiceEmail(orderId);
+      toast.success(
+        language === 'vi'
+          ? 'Hóa đơn đã được gửi lại về Gmail của bạn!'
+          : 'Invoice resent to your Gmail inbox!',
+      );
+    } catch {
+      toast.error(
+        language === 'vi'
+          ? 'Chưa thể gửi email lúc này. Vui lòng thử lại sau.'
+          : 'Could not send invoice email. Please try again later.',
+      );
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+  const isRealOrder = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    orderId,
+  );
+  const localOrder = useMarketplaceStore((state) =>
+    state.orders.find((item) => item.id === orderId),
+  );
+
+  useEffect(() => {
+    let active = true;
+    setBackendOrder(null);
+    setLoadError(false);
+    if (isRealOrder) {
+      marketplaceApi
+        .getOrder(orderId)
+        .then((data) => {
+          if (active) setBackendOrder(data);
+        })
+        .catch(() => {
+          if (active) setLoadError(true);
+        });
+    }
+    return () => {
+      active = false;
+    };
+  }, [orderId, isRealOrder, attempt]);
+
+  if (isRealOrder && !backendOrder)
+    return (
+      <div className="marketplace-page" role={loadError ? 'alert' : 'status'}>
+        <p>
+          {loadError
+            ? language === 'vi'
+              ? 'Không thể tải đơn hàng. Chưa thể xác nhận thanh toán.'
+              : 'Could not load the order. Payment cannot be confirmed.'
+            : language === 'vi'
+              ? 'Đang tải đơn hàng…'
+              : 'Loading order…'}
+        </p>
+        {loadError && (
+          <button onClick={() => setAttempt((value) => value + 1)}>
+            {language === 'vi' ? 'Thử lại' : 'Try again'}
+          </button>
+        )}
+      </div>
+    );
+
+  if (!localOrder && !backendOrder) {
+    return <Navigate to={ROUTES.member.marketplace} replace />;
+  }
+
+  const success = backendOrder
+    ? backendOrder.paymentStatus === 'Paid' || backendOrder.paymentStatus === 'succeeded'
+    : env.VITE_ENABLE_MSW &&
+      localOrder?.isDemo === true &&
+      localOrder.paymentStatus === 'succeeded';
+  const pending =
+    backendOrder?.paymentStatus === 'Pending' || backendOrder?.paymentStatus === 'pending';
+
+  const orderedProduct = localOrder
+    ? localOrder.selection.kind === 'gym_offer'
+      ? gymOffers.find((offer) => offer.id === localOrder.selection.productId)
+      : ptPackages.find((trainerPackage) => trainerPackage.id === localOrder.selection.productId)
+    : undefined;
+
+  const orderTitle = backendOrder?.gymOfferTitle
+    ? backendOrder.gymOfferTitle
+    : orderedProduct
+      ? localize(orderedProduct.name, language)
+      : localOrder?.title || 'Khóa tập FitFlex';
+
+  const orderDisplayId =
+    backendOrder?.orderNumber ?? localOrder?.orderNumber ?? localOrder?.id ?? orderId;
+  const totalAmount = backendOrder?.totalAmount ?? localOrder?.totalVnd ?? 0;
+
   return (
     <div className="marketplace-page">
       <section className={`marketplace-result ${success ? 'is-success' : 'is-failed'}`}>
@@ -731,34 +1198,219 @@ export function MarketplacePaymentResultPage() {
         <span>
           {BRAND_MARK.toUpperCase()} / {copy.orderConfirmation}
         </span>
-        <h1>{success ? copy.paymentSuccess : copy.paymentFailed}</h1>
+        {!isRealOrder && (
+          <p role="status">
+            {language === 'vi'
+              ? 'Dữ liệu mẫu — không thu tiền hoặc cấp quyền dịch vụ.'
+              : 'Sample data — no payment or service access granted.'}
+          </p>
+        )}
+        <h1>
+          {pending
+            ? language === 'vi'
+              ? 'Chờ xác nhận thanh toán'
+              : 'Awaiting payment confirmation'
+            : success
+              ? copy.paymentSuccess
+              : copy.paymentFailed}
+        </h1>
         <strong>{orderTitle}</strong>
-        <p>{order.selection.kind === 'pt_package' ? copy.resultBodyPt : copy.resultBodyGym}</p>
+        <p>
+          {backendOrder?.gymBranchName
+            ? `Chi nhánh: ${backendOrder.gymBranchName} · Điều khoản và quyền lợi đã được lưu snapshot an toàn.`
+            : localOrder?.selection.kind === 'pt_package'
+              ? copy.resultBodyPt
+              : copy.resultBodyGym}
+        </p>
         <dl>
           <div>
             <dt>{copy.orderId}</dt>
-            <dd>{order.id}</dd>
+            <dd>{orderDisplayId}</dd>
           </div>
           <div>
             <dt>{copy.paymentState}</dt>
-            <dd>{success ? copy.paid : copy.paymentFailed}</dd>
+            <dd>
+              {pending
+                ? language === 'vi'
+                  ? 'Chưa xác nhận'
+                  : 'Not confirmed'
+                : success
+                  ? copy.paid
+                  : copy.paymentFailed}
+            </dd>
           </div>
           <div>
             <dt>{copy.fulfillmentState}</dt>
             <dd>
-              {order.fulfillmentStatus === 'trainer_assignment_active'
+              {backendOrder?.enrollmentStatus === 'Active'
                 ? copy.trainerActive
-                : copy.pendingGym}
+                : backendOrder?.status === 'Rejected' || backendOrder?.status === 'Cancelled'
+                  ? language === 'vi'
+                    ? 'Không kích hoạt — đơn đã đóng'
+                    : 'Not active — order closed'
+                  : success
+                    ? copy.pendingGym
+                    : language === 'vi'
+                      ? 'Chưa kích hoạt'
+                      : 'Not active'}
             </dd>
           </div>
           <div>
             <dt>{copy.total}</dt>
-            <dd>{money(order.totalVnd)}</dd>
+            <dd>{money(totalAmount)}</dd>
           </div>
+          {backendOrder && backendOrder.platformCommissionAmount > 0 && (
+            <>
+              <div>
+                <dt>Phí nền sàn FitFlex (10%)</dt>
+                <dd>{money(backendOrder.platformCommissionAmount)}</dd>
+              </div>
+              <div>
+                <dt>Phòng Gym thực nhận (90%)</dt>
+                <dd>{money(backendOrder.gymPayoutAmount)}</dd>
+              </div>
+            </>
+          )}
         </dl>
-        <Link to={ROUTES.member.marketplace}>
-          {copy.continueMarketplace} <ArrowRight size={15} />
-        </Link>
+        {success && isRealOrder && (
+          <div
+            style={{
+              margin: '20px auto 10px',
+              maxWidth: '520px',
+              padding: '16px 20px',
+              borderRadius: '12px',
+              background: 'rgba(59, 130, 246, 0.08)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: '#2563eb',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                marginBottom: '6px',
+              }}
+            >
+              <FileText size={18} />
+              <span>
+                {language === 'vi'
+                  ? 'Hóa đơn điện tử (.html) đã phát hành'
+                  : 'Electronic Invoice (.html) Issued'}
+              </span>
+            </div>
+            <p
+              style={{
+                margin: '0 0 14px',
+                fontSize: '0.85rem',
+                color: 'var(--muted-foreground)',
+              }}
+            >
+              {language === 'vi'
+                ? 'Hóa đơn đã được tự động gửi trực tiếp về hòm thư Gmail của bạn. Bạn cũng có thể xem, tải về file .html hoặc gửi lại bên dưới.'
+                : 'Your electronic invoice has been emailed directly to your Gmail inbox. You can also view, download the .html file or resend it below.'}
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <button
+                type="button"
+                disabled={isDownloadingInvoice}
+                onClick={handleDownloadInvoice}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #3b82f6',
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: isDownloadingInvoice ? 'wait' : 'pointer',
+                }}
+              >
+                <Download size={15} />
+                {isDownloadingInvoice
+                  ? language === 'vi'
+                    ? 'Đang tải...'
+                    : 'Downloading...'
+                  : language === 'vi'
+                    ? 'Tải hóa đơn (.html)'
+                    : 'Download invoice (.html)'}
+              </button>
+
+              <button
+                type="button"
+                disabled={isSendingEmail}
+                onClick={handleResendInvoiceEmail}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  color: 'var(--foreground)',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: isSendingEmail ? 'wait' : 'pointer',
+                }}
+              >
+                <Mail size={15} />
+                {isSendingEmail
+                  ? language === 'vi'
+                    ? 'Đang gửi...'
+                    : 'Sending...'
+                  : language === 'vi'
+                    ? 'Gửi lại về Gmail'
+                    : 'Resend to Gmail'}
+              </button>
+            </div>
+          </div>
+        )}
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginTop: '16px',
+          }}
+        >
+          <Link to={ROUTES.member.marketplace}>
+            {copy.continueMarketplace} <ArrowRight size={15} />
+          </Link>
+          <Link
+            to={ROUTES.member.profileAppointments}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '10px 18px',
+              borderRadius: '8px',
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              color: 'var(--foreground)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+            }}
+          >
+            Quản lý lịch hẹn PT <ChevronRight size={15} />
+          </Link>
+        </div>
       </section>
     </div>
   );

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { extractFieldErrors, tokenManager, unwrapApiResponse } from './client';
@@ -59,7 +59,9 @@ describe('tokenManager', () => {
 
   it('refresh clears tokens and returns null when the backend rejects it', async () => {
     tokenManager.setTokens('old-access', 'old-refresh');
-    vi.spyOn(axios, 'post').mockRejectedValue(new Error('401'));
+    vi.spyOn(axios, 'post').mockRejectedValue(
+      new AxiosError('401', undefined, undefined, undefined, { status: 401 } as never),
+    );
 
     await expect(tokenManager.refresh()).resolves.toBeNull();
     expect(tokenManager.getAccess()).toBeNull();
@@ -78,4 +80,60 @@ describe('tokenManager', () => {
     tokenManager.notifySessionExpired();
     expect(handler).toHaveBeenCalledOnce();
   });
+});
+
+describe('refresh account boundaries', () => {
+  it.each(['success', 'failure'] as const)(
+    'does not overwrite or clear a new login after stale refresh %s',
+    async (outcome) => {
+      tokenManager.clear();
+      tokenManager.setTokens('account-a', 'refresh-a');
+      let resolve!: (value: unknown) => void;
+      let reject!: (error: Error) => void;
+      vi.spyOn(axios, 'post').mockImplementationOnce(
+        () =>
+          new Promise((yes, no) => {
+            resolve = yes;
+            reject = no;
+          }),
+      );
+      const pending = tokenManager.refresh();
+      tokenManager.setTokens('account-b', 'refresh-b');
+      if (outcome === 'success')
+        resolve({
+          data: { data: { accessToken: 'rotated-a', refreshToken: 'rotated-refresh-a' } },
+        });
+      else reject(new Error('old refresh expired'));
+      await expect(pending).resolves.toBeNull();
+      expect(tokenManager.getAccess()).toBe('account-b');
+      expect(tokenManager.getRefresh()).toBe('refresh-b');
+      vi.restoreAllMocks();
+    },
+  );
+});
+
+it('refreshes the current account after an older account refresh finishes', async () => {
+  tokenManager.clear();
+  tokenManager.setTokens('a', 'refresh-a');
+  let finish!: (value: unknown) => void;
+  const post = vi
+    .spyOn(axios, 'post')
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    )
+    .mockResolvedValueOnce({
+      data: { data: { accessToken: 'rotated-b', refreshToken: 'rotated-refresh-b' } },
+    });
+  const old = tokenManager.refresh();
+  tokenManager.setTokens('b', 'refresh-b');
+  const current = tokenManager.refresh();
+  finish({ data: { data: { accessToken: 'rotated-a', refreshToken: 'rotated-refresh-a' } } });
+  await expect(old).resolves.toBeNull();
+  await expect(current).resolves.toBe('rotated-b');
+  expect(post).toHaveBeenCalledTimes(2);
+  expect(tokenManager.getAccess()).toBe('rotated-b');
+  vi.restoreAllMocks();
 });

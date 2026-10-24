@@ -9,6 +9,7 @@ import { useGymProfileBootstrap } from './useGymProfileBootstrap';
 import { createEmptyBranch, isBranchProfileComplete } from '@/features/gym-owner-onboarding';
 import type { GymProfileBranch } from '@/features/gym-owner-profile/model/types';
 import { useGymOwnerProfileStore } from '@/features/gym-owner-profile/model/useGymOwnerProfileStore';
+import { marketplaceApi } from '@/features/marketplace';
 import { FACILITY_IDS, ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Badge } from '@/shared/ui/badge';
@@ -107,6 +108,41 @@ export function GymOwnerBranchesPage() {
     setIsFormOpen(false);
     setDraft(null);
     toast.success(copy.saved);
+
+    // Hybrid sync with backend API if brand exists
+    void (async () => {
+      try {
+        const myBrands = await marketplaceApi.getMyBrands();
+        if (myBrands && myBrands.length > 0) {
+          const firstBrand = myBrands[0];
+          if (firstBrand) {
+            const brandId = firstBrand.id;
+            const req = {
+              name: normalized.name,
+              addressLine1: normalized.address,
+              city: normalized.city,
+              district: normalized.area,
+              countryCode: 'VN',
+              phoneNumber: normalized.contactPhone,
+              latitude: 10.7769,
+              longitude: 106.7009,
+              facilitiesJson: JSON.stringify(normalized.facilities),
+              openingHoursJson: JSON.stringify({ hours: normalized.operatingHours }),
+            };
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              normalized.id,
+            );
+            if (alreadyExists && isUuid) {
+              await marketplaceApi.updateBranch(normalized.id, req);
+            } else {
+              await marketplaceApi.createBranch(brandId, req);
+            }
+          }
+        }
+      } catch {
+        // Fallback safely preserved in local store
+      }
+    })();
   };
 
   const confirmRemove = () => {

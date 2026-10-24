@@ -20,7 +20,9 @@ test.describe('Platform Admin M2', () => {
     await page.goto('/superadmin/approvals/gyms');
     await expect(page.getByText('Northstar Fitness')).toBeVisible();
     await page.getByRole('link', { name: 'Detail' }).click();
-    await expect(page).toHaveURL(/\/superadmin\/approvals\/gyms\/gym-1042$/);
+    await expect(page).toHaveURL(
+      /\/superadmin\/approvals\/gyms\/5b0b0c1e-0000-4000-8000-000000001042$/,
+    );
     await expect(page.getByRole('heading', { name: 'Northstar Fitness' })).toBeVisible();
     await expect(page.getByText('Submitted documents')).toBeVisible();
     await page.getByRole('button', { name: 'Approve', exact: true }).click();

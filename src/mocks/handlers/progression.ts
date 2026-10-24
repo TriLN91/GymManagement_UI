@@ -314,6 +314,10 @@ export const progressionHandlers = [
     return ok(scheduleOverview());
   }),
   http.post(path(ENDPOINTS.progression.badgeSeen(':awardId')), () => ok({ ...badge, seen: true })),
+];
+
+// Endpoints absent from the persistent workout fixture remain available to CF05 screens.
+export const supplementaryProgressionHandlers = [
   http.put(path(ENDPOINTS.progression.primaryDistanceSource), () => ok(distance)),
   http.get(path(ENDPOINTS.progression.recovery), () => ok(recoveryReports)),
   http.post(path(ENDPOINTS.progression.recovery), async ({ request }) => {

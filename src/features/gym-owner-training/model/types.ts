@@ -79,6 +79,8 @@ export interface GymPTPackage {
   sessionsIncluded: number;
   durationDays: number;
   servicePriceVnd: number;
+  /** Hours of notice to cancel or move a session free of charge; undefined uses the platform default (24). */
+  minNoticeHours?: number;
   features: LocalizedPackageText[];
   publicationStatus: 'draft' | 'published';
   createdAt: string;
@@ -87,7 +89,13 @@ export interface GymPTPackage {
 
 export type GymPTPackageInput = Pick<
   GymPTPackage,
-  'trainerId' | 'name' | 'sessionsIncluded' | 'durationDays' | 'servicePriceVnd' | 'features'
+  | 'trainerId'
+  | 'name'
+  | 'sessionsIncluded'
+  | 'durationDays'
+  | 'servicePriceVnd'
+  | 'features'
+  | 'minNoticeHours'
 >;
 
 export type ManagementDataState = 'loading' | 'loaded' | 'empty' | 'error';

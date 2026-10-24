@@ -2,6 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 
 async function openAsMember(page: Page, path: string) {
   await page.addInitScript(() => {
+    // Seed once per tab. Clearing storage on later document navigations would
+    // invalidate the live session epoch and correctly sign this fixture out.
+    if (window.sessionStorage.getItem('gmc.session')) return;
     const user = {
       id: 'profile-center-member',
       email: 'member@fit.local',
@@ -10,7 +13,10 @@ async function openAsMember(page: Page, path: string) {
       tenantId: 'fit-e2e',
       locale: 'en',
     };
-    { window.localStorage.clear(); window.localStorage.setItem('gmc.locale', 'en'); };
+    {
+      window.localStorage.clear();
+      window.localStorage.setItem('gmc.locale', 'en');
+    }
     window.localStorage.setItem('app:auth', JSON.stringify({ state: { user }, version: 1 }));
     window.localStorage.setItem('gmc.locale', 'en');
     window.sessionStorage.setItem('gmc.accessToken', 'e2e-token');
@@ -37,7 +43,7 @@ test.describe('Member profile center', () => {
     await expect(page.getByRole('link', { name: 'Update health profile' })).toBeVisible();
   });
 
-  test('opens assessment result and exposes read-only PT appointments', async ({ page }) => {
+  test('opens assessment result and opens the live sessions page', async ({ page }) => {
     await openAsMember(page, '/app/profile/assessments');
     const bench = page.locator('.assessment-history-list article').filter({
       hasText: 'Barbell Bench Press',
@@ -47,12 +53,7 @@ test.describe('Member profile center', () => {
     await expect(page.getByRole('heading', { name: 'Movement findings' })).toBeVisible();
 
     await page.goto('/app/profile/appointments');
-    await expect(page.getByText('Appointments are managed by your Trainer')).toBeVisible();
-    await expect(page.getByRole('button', { name: /create|add appointment/i })).toHaveCount(0);
-    await page.getByRole('button', { name: /Video check-in/i }).click();
-    await expect(
-      page.getByText('Review recovery, adherence and next-week schedule.'),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My coaching sessions' })).toBeVisible();
   });
 
   test('connects a wearable and clears unread notifications', async ({ page }) => {

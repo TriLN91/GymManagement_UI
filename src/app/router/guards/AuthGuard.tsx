@@ -6,16 +6,26 @@ import { ErrorBoundary } from '@/shared/ui/error-boundary';
 
 export function AuthGuard() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+  const userId = useAuthStore((s) => s.user?.id);
   const location = useLocation();
 
+  if (!isHydrated) return <div role="status" aria-label="Loading session" />;
+
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.public.login} replace state={{ returnTo: location.pathname }} />;
+    return (
+      <Navigate
+        to={ROUTES.public.login}
+        replace
+        state={{ returnTo: location.pathname + location.search + location.hash }}
+      />
+    );
   }
   // Errors inside any protected subtree (portals + pages) are isolated so
   // a single broken page doesn't blank the whole authenticated app. The
   // outer ErrorBoundary in App.tsx remains the last-resort net.
   return (
-    <ErrorBoundary>
+    <ErrorBoundary key={userId} resetKey={location.pathname}>
       <Outlet />
     </ErrorBoundary>
   );

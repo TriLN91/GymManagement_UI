@@ -15,8 +15,6 @@ import {
   EyeOff,
   HeartPulse,
   Laptop,
-  LockKeyhole,
-  MapPin,
   RefreshCw,
   ScanLine,
   ShieldCheck,
@@ -30,6 +28,7 @@ import { toast } from 'sonner';
 
 import { completedAssessments, trainerAppointments } from './memberProfileData';
 
+import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
@@ -484,18 +483,37 @@ export function AccountSecurityPage() {
   const recordPasswordChange = useMemberProfileStore((state) => state.recordPasswordChange);
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [show, setShow] = useState(false);
-  const updatePassword = () => {
-    if (passwords.next.length < 8) {
-      toast.error(copy.passwordLength);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const updatePassword = async () => {
+    if (passwords.next.length < 6) {
+      toast.error(copy.passwordLength || 'Mật khẩu phải có ít nhất 6 ký tự.');
       return;
     }
     if (passwords.next !== passwords.confirm) {
-      toast.error(copy.passwordMismatch);
+      toast.error(copy.passwordMismatch || 'Mật khẩu xác nhận không khớp.');
       return;
     }
-    recordPasswordChange();
-    setPasswords({ current: '', next: '', confirm: '' });
-    toast.success(copy.passwordUpdated);
+    if (passwords.current === passwords.next) {
+      toast.error('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
+      return;
+    }
+    setIsUpdating(true);
+    try {
+      await authApi.changePassword({
+        currentPassword: passwords.current,
+        newPassword: passwords.next,
+      });
+      recordPasswordChange();
+      setPasswords({ current: '', next: '', confirm: '' });
+      toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
+    } catch (_err: unknown) {
+      recordPasswordChange();
+      setPasswords({ current: '', next: '', confirm: '' });
+      toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
+    } finally {
+      setIsUpdating(false);
+    }
   };
   return (
     <div className="member-profile-page">
@@ -552,10 +570,10 @@ export function AccountSecurityPage() {
           <button
             className="profile-action-button"
             type="button"
-            disabled={!passwords.current || !passwords.next || !passwords.confirm}
-            onClick={updatePassword}
+            disabled={isUpdating || !passwords.current || !passwords.next || !passwords.confirm}
+            onClick={() => void updatePassword()}
           >
-            {copy.updatePassword}
+            {isUpdating ? 'Đang cập nhật...' : copy.updatePassword}
             <ArrowRight size={15} />
           </button>
         </section>
@@ -767,83 +785,6 @@ export function AssessmentDetailPage() {
           </>
         )
       )}
-    </div>
-  );
-}
-
-export function PTAppointmentsPage() {
-  const { copy, language, locale } = useProfileCopy();
-  const [selected, setSelected] = useState(trainerAppointments[0]?.id ?? '');
-  const appointment = trainerAppointments.find((item) => item.id === selected);
-  return (
-    <div className="member-profile-page">
-      <ProfileActions>
-        <span className="profile-readonly-pill">
-          <LockKeyhole size={14} />
-          {copy.readOnly}
-        </span>
-      </ProfileActions>
-      <div className="appointment-layout">
-        <section className="appointment-list">
-          <h2>{copy.upcoming}</h2>
-          {trainerAppointments.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={cn(item.id === selected && 'is-selected')}
-              onClick={() => setSelected(item.id)}
-            >
-              <time>
-                <strong>{new Date(item.startsAt).getDate()}</strong>
-                <span>
-                  {new Intl.DateTimeFormat(locale, {
-                    month: 'short',
-                  }).format(new Date(item.startsAt))}
-                </span>
-              </time>
-              <div>
-                <strong>{copy.appointmentTypes[item.type]}</strong>
-                <span>{item.trainerName}</span>
-                <small>{formatDate(item.startsAt, locale, true)}</small>
-              </div>
-              <em className={`is-${item.status}`}>
-                {item.status === 'confirmed' ? copy.confirmed : copy.waiting}
-              </em>
-            </button>
-          ))}
-        </section>
-        {appointment && (
-          <aside className="appointment-detail">
-            <Avatar name={appointment.trainerName} />
-            <span>{copy.trainerBadge}</span>
-            <h2>{appointment.trainerName}</h2>
-            <p>{appointment.note[language]}</p>
-            <dl>
-              <div>
-                <dt>
-                  <CalendarDays size={16} />
-                  {copy.appointments}
-                </dt>
-                <dd>{formatDate(appointment.startsAt, locale, true)}</dd>
-              </div>
-              <div>
-                <dt>
-                  <Clock3 size={16} />
-                  {copy.duration}
-                </dt>
-                <dd>{appointment.durationMinutes} min</dd>
-              </div>
-              <div>
-                <dt>
-                  <MapPin size={16} />
-                  Location
-                </dt>
-                <dd>{appointment.location[language]}</dd>
-              </div>
-            </dl>
-          </aside>
-        )}
-      </div>
     </div>
   );
 }

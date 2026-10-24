@@ -6,12 +6,10 @@ import {
   ChevronDown,
   ClipboardCheck,
   FileCheck2,
-  KeyRound,
   Landmark,
   Languages,
   LayoutDashboard,
   LineChart,
-  List,
   ListChecks,
   Loader2,
   LogOut,
@@ -27,11 +25,12 @@ import {
 } from 'lucide-react';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
-import { useGymOwnerOnboardingStore } from '@/features/gym-owner-onboarding';
+import { useGymOwnerApproved } from '@/features/gym-owner-onboarding';
+import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
 import { cn } from '@/shared/lib/cn';
 import {
@@ -43,6 +42,12 @@ import {
 } from '@/shared/ui/sidebar-controls';
 
 import '@/pages/member/components/member-layout.css';
+
+interface OwnerNavItem {
+  label: string;
+  icon?: LucideIcon;
+  to: string;
+}
 
 interface OwnerNavItem {
   label: string;
@@ -64,6 +69,7 @@ interface OwnerNavGroup {
     | 'onboarding';
   label: string;
   icon: LucideIcon;
+  to?: string;
   items: ReadonlyArray<OwnerNavItem>;
 }
 
@@ -89,10 +95,9 @@ export function GymOwnerLayout() {
   const { i18n, t } = useTranslation(['owner', 'common']);
   const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
-  const status = useGymOwnerOnboardingStore((state) => state.status);
+  const { approved } = useGymOwnerApproved();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
-  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
   const [sidebarQuery, setSidebarQuery] = useState('');
@@ -100,12 +105,18 @@ export function GymOwnerLayout() {
 
   const navGroups = useMemo<ReadonlyArray<OwnerNavGroup>>(() => {
     const groups: OwnerNavGroup[] = [];
-    if (status === 'approved') {
+    if (approved) {
       groups.push({
         id: 'dashboard',
         label: t('shell.nav.dashboard'),
         icon: LayoutDashboard,
-        items: [{ label: t('shell.nav.dashboardOverview'), to: ROUTES.admin.root }],
+        items: [
+          {
+            label: t('shell.nav.dashboardOverview'),
+            to: ROUTES.admin.root,
+            icon: LayoutDashboard,
+          },
+        ],
       });
       groups.push({
         id: 'profile',
@@ -166,7 +177,7 @@ export function GymOwnerLayout() {
           {
             label: t('shell.nav.customerList'),
             to: ROUTES.admin.customers,
-            icon: List,
+            icon: ShoppingBag,
           },
         ],
       });
@@ -191,73 +202,62 @@ export function GymOwnerLayout() {
         id: 'analytics',
         label: t('shell.nav.analytics'),
         icon: LineChart,
-        items: [
-          {
-            label: t('shell.nav.analyticsOps'),
-            to: ROUTES.admin.analytics,
-            icon: LineChart,
-          },
-        ],
+        to: ROUTES.admin.analytics,
+        items: [],
       });
       groups.push({
         id: 'notifications',
         label: t('shell.nav.notifications'),
         icon: Bell,
-        items: [
-          {
-            label: t('shell.nav.notificationsSystem'),
-            to: ROUTES.admin.notifications,
-            icon: Bell,
-          },
-        ],
+        to: ROUTES.admin.notifications,
+        items: [],
       });
       groups.push({
         id: 'security',
         label: t('shell.nav.security'),
-        icon: KeyRound,
+        icon: ShieldCheck,
+        to: ROUTES.admin.accountSecurity,
+        items: [],
+      });
+    }
+
+    // Only display onboarding steps if gym owner is not yet approved
+    if (status !== 'approved') {
+      groups.push({
+        id: 'onboarding',
+        label: t('shell.nav.onboarding'),
+        icon: ClipboardCheck,
         items: [
           {
-            label: t('shell.nav.securityVerification'),
-            to: ROUTES.admin.accountSecurity,
+            label: t('shell.nav.onboardingOverview'),
+            to: ROUTES.admin.onboarding,
+            icon: ClipboardCheck,
+          },
+          {
+            label: t('shell.nav.onboardingBrand'),
+            to: ROUTES.admin.onboardingProfile,
+            icon: Building2,
+          },
+          {
+            label: t('shell.nav.onboardingLicense'),
+            to: ROUTES.admin.onboardingLicense,
+            icon: FileCheck2,
+          },
+          {
+            label: t('shell.nav.onboardingReview'),
+            to: ROUTES.admin.onboardingReview,
             icon: ShieldCheck,
+          },
+          {
+            label: t('shell.nav.onboardingStatus'),
+            to: ROUTES.admin.onboardingStatus,
+            icon: BadgeCheck,
           },
         ],
       });
     }
-    groups.push({
-      id: 'onboarding',
-      label: t('shell.nav.onboarding'),
-      icon: ClipboardCheck,
-      items: [
-        {
-          label: t('shell.nav.onboardingOverview'),
-          to: ROUTES.admin.onboarding,
-          icon: ClipboardCheck,
-        },
-        {
-          label: t('shell.nav.onboardingBrand'),
-          to: ROUTES.admin.onboardingProfile,
-          icon: Building2,
-        },
-        {
-          label: t('shell.nav.onboardingLicense'),
-          to: ROUTES.admin.onboardingLicense,
-          icon: FileCheck2,
-        },
-        {
-          label: t('shell.nav.onboardingReview'),
-          to: ROUTES.admin.onboardingReview,
-          icon: ShieldCheck,
-        },
-        {
-          label: t('shell.nav.onboardingStatus'),
-          to: ROUTES.admin.onboardingStatus,
-          icon: BadgeCheck,
-        },
-      ],
-    });
     return groups;
-  }, [isVi, status, t]);
+  }, [approved, isVi, t]);
 
   const initialGroup =
     navGroups.find((group) => group.items.some((item) => matchesRoute(item.to, location.pathname)))
@@ -274,7 +274,11 @@ export function GymOwnerLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(item.label, query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(group.label, query))),
+    );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
 
@@ -306,7 +310,6 @@ export function GymOwnerLayout() {
 
   const handleLogout = () => {
     void logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   const toggleLanguage = () => {
@@ -372,6 +375,35 @@ export function GymOwnerLayout() {
           <SidebarSearch query={sidebarQuery} isVi={isVi} onChange={setSidebarQuery} />
           {visibleGroups.map((group) => {
             const GroupIcon = group.icon;
+
+            // Direct link trigger for single destination items
+            if (group.to && (!group.items || group.items.length === 0)) {
+              const active = matchesRoute(group.to, location.pathname);
+              return (
+                <div className="member-nav-group" key={group.id}>
+                  <NavLink
+                    to={group.to}
+                    end={group.to === ROUTES.admin.root || END_ROUTES.has(group.to)}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      closeFlyout();
+                    }}
+                    aria-label={group.label}
+                    title={isSidebarCollapsed ? group.label : undefined}
+                    className={cn(
+                      'member-nav-group__trigger is-direct-link',
+                      active && 'is-active',
+                    )}
+                  >
+                    <span>
+                      <GroupIcon aria-hidden="true" size={20} strokeWidth={1.8} />
+                      <span className="member-nav-group__label">{group.label}</span>
+                    </span>
+                  </NavLink>
+                </div>
+              );
+            }
+
             const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
@@ -385,6 +417,7 @@ export function GymOwnerLayout() {
                   type="button"
                   className={cn(
                     'member-nav-group__trigger',
+                    isExpanded && 'is-expanded',
                     hasActiveChild && 'has-active-child',
                     isFlyoutOpen && 'is-flyout-open',
                   )}
@@ -424,18 +457,7 @@ export function GymOwnerLayout() {
                       <NavLink
                         key={item.to}
                         to={item.to}
-                        end={
-                          item.to === ROUTES.admin.root ||
-                          item.to === ROUTES.admin.onboarding ||
-                          item.to === ROUTES.admin.pts ||
-                          item.to === ROUTES.admin.packages ||
-                          item.to === ROUTES.admin.customers ||
-                          item.to === ROUTES.admin.orders ||
-                          item.to === ROUTES.admin.settlements ||
-                          item.to === ROUTES.admin.analytics ||
-                          item.to === ROUTES.admin.notifications ||
-                          item.to === ROUTES.admin.accountSecurity
-                        }
+                        end={END_ROUTES.has(item.to)}
                         onClick={() => {
                           setIsMenuOpen(false);
                           closeFlyout();
@@ -486,6 +508,7 @@ export function GymOwnerLayout() {
               <Languages aria-hidden="true" size={16} />
               <span>{t('shell.switchLanguage')}</span>
             </button>
+            <NotificationBell />
             <div className="member-topbar__profile">
               <div>
                 <strong>{userName}</strong>

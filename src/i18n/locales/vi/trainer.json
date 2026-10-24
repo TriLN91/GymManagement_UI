@@ -93,5 +93,31 @@
     "addedDays_other": "Đã thêm vào {{count}} ngày.",
     "addedDays_skipped_other": "Đã thêm vào {{count}} ngày, bỏ qua {{skipped}} ngày bị trùng.",
     "alreadyScheduled": "Bài tập này đã có trong {{day}}."
+  },
+  "assignedMembers": {
+    "title": "Member được gán cho bạn",
+    "loading": "Đang tải danh sách Member…",
+    "error": "Không tải được danh sách Member được gán.",
+    "empty": "Bạn chưa được gán Member nào.",
+    "current": "Đang hiệu lực",
+    "ended": "Đã kết thúc",
+    "canRead": "Xem hồ sơ fitness",
+    "canWorkout": "Quản lý workout",
+    "canNutrition": "Quản lý dinh dưỡng",
+    "viewProfile": "Xem hồ sơ fitness",
+    "hideProfile": "Ẩn hồ sơ",
+    "loadingProfile": "Đang tải hồ sơ…",
+    "profileError": "Không tải được hồ sơ. Có thể phân công đã hết hiệu lực hoặc bạn không còn quyền đọc.",
+    "goal": "Mục tiêu",
+    "training": "Luyện tập",
+    "trainingSummary": "{{level}} · {{days}} ngày/tuần · {{minutes}} phút/buổi",
+    "limitations": "Giới hạn vận động",
+    "yes": "Có",
+    "none": "Không",
+    "plans": "Plan tập",
+    "loadingPlans": "Đang tải plan…",
+    "plansError": "Không tải được plan của học viên.",
+    "noPlans": "Học viên chưa có plan nào.",
+    "planVersion": "phiên bản {{number}}, {{count}} bài"
   }
 }

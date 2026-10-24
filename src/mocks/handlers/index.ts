@@ -1,10 +1,23 @@
 import { http, HttpResponse } from 'msw';
 
+import { adminRegistrationHandlers } from './adminRegistrations';
+import { appointmentHandlers } from './appointments';
+import { assignmentHandlers } from './assignments';
+import { assistantHandlers } from './assistant';
 import { authHandlers } from './auth';
 import { sampleCoachingPlan } from './coaching';
 import { fitnessHandlers } from './fitness';
+import { gymOwnerHandlers } from './gymOwner';
+import { marketplaceReviewHandlers } from './marketplaceReview';
 import { movementReferenceHandlers } from './movementReferences';
-import { progressionHandlers, workoutHandlers } from './progression';
+import { notificationHandlers } from './notifications';
+import { planFeedbackHandlers } from './planFeedback';
+import { supplementaryProgressionHandlers } from './progression';
+import { staffInvitationHandlers } from './staffInvitations';
+import { studioHandlers } from './studio';
+import { trainerHandlers } from './trainers';
+import { trainerServiceHandlers } from './trainerServices';
+import { workoutHandlers } from './workouts';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
@@ -12,11 +25,23 @@ import { ENDPOINTS } from '@/shared/api/endpoints';
 const path = (p: string) => `*${p}`;
 
 export const handlers = [
+  ...trainerHandlers,
+  ...studioHandlers,
+  ...workoutHandlers,
   ...authHandlers,
+  ...adminRegistrationHandlers,
+  ...assignmentHandlers,
+  ...appointmentHandlers,
+  ...gymOwnerHandlers,
+  ...notificationHandlers,
+  ...marketplaceReviewHandlers,
+  ...planFeedbackHandlers,
+  ...staffInvitationHandlers,
+  ...trainerServiceHandlers,
   ...fitnessHandlers,
   ...movementReferenceHandlers,
-  ...progressionHandlers,
-  ...workoutHandlers,
+  ...supplementaryProgressionHandlers,
+  ...assistantHandlers,
 
   http.get(path(ENDPOINTS.coaching.plan), () => HttpResponse.json({ data: sampleCoachingPlan })),
 

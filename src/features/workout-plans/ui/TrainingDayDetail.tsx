@@ -9,6 +9,7 @@ import {
   optionalTargetLabel,
   type OptionalDayExercise,
 } from '../model/optionalAddons';
+import { optionalWorkout } from '../model/optionalWorkout';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import type { WorkoutExercise, WorkoutSource } from '../model/workoutFlowTypes';
@@ -16,7 +17,11 @@ import type { WorkoutExercise, WorkoutSource } from '../model/workoutFlowTypes';
 import { WorkoutFlowShell } from './WorkoutFlowShell';
 
 import { formatBusinessDate } from '@/features/gamification/model/presentation';
-import { useMemberWorkoutBuilderStore } from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
+import {
+  useMemberWorkoutBuilderStore,
+  WEEKDAYS,
+  type Weekday,
+} from '@/features/member-workout-builder/model/useMemberWorkoutBuilderStore';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 
@@ -51,6 +56,34 @@ export function TrainingDayDetail() {
   if (live.isError) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
   if (dayId === FREE_DAY_ID) return <FreeWorkoutPicker live={live} />;
 
+  if (dayId.startsWith('optional:')) {
+    const [, id, weekday] = dayId.split(':');
+    const addon = optionalAddons.find((a) => a.id === id);
+    if (!addon || !WEEKDAYS.includes(weekday as Weekday))
+      return <Navigate to={ROUTES.member.workoutSchedule} replace />;
+    const result = optionalWorkout(addon, weekday as Weekday, live.catalog);
+    if (result.unavailable.length > 0 || result.exercises.length === 0)
+      return (
+        <WorkoutFlowShell
+          backTo={ROUTES.member.workoutSchedule}
+          backLabel={t('flow.detail.weeklySchedule')}
+        >
+          <p role="alert">
+            {t('optional.unavailable')} {result.unavailable.join(', ')}
+          </p>
+        </WorkoutFlowShell>
+      );
+    return (
+      <DayOverview
+        dayId={dayId}
+        title={addon.name}
+        subtitle={t('optional.accounting')}
+        durationMinutes={0}
+        exercises={result.exercises}
+        start={{ source: { kind: 'free' } }}
+      />
+    );
+  }
   const day = live.week.find((item) => item.id === dayId);
   if (!day) return <Navigate to={ROUTES.member.workoutSchedule} replace />;
   const optional = optionalExercisesFor(optionalAddons, day.weekday);

@@ -18,6 +18,7 @@ import type {
 } from './types';
 
 import { STORAGE_KEYS } from '@/shared/config/constants';
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
 
 interface GymOwnerTrainingState {
   trainers: GymTrainerProfile[];
@@ -218,6 +219,7 @@ export const useGymOwnerTrainingStore = create<GymOwnerTrainingState>()(
       reset: () => set(initialState()),
     }),
     {
+      storage: accountStorage,
       name: STORAGE_KEYS.gymOwnerTrainingManagement,
       version: 1,
     },
@@ -225,3 +227,5 @@ export const useGymOwnerTrainingStore = create<GymOwnerTrainingState>()(
 );
 
 export { canTransitionOperationalStatus };
+
+registerAccountStore(useGymOwnerTrainingStore);

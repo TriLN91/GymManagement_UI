@@ -1,4 +1,11 @@
-import axios, { type AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from 'axios';
+
+import { TokenManager } from './session';
 
 import { ENDPOINTS } from '@/shared/api/endpoints';
 import { ApiError, AuthError, NetworkError, ValidationError } from '@/shared/api/errorTypes';
@@ -25,6 +32,12 @@ const AUTH_PATHS: ReadonlyArray<string> = [
   ENDPOINTS.auth.login,
   ENDPOINTS.auth.register,
   ENDPOINTS.auth.refresh,
+  ENDPOINTS.auth.registerSendOtp,
+  ENDPOINTS.auth.registerResendOtp,
+  ENDPOINTS.auth.registerVerifyOtp,
+  ENDPOINTS.auth.forgotPassword,
+  ENDPOINTS.auth.verifyOtp,
+  ENDPOINTS.auth.resetPassword,
 ];
 
 // Backend validation message: "400: ... thất bại - Email: msg | Password: msg".
@@ -53,99 +66,42 @@ function isAuthRequest(url: string | undefined): boolean {
   return url !== undefined && AUTH_PATHS.some((path) => url.endsWith(path));
 }
 
-class TokenManager {
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
-  private refreshQueue: Array<(token: string | null) => void> = [];
-  private isRefreshing = false;
-  private sessionExpiredHandler: (() => void) | null = null;
-
-  // Registered by the app shell so this module does not import the auth store (no cycle).
-  onSessionExpired(handler: () => void): void {
-    this.sessionExpiredHandler = handler;
-  }
-
-  notifySessionExpired(): void {
-    this.sessionExpiredHandler?.();
-  }
-
-  hydrate(): void {
-    this.accessToken = sessionStorage.getItem(STORAGE_KEYS.accessToken);
-    this.refreshToken = sessionStorage.getItem(STORAGE_KEYS.refreshToken);
-  }
-
-  setTokens(access: string, refresh: string): void {
-    this.accessToken = access;
-    this.refreshToken = refresh;
-    sessionStorage.setItem(STORAGE_KEYS.accessToken, access);
-    sessionStorage.setItem(STORAGE_KEYS.refreshToken, refresh);
-  }
-
-  clear(): void {
-    this.accessToken = null;
-    this.refreshToken = null;
-    sessionStorage.removeItem(STORAGE_KEYS.accessToken);
-    sessionStorage.removeItem(STORAGE_KEYS.refreshToken);
-  }
-
-  getAccess(): string | null {
-    return this.accessToken;
-  }
-
-  getRefresh(): string | null {
-    return this.refreshToken;
-  }
-
-  // FR-IAM-04: single-use rotation; concurrent 401s queue behind one refresh call.
-  async refresh(): Promise<string | null> {
-    if (!this.refreshToken) return null;
-
-    if (this.isRefreshing) {
-      return new Promise<string | null>((resolve) => {
-        this.refreshQueue.push(resolve);
-      });
-    }
-
-    this.isRefreshing = true;
-    try {
-      const response = await axios.post<ApiEnvelope<{ accessToken: string; refreshToken: string }>>(
-        `${env.VITE_API_BASE_URL}${ENDPOINTS.auth.refresh}`,
-        { accessToken: this.accessToken ?? '', refreshToken: this.refreshToken },
-      );
-      const { accessToken, refreshToken } = response.data.data;
-      this.setTokens(accessToken, refreshToken);
-      this.flushQueue(accessToken);
-      return accessToken;
-    } catch {
-      this.clear();
-      this.flushQueue(null);
-      return null;
-    } finally {
-      this.isRefreshing = false;
-    }
-  }
-
-  private flushQueue(token: string | null): void {
-    while (this.refreshQueue.length > 0) {
-      const next = this.refreshQueue.shift();
-      if (next) next(token);
-    }
-  }
-}
-
 export const tokenManager = new TokenManager();
+
+// Default timeout for standard interactive API requests to prevent hanging requests.
+const DEFAULT_API_TIMEOUT_MS = 20_000;
 
 const instance: AxiosInstance = axios.create({
   baseURL: env.VITE_API_BASE_URL,
-  timeout: env.VITE_API_TIMEOUT_MS,
+  timeout: DEFAULT_API_TIMEOUT_MS,
 });
 
+type SessionRequest = { _retried?: boolean; _sessionVersion?: number };
+
 instance.interceptors.request.use((config) => {
+  tokenManager.checkCurrent();
+  const request = config as typeof config & SessionRequest;
+  if (
+    request._sessionVersion !== undefined &&
+    request._sessionVersion !== tokenManager.getVersion()
+  )
+    throw new AuthError(401, 'Session changed', 'SessionChanged');
+  request._sessionVersion ??= tokenManager.getVersion();
   const token = tokenManager.getAccess();
   if (token) config.headers.set('Authorization', `Bearer ${token}`);
 
   const tenantId = sessionStorage.getItem(STORAGE_KEYS.tenantId);
   if (tenantId) config.headers.set('X-Tenant-Id', tenantId);
+
+  // Allow long-running endpoints (like video analysis) to use extended timeout
+  if (!config.timeout || config.timeout === DEFAULT_API_TIMEOUT_MS) {
+    const isLongRunning =
+      config.url &&
+      (config.url.includes('/reference-sets') ||
+        config.url.includes('/analyze') ||
+        config.url.includes('/video'));
+    config.timeout = isLongRunning ? env.VITE_API_TIMEOUT_MS : DEFAULT_API_TIMEOUT_MS;
+  }
 
   // FR: idempotency for mutating requests — interceptor owns this, callers do not.
   if (config.method && MUTATING_METHODS.has(config.method.toLowerCase())) {
@@ -157,14 +113,44 @@ instance.interceptors.request.use((config) => {
 });
 
 instance.interceptors.response.use(
-  (response: AxiosResponse<ApiEnvelope<unknown>>) => response,
+  (response: AxiosResponse<ApiEnvelope<unknown>>) => {
+    if (
+      !isAuthRequest(response.config.url) &&
+      (response.config as SessionRequest)._sessionVersion !== tokenManager.getVersion()
+    )
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+    return response;
+  },
   async (error: AxiosError<ApiEnvelope<unknown>>) => {
-    if (!error.response) throw new NetworkError(error.message);
+    if (error instanceof AuthError) throw error;
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
+        throw new NetworkError(
+          'Yêu cầu đã hết thời gian chờ (Server Timeout). Vui lòng thử lại sau.',
+        );
+      }
+      if (typeof window !== 'undefined' && !window.navigator.onLine) {
+        throw new NetworkError('Mất kết nối Internet. Vui lòng kiểm tra lại đường truyền mạng.');
+      }
+      throw new NetworkError(
+        error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
+      );
+    }
 
     const { status, data } = error.response;
     const body = data as { message?: string; errorCode?: string; code?: string } | undefined;
     const message = body?.message ?? error.message;
     const code = body?.errorCode ?? body?.code;
+
+    // Handle Idempotency in-flight conflicts
+    if (status === 409 && (code === 'IdempotencyInFlight' || code === 'Conflict')) {
+      throw new ApiError(
+        status,
+        message || 'Thao tác đang được xử lý, vui lòng không gửi lại liên tục.',
+        code,
+        data,
+      );
+    }
 
     // Credential errors on login/register/refresh must not trigger a refresh or a sign-out.
     if (status === 401 && isAuthRequest(error.config?.url)) {
@@ -172,17 +158,33 @@ instance.interceptors.response.use(
     }
 
     if (status === 401 && error.config && !(error.config as { _retried?: boolean })._retried) {
-      const newToken = await tokenManager.refresh();
+      if ((error.config as SessionRequest)._sessionVersion !== tokenManager.getVersion())
+        throw new AuthError(status, message, code);
+      const requestAccess = error.config.headers.get('Authorization');
+      const ownerRefresh = tokenManager.getRefresh();
+      const newToken =
+        requestAccess !== `Bearer ${tokenManager.getAccess()}`
+          ? tokenManager.getAccess()
+          : await tokenManager.refresh();
       if (newToken) {
         (error.config as { _retried?: boolean })._retried = true;
         error.config.headers.set('Authorization', `Bearer ${newToken}`);
         return instance.request(error.config);
       }
-      tokenManager.notifySessionExpired();
+      if (tokenManager.getRefresh() === null || tokenManager.getRefresh() === ownerRefresh)
+        tokenManager.notifySessionExpired();
       throw new AuthError(status, message, code);
     }
 
-    if (status === 401) throw new AuthError(status, message, code);
+    if (status === 401) {
+      if (
+        (error.config as SessionRequest | undefined)?._sessionVersion === tokenManager.getVersion()
+      ) {
+        tokenManager.clear();
+        tokenManager.notifySessionExpired();
+      }
+      throw new AuthError(status, message, code);
+    }
 
     if (status === 422 || status === 400) {
       const fieldErrors = extractFieldErrors(data, code, message);
@@ -210,6 +212,54 @@ function unwrap<T>(response: AxiosResponse<ApiEnvelope<T> | T>): T {
   return unwrapApiResponse(response.data);
 }
 
+// In-flight mutation cache: prevents duplicate rapid triggers from firing duplicate HTTP network calls.
+const inFlightMutations = new Map<string, Promise<unknown>>();
+
+function getMutationKey(method: string, url: string, body?: unknown): string {
+  try {
+    return `${method.toLowerCase()}:${url}:${JSON.stringify(body ?? {})}`;
+  } catch {
+    return generateUuid();
+  }
+}
+
+async function executeMutatingRequest<T>(
+  method: 'post' | 'put' | 'patch' | 'delete',
+  url: string,
+  body?: unknown,
+  config?: AxiosRequestConfig,
+): Promise<T> {
+  // Explicit transport options (signals, idempotency keys, timeouts) belong to
+  // independent requests. Never share an account's in-flight mutation with another.
+  const scope = `${tokenManager.getAccess()}:${sessionStorage.getItem(STORAGE_KEYS.tenantId)}`;
+  const key = config ? generateUuid() : `${scope}:${getMutationKey(method, url, body)}`;
+  const existing = inFlightMutations.get(key);
+  if (existing) {
+    return existing as Promise<T>;
+  }
+
+  const executionPromise = (async () => {
+    try {
+      let res: AxiosResponse<ApiEnvelope<T> | T>;
+      if (method === 'post') {
+        res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'put') {
+        res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
+      } else if (method === 'patch') {
+        res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
+      } else {
+        res = await instance.delete<ApiEnvelope<T> | T>(url, config);
+      }
+      return unwrap(res);
+    } finally {
+      inFlightMutations.delete(key);
+    }
+  })();
+
+  inFlightMutations.set(key, executionPromise);
+  return executionPromise;
+}
+
 export async function apiGet<T>(
   url: string,
   config?: Parameters<AxiosInstance['get']>[1],
@@ -223,8 +273,7 @@ export async function apiPost<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['post']>[2],
 ): Promise<T> {
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('post', url, body, config);
 }
 
 export async function apiPut<T, B = unknown>(
@@ -232,8 +281,7 @@ export async function apiPut<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['put']>[2],
 ): Promise<T> {
-  const res = await instance.put<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('put', url, body, config);
 }
 
 export async function apiPatch<T, B = unknown>(
@@ -241,21 +289,23 @@ export async function apiPatch<T, B = unknown>(
   body?: B,
   config?: Parameters<AxiosInstance['patch']>[2],
 ): Promise<T> {
-  const res = await instance.patch<ApiEnvelope<T> | T>(url, body, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('patch', url, body, config);
 }
 
 export async function apiDelete<T>(
   url: string,
   config?: Parameters<AxiosInstance['delete']>[1],
 ): Promise<T> {
-  const res = await instance.delete<ApiEnvelope<T> | T>(url, config);
-  return unwrap(res);
+  return executeMutatingRequest<T>('delete', url, undefined, config);
 }
 
-export async function apiPostForm<T>(url: string, body: FormData): Promise<T> {
+export async function apiPostForm<T>(
+  url: string,
+  body: FormData,
+  config?: Parameters<AxiosInstance['post']>[2],
+): Promise<T> {
   // Do not set Content-Type: the browser must add the multipart boundary.
-  const res = await instance.post<ApiEnvelope<T> | T>(url, body);
+  const res = await instance.post<ApiEnvelope<T> | T>(url, body, config);
   return unwrap(res);
 }
 
@@ -263,14 +313,34 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
   url: string,
   signal: AbortSignal,
 ): Promise<T[]> {
+  const version = tokenManager.getVersion();
+  const initialToken = tokenManager.getAccess();
+  const assertOwner = () => {
+    if (version !== tokenManager.getVersion())
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+  };
   const request = async (token: string | null) =>
     fetch(`${env.VITE_API_BASE_URL}${url}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       cache: 'no-store',
       signal,
     });
-  let response = await request(tokenManager.getAccess());
-  if (response.status === 401) response = await request(await tokenManager.refresh());
+  let response = await request(initialToken);
+  assertOwner();
+  if (response.status === 401) {
+    const token =
+      initialToken === tokenManager.getAccess()
+        ? await tokenManager.refresh()
+        : tokenManager.getAccess();
+    assertOwner();
+    if (token) response = await request(token);
+    if (!token || response.status === 401) {
+      tokenManager.clear();
+      tokenManager.notifySessionExpired();
+      throw new AuthError(401, 'Session expired');
+    }
+  }
+  assertOwner();
   if (!response.ok || !response.body)
     throw new ApiError(response.status, 'Assistant stream failed');
   const reader = response.body.getReader();
@@ -279,6 +349,10 @@ export async function openApiEventStream<T extends { sequence?: number; type?: s
   let buffer = '';
   while (true) {
     const chunk = await reader.read();
+    if (version !== tokenManager.getVersion()) {
+      await reader.cancel();
+      throw new AuthError(401, 'Session changed', 'SessionChanged');
+    }
     if (chunk.done) break;
     buffer += decoder.decode(chunk.value, { stream: true }).replace(/\r\n/g, '\n');
     let boundary = buffer.indexOf('\n\n');

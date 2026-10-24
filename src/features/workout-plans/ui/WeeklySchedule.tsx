@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { optionalExercisesFor } from '../model/optionalAddons';
+import { optionalDayId } from '../model/optionalWorkout';
 import { useLiveWorkoutWeek } from '../model/useLiveWorkout';
 import { useWorkoutSessionStore } from '../model/useWorkoutSessionStore';
 import { useWorkoutSync } from '../model/workoutSync';
@@ -170,15 +171,21 @@ export function WeeklySchedule() {
             <span>{t('flow.schedule.optionalTitle')}</span>
             <strong>{optionalAddons.length}</strong>
           </header>
-          {optionalAddons.map((addon) => (
-            <article key={addon.id}>
-              <div>
-                <strong>{addon.name}</strong>
-                <span>{addon.sourcePlanName}</span>
-              </div>
-              <b>{t('flow.schedule.optionalProtected')}</b>
-            </article>
-          ))}
+          <p>{t('optional.accounting')}</p>
+          <p>{t('flow.schedule.optionalProtected')}</p>
+          {optionalAddons.flatMap((addon) =>
+            [...new Set(addon.exercises.flatMap((e) => e.days))].map((weekday) => (
+              <Link
+                className="workout-day-card"
+                key={`${addon.id}:${weekday}`}
+                to={ROUTES.member.workoutDayPath(optionalDayId(addon.id, weekday))}
+              >
+                <span>{t(`flow.weekdays.${weekday}`)}</span>
+                <h3>{addon.name}</h3>
+                <small>{addon.sourcePlanName}</small>
+              </Link>
+            )),
+          )}
         </section>
       )}
       <p className="workout-live-notice is-quiet">{t('flow.schedule.note')}</p>

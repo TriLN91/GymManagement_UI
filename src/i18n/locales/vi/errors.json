@@ -4,7 +4,8 @@
     "notFoundBody": "Trang bạn yêu cầu không tồn tại.",
     "forbiddenTitle": "403 — Bị cấm",
     "forbiddenBody": "Bạn không có quyền truy cập khu vực này.",
-    "goHome": "Về trang chủ"
+    "goHome": "Về trang chủ",
+    "goBack": "Quay lại"
   },
   "boundary": {
     "title": "Đã xảy ra lỗi",

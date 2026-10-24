@@ -44,6 +44,7 @@
 }
 
 .dark .platform-shell .member-nav-group__trigger:hover,
+.dark .platform-shell .member-nav-group__trigger.is-expanded,
 .dark .platform-shell .member-nav-group__trigger.has-active-child,
 .dark .platform-shell .member-nav-group__trigger.is-flyout-open,
 .dark .platform-shell .member-nav-link:hover {

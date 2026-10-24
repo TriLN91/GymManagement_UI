@@ -25,6 +25,10 @@ export function useReferenceSet(referenceSetId: string) {
     queryKey: QUERY_KEYS.referenceSet(referenceSetId),
     queryFn: () => movementReferenceApi.getReferenceSet(referenceSetId),
     enabled: Boolean(referenceSetId),
+    refetchInterval: (query) =>
+      query.state.data?.sources.some((source) => source.processingStatus === 'PROCESSING')
+        ? 5000
+        : false,
   });
 }
 
@@ -58,7 +62,7 @@ export function useUploadReferenceSource(referenceSetId: string) {
   const refresh = useRefreshReferenceSet(referenceSetId);
   return useMutation({
     mutationFn: (video: File) => movementReferenceApi.uploadSource(referenceSetId, video),
-    onSuccess: refresh,
+    onSettled: refresh,
   });
 }
 

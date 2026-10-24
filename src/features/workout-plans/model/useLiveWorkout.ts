@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import type { ExerciseView } from '../api/types';
+import type { ExerciseView, SessionCorrectionBody } from '../api/types';
 import { workoutApi } from '../api/workoutApi';
 
 import { activeVersion, buildWorkoutWeek } from './liveWorkout';
@@ -11,6 +11,15 @@ import { QUERY_KEYS } from '@/shared/config/constants';
 
 export function useWorkoutPlans() {
   return useQuery({ queryKey: QUERY_KEYS.workoutPlans(), queryFn: workoutApi.getPlans });
+}
+
+export function useCorrectSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { sessionId: string; body: SessionCorrectionBody }) =>
+      workoutApi.correctSession(v.sessionId, v.body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutSessions() }),
+  });
 }
 
 export function useExerciseCatalog() {

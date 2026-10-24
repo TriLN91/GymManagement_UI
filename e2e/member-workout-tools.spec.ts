@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openAsMember(page: Page, path: string) {
+  await page.clock.setFixedTime(new Date('2026-10-20T03:00:00Z'));
   await page.addInitScript(() => {
     const user = {
       id: 'member-tools-member',
@@ -52,22 +53,8 @@ test.describe('Member workout tools', () => {
     await expect(page.getByText('Confirmed XP', { exact: true })).toBeVisible();
     await expect(page.getByText('150', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Badges earned' })).toBeVisible();
-    await expect(page.getByText('First steps')).toBeVisible();
+    await expect(page.getByText('Workout Milestone', { exact: true }).first()).toBeVisible();
     await expect(page.getByText(/Confirmed XP and badges are never removed/)).toBeVisible();
-  });
-
-  test('shows an error with retry when the progression state cannot be loaded', async ({
-    page,
-  }) => {
-    await page.addInitScript(() => window.sessionStorage.setItem('msw:fail', 'progression-state'));
-    await openAsMember(page, '/app/workout/achievements');
-
-    await expect(
-      page.getByRole('alert').filter({ hasText: /couldn't load your progression/ }),
-    ).toBeVisible({ timeout: 20_000 });
-    await page.evaluate(() => window.sessionStorage.removeItem('msw:fail'));
-    await page.getByRole('button', { name: 'Try again' }).first().click();
-    await expect(page.getByRole('heading', { name: 'Your progression' })).toBeVisible();
   });
 
   test('adds optional exercises without changing AI or PT plan progress', async ({ page }) => {
@@ -91,25 +78,61 @@ test.describe('Member workout tools', () => {
     await expect(summary).toHaveText(before ?? '');
 
     await page.reload();
-    await expect(page.getByText('Monday chest add-on', { exact: true })).toBeVisible();
+    await expect(page.getByText('Monday chest add-on', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Excluded from AI/PT plan completion').first()).toBeVisible();
 
-    await page.getByRole('link', { name: /Monday.*Monday chest add-on/i }).click();
+    await page
+      .locator('a[href*="/app/workout/day/optional:"]')
+      .filter({ hasText: 'Monday chest add-on' })
+      .click();
     await expect(page.getByRole('heading', { name: 'Barbell Bench Press' })).toBeVisible();
     await expect(page.getByText('Excluded from AI/PT plan completion')).toBeVisible();
-    await expect(page.getByRole('button', { name: /start session/i })).toHaveCount(0);
+    await page.reload();
+    await page.getByRole('button', { name: /start session/i }).click();
+    await page.getByLabel('Set 1 load').fill('42.5');
+    await page.getByRole('button', { name: /save actual & continue/i }).click();
+    await expect(page).toHaveURL(/workout\/complete/);
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const state = JSON.parse(
+            localStorage.getItem('fitflex:mock-workouts:member-tools-member') ?? '{}',
+          );
+          return state.sessions?.filter((s: { status: string }) => s.status === 'Completed').length;
+        }),
+      )
+      .toBe(1);
+    const accounting = await page.evaluate(() => {
+      const state = JSON.parse(
+        localStorage.getItem('fitflex:mock-workouts:member-tools-member') ?? '{}',
+      );
+      return {
+        version: state.sessions[0].workoutPlanVersionId,
+        completedMain: state.completedMain,
+      };
+    });
+    expect(accounting).toEqual({ version: null, completedMain: false });
+    await page.goto('/app/workout/schedule');
+    await page.reload();
+    await expect(page.getByRole('link', { name: /Tuesday.*Day 1/i })).toBeVisible();
+    await expect(page.getByText('Monday chest add-on', { exact: true }).first()).toBeVisible();
   });
 
   test('opens assessment for the current exercise and resumes the session', async ({ page }) => {
     await openAsMember(page, '/app/workout/schedule');
-    await page.getByRole('link', { name: /Tuesday.*Day 2/i }).click();
+    await page.getByRole('link', { name: /Tuesday.*Day 1/i }).click();
 
     await page.getByRole('button', { name: /start session/i }).click();
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Hip hinge' })).toBeVisible();
+    await page.getByLabel('Set 2 load').fill('42.5');
     await page.getByRole('button', { name: /assess my form/i }).click();
 
-    await expect(page).toHaveURL(/\/app\/workout\/assessment\/ex-bent-over-row(:|%3A)1$/);
+    await expect(page).toHaveURL(
+      /\/app\/workout\/assessment\/20000000-0000-4000-8000-000000000001$/,
+    );
     await expect(page.getByRole('heading', { name: 'Form assessment' })).toHaveCount(0);
-    await expect(page.getByText('Bent-over barbell row', { exact: true })).toBeVisible();
+    await expect(page.getByText('Hip hinge', { exact: true })).toBeVisible();
+    await page.reload();
 
     await page.locator('input[type="file"]').setInputFiles({
       name: 'bench-form.webm',
@@ -125,6 +148,22 @@ test.describe('Member workout tools', () => {
       .first()
       .click();
     await expect(page).toHaveURL(/\/app\/workout\/session\/2026-10-20$/);
-    await expect(page.getByRole('heading', { name: 'Bent-over barbell row' })).toBeVisible();
+    await expect(page.getByLabel('Set 2 load')).toHaveValue('42.5');
+    await expect(page.getByLabel('Set 2 load')).toBeFocused();
+    await expect(page.getByRole('heading', { name: 'Hip hinge' })).toBeVisible();
   });
+});
+
+test('progression shows the API error and recovers on explicit retry', async ({ page }) => {
+  await openAsMember(page, '/app/workout/builder');
+  await page.evaluate(() => sessionStorage.setItem('fitflex:mock:progression-fail', 'true'));
+  await page.goto('/app/workout/achievements');
+  await expect(page.getByRole('alert')).toContainText("We couldn't load your progression");
+  await expect(page.getByText('Confirmed XP', { exact: true })).toHaveCount(0);
+  await page.evaluate(() => sessionStorage.removeItem('fitflex:mock:progression-fail'));
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Your progression' })).toBeVisible();
+  await expect(page.getByText('150', { exact: true })).toBeVisible();
+  await expect(page.getByText('Bronze', { exact: true })).toBeVisible();
+  await expect(page.getByText('Silver', { exact: true })).toBeVisible();
 });

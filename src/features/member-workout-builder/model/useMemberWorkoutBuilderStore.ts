@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 
 import type { MuscleTarget } from './muscleMapData';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export type BuilderTrackingType = 'strength' | 'duration' | 'distance' | 'interval';
 
 export interface ExerciseCatalogItem {
@@ -408,6 +410,7 @@ export const useMemberWorkoutBuilderStore = create<MemberBuilderState>()(
       },
     }),
     {
+      storage: accountStorage,
       name: 'fit:member-workout-builder:v1',
       version: 3,
       migrate: (persistedState, version) => {
@@ -417,10 +420,12 @@ export const useMemberWorkoutBuilderStore = create<MemberBuilderState>()(
         if (version < 3) {
           const migrated = { ...persisted };
           delete migrated.changeRequests;
-          return { ...migrated, optionalAddons: [] } as MemberBuilderState;
+          return { ...migrated, optionalAddons: [] };
         }
-        return persistedState as MemberBuilderState;
+        return persistedState;
       },
     },
   ),
 );
+
+registerAccountStore(useMemberWorkoutBuilderStore);

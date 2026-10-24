@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export interface TrainerProfileData {
   phone: string;
   bio: string;
@@ -12,7 +14,9 @@ export interface TrainerProfileData {
 
 interface TrainerProfileState {
   profile: TrainerProfileData;
+  isProfileComplete: boolean;
   updateProfile: (profile: TrainerProfileData) => void;
+  setIsProfileComplete: (isComplete: boolean) => void;
 }
 
 export const useTrainerProfileStore = create<TrainerProfileState>()(
@@ -27,8 +31,19 @@ export const useTrainerProfileStore = create<TrainerProfileState>()(
           'I help members understand why each exercise belongs in their plan and how to progress without sacrificing movement quality.',
         avatarDataUrl: null,
       },
-      updateProfile: (profile) => set({ profile }),
+      isProfileComplete: true,
+      updateProfile: (profile) =>
+        set({
+          profile,
+          isProfileComplete:
+            Boolean(profile.phone?.trim()) &&
+            Boolean(profile.bio?.trim()) &&
+            (profile.experienceYears ?? 0) > 0,
+        }),
+      setIsProfileComplete: (isProfileComplete) => set({ isProfileComplete }),
     }),
-    { name: 'fit:trainer-profile:v1', version: 1 },
+    { storage: accountStorage, name: 'fit:trainer-profile:v2', version: 2 },
   ),
 );
+
+registerAccountStore(useTrainerProfileStore);

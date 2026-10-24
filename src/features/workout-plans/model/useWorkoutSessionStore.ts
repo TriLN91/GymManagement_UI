@@ -10,6 +10,8 @@ import type {
   WorkoutTotals,
 } from './workoutFlowTypes';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 interface StartInput {
   dayId: string;
   source: WorkoutSource;
@@ -24,6 +26,8 @@ interface WorkoutSessionState {
   startSession: (input: StartInput) => string;
   saveExerciseLog: (exerciseId: string, log: ExerciseLog) => void;
   goToExercise: (index: number) => void;
+  saveDraft: (exerciseId: string, draft: ExerciseLog) => void;
+  selectSet: (exerciseId: string, index: number) => void;
   finishSession: () => CompletedWorkoutSession | null;
   clearActiveSession: () => void;
   updateSync: (id: string, sync: CompletedWorkoutSession['sync']) => void;
@@ -103,6 +107,28 @@ export const useWorkoutSessionStore = create<WorkoutSessionState>()(
               }
             : state,
         ),
+      saveDraft: (exerciseId, draft) =>
+        set((state) =>
+          state.activeSession
+            ? {
+                activeSession: {
+                  ...state.activeSession,
+                  drafts: { ...state.activeSession.drafts, [exerciseId]: draft },
+                },
+              }
+            : state,
+        ),
+      selectSet: (exerciseId, index) =>
+        set((state) =>
+          state.activeSession
+            ? {
+                activeSession: {
+                  ...state.activeSession,
+                  selectedSets: { ...state.activeSession.selectedSets, [exerciseId]: index },
+                },
+              }
+            : state,
+        ),
       goToExercise: (index) =>
         set((state) =>
           state.activeSession
@@ -140,8 +166,11 @@ export const useWorkoutSessionStore = create<WorkoutSessionState>()(
         })),
     }),
     {
+      storage: accountStorage,
       name: 'fit:member-workout-session:v2',
       version: 2,
     },
   ),
 );
+
+registerAccountStore(useWorkoutSessionStore);

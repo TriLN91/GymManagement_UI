@@ -1,0 +1,39 @@
+{
+  "title": "Invite staff",
+  "intro": "Trainers and Branch Managers join by e-mail invitation and choose their own password.",
+  "email": "Invitee e-mail",
+  "fullName": "Full name",
+  "role": "Role",
+  "roles": { "Trainer": "Trainer", "BranchManager": "Branch Manager" },
+  "branch": "Branch",
+  "noBranches": "There is no branch to invite to yet.",
+  "send": "Send invitation",
+  "sent": "Invitation sent.",
+  "devLink": "Link (development only):",
+  "failed": "Something went wrong. Please try again.",
+  "listTitle": "Invitations sent",
+  "loading": "Loading…",
+  "loadFailed": "Could not load the invitations.",
+  "empty": "No invitations sent yet.",
+  "status": {
+    "Pending": "Pending",
+    "Accepted": "Accepted",
+    "Revoked": "Revoked",
+    "Expired": "Expired"
+  },
+  "expires": "expires {{when}}",
+  "revoke": "Revoke",
+  "revoked": "Invitation revoked.",
+  "accept": {
+    "title": "Accept invitation",
+    "intro": "You are invited to join {{gym}} ({{branch}}) as {{role}}.",
+    "invalid": "This invitation is invalid, expired or already used.",
+    "password": "Password",
+    "confirm": "Confirm password",
+    "passwordShort": "The password must have at least 6 characters.",
+    "mismatch": "The passwords do not match.",
+    "submit": "Create account",
+    "done": "Account created. Please sign in.",
+    "toLogin": "Back to sign in"
+  }
+}

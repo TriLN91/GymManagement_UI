@@ -15,6 +15,7 @@ describe('movement reference DTO mappers', () => {
     ).toEqual({
       id: 'exercise-1',
       name: 'Back Squat',
+      movementPatternCode: null,
       muscleGroup: 'Legs',
       equipment: null,
       difficultyLevel: null,

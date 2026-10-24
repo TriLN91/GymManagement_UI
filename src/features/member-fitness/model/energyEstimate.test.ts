@@ -47,12 +47,54 @@ describe('estimateEnergy', () => {
     }
   });
 
-  it('keeps PAL values inside the FAO ranges and increasing', () => {
+  it('keeps PAL values strictly increasing', () => {
     const values = Object.values(PAL_BY_ACTIVITY);
     expect(values).toEqual([...values].sort((a, b) => a - b));
-    expect(PAL_BY_ACTIVITY.sedentary).toBeGreaterThanOrEqual(1.4);
-    expect(PAL_BY_ACTIVITY.high).toBeLessThanOrEqual(2.4);
+    expect(new Set(values).size).toBe(values.length);
   });
+
+  // NASEM 2023, Dietary Reference Intakes for Energy, Table 5-5: TEE (kcal/d) for adults 19+.
+  // Coefficients: [intercept, age, height cm, weight kg].
+  const NASEM_TEE = {
+    male: {
+      sedentary: [753.07, -10.83, 6.5, 14.1],
+      light: [581.47, -10.83, 8.3, 14.94],
+      moderate: [1004.82, -10.83, 6.52, 15.91],
+      high: [-517.88, -10.83, 15.61, 19.11],
+    },
+    female: {
+      sedentary: [584.9, -7.01, 5.72, 11.71],
+      light: [575.77, -7.01, 6.6, 12.14],
+      moderate: [710.25, -7.01, 6.54, 12.34],
+      high: [511.83, -7.01, 9.07, 12.56],
+    },
+  } as const;
+
+  // One constant per level cannot match the NASEM equations everywhere (they have different slopes),
+  // so check the average error is small and the worst corner (small, older, lean body) stays bounded.
+  it.each(['male', 'female'] as const)(
+    'matches the NASEM 2023 TEE equations on average for every level (%s)',
+    (sex) => {
+      const heights = sex === 'male' ? [165, 175, 185] : [150, 160, 170];
+      for (const level of Object.keys(PAL_BY_ACTIVITY) as Array<keyof typeof PAL_BY_ACTIVITY>) {
+        const [intercept, perYear, perCm, perKg] = NASEM_TEE[sex][level];
+        const errors: number[] = [];
+        for (const height of heights) {
+          for (const bmi of [20, 25, 30]) {
+            for (const age of [20, 30, 45, 60]) {
+              const weight = bmi * (height / 100) ** 2;
+              const reference = intercept + perYear * age + perCm * height + perKg * weight;
+              const ours = mifflinRee(weight, height, age, sex) * PAL_BY_ACTIVITY[level];
+              errors.push(Math.abs(ours / reference - 1));
+            }
+          }
+        }
+        const mean = errors.reduce((sum, error) => sum + error, 0) / errors.length;
+        expect(mean).toBeLessThan(0.04);
+        expect(Math.max(...errors)).toBeLessThan(0.12);
+      }
+    },
+  );
 
   it('reports why it cannot estimate', () => {
     expect(estimateEnergy(EMPTY_PROFILE.identity, now).status).toBe('missing_input');

@@ -234,11 +234,114 @@
     visibility 0s;
 }
 
+.member-nav-group__trigger.is-direct-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.member-nav-group__trigger.is-active {
+  border-color: var(--member-primary);
+  color: var(--member-mint);
+  background: var(--member-primary);
+}
+
+.member-nav-group__trigger.is-active > span > svg {
+  color: var(--member-mint);
+}
+
+.member-nav-group__trigger.is-active .member-nav-group__label {
+  color: var(--member-mint);
+}
+
+.dark .member-nav-group__trigger.is-active {
+  color: #173917;
+  background: var(--member-mint);
+  border-color: transparent;
+}
+
+.dark .member-nav-group__trigger.is-active > span > svg,
+.dark .member-nav-group__trigger.is-active .member-nav-group__label {
+  color: #173917;
+}
+
+.member-sidebar,
+.member-sidebar__nav,
+.member-nav-children,
+.member-content,
+.member-main,
+.member-shell {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.member-sidebar::-webkit-scrollbar,
+.member-sidebar__nav::-webkit-scrollbar,
+.member-nav-children::-webkit-scrollbar,
+.member-content::-webkit-scrollbar,
+.member-main::-webkit-scrollbar,
+.member-shell::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .member-nav-group__trigger:hover,
-.member-nav-group__trigger.has-active-child,
 .member-nav-group__trigger.is-flyout-open {
   border-color: var(--member-outline);
   background: #f4f7ee;
+}
+
+.dark .member-nav-group__trigger:hover,
+.dark .member-nav-group__trigger.is-flyout-open {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Expanded Trigger (In đậm & Highlight nổi bật khi click mở) ─ */
+.member-nav-group__trigger.is-expanded,
+.member-nav-group__trigger.has-active-child {
+  font-weight: 800;
+  border-color: rgba(16, 185, 129, 0.28);
+  background: #edf5e8;
+  color: var(--member-primary);
+  box-shadow: inset 3px 0 0 var(--member-primary);
+}
+
+.member-nav-group__trigger.is-expanded .member-nav-group__label,
+.member-nav-group__trigger.has-active-child .member-nav-group__label {
+  font-weight: 800;
+  color: var(--member-primary);
+  letter-spacing: 0.08em;
+}
+
+.member-nav-group__trigger.is-expanded > span > svg,
+.member-nav-group__trigger.has-active-child > span > svg {
+  color: var(--member-primary);
+  stroke-width: 2.2;
+}
+
+.member-nav-group__trigger.is-expanded > svg,
+.member-nav-group__trigger.has-active-child > svg {
+  color: var(--member-primary);
+  stroke-width: 2.2;
+}
+
+/* Dark mode cho trigger khi mở / có mục con đang active */
+.dark .member-nav-group__trigger.is-expanded,
+.dark .member-nav-group__trigger.has-active-child {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--member-mint);
+  box-shadow: inset 3px 0 0 var(--member-mint);
+}
+
+.dark .member-nav-group__trigger.is-expanded .member-nav-group__label,
+.dark .member-nav-group__trigger.has-active-child .member-nav-group__label,
+.dark .member-nav-group__trigger.is-expanded > span > svg,
+.dark .member-nav-group__trigger.has-active-child > span > svg,
+.dark .member-nav-group__trigger.is-expanded > svg,
+.dark .member-nav-group__trigger.has-active-child > svg {
+  color: var(--member-mint);
 }
 
 .member-nav-group__trigger > svg {
@@ -247,7 +350,7 @@
   right: 11px;
   margin-top: -8px;
   transition:
-    transform 180ms ease,
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 230ms ease 120ms,
     visibility 0s;
 }
@@ -256,51 +359,79 @@
   transform: rotate(180deg);
 }
 
+/* ── Danh sách chức năng con (Hiển thị list mượt mà, không đường ray) ─ */
+@keyframes navChildrenSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .member-nav-children {
   display: none;
   gap: 3px;
-  margin: 3px 0 9px 17px;
-  padding-left: 10px;
-  border-left: 1px solid var(--member-outline);
+  margin: 3px 0 8px 10px;
+  padding-left: 0;
+  border-left: none;
+  position: relative;
 }
 
 .member-nav-children.is-expanded {
   display: grid;
+  animation: navChildrenSlideDown 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ── Chức năng con (Sub-items) ─────────────────────────────────── */
 .member-nav-link {
+  position: relative;
   display: flex;
   width: 100%;
   min-height: 34px;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 7px 10px;
+  border-radius: 8px;
+  padding: 7px 11px;
   color: var(--member-muted);
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.045em;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-align: left;
   text-transform: uppercase;
-  transition:
-    color 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
+  transition: all 160ms ease;
 }
 
 .member-nav-link:hover {
-  border-color: var(--member-outline);
+  border-color: rgba(16, 185, 129, 0.18);
   color: var(--member-primary);
-  background: #f4f7ee;
+  background: #f4f8ed;
+}
+
+.dark .member-nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--member-mint);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .member-nav-link.is-active {
-  border-color: var(--member-primary);
+  border-color: transparent;
   color: var(--member-mint);
   background: var(--member-primary);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .member-nav-link.is-active {
+  color: #173917;
+  background: var(--member-mint);
+  border-color: transparent;
+  font-weight: 700;
 }
 
 .member-nav-link.is-unavailable {
@@ -473,6 +604,7 @@
     border-radius: 10px;
     color: var(--member-primary);
     background: var(--member-surface);
+    animation: none;
   }
 
   .member-shell.is-sidebar-collapsed

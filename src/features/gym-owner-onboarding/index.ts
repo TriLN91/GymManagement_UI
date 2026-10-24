@@ -1,4 +1,5 @@
 export * from './model/types';
+export * from './model/useGymOwnerApproved';
 export * from './model/useGymOwnerOnboardingStore';
 export * from './ui/GymOwnerApprovalStatusPage';
 export * from './ui/GymOwnerBrandBranchPage';

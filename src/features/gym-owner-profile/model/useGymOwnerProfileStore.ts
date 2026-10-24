@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 import type { GymOwnerProfileData, GymProfileBranch, GymProfileBrand } from './types';
 
 import type { GymOwnerOnboardingData } from '@/features/gym-owner-onboarding';
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
 
 const PROFILE_STORAGE_KEY = 'gmc.gymOwnerProfile';
 
@@ -82,8 +83,11 @@ export const useGymOwnerProfileStore = create<GymOwnerProfileState>()(
         }),
     }),
     {
+      storage: accountStorage,
       name: PROFILE_STORAGE_KEY,
       version: 1,
     },
   ),
 );
+
+registerAccountStore(useGymOwnerProfileStore);

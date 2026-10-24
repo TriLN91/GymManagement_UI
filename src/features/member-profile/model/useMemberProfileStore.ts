@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 export interface MemberContactProfile {
   phone: string;
   address: string;
@@ -153,6 +155,8 @@ export const useMemberProfileStore = create<MemberProfileState>()(
           })),
         })),
     }),
-    { name: 'fit:member-profile-center:v1', version: 1 },
+    { storage: accountStorage, name: 'fit:member-profile-center:v1', version: 1 },
   ),
 );
+
+registerAccountStore(useMemberProfileStore);

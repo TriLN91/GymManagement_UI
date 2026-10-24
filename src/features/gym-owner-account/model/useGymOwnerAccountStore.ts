@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { accountStorage, registerAccountStore } from '@/shared/lib/accountState';
+
 interface GymOwnerAccountState {
   readNotificationIds: ReadonlyArray<string>;
   markNotificationRead: (id: string) => void;
@@ -18,8 +20,11 @@ export const useGymOwnerAccountStore = create<GymOwnerAccountState>()(
         })),
     }),
     {
+      storage: accountStorage,
       name: 'gmc.gymOwnerAccountCenter',
       version: 1,
     },
   ),
 );
+
+registerAccountStore(useGymOwnerAccountStore);

@@ -20,7 +20,6 @@ import {
   ReceiptText,
   ShieldCheck,
   SlidersHorizontal,
-  Store,
   Tag,
   TriangleAlert,
   UserRound,
@@ -29,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { isNavigationRouteActive } from './navigationRoute';
 
@@ -56,6 +55,7 @@ type CopyKey =
   | 'movementAssessment'
   | 'analyticsOverview'
   | 'gymApplications'
+  | 'marketplaceReview'
   | 'activeGyms'
   | 'legalChanges'
   | 'trainerApplications'
@@ -89,6 +89,7 @@ interface NavItem {
 interface NavGroup {
   id: GroupKey;
   icon: LucideIcon;
+  to?: string;
   items: ReadonlyArray<NavItem>;
 }
 
@@ -106,6 +107,7 @@ const groups: ReadonlyArray<NavGroup> = [
     icon: ClipboardCheck,
     items: [
       { label: 'gymApplications', to: ROUTES.superadmin.gymApplications, icon: Building2 },
+      { label: 'marketplaceReview', to: ROUTES.superadmin.marketplaceReview, icon: ClipboardCheck },
       { label: 'activeGyms', to: ROUTES.superadmin.activeGyms, icon: BadgeCheck },
       { label: 'legalChanges', to: ROUTES.superadmin.legalChanges, icon: FileText },
       { label: 'trainerApplications', to: ROUTES.superadmin.trainerApplications, icon: UserRound },
@@ -113,19 +115,13 @@ const groups: ReadonlyArray<NavGroup> = [
     ],
   },
   {
-    id: 'marketplace',
-    icon: Store,
-    items: [{ label: 'listings', to: ROUTES.superadmin.listings, icon: List }],
-  },
-  {
     id: 'commercial',
     icon: SlidersHorizontal,
-    items: [{ label: 'pricing', to: ROUTES.superadmin.commercial, icon: Tag }],
-  },
-  {
-    id: 'campaigns',
-    icon: Megaphone,
-    items: [{ label: 'campaignsList', to: ROUTES.superadmin.campaigns, icon: Megaphone }],
+    items: [
+      { label: 'listings', to: ROUTES.superadmin.listings, icon: List },
+      { label: 'pricing', to: ROUTES.superadmin.commercial, icon: Tag },
+      { label: 'campaignsList', to: ROUTES.superadmin.campaigns, icon: Megaphone },
+    ],
   },
   {
     id: 'transactions',
@@ -182,7 +178,6 @@ export function PlatformAdminLayout() {
   const { i18n, t } = useTranslation('common');
   const copy = platformCopy[i18n.resolvedLanguage === 'vi' ? 'vi' : 'en'];
   const location = useLocation();
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -201,7 +196,11 @@ export function PlatformAdminLayout() {
           ? group.items
           : group.items.filter((item) => matchesSidebarSearch(copy[item.label], query)),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter(
+      (group) =>
+        group.items.length > 0 ||
+        (group.to && (!query || matchesSidebarSearch(copy[group.id], query))),
+    );
 
   const activeItem = groups
     .flatMap((group) => group.items)
@@ -238,7 +237,6 @@ export function PlatformAdminLayout() {
 
   const handleLogout = () => {
     void logout.mutate();
-    void navigate(ROUTES.public.login, { replace: true });
   };
 
   return (
@@ -306,6 +304,35 @@ export function PlatformAdminLayout() {
           />
           {visibleGroups.map((group) => {
             const Icon = group.icon;
+
+            // Direct link trigger for single destination items
+            if (group.to && (!group.items || group.items.length === 0)) {
+              const active = matchesPlatformRoute(group.to, location.pathname);
+              return (
+                <div className="member-nav-group" key={group.id}>
+                  <NavLink
+                    to={group.to}
+                    end={group.to === ROUTES.superadmin.root}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      closeFlyout();
+                    }}
+                    aria-label={copy[group.id]}
+                    title={isSidebarCollapsed ? copy[group.id] : undefined}
+                    className={cn(
+                      'member-nav-group__trigger is-direct-link',
+                      active && 'is-active',
+                    )}
+                  >
+                    <span>
+                      <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
+                      <span className="member-nav-group__label">{copy[group.id]}</span>
+                    </span>
+                  </NavLink>
+                </div>
+              );
+            }
+
             const isFlyoutOpen = isSidebarCollapsed && flyout?.id === group.id;
             const isExpanded = isSidebarCollapsed
               ? isFlyoutOpen
@@ -319,6 +346,7 @@ export function PlatformAdminLayout() {
                   type="button"
                   className={cn(
                     'member-nav-group__trigger',
+                    isExpanded && 'is-expanded',
                     active && 'has-active-child',
                     isFlyoutOpen && 'is-flyout-open',
                   )}

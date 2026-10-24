@@ -9,6 +9,7 @@ import { useGymProfileBootstrap } from './useGymProfileBootstrap';
 import { isBrandProfileComplete } from '@/features/gym-owner-onboarding';
 import type { GymProfileBrand } from '@/features/gym-owner-profile/model/types';
 import { useGymOwnerProfileStore } from '@/features/gym-owner-profile/model/useGymOwnerProfileStore';
+import { marketplaceApi } from '@/features/marketplace';
 import { ROUTES } from '@/shared/config/constants';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { Button } from '@/shared/ui/button';
@@ -51,6 +52,29 @@ export function GymOwnerBrandProfilePage() {
     setError('');
     setIsEditing(false);
     toast.success(copy.saved);
+
+    // Hybrid sync with backend API
+    void (async () => {
+      try {
+        const myBrands = await marketplaceApi.getMyBrands();
+        const firstBrand = myBrands?.[0];
+        if (firstBrand) {
+          await marketplaceApi.updateBrand(firstBrand.id, {
+            name: normalized.name,
+            description: normalized.description,
+            phoneNumber: normalized.contactPhone,
+          });
+        } else {
+          await marketplaceApi.createBrand({
+            name: normalized.name,
+            description: normalized.description,
+            phoneNumber: normalized.contactPhone,
+          });
+        }
+      } catch {
+        // Fallback safely preserved in local store
+      }
+    })();
   };
 
   return (

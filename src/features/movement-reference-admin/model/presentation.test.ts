@@ -55,6 +55,16 @@ const set = (patch: Partial<ReferenceSetDto> = {}): ReferenceSetDto => ({
 });
 
 describe('movement reference presentation selectors', () => {
+  it('keeps withdrawn references in history without offering them as publication candidates', () => {
+    const withdrawn = {
+      ...profile(1, 'CONFIRMED'),
+      qualitySummary: { withdrawnReason: 'Wrong exercise variant' },
+    };
+    const selected = selectProfilesForView([withdrawn]);
+    expect(selected.currentCandidate).toBeUndefined();
+    expect(selected.liveProfile).toBeUndefined();
+    expect(selected.history).toEqual([withdrawn]);
+  });
   it('maps each source to one operational outcome', () => {
     expect(getSourceOperationalOutcome(source())).toBe('USABLE');
     expect(getSourceOperationalOutcome(source({ action: 'DOWN_WEIGHT' }))).toBe('USABLE_REDUCED');
