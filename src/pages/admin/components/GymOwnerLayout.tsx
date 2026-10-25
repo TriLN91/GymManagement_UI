@@ -21,6 +21,7 @@ import {
   ShoppingBag,
   UserRound,
   UsersRound,
+  Wallet,
   X,
 } from 'lucide-react';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -81,6 +82,7 @@ const END_ROUTES: ReadonlySet<string> = new Set([
   ROUTES.admin.customers,
   ROUTES.admin.orders,
   ROUTES.admin.settlements,
+  ROUTES.admin.wallet,
   ROUTES.admin.analytics,
   ROUTES.admin.notifications,
   ROUTES.admin.accountSecurity,
@@ -195,6 +197,11 @@ export function GymOwnerLayout() {
             label: t('shell.nav.settlements'),
             to: ROUTES.admin.settlements,
             icon: Landmark,
+          },
+          {
+            label: isVi ? 'Ví & Rút tiền' : 'Wallet & Payouts',
+            to: ROUTES.admin.wallet,
+            icon: Wallet,
           },
         ],
       });

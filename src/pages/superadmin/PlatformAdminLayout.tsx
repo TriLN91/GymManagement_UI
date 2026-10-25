@@ -24,6 +24,7 @@ import {
   TriangleAlert,
   UserRound,
   UsersRound,
+  Wallet,
   X,
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
@@ -65,6 +66,7 @@ type CopyKey =
   | 'pricing'
   | 'orders'
   | 'settlementsList'
+  | 'payoutsList'
   | 'disputesList'
   | 'platformAnalytics'
   | 'activity'
@@ -129,6 +131,7 @@ const groups: ReadonlyArray<NavGroup> = [
     items: [
       { label: 'orders', to: ROUTES.superadmin.orders, icon: ReceiptText },
       { label: 'settlementsList', to: ROUTES.superadmin.settlements, icon: Landmark },
+      { label: 'payoutsList', to: ROUTES.superadmin.payouts, icon: Wallet },
       { label: 'disputesList', to: ROUTES.superadmin.disputes, icon: TriangleAlert },
     ],
   },
