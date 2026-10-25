@@ -151,6 +151,61 @@ describe('Assistant page lifecycle', () => {
     expect(caught).not.toHaveBeenCalled();
   });
 
+  // SRS 2.4.0 NFR-05/07: failure must preserve a usable interaction and saved history.
+  it('keeps a rejected interaction available for retry and restores the accepted response on return', async () => {
+    let detail: AssistantConversationDetail = {
+      conversation: conversation('saved'),
+      messages: [
+        {
+          id: 'choice',
+          role: 'assistant',
+          content: 'Choose a goal',
+          createdAtUtc: '2026-10-22T00:00:00Z',
+          interactionStatus: 'required',
+          interaction: {
+            version: '1',
+            type: 'single_choice',
+            id: 'goal',
+            title: 'Goal',
+            options: [{ value: 'strength', label: 'Build strength' }],
+          },
+        },
+      ],
+    };
+    vi.mocked(assistantApi.get).mockImplementation(() => Promise.resolve(detail));
+    vi.mocked(assistantApi.submit)
+      .mockRejectedValueOnce(new Error('Response could not be saved'))
+      .mockImplementationOnce(() => {
+        detail = {
+          ...detail,
+          messages: [
+            { ...detail.messages[0]!, interactionStatus: 'completed' },
+            {
+              id: 'saved-response',
+              role: 'assistant',
+              content: 'Your choice is saved in this conversation.',
+              createdAtUtc: '2026-10-22T00:01:00Z',
+              interactionStatus: 'none',
+            },
+          ],
+        };
+        return Promise.resolve(completedRun);
+      });
+    vi.mocked(assistantApi.events).mockResolvedValue([]);
+    const page = render(view());
+    fireEvent.click(await screen.findByRole('button', { name: 'Build strength' }));
+    expect(await screen.findByText('Response could not be saved')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Build strength' })).toBeEnabled();
+    expect(assistantApi.events).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Build strength' }));
+    expect(await screen.findByText('Your choice is saved in this conversation.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Build strength' })).toBeDisabled();
+    expect(assistantApi.submit).toHaveBeenCalledTimes(2);
+    page.rerender(view('reopened'));
+    expect(await screen.findByText('Your choice is saved in this conversation.')).toBeVisible();
+    expect(assistantApi.submit).toHaveBeenCalledTimes(2);
+  });
+
   it.each(['cancel', 'leave'])(
     'aborts an active stream when the user chooses to %s',
     async (action) => {

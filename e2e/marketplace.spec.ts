@@ -19,7 +19,8 @@ async function openAsMember(page: Page, path: string) {
   await page.goto(path);
 }
 
-test.describe('Member marketplace', () => {
+// Retained AS-IS regression during SRS 2.4.0 migration; not AI pass acceptance.
+test.describe('Member marketplace', { tag: '@legacy-marketplace' }, () => {
   test('discovers a gym and completes a separated Gym plus checkout', async ({ page }) => {
     await openAsMember(page, '/app/marketplace');
 

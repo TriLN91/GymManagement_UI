@@ -14,7 +14,8 @@ async function loginPlatformAdmin(page: Page) {
   await expect(page).toHaveURL(/\/superadmin$/);
 }
 
-test.describe('Platform Admin M4', () => {
+// Retained AS-IS regression during SRS 2.4.0 migration; not AI pass acceptance.
+test.describe('Platform Admin M4', { tag: '@legacy-marketplace' }, () => {
   test('confirms a future commission version and rejects invalid bundled Plus price', async ({
     page,
   }) => {

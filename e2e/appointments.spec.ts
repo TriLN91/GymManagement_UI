@@ -85,9 +85,9 @@ test.describe('Coaching sessions (CF04)', () => {
     await page.getByRole('button', { name: 'Save availability' }).click();
     await expect(page.getByText('Availability saved.')).toBeVisible();
 
-    // Monday 08:00 to 12:00 local: pick the next Monday at 09:00 so the proposal fits.
-    const monday = new Date();
-    monday.setDate(monday.getDate() + ((8 - monday.getDay()) % 7 || 7));
+    // Monday 08:00 to 12:00 local, beyond the 24-hour notice window even on Sunday.
+    const monday = new Date(Date.now() + 48 * 3_600_000);
+    monday.setDate(monday.getDate() + ((8 - monday.getDay()) % 7));
     const pad = (n: number) => String(n).padStart(2, '0');
     const value = `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}T09:00`;
     await page.getByLabel('Date and time').fill(value);
