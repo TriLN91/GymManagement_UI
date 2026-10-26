@@ -110,7 +110,8 @@
     "appointments": "PT appointments",
     "wearables": "Wearables",
     "soon": "Soon",
-    "weeklySchedule": "Weekly schedule"
+    "weeklySchedule": "Weekly schedule",
+    "aiPass": "My AI Pass"
   },
   "close": "Close"
 }

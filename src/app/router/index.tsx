@@ -140,6 +140,15 @@ const GymOwnerWalletPage = lazy(() =>
 const AdminWithdrawalsPage = lazy(() =>
   import('@/features/wallet-payouts').then((m) => ({ default: m.AdminWithdrawalsPage })),
 );
+const GymPassDistributionPage = lazy(() =>
+  import('@/features/pass-distribution').then((m) => ({ default: m.GymPassDistributionPage })),
+);
+const GymPassOffersPage = lazy(() =>
+  import('@/features/pass-distribution').then((m) => ({ default: m.GymPassOffersPage })),
+);
+const MemberAiPassPage = lazy(() =>
+  import('@/features/pass-distribution').then((m) => ({ default: m.MemberAiPassPage })),
+);
 const TrainerAssignmentsPage = lazy(() =>
   import('@/pages/appointments/AppointmentPages').then((m) => ({
     default: m.TrainerAssignmentsPage,
@@ -487,6 +496,7 @@ const router = createBrowserRouter([
               },
               { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
               { path: ROUTES.member.assistant, element: <AssistantPage /> },
+              { path: ROUTES.member.aiPass, element: <MemberAiPassPage /> },
               { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
               { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
               { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },
@@ -618,6 +628,14 @@ const router = createBrowserRouter([
                   {
                     path: ROUTES.admin.packageDetail,
                     element: <GymOwnerPTPackageDetailPage />,
+                  },
+                  {
+                    path: ROUTES.admin.passDistribution,
+                    element: <GymPassDistributionPage />,
+                  },
+                  {
+                    path: ROUTES.admin.passOffers,
+                    element: <GymPassOffersPage />,
                   },
                   {
                     path: ROUTES.admin.customers,

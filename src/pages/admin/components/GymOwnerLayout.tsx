@@ -17,8 +17,10 @@ import {
   Menu,
   PackageCheck,
   ReceiptText,
+  Send,
   ShieldCheck,
   ShoppingBag,
+  Ticket,
   UserRound,
   UsersRound,
   Wallet,
@@ -62,6 +64,7 @@ interface OwnerNavGroup {
     | 'profile'
     | 'trainers'
     | 'packages'
+    | 'passDistribution'
     | 'customers'
     | 'orders'
     | 'analytics'
@@ -79,6 +82,8 @@ const END_ROUTES: ReadonlySet<string> = new Set([
   ROUTES.admin.onboarding,
   ROUTES.admin.pts,
   ROUTES.admin.packages,
+  ROUTES.admin.passDistribution,
+  ROUTES.admin.passOffers,
   ROUTES.admin.customers,
   ROUTES.admin.orders,
   ROUTES.admin.settlements,
@@ -168,6 +173,23 @@ export function GymOwnerLayout() {
             label: t('shell.nav.packageManagement'),
             to: ROUTES.admin.packages,
             icon: PackageCheck,
+          },
+        ],
+      });
+      groups.push({
+        id: 'passDistribution',
+        label: isVi ? 'Phân phối AI Pass' : 'Pass Distribution',
+        icon: Ticket,
+        items: [
+          {
+            label: isVi ? 'Kho thẻ & Gói phân phối' : 'Pass Inventory & Catalog',
+            to: ROUTES.admin.passDistribution,
+            icon: Ticket,
+          },
+          {
+            label: isVi ? 'Ưu đãi & Cấp thẻ hội viên' : 'Member Pass Offers',
+            to: ROUTES.admin.passOffers,
+            icon: Send,
           },
         ],
       });

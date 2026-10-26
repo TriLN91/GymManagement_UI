@@ -56,6 +56,7 @@ export const ROUTES = Object.freeze({
     profileAppointments: '/app/profile/appointments',
     profileWearables: '/app/profile/wearables',
     profileNotifications: '/app/profile/notifications',
+    aiPass: '/app/ai-pass',
   }),
   pt: Object.freeze({
     root: '/pt',
@@ -109,6 +110,8 @@ export const ROUTES = Object.freeze({
     analytics: '/admin/analytics',
     notifications: '/admin/notifications',
     accountSecurity: '/admin/account-security',
+    passDistribution: '/admin/pass-distribution',
+    passOffers: '/admin/pass-distribution/offers',
   }),
   superadmin: Object.freeze({
     root: '/superadmin',

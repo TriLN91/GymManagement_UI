@@ -18,6 +18,7 @@ import {
   Package,
   Play,
   ShieldCheck,
+  Sparkles,
   Store,
   Tag,
   TrendingUp,
@@ -53,7 +54,7 @@ interface MemberNavItem {
 }
 
 interface MemberNavGroup {
-  id: 'dashboard' | 'workout' | 'marketplace' | 'profile';
+  id: 'dashboard' | 'workout' | 'aiPass' | 'marketplace' | 'profile';
   labelKey: string;
   icon: LucideIcon;
   to?: string;
@@ -89,6 +90,13 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     ],
   },
   {
+    id: 'aiPass',
+    labelKey: 'memberShell.aiPass',
+    icon: Sparkles,
+    to: ROUTES.member.aiPass,
+    items: [],
+  },
+  {
     id: 'marketplace',
     labelKey: 'memberShell.marketplaceGroup',
     icon: Store,
@@ -105,6 +113,7 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     icon: UserRound,
     items: [
       { labelKey: 'memberShell.personalProfile', to: ROUTES.member.profile, icon: UserRound },
+      { labelKey: 'memberShell.aiPass', to: ROUTES.member.aiPass, icon: Sparkles },
       {
         labelKey: 'memberShell.appointments',
         to: ROUTES.member.profileAppointments,

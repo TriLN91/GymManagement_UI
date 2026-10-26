@@ -30,15 +30,14 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path aliases (mirror root tsconfig.json for IDE) */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/app/*": ["src/app/*"],
-      "@/pages/*": ["src/pages/*"],
-      "@/features/*": ["src/features/*"],
-      "@/entities/*": ["src/entities/*"],
-      "@/shared/*": ["src/shared/*"],
-      "@/i18n/*": ["src/i18n/*"]
+      "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/entities/*": ["./src/entities/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/i18n/*": ["./src/i18n/*"]
     }
   },
   "include": ["src"]

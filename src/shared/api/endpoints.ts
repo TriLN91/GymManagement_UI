@@ -221,6 +221,37 @@ export const ENDPOINTS = {
       `/branch-manager/appointments/${appointmentId}/attendance`,
     trainersKpi: (branchId: string) => `/branch-manager/branches/${branchId}/trainers/kpi`,
   },
+  passDistribution: {
+    passTypes: (onlyActive = true) =>
+      `/admin/pass-distribution/pass-types?onlyActive=${onlyActive}`,
+    createPassType: '/admin/pass-distribution/pass-types',
+    createAgreement: '/admin/pass-distribution/agreements',
+    sweepExpired: '/admin/pass-distribution/maintenance/sweep-expired',
+    agreements: (gymId: string) => `/gym-distribution/${gymId}/agreements`,
+    inventory: (gymId: string) => `/gym-distribution/${gymId}/inventory`,
+    topUp: (gymId: string) => `/gym-distribution/${gymId}/top-up`,
+    programs: (gymId: string) => `/gym-distribution/${gymId}/programs`,
+    createProgram: (gymId: string) => `/gym-distribution/${gymId}/programs`,
+    updateProgram: (gymId: string, programId: string) =>
+      `/gym-distribution/${gymId}/programs/${programId}`,
+    offers: (gymId: string, branchId?: string, status?: number) => {
+      const q = new URLSearchParams();
+      if (branchId) q.set('branchId', branchId);
+      if (status !== undefined) q.set('status', String(status));
+      const str = q.toString();
+      return str ? `/gym-distribution/${gymId}/offers?${str}` : `/gym-distribution/${gymId}/offers`;
+    },
+    sendOffer: (gymId: string, branchId?: string) =>
+      branchId
+        ? `/gym-distribution/${gymId}/offers?branchId=${branchId}`
+        : `/gym-distribution/${gymId}/offers`,
+    cancelOffer: (gymId: string, offerId: string) =>
+      `/gym-distribution/${gymId}/offers/${offerId}/cancel`,
+    memberOffers: '/member/ai-pass/offers',
+    acceptOffer: (offerId: string) => `/member/ai-pass/offers/${offerId}/accept`,
+    declineOffer: (offerId: string) => `/member/ai-pass/offers/${offerId}/decline`,
+    currentPass: '/member/ai-pass/current',
+  },
 } as const;
 
 export type EndpointGroup = keyof typeof ENDPOINTS;
