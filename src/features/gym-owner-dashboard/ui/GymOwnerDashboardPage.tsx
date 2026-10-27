@@ -32,6 +32,7 @@ import { DashboardCustomizationDialog } from './DashboardCustomizationDialog';
 import { DashboardWidgetState } from './DashboardWidgetState';
 import { TrainerScheduleMatrix } from './TrainerScheduleMatrix';
 
+import { env } from '@/shared/config/env';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 import { Badge } from '@/shared/ui/badge';
@@ -380,7 +381,12 @@ export function GymOwnerDashboardPage() {
         </Button>
       </div>
 
-      <BrandFinancialOverview />
+      <p role="note">
+        {language === 'vi'
+          ? 'Các widget tổng quan bên dưới dùng dữ liệu minh họa. Lịch Trainer và trang AI Pass sử dụng API thực.'
+          : 'Overview widgets below contain sample records. Trainer scheduling and AI Pass pages use the live API.'}
+      </p>
+      {env.VITE_ENABLE_LEGACY_AI_COMMERCE && <BrandFinancialOverview />}
       <TrainerScheduleMatrix />
 
       {visibleWidgets.length > 0 ? (

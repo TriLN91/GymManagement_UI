@@ -1,6 +1,5 @@
 import type { TFunction } from 'i18next';
 import {
-  Activity,
   ArrowLeft,
   ArrowRight,
   Bell,
@@ -9,8 +8,6 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
-  Clock3,
-  Dumbbell,
   Eye,
   EyeOff,
   HeartPulse,
@@ -18,7 +15,6 @@ import {
   RefreshCw,
   ScanLine,
   ShieldCheck,
-  Smartphone,
   Watch,
 } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
@@ -26,18 +22,29 @@ import { useTranslation } from 'react-i18next';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { completedAssessments, trainerAppointments } from './memberProfileData';
+import {
+  completedAssessments as sampleAssessments,
+  trainerAppointments,
+} from './memberProfileData';
 
 import { authApi } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useAssessmentStore } from '@/features/camera-assessment/model/useAssessmentStore';
 import { calculateProfileReadiness, useProfileSetupStore } from '@/features/member-fitness';
 import { useMemberProfileStore } from '@/features/member-profile';
+import {
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+  useNotifications,
+} from '@/features/notifications/model/useNotifications';
 import { ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { useLocale } from '@/shared/hooks/useLocale';
 import { cn } from '@/shared/lib/cn';
 
 import './member-profile.css';
+
+const completedAssessments = env.VITE_ENABLE_MSW ? sampleAssessments : [];
 
 function getCopy(t: TFunction) {
   return {
@@ -379,7 +386,7 @@ export function EditPersonalProfilePage() {
       address: form.address.trim(),
       avatarDataUrl: form.avatarDataUrl,
     });
-    toast.success(copy.saved);
+    toast.info('Saved on this device only. Server account details have not changed.');
     void navigate(ROUTES.member.profile);
   };
   return (
@@ -479,7 +486,6 @@ export function AccountSecurityPage() {
   const { copy, locale } = useProfileCopy();
   const user = useAuthStore((state) => state.user);
   const security = useMemberProfileStore((state) => state.security);
-  const updateSecurity = useMemberProfileStore((state) => state.updateSecurity);
   const recordPasswordChange = useMemberProfileStore((state) => state.recordPasswordChange);
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [show, setShow] = useState(false);
@@ -507,10 +513,8 @@ export function AccountSecurityPage() {
       recordPasswordChange();
       setPasswords({ current: '', next: '', confirm: '' });
       toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
-    } catch (_err: unknown) {
-      recordPasswordChange();
-      setPasswords({ current: '', next: '', confirm: '' });
-      toast.success(copy.passwordUpdated || 'Đổi mật khẩu thành công!');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : t('common:requestFailed'));
     } finally {
       setIsUpdating(false);
     }
@@ -579,34 +583,7 @@ export function AccountSecurityPage() {
         </section>
         <section className="profile-security-settings">
           <h2>{copy.preferences}</h2>
-          <ToggleSetting
-            icon={<ShieldCheck />}
-            title={copy.twoFactor}
-            checked={security.twoFactorEnabled}
-            onChange={(twoFactorEnabled) => updateSecurity({ twoFactorEnabled })}
-          />
-          <ToggleSetting
-            icon={<Bell />}
-            title={copy.loginAlerts}
-            checked={security.loginAlerts}
-            onChange={(loginAlerts) => updateSecurity({ loginAlerts })}
-          />
-          <label className="profile-select-setting">
-            <div>
-              <Clock3 size={19} />
-              <strong>{copy.sessionTimeout}</strong>
-            </div>
-            <select
-              value={security.sessionTimeoutMinutes}
-              onChange={(e) =>
-                updateSecurity({ sessionTimeoutMinutes: Number(e.target.value) as 30 | 60 | 120 })
-              }
-            >
-              <option value="30">30 {copy.minutes}</option>
-              <option value="60">60 {copy.minutes}</option>
-              <option value="120">120 {copy.minutes}</option>
-            </select>
-          </label>
+          <p role="status">{t('common:securitySettingsUnavailable')}</p>
         </section>
         <section className="profile-session-card">
           <div>
@@ -626,29 +603,6 @@ export function AccountSecurityPage() {
         </section>
       </div>
     </div>
-  );
-}
-
-function ToggleSetting({
-  icon,
-  title,
-  checked,
-  onChange,
-}: {
-  icon: ReactNode;
-  title: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className="profile-toggle-setting">
-      <div>
-        {icon}
-        <strong>{title}</strong>
-      </div>
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <i />
-    </label>
   );
 }
 
@@ -789,129 +743,73 @@ export function AssessmentDetailPage() {
   );
 }
 
-const wearableMeta = {
-  apple_health: { name: 'Apple Health', icon: Smartphone },
-  google_fit: { name: 'Google Fit', icon: Activity },
-  garmin: { name: 'Garmin Connect', icon: Watch },
-  fitbit: { name: 'Fitbit', icon: HeartPulse },
-};
-
 export function WearableConnectionsPage() {
-  const { copy, locale } = useProfileCopy();
-  const wearables = useMemberProfileStore((state) => state.wearables);
-  const toggle = useMemberProfileStore((state) => state.toggleWearable);
-  const sync = useMemberProfileStore((state) => state.syncWearable);
+  const { i18n } = useTranslation();
+  const vi = i18n.resolvedLanguage === 'vi';
   return (
     <div className="member-profile-page">
-      <section className="wearable-grid">
-        {wearables.map((device) => {
-          const meta = wearableMeta[device.id];
-          const Icon = meta.icon;
-          return (
-            <article key={device.id} className={cn(device.connected && 'is-connected')}>
-              <div className="wearable-icon">
-                <Icon size={25} />
-              </div>
-              <div>
-                <h2>{meta.name}</h2>
-                <span>{device.connected ? copy.connected : copy.disconnected}</span>
-              </div>
-              <p>
-                {copy.lastSync}:{' '}
-                {device.lastSyncedAt ? formatDate(device.lastSyncedAt, locale, true) : copy.never}
-              </p>
-              <div>
-                {device.connected && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sync(device.id);
-                      toast.success(copy.synced);
-                    }}
-                  >
-                    <RefreshCw size={15} />
-                    {copy.sync}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className={cn(device.connected && 'is-danger')}
-                  onClick={() => toggle(device.id)}
-                >
-                  {device.connected ? copy.disconnect : copy.connect}
-                </button>
-              </div>
-            </article>
-          );
-        })}
+      <section className="profile-account-card">
+        <h1>{vi ? 'Ứng dụng fitness đã kết nối' : 'Connected fitness apps'}</h1>
+        <p role="status">
+          {vi
+            ? 'Kết nối Health Connect và Strava trong ứng dụng Mobile. Web chưa hỗ trợ kết nối hoặc đồng bộ thiết bị. Không có kết nối nào được thay đổi tại đây.'
+            : 'Connect Health Connect and Strava in the Mobile app. Web device connection and synchronization are unavailable. No connection has been changed here.'}
+        </p>
+        <Link to={ROUTES.member.progress}>{vi ? 'Xem tiến trình' : 'View progress'}</Link>
       </section>
     </div>
   );
 }
 
 export function MemberNotificationsPage() {
-  const { copy, language, locale } = useProfileCopy();
-  const notifications = useMemberProfileStore((state) => state.notifications);
-  const markRead = useMemberProfileStore((state) => state.markNotificationRead);
-  const markAll = useMemberProfileStore((state) => state.markAllNotificationsRead);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const visible = notifications.filter((item) => filter === 'all' || !item.read);
+  const { t } = useTranslation('notifications');
+  const notifications = useNotifications();
+  const markRead = useMarkNotificationRead();
+  const markAll = useMarkAllNotificationsRead();
   return (
     <div className="member-profile-page">
-      <ProfileActions>
-        <button className="profile-secondary-action" type="button" onClick={markAll}>
-          <Check size={15} />
-          {copy.markAll}
-        </button>
-      </ProfileActions>
-      <div className="profile-filter-bar">
-        <button
-          type="button"
-          className={cn(filter === 'all' && 'is-active')}
-          onClick={() => setFilter('all')}
-        >
-          {copy.all}
-        </button>
-        <button
-          type="button"
-          className={cn(filter === 'unread' && 'is-active')}
-          onClick={() => setFilter('unread')}
-        >
-          {copy.unread} · {notifications.filter((item) => !item.read).length}
-        </button>
-      </div>
-      <section className="profile-notification-list">
-        {visible.length ? (
-          visible.map((item) => (
-            <Link
-              key={item.id}
-              to={item.target}
-              className={cn(!item.read && 'is-unread')}
-              onClick={() => markRead(item.id)}
-            >
-              <span className={`is-${item.category}`}>
-                {item.category === 'workout' ? (
-                  <Dumbbell />
-                ) : item.category === 'assessment' ? (
-                  <ScanLine />
-                ) : item.category === 'appointment' ? (
-                  <CalendarDays />
-                ) : (
-                  <CheckCircle2 />
-                )}
-              </span>
-              <div>
-                <strong>{item.title[language]}</strong>
-                <p>{item.body[language]}</p>
-                <small>{formatDate(item.createdAt, locale, true)}</small>
-              </div>
-              <ChevronRight size={17} />
-            </Link>
-          ))
-        ) : (
-          <EmptyState copy={copy.empty} />
-        )}
-      </section>
+      <h1>{t('title')}</h1>
+      {notifications.isPending ? <p role="status">{t('loading')}</p> : null}
+      {notifications.isError ? (
+        <div role="alert">
+          <p>{t('error')}</p>
+          <button type="button" onClick={() => void notifications.refetch()}>
+            {t('common:retry')}
+          </button>
+        </div>
+      ) : null}
+      {markRead.isError || markAll.isError ? <p role="alert">{t('error')}</p> : null}
+      {notifications.isSuccess ? (
+        <>
+          {notifications.data.unreadCount > 0 ? (
+            <button type="button" disabled={markAll.isPending} onClick={() => markAll.mutate()}>
+              {t('markAll')}
+            </button>
+          ) : null}
+          <section className="profile-notification-list">
+            {notifications.data.items.length === 0 ? (
+              <EmptyState copy={t('empty')} />
+            ) : (
+              notifications.data.items.map((item) => (
+                <article key={item.id} className={cn(!item.isRead && 'is-unread')}>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                  <small>{new Date(item.createdAtUtc).toLocaleString()}</small>
+                  {!item.isRead ? (
+                    <button
+                      type="button"
+                      disabled={markRead.isPending}
+                      onClick={() => markRead.mutate(item.id)}
+                    >
+                      {t('markRead')}
+                    </button>
+                  ) : null}
+                </article>
+              ))
+            )}
+          </section>
+        </>
+      ) : null}
     </div>
   );
 }

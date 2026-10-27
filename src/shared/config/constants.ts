@@ -77,6 +77,11 @@ export const ROUTES = Object.freeze({
     coachingHistory: '/pt/history/coaching',
     income: '/pt/history/income',
   }),
+  branch: Object.freeze({
+    root: '/branch',
+    passDistribution: '/branch/pass-distribution',
+    passOffers: '/branch/pass-distribution/offers',
+  }),
   admin: Object.freeze({
     root: '/admin',
     profile: '/admin/profile',

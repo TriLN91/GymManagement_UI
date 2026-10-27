@@ -56,32 +56,34 @@ test.describe('Member profile center', () => {
     await expect(page.getByRole('heading', { name: 'My coaching sessions' })).toBeVisible();
   });
 
-  test('connects a wearable and clears unread notifications', async ({ page }) => {
+  test('explains the Mobile connection handoff and clears server-backed unread notifications', async ({
+    page,
+  }) => {
     await openAsMember(page, '/app/profile/wearables');
-    const garmin = page.locator('.wearable-grid article').filter({ hasText: 'Garmin Connect' });
-    await garmin.getByRole('button', { name: 'Connect', exact: true }).click();
-    await expect(garmin.getByText('Connected', { exact: true })).toBeVisible();
-    await garmin.getByRole('button', { name: 'Sync now' }).click();
+    await expect(page.getByRole('status')).toContainText(
+      'Connect Health Connect and Strava in the Mobile app',
+    );
+    await expect(page.getByRole('button', { name: 'Connect', exact: true })).toHaveCount(0);
 
     await page.goto('/app/profile/notifications');
-    await expect(page.getByRole('button', { name: 'Unread · 2' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Mark all as read' })).toBeVisible();
     await page.getByRole('button', { name: 'Mark all as read' }).click();
-    await expect(page.getByRole('button', { name: 'Unread · 0' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Mark all as read' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Notifications', exact: true })).toBeVisible();
   });
 
-  test('updates password and account security preferences', async ({ page }) => {
+  test('updates password only after server success and explains unavailable security preferences', async ({
+    page,
+  }) => {
     await openAsMember(page, '/app/profile/security');
 
     await page.getByLabel('Current password').fill('Password1!');
     await page.getByLabel('New password', { exact: true }).fill('NewPassword2!');
     await page.getByLabel('Confirm new password', { exact: true }).fill('NewPassword2!');
     await page.getByRole('button', { name: 'Update password' }).click();
-    await expect(page.getByText('Password updated in the local simulation.')).toBeVisible();
-
-    await page.getByText('Two-step verification').click();
-    await page.getByText('New-login alerts').click();
-    await page.getByLabel('Automatically lock session after').selectOption('120');
-
-    await expect(page.getByLabel('Automatically lock session after')).toHaveValue('120');
+    await expect(page.getByText('Password updated.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('status')).toContainText('No security settings have been changed');
+    await expect(page.getByRole('checkbox')).toHaveCount(0);
+    await expect(page.getByLabel('Automatically lock session after')).toHaveCount(0);
   });
 });

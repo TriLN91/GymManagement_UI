@@ -9,10 +9,10 @@ import { useMyGyms } from '@/features/gym-owner-training';
  * Platform Admin already approved in the backend. A Gym Admin who registered through the real flow
  * could only sign in after that review, so they never repeat the local onboarding.
  */
-export function useGymOwnerApproved() {
+export function useGymOwnerApproved(enabled = true) {
   const localStatus = useGymOwnerOnboardingStore((state) => state.status);
   // Skip the request when the local flow already approved: nothing to learn, and no extra call.
-  const myGyms = useMyGyms(localStatus !== 'approved');
+  const myGyms = useMyGyms(enabled && localStatus !== 'approved');
   const backendApproved = myGyms.data?.some((gym) => gym.approvalStatus === 'Approved') ?? false;
   const approved = localStatus === 'approved' || backendApproved;
   return {

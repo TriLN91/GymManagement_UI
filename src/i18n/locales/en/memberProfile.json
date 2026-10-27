@@ -216,7 +216,7 @@
       "updatePassword": "Update password",
       "passwordMismatch": "Password confirmation does not match.",
       "passwordLength": "The new password must contain at least 8 characters.",
-      "passwordUpdated": "Password updated in the local simulation.",
+      "passwordUpdated": "Password updated.",
       "preferences": "Security settings",
       "twoFactor": "Two-step verification",
       "loginAlerts": "New-login alerts",
