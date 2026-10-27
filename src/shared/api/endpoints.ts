@@ -222,6 +222,7 @@ export const ENDPOINTS = {
     trainersKpi: (branchId: string) => `/branch-manager/branches/${branchId}/trainers/kpi`,
   },
   passDistribution: {
+    capabilities: '/platform/pass-distribution/capabilities',
     passTypes: (onlyActive = true) =>
       `/admin/pass-distribution/pass-types?onlyActive=${onlyActive}`,
     createPassType: '/admin/pass-distribution/pass-types',

@@ -19,6 +19,12 @@ import { apiGet, apiPost, apiPut } from '@/shared/api/client';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
 export const passDistributionApi = {
+  getRecipients: (gymId: string) =>
+    apiGet<{ memberProfileId: string; fullName: string; email: string }[]>(
+      `/gym-distribution/${gymId}/recipients`,
+    ),
+  getCapabilities: (): Promise<{ demoProvisioningEnabled: boolean }> =>
+    apiGet(ENDPOINTS.passDistribution.capabilities),
   // Catalog
   getPassTypes: (onlyActive = true): Promise<PassTypeDto[]> =>
     apiGet<PassTypeDto[]>(ENDPOINTS.passDistribution.passTypes(onlyActive)),

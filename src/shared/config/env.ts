@@ -12,6 +12,7 @@ export const envSchema = z.object({
   VITE_API_TIMEOUT_MS: z.coerce.number().int().positive().default(330_000),
   VITE_OAUTH_GOOGLE_CLIENT_ID: z.string().optional(),
   VITE_ENABLE_MSW: booleanFlag.optional(),
+  VITE_ENABLE_LEGACY_AI_COMMERCE: booleanFlag.default('false'),
 });
 
 type ParsedEnv = Omit<z.infer<typeof envSchema>, 'VITE_ENABLE_MSW'> & { VITE_ENABLE_MSW: boolean };

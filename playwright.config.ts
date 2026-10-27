@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Point E2E_BASE_URL at an already running dev server when port 5173 is taken.
 const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:5173';
+const serverUrl = new URL(baseURL);
 
 export default defineConfig({
   testDir: './e2e',
@@ -27,13 +28,16 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    command: `npm run dev -- --host ${serverUrl.hostname} --port ${serverUrl.port || '5173'} --strictPort`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
       ...process.env,
       VITE_ENABLE_MSW: 'true',
+      // These retained marketplace regressions exercise the explicit compatibility surface.
+      // Real-service demo checks reuse the running server with legacy commerce disabled.
+      VITE_ENABLE_LEGACY_AI_COMMERCE: 'true',
     },
   },
 });

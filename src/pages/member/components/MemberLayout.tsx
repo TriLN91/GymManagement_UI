@@ -36,6 +36,7 @@ import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
@@ -86,6 +87,11 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
       { labelKey: 'memberShell.assistant', to: ROUTES.member.assistant, icon: Bot },
       { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress, icon: TrendingUp },
       { labelKey: 'memberShell.achievements', to: ROUTES.member.achievements, icon: Trophy },
+      {
+        labelKey: 'memberShell.weeklyProgression',
+        to: ROUTES.member.weeklyProgression,
+        icon: TrendingUp,
+      },
       { labelKey: 'memberShell.workoutHistory', to: ROUTES.member.workoutHistory, icon: History },
     ],
   },
@@ -222,6 +228,12 @@ export function MemberLayout() {
   const userName = user?.fullName || 'Member';
   const query = sidebarQuery.trim();
   const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => env.VITE_ENABLE_LEGACY_AI_COMMERCE || item.to !== ROUTES.member.marketplaceOffers,
+      ),
+    }))
     .map((group) => ({
       ...group,
       items:

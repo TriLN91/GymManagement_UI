@@ -57,6 +57,7 @@ export const ROUTES = Object.freeze({
     profileWearables: '/app/profile/wearables',
     profileNotifications: '/app/profile/notifications',
     aiPass: '/app/ai-pass',
+    weeklyProgression: '/app/weekly-review',
   }),
   pt: Object.freeze({
     root: '/pt',

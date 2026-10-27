@@ -1,10 +1,16 @@
 import { lazy } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { AuthGuard } from './guards/AuthGuard';
 import { GymOwnerApprovalGuard } from './guards/GymOwnerApprovalGuard';
 import { GymOwnerEditableGuard } from './guards/GymOwnerEditableGuard';
 import { RoleGuard } from './guards/RoleGuard';
+
+const WeeklyProgressionPage = lazy(() =>
+  import('@/features/gamification/ui/WeeklyProgressionPage').then((m) => ({
+    default: m.WeeklyProgressionPage,
+  })),
+);
 
 import { AcceptInvitationPage } from '@/features/staff-invitations';
 import { GymOwnerLayout } from '@/pages/admin/components/GymOwnerLayout';
@@ -18,6 +24,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 import { TrainerLayout } from '@/pages/pt/components/TrainerLayout';
 import { PlatformAdminLayout } from '@/pages/superadmin/PlatformAdminLayout';
 import { ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 
 const LandingPage = lazy(() =>
   import('@/pages/public/LandingPage').then((m) => ({ default: m.LandingPage })),
@@ -497,6 +504,7 @@ const router = createBrowserRouter([
               { path: ROUTES.member.coaching, element: <MemberCoachingPage /> },
               { path: ROUTES.member.assistant, element: <AssistantPage /> },
               { path: ROUTES.member.aiPass, element: <MemberAiPassPage /> },
+              { path: ROUTES.member.weeklyProgression, element: <WeeklyProgressionPage /> },
               { path: ROUTES.member.workout, element: <MemberWorkoutPage /> },
               { path: ROUTES.member.workoutSchedule, element: <WeeklySchedule /> },
               { path: ROUTES.member.workoutBuilder, element: <MemberWorkoutBuilder /> },
@@ -511,7 +519,14 @@ const router = createBrowserRouter([
               { path: ROUTES.member.workoutCompletion, element: <WorkoutCompletion /> },
               { path: ROUTES.member.marketplace, element: <MarketplaceHome /> },
               { path: ROUTES.member.marketplaceGym, element: <GymDetailPage /> },
-              { path: ROUTES.member.marketplaceOffers, element: <GymOffersPage /> },
+              {
+                path: ROUTES.member.marketplaceOffers,
+                element: env.VITE_ENABLE_LEGACY_AI_COMMERCE ? (
+                  <GymOffersPage />
+                ) : (
+                  <Navigate to={ROUTES.member.aiPass} replace />
+                ),
+              },
               { path: ROUTES.member.marketplaceTrainers, element: <TrainerDiscoveryPage /> },
               { path: ROUTES.member.marketplaceTrainer, element: <TrainerDetailPage /> },
               { path: ROUTES.member.marketplacePackages, element: <PTPackagesPage /> },

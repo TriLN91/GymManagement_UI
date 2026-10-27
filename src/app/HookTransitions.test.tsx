@@ -9,6 +9,7 @@ import { gymOffers } from '@/features/marketplace/model/marketplaceData';
 import { useMarketplaceStore } from '@/features/marketplace/model/useMarketplaceStore';
 import { MarketplaceCheckoutPage } from '@/features/marketplace/ui/MarketplacePages';
 import i18n from '@/i18n';
+import { env } from '@/shared/config/env';
 
 // Retain the missing-data render so the same mounted component receives its data later.
 vi.mock('react-router-dom', async (importOriginal) => ({
@@ -24,6 +25,8 @@ describe('data transitions preserve React hook order', () => {
   });
 
   it('checkout can receive and lose its selection without remounting', () => {
+    const original = env.VITE_ENABLE_LEGACY_AI_COMMERCE;
+    env.VITE_ENABLE_LEGACY_AI_COMMERCE = true;
     render(
       <MemoryRouter>
         <MarketplaceCheckoutPage />
@@ -33,6 +36,21 @@ describe('data transitions preserve React hook order', () => {
     act(() => useMarketplaceStore.getState().selectGymOffer(offer.id));
     expect(screen.getByRole('button', { name: 'Confirm payment' })).toBeInTheDocument();
     act(() => useMarketplaceStore.getState().clearSelection());
+    expect(screen.queryByRole('button', { name: 'Confirm payment' })).not.toBeInTheDocument();
+    env.VITE_ENABLE_LEGACY_AI_COMMERCE = original;
+  });
+
+  it('isolates legacy Gym checkout from the distribution demo by default', () => {
+    useMarketplaceStore.getState().selectGymOffer(gymOffers.find((item) => item.published)!.id);
+    render(
+      <MemoryRouter>
+        <MarketplaceCheckoutPage />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: 'Review my AI Pass invitations' })).toHaveAttribute(
+      'href',
+      '/app/ai-pass',
+    );
     expect(screen.queryByRole('button', { name: 'Confirm payment' })).not.toBeInTheDocument();
   });
 
