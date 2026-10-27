@@ -24,7 +24,6 @@ import type {
   PassTypeDto,
 } from '../types';
 
-
 const formatCurrencyVND = (amount: number) => amount.toLocaleString('vi-VN') + ' ₫';
 
 export function GymPassDistributionPage() {

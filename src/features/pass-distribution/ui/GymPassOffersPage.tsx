@@ -16,7 +16,6 @@ import { passDistributionApi } from '../api/passDistributionApi';
 import { useDistributionGym } from '../model/useDistributionGym';
 import type { DistributionOfferDto, DistributionProgramDto, PassTypeDto } from '../types';
 
-
 export function GymPassOffersPage() {
   const { i18n } = useTranslation();
   const isVi = i18n.resolvedLanguage === 'vi';
