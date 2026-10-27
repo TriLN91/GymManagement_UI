@@ -13,20 +13,22 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { passDistributionApi } from '../api/passDistributionApi';
+import { useDistributionGym } from '../model/useDistributionGym';
 import type { DistributionOfferDto, DistributionProgramDto, PassTypeDto } from '../types';
 
-import { useAuthStore } from '@/features/auth/model/useAuthStore';
 
 export function GymPassOffersPage() {
   const { i18n } = useTranslation();
   const isVi = i18n.resolvedLanguage === 'vi';
-  const user = useAuthStore((state) => state.user);
-  const gymId = user?.tenantId ?? '';
+  const { context, gyms, gymId, setSelected } = useDistributionGym();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [offers, setOffers] = useState<DistributionOfferDto[]>([]);
+  const [recipients, setRecipients] = useState<
+    { memberProfileId: string; fullName: string; email: string }[]
+  >([]);
   const [programs, setPrograms] = useState<DistributionProgramDto[]>([]);
   const [passTypes, setPassTypes] = useState<PassTypeDto[]>([]);
 
@@ -47,12 +49,14 @@ export function GymPassOffersPage() {
     try {
       setLoading(true);
       setError(null);
-      const [offerData, progData, typesData] = await Promise.all([
+      const [offerData, progData, typesData, recipientData] = await Promise.all([
         passDistributionApi.getGymOffers(gymId),
         passDistributionApi.getGymPrograms(gymId),
         passDistributionApi.getPassTypes(true),
+        passDistributionApi.getRecipients(gymId),
       ]);
       setOffers(offerData);
+      setRecipients(recipientData);
       setPrograms(progData);
       setPassTypes(typesData);
       const firstType = typesData[0];
@@ -156,6 +160,31 @@ export function GymPassOffersPage() {
     }
   };
 
+  if (!gymId) {
+    if (context.isPending) return <p role="status">Loading your Gym organizations…</p>;
+    if (context.isError)
+      return (
+        <div role="alert">
+          Could not load your Gym organizations.{' '}
+          <button onClick={() => void context.refetch()}>Retry</button>
+        </div>
+      );
+    if (gyms.length > 1)
+      return (
+        <label>
+          Select Gym
+          <select value="" onChange={(e) => setSelected(e.target.value)}>
+            <option value="">Choose organization</option>
+            {gyms.map((g) => (
+              <option key={g.gymId} value={g.gymId}>
+                {g.gymName}
+              </option>
+            ))}
+          </select>
+        </label>
+      );
+    return <p>No assigned Gym organization.</p>;
+  }
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -316,17 +345,26 @@ export function GymPassOffersPage() {
 
             <form onSubmit={handleSendOffer} className="mt-5 space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-slate-300">
-                  {isVi ? 'ID Hồ sơ Hội viên (Member Profile ID)' : 'Member Profile ID'}
+                <label
+                  htmlFor="distribution-recipient"
+                  className="mb-1.5 block text-xs font-medium text-slate-300"
+                >
+                  {isVi ? 'Hội viên nhận thẻ' : 'Recipient'}
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
+                <select
+                  id="distribution-recipient"
                   value={targetMemberId}
                   onChange={(e) => setTargetMemberId(e.target.value)}
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 font-mono text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
                   required
-                />
+                >
+                  <option value="">{isVi ? 'Chọn hội viên' : 'Select an active member'}</option>
+                  {recipients.map((m) => (
+                    <option key={m.memberProfileId} value={m.memberProfileId}>
+                      {m.fullName} · {m.email}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -334,6 +372,7 @@ export function GymPassOffersPage() {
                   {isVi ? 'Loại AI Pass cấp' : 'Pass Type'}
                 </label>
                 <select
+                  aria-label="Pass Type"
                   value={selectedPassTypeId}
                   onChange={(e) => setSelectedPassTypeId(e.target.value)}
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"

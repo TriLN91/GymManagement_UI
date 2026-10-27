@@ -323,6 +323,10 @@ function OfferCard({
       <button
         type="button"
         onClick={() => {
+          if (!env.VITE_ENABLE_LEGACY_AI_COMMERCE) {
+            void navigate(ROUTES.member.aiPass);
+            return;
+          }
           if (isBackend) {
             selectGymOffer(
               offer.id,
@@ -894,6 +898,17 @@ export function MarketplaceCheckoutPage() {
     : selectedPackage
       ? localize(selectedPackage.name, language)
       : breakdown?.title;
+  if (selection?.kind === 'gym_offer' && !env.VITE_ENABLE_LEGACY_AI_COMMERCE)
+    return (
+      <section className="marketplace-empty">
+        <h2>Gym AI Pass distribution</h2>
+        <p>
+          Legacy Gym bundle checkout is unavailable for this demo. Your Gym sends AI Pass
+          invitations; accepting an invitation does not charge you.
+        </p>
+        <Link to={ROUTES.member.aiPass}>Review my AI Pass invitations</Link>
+      </section>
+    );
   if (!selection || !breakdown)
     return (
       <div className="marketplace-page">

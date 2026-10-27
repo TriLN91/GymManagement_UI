@@ -449,6 +449,8 @@ export function MemberAiPassPage() {
               {pendingOffers.map((offer) => (
                 <div
                   key={offer.id}
+                  role="article"
+                  aria-label={offer.passTypeName}
                   className="flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition hover:border-primary/40"
                 >
                   <div className="space-y-3">

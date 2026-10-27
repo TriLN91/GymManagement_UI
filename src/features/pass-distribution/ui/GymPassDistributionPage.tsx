@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { passDistributionApi } from '../api/passDistributionApi';
+import { useDistributionGym } from '../model/useDistributionGym';
 import type {
   DistributionProgramDto,
   GymDistributionAgreementDto,
@@ -23,15 +24,13 @@ import type {
   PassTypeDto,
 } from '../types';
 
-import { useAuthStore } from '@/features/auth/model/useAuthStore';
 
 const formatCurrencyVND = (amount: number) => amount.toLocaleString('vi-VN') + ' ₫';
 
 export function GymPassDistributionPage() {
   const { i18n } = useTranslation();
   const isVi = i18n.resolvedLanguage === 'vi';
-  const user = useAuthStore((state) => state.user);
-  const gymId = user?.tenantId ?? '';
+  const { context, gyms, gym, gymId, setSelected } = useDistributionGym();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +63,7 @@ export function GymPassDistributionPage() {
       setError(null);
       const [invData, agrData, progData, typesData, capabilities] = await Promise.all([
         passDistributionApi.getGymInventory(gymId),
-        passDistributionApi.getGymAgreements(gymId),
+        gym?.canManageInventory ? passDistributionApi.getGymAgreements(gymId) : Promise.resolve([]),
         passDistributionApi.getGymPrograms(gymId),
         passDistributionApi.getPassTypes(true),
         passDistributionApi.getCapabilities().catch(() => ({ demoProvisioningEnabled: false })),
@@ -86,7 +85,7 @@ export function GymPassDistributionPage() {
     } finally {
       setLoading(false);
     }
-  }, [gymId]);
+  }, [gymId, gym?.canManageInventory]);
 
   useEffect(() => {
     void loadData();
@@ -138,6 +137,28 @@ export function GymPassDistributionPage() {
   };
 
   if (!gymId) {
+    if (context.isPending) return <p role="status">Loading your Gym organizations…</p>;
+    if (context.isError)
+      return (
+        <div role="alert">
+          Could not load your Gym organizations.{' '}
+          <button onClick={() => void context.refetch()}>Retry</button>
+        </div>
+      );
+    if (gyms.length > 1)
+      return (
+        <label>
+          Select Gym
+          <select value="" onChange={(e) => setSelected(e.target.value)}>
+            <option value="">Choose organization</option>
+            {gyms.map((g) => (
+              <option key={g.gymId} value={g.gymId}>
+                {g.gymName}
+              </option>
+            ))}
+          </select>
+        </label>
+      );
     return (
       <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 text-amber-200">
         <Building2 className="mb-2 h-8 w-8 text-amber-400" />
@@ -165,7 +186,7 @@ export function GymPassDistributionPage() {
                 : 'Pass Credit Inventory & Packages'}
             </h1>
             <span className="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-2.5 py-0.5 text-xs font-medium text-cyan-400">
-              CF03 TO-BE v2.1
+              {isVi ? 'Phân phối tại Gym' : 'Gym distribution'}
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-400">
