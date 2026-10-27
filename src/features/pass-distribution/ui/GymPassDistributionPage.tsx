@@ -40,6 +40,7 @@ export function GymPassDistributionPage() {
   const [agreements, setAgreements] = useState<GymDistributionAgreementDto[]>([]);
   const [programs, setPrograms] = useState<DistributionProgramDto[]>([]);
   const [passTypes, setPassTypes] = useState<PassTypeDto[]>([]);
+  const [demoProvisioningEnabled, setDemoProvisioningEnabled] = useState(false);
 
   // Top-Up Modal State
   const [showTopUpModal, setShowTopUpModal] = useState(false);
@@ -61,16 +62,18 @@ export function GymPassDistributionPage() {
     try {
       setLoading(true);
       setError(null);
-      const [invData, agrData, progData, typesData] = await Promise.all([
+      const [invData, agrData, progData, typesData, capabilities] = await Promise.all([
         passDistributionApi.getGymInventory(gymId),
         passDistributionApi.getGymAgreements(gymId),
         passDistributionApi.getGymPrograms(gymId),
         passDistributionApi.getPassTypes(true),
+        passDistributionApi.getCapabilities().catch(() => ({ demoProvisioningEnabled: false })),
       ]);
       setInventory(invData);
       setAgreements(agrData);
       setPrograms(progData);
       setPassTypes(typesData);
+      setDemoProvisioningEnabled(capabilities.demoProvisioningEnabled);
       const firstAgr = agrData[0];
       if (firstAgr) setSelectedAgreementId(firstAgr.id);
       const firstType = typesData[0];
@@ -91,17 +94,14 @@ export function GymPassDistributionPage() {
 
   const handleTopUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!gymId || !selectedAgreementId || !selectedPassTypeId) return;
+    if (!gymId || !selectedAgreementId || !selectedPassTypeId || !demoProvisioningEnabled) return;
     try {
       setTopUpSubmitting(true);
-      const passType = passTypes.find((p) => p.id === selectedPassTypeId);
-      const unitPrice = passType?.wholesaleCreditPrice ?? 100_000;
-
       await passDistributionApi.topUpCredits(gymId, {
         agreementId: selectedAgreementId,
         passTypeId: selectedPassTypeId,
         quantity: topUpQuantity,
-        unitPrice,
+        unitPrice: 0,
       });
 
       setShowTopUpModal(false);
@@ -187,10 +187,16 @@ export function GymPassDistributionPage() {
           <button
             type="button"
             onClick={() => setShowTopUpModal(true)}
+            disabled={!demoProvisioningEnabled || loading || Boolean(error)}
+            title={
+              isVi
+                ? 'Chỉ cấp dữ liệu demo khi máy chủ bật chế độ demo; không thu tiền.'
+                : 'Requires server demo provisioning; no payment is taken.'
+            }
             className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-blue-500"
           >
             <Plus className="h-4 w-4" />
-            {isVi ? 'Mua Top-Up Credits' : 'Top-Up Credits'}
+            {isVi ? 'Cấp Credit Demo' : 'Provision Demo Credits'}
           </button>
         </div>
       </div>
@@ -469,12 +475,12 @@ export function GymPassDistributionPage() {
           <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
             <h3 className="flex items-center gap-2 text-xl font-bold text-white">
               <Coins className="h-5 w-5 text-cyan-400" />
-              {isVi ? 'Mua Bổ Sung Credit (Top-Up)' : 'Top-Up Credits'}
+              {isVi ? 'Cấp Credit Demo — Không Thu Tiền' : 'Demo Credits — No Payment'}
             </h3>
             <p className="mt-1 text-xs text-slate-400">
               {isVi
-                ? 'Lô credit top-up có hạn phát hành không vượt quá ngày hết hạn của hợp đồng hiện hành.'
-                : 'Top-up credit lot expiration strictly cannot exceed active agreement expiration.'}
+                ? 'Chỉ phục vụ trình diễn, không tạo thanh toán. Hạn credit không vượt quá hợp đồng.'
+                : 'For demonstration only. No payment is created. Credits expire with the agreement.'}
             </p>
 
             <form onSubmit={handleTopUpSubmit} className="mt-5 space-y-4">
@@ -506,7 +512,7 @@ export function GymPassDistributionPage() {
                 >
                   {passTypes.map((pt) => (
                     <option key={pt.id} value={pt.id}>
-                      {pt.name} — {formatCurrencyVND(pt.wholesaleCreditPrice)}/credit
+                      {pt.name}
                     </option>
                   ))}
                 </select>
@@ -514,7 +520,7 @@ export function GymPassDistributionPage() {
 
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-slate-300">
-                  {isVi ? 'Số lượng credit mua thêm' : 'Quantity to Top-Up'}
+                  {isVi ? 'Số credit demo' : 'Demo credit quantity'}
                 </label>
                 <input
                   type="number"
@@ -529,21 +535,12 @@ export function GymPassDistributionPage() {
 
               <div className="space-y-1 rounded-lg bg-slate-800/60 p-3 text-xs text-slate-300">
                 <div className="flex justify-between">
-                  <span>{isVi ? 'Đơn giá sỉ:' : 'Wholesale unit price:'}</span>
-                  <span className="font-semibold text-white">
-                    {formatCurrencyVND(
-                      passTypes.find((p) => p.id === selectedPassTypeId)?.wholesaleCreditPrice ?? 0,
-                    )}
-                  </span>
+                  <span>{isVi ? 'Phí cấp demo:' : 'Demo charge:'}</span>
+                  <span className="font-semibold text-white">{formatCurrencyVND(0)}</span>
                 </div>
                 <div className="flex justify-between border-t border-slate-700 pt-1 font-bold text-cyan-400">
                   <span>{isVi ? 'Tổng tiền:' : 'Total:'}</span>
-                  <span>
-                    {formatCurrencyVND(
-                      (passTypes.find((p) => p.id === selectedPassTypeId)?.wholesaleCreditPrice ??
-                        0) * topUpQuantity,
-                    )}
-                  </span>
+                  <span>{formatCurrencyVND(0)}</span>
                 </div>
               </div>
 

@@ -19,6 +19,8 @@ import { apiGet, apiPost, apiPut } from '@/shared/api/client';
 import { ENDPOINTS } from '@/shared/api/endpoints';
 
 export const passDistributionApi = {
+  getCapabilities: (): Promise<{ demoProvisioningEnabled: boolean }> =>
+    apiGet(ENDPOINTS.passDistribution.capabilities),
   // Catalog
   getPassTypes: (onlyActive = true): Promise<PassTypeDto[]> =>
     apiGet<PassTypeDto[]>(ENDPOINTS.passDistribution.passTypes(onlyActive)),

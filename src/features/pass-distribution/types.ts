@@ -138,6 +138,7 @@ export interface TopUpPassCreditRequest {
 
 export interface AcceptOfferRequest {
   acknowledgeReplaceCurrentPass?: boolean;
+  expectedCurrentPassId?: string | null;
 }
 
 export interface DeclineOfferRequest {
@@ -153,7 +154,7 @@ export interface PassEntitlementSnapshotDto {
   startsAtUtc: string;
   expiresAtUtc: string;
   sourceType: AiPassSourceType;
-  issuerName?: string;
+  issuerName?: string | null;
 }
 
 export interface MemberAiPassDto {
@@ -178,7 +179,7 @@ export interface ActiveMemberAiPassResponse {
 export interface OfferActionResponse {
   success: boolean;
   message: string;
-  passId?: string;
+  passId?: string | null;
   requiresReplacementConfirmation: boolean;
-  currentActivePass?: MemberAiPassDto;
+  currentActivePass?: MemberAiPassDto | null;
 }

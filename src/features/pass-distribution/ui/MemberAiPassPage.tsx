@@ -25,11 +25,14 @@ import type {
   DistributionOfferDto,
 } from '../types';
 
+import { ApiError } from '@/shared/api/errorTypes';
+
 export function MemberAiPassPage() {
   const [passData, setPassData] = useState<ActiveMemberAiPassResponse | null>(null);
   const [pendingOffers, setPendingOffers] = useState<DistributionOfferDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Modals state
   const [selectedOfferToAccept, setSelectedOfferToAccept] = useState<DistributionOfferDto | null>(
@@ -49,21 +52,18 @@ export function MemberAiPassPage() {
   const fetchData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     else setRefreshing(true);
+    setLoadError(null);
 
     try {
       const [currentPassRes, offersRes] = await Promise.all([
-        passDistributionApi.getCurrentPass().catch(() => ({
-          hasActivePass: false,
-          activePass: null,
-          daysRemaining: 0,
-        })),
-        passDistributionApi.getMemberOffers().catch(() => []),
+        passDistributionApi.getCurrentPass(),
+        passDistributionApi.getMemberOffers(),
       ]);
 
       setPassData(currentPassRes);
       setPendingOffers(offersRes || []);
     } catch (err: unknown) {
-      toast.error(
+      setLoadError(
         'Không thể tải thông tin AI Pass: ' + (err instanceof Error ? err.message : 'Lỗi hệ thống'),
       );
     } finally {
@@ -93,7 +93,8 @@ export function MemberAiPassPage() {
     setIsSubmittingAccept(true);
     try {
       const res = await passDistributionApi.acceptOffer(selectedOfferToAccept.id, {
-        acknowledgeReplaceCurrentPass: Boolean(hasActive),
+        acknowledgeReplaceCurrentPass: Boolean(hasActive && acknowledgeReplacement),
+        expectedCurrentPassId: passData?.activePass?.id ?? null,
       });
 
       if (res.success) {
@@ -107,6 +108,12 @@ export function MemberAiPassPage() {
         toast.warning(res.message);
       }
     } catch (err: unknown) {
+      if (err instanceof ApiError && err.status === 409) {
+        setAcknowledgeReplacement(false);
+        await fetchData(true);
+        toast.warning('Thông tin thẻ đã thay đổi. Vui lòng kiểm tra và xác nhận lại.');
+        return;
+      }
       toast.error(
         'Kích hoạt thẻ thất bại: ' + (err instanceof Error ? err.message : 'Lỗi không xác định'),
       );
@@ -191,6 +198,17 @@ export function MemberAiPassPage() {
       <div className="flex h-96 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <span className="ml-3 text-muted-foreground">Đang tải thông tin AI Pass...</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="space-y-4 p-6">
+        <p role="alert">{loadError}</p>
+        <button type="button" disabled={refreshing} onClick={() => void fetchData()}>
+          Thử lại
+        </button>
       </div>
     );
   }
@@ -341,10 +359,10 @@ export function MemberAiPassPage() {
                     <div className="mt-4 space-y-3">
                       <div className="flex items-center justify-between rounded-lg bg-accent/40 p-2.5 text-sm">
                         <span className="flex items-center gap-2 text-muted-foreground">
-                          <Bot className="h-4 w-4 text-primary" /> Lượt đánh giá AI cho phép:
+                          <Bot className="h-4 w-4 text-primary" /> Danh mục đánh giá hỗ trợ:
                         </span>
                         <span className="font-bold text-foreground">
-                          {activePass.snapshot.allowedAssessmentsCount} lượt/kỳ
+                          {activePass.snapshot.allowedAssessmentsCount} bài đánh giá
                         </span>
                       </div>
 
@@ -567,8 +585,8 @@ export function MemberAiPassPage() {
                       </p>
                       <p className="mt-1 text-[11px] font-medium text-amber-800 dark:text-amber-300">
                         Theo chính sách FitFlex, mỗi hội viên chỉ có 01 thẻ kích hoạt. Kích hoạt thẻ
-                        mới sẽ <span className="font-bold underline">hủy ngay lập tức</span> thời
-                        gian và số lượt đánh giá còn lại của thẻ cũ (Không cộng dồn ngày, không hoàn
+                        mới sẽ <span className="font-bold underline">thay thế ngay lập tức</span>{' '}
+                        thời gian và quyền lợi còn lại của thẻ cũ (Không cộng dồn ngày, không hoàn
                         tiền).
                       </p>
                     </div>
@@ -597,6 +615,7 @@ export function MemberAiPassPage() {
               <button
                 type="button"
                 onClick={() => setSelectedOfferToAccept(null)}
+                disabled={isSubmittingAccept}
                 className="rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
               >
                 Hủy bỏ
@@ -657,6 +676,7 @@ export function MemberAiPassPage() {
               <button
                 type="button"
                 onClick={() => setSelectedOfferToDecline(null)}
+                disabled={isSubmittingDecline}
                 className="rounded-lg border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
               >
                 Giữ lại
