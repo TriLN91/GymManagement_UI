@@ -142,12 +142,6 @@ const TrainerServicesPage = lazy(() =>
 const StaffInvitationsPage = lazy(() =>
   import('@/features/staff-invitations').then((m) => ({ default: m.StaffInvitationsPage })),
 );
-const GymOwnerWalletPage = lazy(() =>
-  import('@/features/wallet-payouts').then((m) => ({ default: m.GymOwnerWalletPage })),
-);
-const AdminWithdrawalsPage = lazy(() =>
-  import('@/features/wallet-payouts').then((m) => ({ default: m.AdminWithdrawalsPage })),
-);
 const GymPassDistributionPage = lazy(() =>
   import('@/features/pass-distribution').then((m) => ({ default: m.GymPassDistributionPage })),
 );
@@ -747,14 +741,6 @@ const router = createBrowserRouter([
                     ),
                   },
                   {
-                    path: ROUTES.admin.wallet,
-                    element: (
-                      <LegacyCommerceBoundary>
-                        <GymOwnerWalletPage />
-                      </LegacyCommerceBoundary>
-                    ),
-                  },
-                  {
                     path: ROUTES.admin.analytics,
                     element: (
                       <LegacyCommerceBoundary sample>
@@ -903,7 +889,6 @@ const router = createBrowserRouter([
                   </LegacyCommerceBoundary>
                 ),
               },
-              { path: ROUTES.superadmin.payouts, element: <AdminWithdrawalsPage /> },
               {
                 path: ROUTES.superadmin.disputes,
                 element: (

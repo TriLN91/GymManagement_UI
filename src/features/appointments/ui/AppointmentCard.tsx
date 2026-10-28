@@ -9,8 +9,10 @@ import {
   useAnswerReschedule,
   useCancelAppointment,
   useCompleteAppointment,
+  useConfirmAppointment,
   useConsentReassign,
   useDeclineAppointment,
+  useDisputeAppointment,
   useNoShowAppointment,
   useRescheduleAppointment,
   useTrainerNoShowAppointment,
@@ -21,7 +23,7 @@ import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 
 type Role = 'Member' | 'Trainer';
-type Panel = 'cancel' | 'reschedule' | null;
+type Panel = 'cancel' | 'reschedule' | 'dispute' | null;
 
 interface Props {
   appointment: AppointmentDto;
@@ -43,6 +45,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
   const decline = useDeclineAppointment();
   const cancel = useCancelAppointment();
   const complete = useCompleteAppointment();
+  const confirmResult = useConfirmAppointment();
+  const dispute = useDisputeAppointment();
   const noShow = useNoShowAppointment();
   const trainerNoShow = useTrainerNoShowAppointment();
   const reschedule = useRescheduleAppointment();
@@ -57,6 +61,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
     decline.isPending ||
     cancel.isPending ||
     complete.isPending ||
+    confirmResult.isPending ||
+    dispute.isPending ||
     noShow.isPending ||
     trainerNoShow.isPending ||
     reschedule.isPending ||
@@ -64,11 +70,14 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
     consent.isPending;
   const open = a.status === 'Scheduled' || a.status === 'Proposed' || a.status === 'Reassigned';
   const started = new Date(a.scheduledAtUtc).getTime() <= Date.now();
+  // Older servers do not expose the session-result contract or its dispute endpoints.
+  const supportsResultReview =
+    a.resultReportedAtUtc !== undefined || a.status === 'AwaitingMemberConfirmation';
 
-  const run = async (action: () => Promise<unknown>, success: string) => {
+  const run = async <T,>(action: () => Promise<T>, success: string | ((result: T) => string)) => {
     try {
-      await action();
-      toast.success(success);
+      const result = await action();
+      toast.success(typeof success === 'function' ? success(result) : success);
       setPanel(null);
       setReason('');
       setNewTime('');
@@ -186,6 +195,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
                 () => cancel.mutateAsync({ id: a.id, body: { reason, isEmergency: emergency } }),
                 t('toast.cancelled'),
               );
+            } else if (panel === 'dispute') {
+              void run(() => dispute.mutateAsync({ id: a.id, reason }), t('toast.disputed'));
             } else {
               void run(
                 () =>
@@ -222,7 +233,7 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
               onChange={(event) => setReason(event.target.value)}
             />
           </label>
-          {isTrainer ? (
+          {isTrainer && panel !== 'dispute' ? (
             <label className="appointment-check">
               <input
                 type="checkbox"
@@ -292,7 +303,17 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
                   <Button
                     size="sm"
                     disabled={busy}
-                    onClick={() => run(() => complete.mutateAsync(a.id), t('toast.completed'))}
+                    onClick={() =>
+                      run(
+                        () => complete.mutateAsync(a.id),
+                        (result) =>
+                          t(
+                            result.status === 'AwaitingMemberConfirmation'
+                              ? 'toast.completed'
+                              : 'toast.completedLegacy',
+                          ),
+                      )
+                    }
                   >
                     {t('action.complete')}
                   </Button>
@@ -312,6 +333,28 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
                 </Button>
               ) : null}
             </>
+          ) : null}
+          {!isTrainer && a.status === 'AwaitingMemberConfirmation' ? (
+            <Button
+              size="sm"
+              disabled={busy}
+              onClick={() => run(() => confirmResult.mutateAsync(a.id), t('toast.confirmed'))}
+            >
+              {t('action.confirmResult')}
+            </Button>
+          ) : null}
+          {supportsResultReview &&
+          ((!isTrainer && (a.status === 'AwaitingMemberConfirmation' || a.status === 'NoShow')) ||
+            (isTrainer && a.status === 'TrainerNoShow')) ? (
+            <Button size="sm" variant="outline" disabled={busy} onClick={() => setPanel('dispute')}>
+              {t('action.dispute')}
+            </Button>
+          ) : null}
+          {a.disputeReason ? (
+            <p className="appointment-note">
+              {a.disputeReason}
+              {a.disputeResolution ? ` · ${a.disputeResolution}` : ''}
+            </p>
           ) : null}
           {a.needsMakeup && onBookMakeup && role === 'Member' ? (
             <Button size="sm" disabled={busy} onClick={() => onBookMakeup(a)}>
