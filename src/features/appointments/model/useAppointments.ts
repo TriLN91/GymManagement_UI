@@ -70,6 +70,10 @@ export const useCancelAppointment = () =>
   );
 export const useCompleteAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.complete(id));
+export const useConfirmAppointment = () =>
+  useAppointmentMutation((id: string) => appointmentsApi.confirm(id));
+export const useDisputeAppointment = () =>
+  useAppointmentMutation(({ id, reason }: { id: string; reason: string }) => appointmentsApi.dispute(id, reason));
 export const useNoShowAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.noShow(id));
 export const useTrainerNoShowAppointment = () =>

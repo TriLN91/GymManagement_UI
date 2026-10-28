@@ -275,11 +275,30 @@ export const appointmentHandlers = [
     if (!a || a.status !== 'Scheduled')
       return fail(409, 'Chỉ buổi đã xác nhận mới hoàn thành được.');
     if (new Date(a.scheduledAtUtc).getTime() > Date.now()) return fail(409, 'Buổi chưa bắt đầu.');
+    // SRS 2.4.4 FR-CF04-10: the Trainer only reports; the Member confirms or disputes within the window.
+    a.status = 'AwaitingMemberConfirmation';
+    a.resultReportedAtUtc = new Date().toISOString();
+    return ok(withViewer(a, 'Trainer'));
+  }),
+
+  http.post(path('/appointments/:id/confirm'), ({ params }) => {
+    const a = find(String(params.id));
+    if (!a || a.status !== 'AwaitingMemberConfirmation')
+      return fail(409, 'Chỉ buổi Trainer đã báo là đã dạy mới xác nhận được.');
     a.status = 'Completed';
     a.completedAtUtc = new Date().toISOString();
-    a.consumedSession = true;
-    assignment.sessionsUsed += 1;
-    return ok(withViewer(a, 'Trainer'));
+    return ok(withViewer(a, 'Member'));
+  }),
+
+  http.post(path('/appointments/:id/dispute'), async ({ params, request }) => {
+    const a = find(String(params.id));
+    const body = (await request.json()) as { reason?: string };
+    if (!a || !['AwaitingMemberConfirmation', 'NoShow', 'TrainerNoShow'].includes(a.status))
+      return fail(409, 'Không thể khiếu nại kết quả ở trạng thái này.');
+    if (!body.reason?.trim()) return fail(400, 'Cần nêu lý do khiếu nại.');
+    a.status = 'Disputed';
+    a.disputeReason = body.reason.trim();
+    return ok(withViewer(a, roleOf()));
   }),
 
   http.post(path('/appointments/:id/no-show'), ({ params }) => {
@@ -287,8 +306,7 @@ export const appointmentHandlers = [
     if (!a || a.status !== 'Scheduled') return fail(409, 'Chỉ buổi đã xác nhận mới ghi vắng được.');
     if (new Date(a.scheduledAtUtc).getTime() > Date.now()) return fail(409, 'Buổi chưa bắt đầu.');
     a.status = 'NoShow';
-    a.consumedSession = true;
-    assignment.sessionsUsed += 1;
+    a.resultReportedAtUtc = new Date().toISOString();
     return ok(withViewer(a, 'Trainer'));
   }),
 

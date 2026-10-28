@@ -9,6 +9,8 @@ import {
   useAnswerReschedule,
   useCancelAppointment,
   useCompleteAppointment,
+  useConfirmAppointment,
+  useDisputeAppointment,
   useConsentReassign,
   useDeclineAppointment,
   useNoShowAppointment,
@@ -21,7 +23,7 @@ import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 
 type Role = 'Member' | 'Trainer';
-type Panel = 'cancel' | 'reschedule' | null;
+type Panel = 'cancel' | 'reschedule' | 'dispute' | null;
 
 interface Props {
   appointment: AppointmentDto;
@@ -43,6 +45,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
   const decline = useDeclineAppointment();
   const cancel = useCancelAppointment();
   const complete = useCompleteAppointment();
+  const confirmResult = useConfirmAppointment();
+  const dispute = useDisputeAppointment();
   const noShow = useNoShowAppointment();
   const trainerNoShow = useTrainerNoShowAppointment();
   const reschedule = useRescheduleAppointment();
@@ -57,6 +61,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
     decline.isPending ||
     cancel.isPending ||
     complete.isPending ||
+    confirmResult.isPending ||
+    dispute.isPending ||
     noShow.isPending ||
     trainerNoShow.isPending ||
     reschedule.isPending ||
@@ -186,6 +192,8 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
                 () => cancel.mutateAsync({ id: a.id, body: { reason, isEmergency: emergency } }),
                 t('toast.cancelled'),
               );
+            } else if (panel === 'dispute') {
+              void run(() => dispute.mutateAsync({ id: a.id, reason }), t('toast.disputed'));
             } else {
               void run(
                 () =>
@@ -312,6 +320,27 @@ export function AppointmentCard({ appointment, role, locale, onBookMakeup }: Pro
                 </Button>
               ) : null}
             </>
+          ) : null}
+          {!isTrainer && a.status === 'AwaitingMemberConfirmation' ? (
+            <Button
+              size="sm"
+              disabled={busy}
+              onClick={() => run(() => confirmResult.mutateAsync(a.id), t('toast.confirmed'))}
+            >
+              {t('action.confirmResult')}
+            </Button>
+          ) : null}
+          {(!isTrainer && (a.status === 'AwaitingMemberConfirmation' || a.status === 'NoShow')) ||
+          (isTrainer && a.status === 'TrainerNoShow') ? (
+            <Button size="sm" variant="outline" disabled={busy} onClick={() => setPanel('dispute')}>
+              {t('action.dispute')}
+            </Button>
+          ) : null}
+          {a.disputeReason ? (
+            <p className="appointment-note">
+              {a.disputeReason}
+              {a.disputeResolution ? ` · ${a.disputeResolution}` : ''}
+            </p>
           ) : null}
           {a.needsMakeup && onBookMakeup && role === 'Member' ? (
             <Button size="sm" disabled={busy} onClick={() => onBookMakeup(a)}>

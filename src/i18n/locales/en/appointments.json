@@ -11,7 +11,9 @@
     "NoShow": "No-show",
     "Cancelled": "Cancelled",
     "TrainerNoShow": "Trainer did not show up",
-    "Reassigned": "Substitute Trainer pending"
+    "Reassigned": "Substitute Trainer pending",
+    "AwaitingMemberConfirmation": "Waiting for the Member to confirm",
+    "Disputed": "Disputed, the gym is deciding"
   },
   "assignments": {
     "heading": "Training packages",
@@ -71,7 +73,9 @@
     "decline": "Decline",
     "cancel": "Cancel session",
     "reschedule": "Reschedule",
-    "complete": "Mark completed",
+    "complete": "Report as taught",
+    "confirmResult": "Confirm the session happened",
+    "dispute": "Dispute",
     "noShow": "Mark no-show",
     "reportTrainerNoShow": "Trainer did not show up",
     "bookMakeup": "Book another time",
@@ -92,7 +96,9 @@
     "accepted": "Session confirmed.",
     "declined": "Proposal declined.",
     "cancelled": "Session cancelled.",
-    "completed": "Session completed.",
+    "completed": "Reported. The Member has to confirm the session.",
+    "confirmed": "Session confirmed as completed.",
+    "disputed": "Dispute sent. The gym will decide.",
     "noShow": "No-show recorded.",
     "trainerNoShow": "Recorded. This session is not charged; please book another time.",
     "rescheduleSent": "Reschedule request sent.",
