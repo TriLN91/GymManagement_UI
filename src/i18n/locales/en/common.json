@@ -1,4 +1,6 @@
 {
+  "requestFailed": "The request failed. Please try again.",
+  "securitySettingsUnavailable": "Two-factor authentication, login-alert preferences and session-timeout controls are not connected. No security settings have been changed.",
   "appName": "AI Fitness Coaching",
   "loading": "Loading...",
   "retry": "Retry",
@@ -89,6 +91,9 @@
     "overview": "Member overview",
     "profileSetup": "Setup profile",
     "workoutGroup": "Workout",
+    "coachingGroup": "Coaching & assessment",
+    "coachingPlans": "Coaching plans",
+    "progressGroup": "Progress & recovery",
     "workoutBuilder": "Workout builder",
     "workoutExecution": "Workout execution",
     "progressTracking": "Progress tracking",

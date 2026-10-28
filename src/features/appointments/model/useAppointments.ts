@@ -48,7 +48,7 @@ export function useManagedAssignments() {
 }
 
 /** Runs one write and refreshes every CF04 query (a session change also moves the remaining-session count). */
-function useAppointmentMutation<TVars>(fn: (vars: TVars) => Promise<unknown>) {
+function useAppointmentMutation<TVars, TResult>(fn: (vars: TVars) => Promise<TResult>) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: fn,
@@ -70,6 +70,12 @@ export const useCancelAppointment = () =>
   );
 export const useCompleteAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.complete(id));
+export const useConfirmAppointment = () =>
+  useAppointmentMutation((id: string) => appointmentsApi.confirm(id));
+export const useDisputeAppointment = () =>
+  useAppointmentMutation(({ id, reason }: { id: string; reason: string }) =>
+    appointmentsApi.dispute(id, reason),
+  );
 export const useNoShowAppointment = () =>
   useAppointmentMutation((id: string) => appointmentsApi.noShow(id));
 export const useTrainerNoShowAppointment = () =>

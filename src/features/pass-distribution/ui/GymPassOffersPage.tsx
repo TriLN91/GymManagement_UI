@@ -184,6 +184,16 @@ export function GymPassOffersPage() {
       );
     return <p>No assigned Gym organization.</p>;
   }
+  if (loading) return <p role="status">{isVi ? 'Đang tải lời mời…' : 'Loading Pass offers…'}</p>;
+  if (error)
+    return (
+      <div role="alert">
+        <p>{error}</p>
+        <button type="button" onClick={() => void loadData()}>
+          {isVi ? 'Thử lại' : 'Retry'}
+        </button>
+      </div>
+    );
   return (
     <div className="space-y-6">
       {/* Header */}

@@ -15,7 +15,7 @@ describe('error navigation', () => {
     ['pt', '/pt'],
     ['gym_admin', '/admin'],
     ['super_admin', '/superadmin'],
-    ['branch_manager', '/'],
+    ['branch_manager', '/branch'],
   ] as const)('uses the %s home instead of the Member portal', (role, home) => {
     useAuthStore
       .getState()

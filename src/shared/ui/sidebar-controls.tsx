@@ -62,6 +62,21 @@ export function matchesSidebarSearch(label: string, query: string) {
   return label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
 }
 
+/** Close the mobile drawer after navigation and allow keyboard dismissal. */
+export function useSidebarMenu(pathname: string) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', dismiss);
+    return () => window.removeEventListener('keydown', dismiss);
+  }, [open]);
+  return [open, setOpen] as const;
+}
+
 export function useSidebarCollapse() {
   const [collapsed, setCollapsed] = useState(false);
 

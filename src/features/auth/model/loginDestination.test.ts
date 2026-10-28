@@ -26,6 +26,12 @@ describe('resolveLoginDestination', () => {
     );
     expect(resolveLoginDestination(['member'], '//evil.example/app')).toBe('/app');
     expect(resolveLoginDestination(['member'], '/app/\\evil')).toBe('/app');
-    expect(resolveLoginDestination(['branch_manager'], '/admin/orders')).toBe('/');
+    expect(resolveLoginDestination(['branch_manager'], '/admin/orders')).toBe('/branch');
+    expect(
+      resolveLoginDestination(
+        ['branch_manager'],
+        '/branch/pass-distribution/offers?status=Pending',
+      ),
+    ).toBe('/branch/pass-distribution/offers?status=Pending');
   });
 });

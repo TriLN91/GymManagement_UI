@@ -1,4 +1,6 @@
 {
+  "requestFailed": "Thao tác thất bại. Vui lòng thử lại.",
+  "securitySettingsUnavailable": "Xác thực hai bước, tùy chọn cảnh báo đăng nhập và thời gian phiên chưa được kết nối. Không có cài đặt bảo mật nào được thay đổi.",
   "appName": "AI Fitness Coaching",
   "loading": "Đang tải...",
   "retry": "Thử lại",
@@ -89,6 +91,9 @@
     "overview": "Thông tin thành viên",
     "profileSetup": "Thiết lập hồ sơ",
     "workoutGroup": "Tập luyện",
+    "coachingGroup": "Huấn luyện & đánh giá",
+    "coachingPlans": "Kế hoạch huấn luyện",
+    "progressGroup": "Tiến trình & phục hồi",
     "workoutBuilder": "Tự tạo lịch tập",
     "workoutExecution": "Thực hiện bài tập",
     "progressTracking": "Theo dõi tiến trình",

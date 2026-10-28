@@ -26,7 +26,10 @@ export const appointmentsApi = {
   accept: (id: string) => apiPost<AppointmentDto>(E.accept(id)),
   decline: (id: string, reason?: string) => apiPost<AppointmentDto>(E.decline(id), { reason }),
   cancel: (id: string, body: CancelAppointmentBody) => apiPost<AppointmentDto>(E.cancel(id), body),
+  /** The Trainer reports the session as taught; the Member still has to confirm it (FR-CF04-10). */
   complete: (id: string) => apiPost<AppointmentDto>(E.complete(id)),
+  confirm: (id: string) => apiPost<AppointmentDto>(E.confirm(id)),
+  dispute: (id: string, reason: string) => apiPost<AppointmentDto>(E.dispute(id), { reason }),
   noShow: (id: string) => apiPost<AppointmentDto>(E.noShow(id)),
   /** Member reports that the Trainer did not show up: not charged, a make-up session is offered. */
   trainerNoShow: (id: string) => apiPost<AppointmentDto>(E.trainerNoShow(id)),

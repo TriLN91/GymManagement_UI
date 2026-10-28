@@ -77,6 +77,11 @@ export const ROUTES = Object.freeze({
     coachingHistory: '/pt/history/coaching',
     income: '/pt/history/income',
   }),
+  branch: Object.freeze({
+    root: '/branch',
+    passDistribution: '/branch/pass-distribution',
+    passOffers: '/branch/pass-distribution/offers',
+  }),
   admin: Object.freeze({
     root: '/admin',
     profile: '/admin/profile',
@@ -107,7 +112,6 @@ export const ROUTES = Object.freeze({
     orderDetail: '/admin/orders/:orderId',
     orderDetailPath: (orderId: string) => `/admin/orders/${orderId}`,
     settlements: '/admin/settlements',
-    wallet: '/admin/wallet',
     analytics: '/admin/analytics',
     notifications: '/admin/notifications',
     accountSecurity: '/admin/account-security',
@@ -154,7 +158,6 @@ export const ROUTES = Object.freeze({
     orderDetail: '/superadmin/transactions/orders/:orderId',
     orderDetailPath: (orderId: string) => `/superadmin/transactions/orders/${orderId}`,
     settlements: '/superadmin/transactions/settlements',
-    payouts: '/superadmin/transactions/payouts',
     disputes: '/superadmin/transactions/disputes',
     disputeDetail: '/superadmin/transactions/disputes/:disputeId',
     disputeDetailPath: (disputeId: string) => `/superadmin/transactions/disputes/${disputeId}`,

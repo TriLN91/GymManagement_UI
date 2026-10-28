@@ -1,6 +1,14 @@
 // Bodies of the backend CF04 endpoints (AppointmentDtos.cs): camelCase JSON, enums as strings.
 export type AppointmentStatus =
-  'Proposed' | 'Scheduled' | 'Completed' | 'NoShow' | 'Cancelled' | 'Reassigned' | 'TrainerNoShow';
+  | 'Proposed'
+  | 'Scheduled'
+  | 'Completed'
+  | 'NoShow'
+  | 'Cancelled'
+  | 'Reassigned'
+  | 'TrainerNoShow'
+  | 'AwaitingMemberConfirmation'
+  | 'Disputed';
 export type ChangeRequestStatus = 'Pending' | 'Accepted' | 'Declined' | 'Withdrawn';
 export type TrainerChangeStatus =
   'PendingManager' | 'PendingMember' | 'Applied' | 'DeclinedByMember' | 'Withdrawn';
@@ -50,6 +58,11 @@ export interface AppointmentDto {
   /** For a make-up session: the earlier session it replaces. */
   makeupOfAppointmentId: string | null;
   pendingChange: AppointmentChangeDto | null;
+  /** When the Trainer reported the result; the Member has the confirm window (P-01) from here. */
+  resultReportedAtUtc?: string | null;
+  disputeReason?: string | null;
+  disputeResolution?: string | null;
+  disputeMemberFeedback?: string | null;
 }
 
 export interface TrainerChangeDto {

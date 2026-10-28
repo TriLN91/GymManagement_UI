@@ -24,7 +24,7 @@ async function navigateAwayAndBack(page: Page) {
   if ((await profileGroup.getAttribute('aria-expanded')) !== 'true') await profileGroup.click();
   await page.locator('a[href="/app/profile"]:visible').first().click();
   await expect(page).toHaveURL(/\/app\/profile$/);
-  const workoutGroup = page.locator('button[aria-controls="member-nav-workout"]');
+  const workoutGroup = page.locator('button[aria-controls="member-nav-coach"]');
   if ((await workoutGroup.getAttribute('aria-expanded')) !== 'true') await workoutGroup.click();
   await page.locator('a[href="/app/assistant"]:visible').first().click();
   await expect(page.getByLabel('Message FitFlex Assistant')).toBeVisible();

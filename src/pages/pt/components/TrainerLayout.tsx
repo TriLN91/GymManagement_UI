@@ -30,6 +30,7 @@ import { marketplaceApi } from '@/features/marketplace/api/marketplaceApi';
 import { NotificationBell } from '@/features/notifications';
 import { useTrainerProfileStore } from '@/features/trainer-profile';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
@@ -37,6 +38,7 @@ import {
   SidebarToggle,
   useSidebarCollapse,
   useSidebarFlyout,
+  useSidebarMenu,
 } from '@/shared/ui/sidebar-controls';
 
 import '@/pages/member/components/member-layout.css';
@@ -188,7 +190,7 @@ export function TrainerLayout() {
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<TrainerNavGroup['id']>>(
     () => new Set([initialGroup]),
   );
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useSidebarMenu(location.pathname);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
   const [sidebarQuery, setSidebarQuery] = useState('');
   const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
@@ -225,6 +227,12 @@ export function TrainerLayout() {
   const visibleGroups = navGroups
     .map((group) => ({
       ...group,
+      items: group.items.filter(
+        (item) => env.VITE_ENABLE_LEGACY_AI_COMMERCE || item.to !== ROUTES.pt.income,
+      ),
+    }))
+    .map((group) => ({
+      ...group,
       items:
         !query || matchesSidebarSearch(t(group.labelKey), query)
           ? group.items
@@ -237,6 +245,15 @@ export function TrainerLayout() {
     );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
+  useEffect(() => {
+    const active = navGroups.find((group) =>
+      group.items.some((item) => matchesTrainerRoute(item, location.pathname)),
+    )?.id;
+    if (active)
+      setExpandedGroups((current) =>
+        current.has(active) ? current : new Set([...current, active]),
+      );
+  }, [location.pathname]);
 
   const toggleGroup = (groupId: TrainerNavGroup['id']) => {
     setExpandedGroups((current) => {

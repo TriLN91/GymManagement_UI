@@ -11,7 +11,9 @@
     "NoShow": "Vắng mặt",
     "Cancelled": "Đã huỷ",
     "TrainerNoShow": "Huấn luyện viên vắng mặt",
-    "Reassigned": "Chờ xác nhận người dạy thay"
+    "Reassigned": "Chờ xác nhận người dạy thay",
+    "AwaitingMemberConfirmation": "Chờ hội viên xác nhận",
+    "Disputed": "Đang khiếu nại, phòng tập sẽ quyết định"
   },
   "assignments": {
     "heading": "Gói huấn luyện",
@@ -71,7 +73,9 @@
     "decline": "Từ chối",
     "cancel": "Huỷ buổi",
     "reschedule": "Dời lịch",
-    "complete": "Đánh dấu hoàn thành",
+    "complete": "Báo đã dạy",
+    "confirmResult": "Xác nhận buổi tập đã diễn ra",
+    "dispute": "Khiếu nại",
     "noShow": "Đánh dấu vắng mặt",
     "reportTrainerNoShow": "Huấn luyện viên vắng mặt",
     "bookMakeup": "Hẹn lịch khác",
@@ -92,7 +96,10 @@
     "accepted": "Đã xác nhận buổi tập.",
     "declined": "Đã từ chối đề xuất.",
     "cancelled": "Đã huỷ buổi tập.",
-    "completed": "Đã hoàn thành buổi tập.",
+    "completed": "Đã báo đã dạy. Hội viên cần xác nhận buổi tập.",
+    "completedLegacy": "Đã đánh dấu buổi tập hoàn thành.",
+    "confirmed": "Đã xác nhận buổi tập hoàn thành.",
+    "disputed": "Đã gửi khiếu nại. Phòng tập sẽ quyết định.",
     "noShow": "Đã ghi nhận vắng mặt.",
     "trainerNoShow": "Đã ghi nhận. Buổi này không bị trừ, hãy hẹn lịch khác.",
     "rescheduleSent": "Đã gửi yêu cầu dời lịch.",

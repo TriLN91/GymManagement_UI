@@ -31,7 +31,8 @@ test('Member mobile navigation exposes plans and AI assessment as distinct core 
 
   await page.getByRole('button', { name: 'Open navigation' }).click();
   const menu = page.locator('aside.member-sidebar');
-  await menu.getByRole('button', { name: 'Workout' }).click();
+  const workoutGroup = menu.getByRole('button', { name: 'Workout', exact: true });
+  if ((await workoutGroup.getAttribute('aria-expanded')) !== 'true') await workoutGroup.click();
   await expect(menu.getByRole('link', { name: 'Weekly schedule' })).toBeVisible();
   await menu.getByRole('link', { name: 'Weekly schedule' }).click();
   await expect(page).toHaveURL(/\/app\/workout\/schedule$/);
@@ -57,7 +58,8 @@ test('Trainer mobile navigation exposes members, plans and appointments as separ
 
   await page.getByRole('button', { name: 'Open navigation' }).click();
   const menu = page.locator('aside.member-sidebar');
-  await menu.getByRole('button', { name: 'Workout builder' }).click();
+  const builderGroup = menu.getByRole('button', { name: 'Workout builder', exact: true });
+  if ((await builderGroup.getAttribute('aria-expanded')) !== 'true') await builderGroup.click();
   await expect(menu.getByRole('link', { name: 'Exercise library' })).toBeVisible();
   await menu.getByRole('link', { name: 'Exercise library' }).click();
   await expect(page).toHaveURL(/\/pt\/workout-builder\/library$/);

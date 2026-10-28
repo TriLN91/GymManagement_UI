@@ -44,6 +44,7 @@ import {
   SidebarToggle,
   useSidebarCollapse,
   useSidebarFlyout,
+  useSidebarMenu,
 } from '@/shared/ui/sidebar-controls';
 
 import './member-layout.css';
@@ -55,7 +56,7 @@ interface MemberNavItem {
 }
 
 interface MemberNavGroup {
-  id: 'dashboard' | 'workout' | 'aiPass' | 'marketplace' | 'profile';
+  id: 'dashboard' | 'workout' | 'coach' | 'progress' | 'aiPass' | 'marketplace' | 'profile';
   labelKey: string;
   icon: LucideIcon;
   to?: string;
@@ -83,8 +84,33 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
       },
       { labelKey: 'memberShell.workoutExecution', to: ROUTES.member.workoutExecution, icon: Play },
       { labelKey: 'memberShell.workoutBuilder', to: ROUTES.member.workoutBuilder, icon: ListPlus },
-      { labelKey: 'memberShell.aiAssessment', to: ROUTES.member.aiAssessment, icon: Camera },
+    ],
+  },
+  {
+    id: 'coach',
+    labelKey: 'memberShell.coachingGroup',
+    icon: Bot,
+    items: [
+      { labelKey: 'memberShell.coachingPlans', to: ROUTES.member.coaching, icon: ClipboardList },
       { labelKey: 'memberShell.assistant', to: ROUTES.member.assistant, icon: Bot },
+      { labelKey: 'memberShell.aiAssessment', to: ROUTES.member.aiAssessment, icon: Camera },
+      {
+        labelKey: 'memberShell.assessmentHistory',
+        to: ROUTES.member.profileAssessments,
+        icon: Camera,
+      },
+      {
+        labelKey: 'memberShell.appointments',
+        to: ROUTES.member.profileAppointments,
+        icon: CalendarDays,
+      },
+    ],
+  },
+  {
+    id: 'progress',
+    labelKey: 'memberShell.progressGroup',
+    icon: TrendingUp,
+    items: [
       { labelKey: 'memberShell.progressTracking', to: ROUTES.member.progress, icon: TrendingUp },
       { labelKey: 'memberShell.achievements', to: ROUTES.member.achievements, icon: Trophy },
       {
@@ -119,17 +145,6 @@ const navGroups: ReadonlyArray<MemberNavGroup> = [
     icon: UserRound,
     items: [
       { labelKey: 'memberShell.personalProfile', to: ROUTES.member.profile, icon: UserRound },
-      { labelKey: 'memberShell.aiPass', to: ROUTES.member.aiPass, icon: Sparkles },
-      {
-        labelKey: 'memberShell.appointments',
-        to: ROUTES.member.profileAppointments,
-        icon: CalendarDays,
-      },
-      {
-        labelKey: 'memberShell.assessmentHistory',
-        to: ROUTES.member.profileAssessments,
-        icon: Camera,
-      },
       { labelKey: 'memberShell.wearables', to: ROUTES.member.profileWearables, icon: Watch },
       {
         labelKey: 'memberShell.accountSecurity',
@@ -197,13 +212,20 @@ function matchesMemberMobileNav(id: (typeof mobileNav)[number]['id'], pathname: 
 }
 
 function matchesMemberNavRoute(itemTo: string, pathname: string) {
-  const exactRoutes: string[] = [
-    ROUTES.member.root,
-    ROUTES.member.marketplace,
-    ROUTES.member.profile,
-  ];
+  const exactRoutes: string[] = [ROUTES.member.root];
   if (exactRoutes.includes(itemTo)) return pathname === itemTo;
-  return pathname === itemTo || pathname.startsWith(`${itemTo}/`);
+  const matches = pathname === itemTo || pathname.startsWith(`${itemTo}/`);
+  return (
+    matches &&
+    !navGroups
+      .flatMap((group) => group.items)
+      .some(
+        (item) =>
+          item.to &&
+          item.to.length > itemTo.length &&
+          (pathname === item.to || pathname.startsWith(`${item.to}/`)),
+      )
+  );
 }
 
 export function MemberLayout() {
@@ -217,7 +239,7 @@ export function MemberLayout() {
   const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<MemberNavGroup['id']>>(
     () => new Set([initialGroup]),
   );
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useSidebarMenu(location.pathname);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
   const [sidebarQuery, setSidebarQuery] = useState('');
   const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
@@ -231,7 +253,10 @@ export function MemberLayout() {
     .map((group) => ({
       ...group,
       items: group.items.filter(
-        (item) => env.VITE_ENABLE_LEGACY_AI_COMMERCE || item.to !== ROUTES.member.marketplaceOffers,
+        (item) =>
+          env.VITE_ENABLE_LEGACY_AI_COMMERCE ||
+          (item.to !== ROUTES.member.marketplaceOffers &&
+            item.to !== ROUTES.member.marketplacePackages),
       ),
     }))
     .map((group) => ({
@@ -248,6 +273,15 @@ export function MemberLayout() {
     );
 
   useEffect(() => closeFlyout(), [closeFlyout, location.pathname]);
+  useEffect(() => {
+    const active = navGroups.find((group) =>
+      group.items.some((item) => item.to && matchesMemberNavRoute(item.to, location.pathname)),
+    )?.id;
+    if (active)
+      setExpandedGroups((current) =>
+        current.has(active) ? current : new Set([...current, active]),
+      );
+  }, [location.pathname]);
 
   const handleLogout = () => {
     void logout.mutate();
@@ -422,6 +456,7 @@ export function MemberLayout() {
                         to={item.to}
                         end={
                           item.to === ROUTES.member.root ||
+                          item.to === ROUTES.member.workout ||
                           item.to === ROUTES.member.marketplace ||
                           item.to === ROUTES.member.profile
                         }
@@ -431,7 +466,10 @@ export function MemberLayout() {
                         }}
                         aria-label={t(item.labelKey)}
                         title={isSidebarCollapsed ? t(item.labelKey) : undefined}
-                        className={({ isActive }) => cn('member-nav-link', isActive && 'is-active')}
+                        className={cn(
+                          'member-nav-link',
+                          matchesMemberNavRoute(item.to, location.pathname) && 'is-active',
+                        )}
                       >
                         <ItemIcon aria-hidden="true" size={16} strokeWidth={1.8} />
                         <span>{t(item.labelKey)}</span>

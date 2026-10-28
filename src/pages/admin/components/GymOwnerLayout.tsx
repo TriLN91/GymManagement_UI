@@ -23,7 +23,6 @@ import {
   Ticket,
   UserRound,
   UsersRound,
-  Wallet,
   X,
 } from 'lucide-react';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -35,6 +34,7 @@ import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { useGymOwnerApproved } from '@/features/gym-owner-onboarding';
 import { NotificationBell } from '@/features/notifications';
 import { BRAND_MARK, ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
@@ -42,15 +42,10 @@ import {
   SidebarToggle,
   useSidebarCollapse,
   useSidebarFlyout,
+  useSidebarMenu,
 } from '@/shared/ui/sidebar-controls';
 
 import '@/pages/member/components/member-layout.css';
-
-interface OwnerNavItem {
-  label: string;
-  icon?: LucideIcon;
-  to: string;
-}
 
 interface OwnerNavItem {
   label: string;
@@ -87,10 +82,11 @@ const END_ROUTES: ReadonlySet<string> = new Set([
   ROUTES.admin.customers,
   ROUTES.admin.orders,
   ROUTES.admin.settlements,
-  ROUTES.admin.wallet,
   ROUTES.admin.analytics,
   ROUTES.admin.notifications,
   ROUTES.admin.accountSecurity,
+  ROUTES.branch.passDistribution,
+  ROUTES.branch.passOffers,
 ]);
 
 function matchesRoute(to: string, pathname: string) {
@@ -98,19 +94,39 @@ function matchesRoute(to: string, pathname: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
-export function GymOwnerLayout() {
+export function GymOwnerLayout({ branchWorkspace = false }: { branchWorkspace?: boolean }) {
   const { i18n, t } = useTranslation(['owner', 'common']);
   const isVi = i18n.resolvedLanguage === 'vi';
   const location = useLocation();
-  const { approved } = useGymOwnerApproved();
+  const { approved } = useGymOwnerApproved(!branchWorkspace);
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useSidebarMenu(location.pathname);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
   const [sidebarQuery, setSidebarQuery] = useState('');
   const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
 
   const navGroups = useMemo<ReadonlyArray<OwnerNavGroup>>(() => {
+    if (branchWorkspace)
+      return [
+        {
+          id: 'passDistribution',
+          label: isVi ? 'Phân phối AI Pass' : 'AI Pass Distribution',
+          icon: Ticket,
+          items: [
+            {
+              label: isVi ? 'Lời mời hội viên' : 'Member Pass Offers',
+              to: ROUTES.branch.passOffers,
+              icon: Send,
+            },
+            {
+              label: isVi ? 'Kho AI Pass' : 'Pass Inventory',
+              to: ROUTES.branch.passDistribution,
+              icon: Ticket,
+            },
+          ],
+        },
+      ];
     const groups: OwnerNavGroup[] = [];
     if (approved) {
       groups.push({
@@ -220,11 +236,6 @@ export function GymOwnerLayout() {
             to: ROUTES.admin.settlements,
             icon: Landmark,
           },
-          {
-            label: isVi ? 'Ví & Rút tiền' : 'Wallet & Payouts',
-            to: ROUTES.admin.wallet,
-            icon: Wallet,
-          },
         ],
       });
       groups.push({
@@ -251,7 +262,7 @@ export function GymOwnerLayout() {
     }
 
     // Only display onboarding steps if gym owner is not yet approved
-    if (status !== 'approved') {
+    if (!approved) {
       groups.push({
         id: 'onboarding',
         label: t('shell.nav.onboarding'),
@@ -285,8 +296,12 @@ export function GymOwnerLayout() {
         ],
       });
     }
-    return groups;
-  }, [approved, isVi, t]);
+    return groups.filter(
+      (group) =>
+        env.VITE_ENABLE_LEGACY_AI_COMMERCE ||
+        !['packages', 'customers', 'orders', 'analytics'].includes(group.id),
+    );
+  }, [approved, branchWorkspace, isVi, t]);
 
   const initialGroup =
     navGroups.find((group) => group.items.some((item) => matchesRoute(item.to, location.pathname)))
@@ -325,8 +340,16 @@ export function GymOwnerLayout() {
 
   const userName = user?.fullName || t('shell.role');
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'G';
-  const ownerLabel = t('shell.role');
-  const workspaceLabel = t('shell.workspace');
+  const ownerLabel = branchWorkspace
+    ? isVi
+      ? 'Quản lý chi nhánh'
+      : 'Branch Manager'
+    : t('shell.role');
+  const workspaceLabel = branchWorkspace
+    ? isVi
+      ? 'Không gian chi nhánh'
+      : 'Branch workspace'
+    : t('shell.workspace');
 
   const toggleGroup = (groupId: OwnerNavGroup['id']) => {
     setExpandedGroups((current) => {
@@ -348,7 +371,13 @@ export function GymOwnerLayout() {
   const mobileItems = navGroups
     .flatMap((group) => {
       const [item] = group.items;
-      return item ? [item] : [];
+      return item
+        ? branchWorkspace
+          ? [...group.items]
+          : [item]
+        : group.to
+          ? [{ label: group.label, to: group.to, icon: group.icon }]
+          : [];
     })
     .slice(0, 4);
 

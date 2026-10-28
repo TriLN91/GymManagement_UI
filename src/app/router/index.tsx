@@ -5,6 +5,7 @@ import { AuthGuard } from './guards/AuthGuard';
 import { GymOwnerApprovalGuard } from './guards/GymOwnerApprovalGuard';
 import { GymOwnerEditableGuard } from './guards/GymOwnerEditableGuard';
 import { RoleGuard } from './guards/RoleGuard';
+import { LegacyCommerceBoundary } from './LegacyCommerceBoundary';
 
 const WeeklyProgressionPage = lazy(() =>
   import('@/features/gamification/ui/WeeklyProgressionPage').then((m) => ({
@@ -140,12 +141,6 @@ const TrainerServicesPage = lazy(() =>
 );
 const StaffInvitationsPage = lazy(() =>
   import('@/features/staff-invitations').then((m) => ({ default: m.StaffInvitationsPage })),
-);
-const GymOwnerWalletPage = lazy(() =>
-  import('@/features/wallet-payouts').then((m) => ({ default: m.GymOwnerWalletPage })),
-);
-const AdminWithdrawalsPage = lazy(() =>
-  import('@/features/wallet-payouts').then((m) => ({ default: m.AdminWithdrawalsPage })),
 );
 const GymPassDistributionPage = lazy(() =>
   import('@/features/pass-distribution').then((m) => ({ default: m.GymPassDistributionPage })),
@@ -529,11 +524,29 @@ const router = createBrowserRouter([
               },
               { path: ROUTES.member.marketplaceTrainers, element: <TrainerDiscoveryPage /> },
               { path: ROUTES.member.marketplaceTrainer, element: <TrainerDetailPage /> },
-              { path: ROUTES.member.marketplacePackages, element: <PTPackagesPage /> },
-              { path: ROUTES.member.marketplaceCheckout, element: <MarketplaceCheckoutPage /> },
+              {
+                path: ROUTES.member.marketplacePackages,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PTPackagesPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.member.marketplaceCheckout,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <MarketplaceCheckoutPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
               {
                 path: ROUTES.member.marketplacePaymentResult,
-                element: <MarketplacePaymentResultPage />,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <MarketplacePaymentResultPage />
+                  </LegacyCommerceBoundary>
+                ),
               },
             ],
           },
@@ -553,11 +566,38 @@ const router = createBrowserRouter([
               { path: ROUTES.pt.members, element: <PTMembersPage /> },
               { path: ROUTES.pt.memberDetail, element: <TrainerMemberDetailPage /> },
               { path: ROUTES.pt.appointments, element: <TrainerAppointmentsPage /> },
+              {
+                path: ROUTES.pt.workoutBuilder,
+                element: <Navigate to={ROUTES.pt.exerciseLibrary} replace />,
+              },
               { path: ROUTES.pt.exerciseLibrary, element: <TrainerExerciseLibraryPage /> },
               { path: ROUTES.pt.planBuilder, element: <PlanBuilderPage /> },
               { path: ROUTES.pt.memberWorkout, element: <TrainerMemberWorkoutPage /> },
               { path: ROUTES.pt.coachingHistory, element: <TrainerCoachingHistoryPage /> },
-              { path: ROUTES.pt.income, element: <TrainerIncomePage /> },
+              {
+                path: ROUTES.pt.income,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <TrainerIncomePage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        element: <RoleGuard allow="branch_manager" />,
+        children: [
+          {
+            element: <GymOwnerLayout branchWorkspace />,
+            children: [
+              {
+                path: ROUTES.branch.root,
+                element: <Navigate to={ROUTES.branch.passOffers} replace />,
+              },
+              { path: ROUTES.branch.passDistribution, element: <GymPassDistributionPage /> },
+              { path: ROUTES.branch.passOffers, element: <GymPassOffersPage /> },
             ],
           },
         ],
@@ -630,19 +670,35 @@ const router = createBrowserRouter([
                   },
                   {
                     path: ROUTES.admin.packages,
-                    element: <GymOwnerPTPackageListPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerPTPackageListPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.packageCreate,
-                    element: <GymOwnerPTPackageFormPage mode="create" />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerPTPackageFormPage mode="create" />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.packageEdit,
-                    element: <GymOwnerPTPackageFormPage mode="edit" />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerPTPackageFormPage mode="edit" />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.packageDetail,
-                    element: <GymOwnerPTPackageDetailPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerPTPackageDetailPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.passDistribution,
@@ -654,27 +710,43 @@ const router = createBrowserRouter([
                   },
                   {
                     path: ROUTES.admin.customers,
-                    element: <GymOwnerCustomersPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerCustomersPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.orders,
-                    element: <GymOwnerOrdersPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerOrdersPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.orderDetail,
-                    element: <GymOwnerOrderDetailPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerOrderDetailPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.settlements,
-                    element: <GymOwnerSettlementsPage />,
-                  },
-                  {
-                    path: ROUTES.admin.wallet,
-                    element: <GymOwnerWalletPage />,
+                    element: (
+                      <LegacyCommerceBoundary>
+                        <GymOwnerSettlementsPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.analytics,
-                    element: <GymOwnerAnalyticsPage />,
+                    element: (
+                      <LegacyCommerceBoundary sample>
+                        <GymOwnerAnalyticsPage />
+                      </LegacyCommerceBoundary>
+                    ),
                   },
                   {
                     path: ROUTES.admin.notifications,
@@ -698,7 +770,14 @@ const router = createBrowserRouter([
             children: [
               { path: ROUTES.superadmin.root, element: <SuperAdminDashboardPage /> },
               { path: ROUTES.superadmin.tenants, element: <SuperAdminTenantsPage /> },
-              { path: ROUTES.superadmin.analytics, element: <SuperAdminAnalyticsPage /> },
+              {
+                path: ROUTES.superadmin.analytics,
+                element: (
+                  <LegacyCommerceBoundary sample>
+                    <SuperAdminAnalyticsPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
               {
                 path: ROUTES.superadmin.movementAssessment,
                 element: <MovementAssessmentPage />,
@@ -729,21 +808,111 @@ const router = createBrowserRouter([
                 element: <PlatformTrainerApplicationDetailPage />,
               },
               { path: ROUTES.superadmin.accounts, element: <PlatformAccountsPage /> },
-              { path: ROUTES.superadmin.listings, element: <PlatformListingsPage /> },
-              { path: ROUTES.superadmin.listingDetail, element: <PlatformListingDetailPage /> },
-              { path: ROUTES.superadmin.campaigns, element: <PlatformCampaignsPage /> },
-              { path: ROUTES.superadmin.campaignCreate, element: <PlatformCampaignFormPage /> },
-              { path: ROUTES.superadmin.campaignEdit, element: <PlatformCampaignFormPage /> },
-              { path: ROUTES.superadmin.campaignDetail, element: <PlatformCampaignDetailPage /> },
+              {
+                path: ROUTES.superadmin.listings,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformListingsPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.listingDetail,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformListingDetailPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.campaigns,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformCampaignsPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.campaignCreate,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformCampaignFormPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.campaignEdit,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformCampaignFormPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.campaignDetail,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformCampaignDetailPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
               { path: ROUTES.superadmin.notifications, element: <PlatformNotificationsPage /> },
-              { path: ROUTES.superadmin.commercial, element: <PlatformCommercialConfigPage /> },
-              { path: ROUTES.superadmin.orders, element: <PlatformOrdersPage /> },
-              { path: ROUTES.superadmin.orderDetail, element: <PlatformOrderDetailPage /> },
-              { path: ROUTES.superadmin.settlements, element: <PlatformSettlementsPage /> },
-              { path: ROUTES.superadmin.payouts, element: <AdminWithdrawalsPage /> },
-              { path: ROUTES.superadmin.disputes, element: <PlatformDisputesPage /> },
-              { path: ROUTES.superadmin.disputeDetail, element: <PlatformDisputeDetailPage /> },
-              { path: ROUTES.superadmin.platformAnalytics, element: <PlatformAnalyticsPage /> },
+              {
+                path: ROUTES.superadmin.commercial,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformCommercialConfigPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.orders,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformOrdersPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.orderDetail,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformOrderDetailPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.settlements,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformSettlementsPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.disputes,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformDisputesPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.disputeDetail,
+                element: (
+                  <LegacyCommerceBoundary>
+                    <PlatformDisputeDetailPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
+              {
+                path: ROUTES.superadmin.platformAnalytics,
+                element: (
+                  <LegacyCommerceBoundary sample>
+                    <PlatformAnalyticsPage />
+                  </LegacyCommerceBoundary>
+                ),
+              },
               { path: ROUTES.superadmin.audit, element: <PlatformAuditPage /> },
             ],
           },

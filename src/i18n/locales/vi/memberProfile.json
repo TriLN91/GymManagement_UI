@@ -216,7 +216,7 @@
       "updatePassword": "Cập nhật mật khẩu",
       "passwordMismatch": "Mật khẩu xác nhận không khớp.",
       "passwordLength": "Mật khẩu mới phải có ít nhất 8 ký tự.",
-      "passwordUpdated": "Mật khẩu đã được cập nhật trong bản mô phỏng.",
+      "passwordUpdated": "Mật khẩu đã được cập nhật.",
       "preferences": "Cài đặt bảo mật",
       "twoFactor": "Xác thực hai bước",
       "loginAlerts": "Cảnh báo đăng nhập mới",

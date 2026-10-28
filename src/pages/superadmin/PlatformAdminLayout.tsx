@@ -24,7 +24,6 @@ import {
   TriangleAlert,
   UserRound,
   UsersRound,
-  Wallet,
   X,
 } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
@@ -37,6 +36,7 @@ import { useLogout } from '@/features/auth/model/useAuth';
 import { useAuthStore } from '@/features/auth/model/useAuthStore';
 import { platformCopy } from '@/features/platform-admin-dashboard/ui/copy';
 import { ROUTES } from '@/shared/config/constants';
+import { env } from '@/shared/config/env';
 import { cn } from '@/shared/lib/cn';
 import {
   matchesSidebarSearch,
@@ -44,6 +44,7 @@ import {
   SidebarToggle,
   useSidebarCollapse,
   useSidebarFlyout,
+  useSidebarMenu,
 } from '@/shared/ui/sidebar-controls';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
@@ -66,7 +67,6 @@ type CopyKey =
   | 'pricing'
   | 'orders'
   | 'settlementsList'
-  | 'payoutsList'
   | 'disputesList'
   | 'platformAnalytics'
   | 'activity'
@@ -131,7 +131,6 @@ const groups: ReadonlyArray<NavGroup> = [
     items: [
       { label: 'orders', to: ROUTES.superadmin.orders, icon: ReceiptText },
       { label: 'settlementsList', to: ROUTES.superadmin.settlements, icon: Landmark },
-      { label: 'payoutsList', to: ROUTES.superadmin.payouts, icon: Wallet },
       { label: 'disputesList', to: ROUTES.superadmin.disputes, icon: TriangleAlert },
     ],
   },
@@ -183,7 +182,7 @@ export function PlatformAdminLayout() {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const logout = useLogout();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useSidebarMenu(location.pathname);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useSidebarCollapse();
   const [sidebarQuery, setSidebarQuery] = useState('');
   const { flyout, toggleFlyout, closeFlyout } = useSidebarFlyout();
@@ -192,6 +191,17 @@ export function PlatformAdminLayout() {
   const userInitial = userName.trim().charAt(0).toUpperCase() || 'P';
   const query = sidebarQuery.trim();
   const visibleGroups = groups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => env.VITE_ENABLE_LEGACY_AI_COMMERCE || item.to !== ROUTES.superadmin.tenants,
+      ),
+    }))
+    .filter(
+      (group) =>
+        env.VITE_ENABLE_LEGACY_AI_COMMERCE ||
+        !['commercial', 'transactions', 'analytics'].includes(group.id),
+    )
     .map((group) => ({
       ...group,
       items:

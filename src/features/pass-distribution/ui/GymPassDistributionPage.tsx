@@ -92,7 +92,14 @@ export function GymPassDistributionPage() {
 
   const handleTopUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!gymId || !selectedAgreementId || !selectedPassTypeId || !demoProvisioningEnabled) return;
+    if (
+      !gymId ||
+      !gym?.canManageInventory ||
+      !selectedAgreementId ||
+      !selectedPassTypeId ||
+      !demoProvisioningEnabled
+    )
+      return;
     try {
       setTopUpSubmitting(true);
       await passDistributionApi.topUpCredits(gymId, {
@@ -113,7 +120,7 @@ export function GymPassDistributionPage() {
 
   const handleCreateProgram = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!gymId || !progPassTypeId || !progName.trim()) return;
+    if (!gymId || !gym?.canManageInventory || !progPassTypeId || !progName.trim()) return;
     try {
       setProgSubmitting(true);
       await passDistributionApi.createProgram(gymId, {
@@ -173,6 +180,17 @@ export function GymPassDistributionPage() {
     );
   }
 
+  if (loading)
+    return <p role="status">{isVi ? 'Đang tải kho AI Pass…' : 'Loading Pass inventory…'}</p>;
+  if (error)
+    return (
+      <div role="alert">
+        <p>{error}</p>
+        <button type="button" onClick={() => void loadData()}>
+          {isVi ? 'Thử lại' : 'Retry'}
+        </button>
+      </div>
+    );
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -204,20 +222,22 @@ export function GymPassDistributionPage() {
             <RefreshCw className="h-4 w-4" />
             {isVi ? 'Làm mới' : 'Refresh'}
           </button>
-          <button
-            type="button"
-            onClick={() => setShowTopUpModal(true)}
-            disabled={!demoProvisioningEnabled || loading || Boolean(error)}
-            title={
-              isVi
-                ? 'Chỉ cấp dữ liệu demo khi máy chủ bật chế độ demo; không thu tiền.'
-                : 'Requires server demo provisioning; no payment is taken.'
-            }
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-blue-500"
-          >
-            <Plus className="h-4 w-4" />
-            {isVi ? 'Cấp Credit Demo' : 'Provision Demo Credits'}
-          </button>
+          {gym?.canManageInventory && (
+            <button
+              type="button"
+              onClick={() => setShowTopUpModal(true)}
+              disabled={!demoProvisioningEnabled || loading || Boolean(error)}
+              title={
+                isVi
+                  ? 'Chỉ cấp dữ liệu demo khi máy chủ bật chế độ demo; không thu tiền.'
+                  : 'Requires server demo provisioning; no payment is taken.'
+              }
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-blue-500"
+            >
+              <Plus className="h-4 w-4" />
+              {isVi ? 'Cấp Credit Demo' : 'Provision Demo Credits'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -375,69 +395,70 @@ export function GymPassDistributionPage() {
       {/* Agreements and Programs Section */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Active Agreements */}
-        <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-400" />
-            <h2 className="text-lg font-semibold text-white">
-              {isVi ? 'Hợp Đồng Phân Phối B2B' : 'Distribution Agreements'}
-            </h2>
-          </div>
+        {gym?.canManageInventory && (
+          <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6 backdrop-blur-sm">
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-400" />
+              <h2 className="text-lg font-semibold text-white">
+                {isVi ? 'Hợp Đồng Phân Phối B2B' : 'Distribution Agreements'}
+              </h2>
+            </div>
 
-          <div className="space-y-3">
-            {agreements.length > 0 ? (
-              agreements.map((agr) => (
-                <div
-                  key={agr.id}
-                  className="rounded-xl border border-slate-800 bg-slate-800/40 p-4 transition hover:border-slate-700"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-white">{agr.packageName}</span>
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
-                        agr.status === 'Active'
-                          ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-400'
-                          : 'border-slate-600 bg-slate-700 text-slate-300'
-                      }`}
-                    >
-                      {agr.status}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
-                    <span>
-                      {isVi ? 'Số HĐ:' : 'Agreement #:'}{' '}
-                      <strong className="text-slate-200">{agr.agreementNumber}</strong>
-                    </span>
-                    <span>
-                      {isVi ? 'Hạn:' : 'Expires:'}{' '}
-                      <strong className="text-slate-200">
-                        {new Date(agr.expiresAtUtc).toLocaleDateString(isVi ? 'vi-VN' : 'en-US')}
-                      </strong>
-                    </span>
-                    <span>
-                      {isVi ? 'Trainer AI:' : 'Trainer AI:'}{' '}
-                      <strong
-                        className={agr.hasTrainerAiAccess ? 'text-cyan-400' : 'text-slate-400'}
+            <div className="space-y-3">
+              {agreements.length > 0 ? (
+                agreements.map((agr) => (
+                  <div
+                    key={agr.id}
+                    className="rounded-xl border border-slate-800 bg-slate-800/40 p-4 transition hover:border-slate-700"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-white">{agr.packageName}</span>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
+                          agr.status === 'Active'
+                            ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-400'
+                            : 'border-slate-600 bg-slate-700 text-slate-300'
+                        }`}
                       >
-                        {agr.hasTrainerAiAccess
-                          ? isVi
-                            ? 'BẬT'
-                            : 'ENABLED'
-                          : isVi
-                            ? 'TẮT'
-                            : 'DISABLED'}
-                      </strong>
-                    </span>
+                        {agr.status}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+                      <span>
+                        {isVi ? 'Số HĐ:' : 'Agreement #:'}{' '}
+                        <strong className="text-slate-200">{agr.agreementNumber}</strong>
+                      </span>
+                      <span>
+                        {isVi ? 'Hạn:' : 'Expires:'}{' '}
+                        <strong className="text-slate-200">
+                          {new Date(agr.expiresAtUtc).toLocaleDateString(isVi ? 'vi-VN' : 'en-US')}
+                        </strong>
+                      </span>
+                      <span>
+                        {isVi ? 'Trainer AI:' : 'Trainer AI:'}{' '}
+                        <strong
+                          className={agr.hasTrainerAiAccess ? 'text-cyan-400' : 'text-slate-400'}
+                        >
+                          {agr.hasTrainerAiAccess
+                            ? isVi
+                              ? 'BẬT'
+                              : 'ENABLED'
+                            : isVi
+                              ? 'TẮT'
+                              : 'DISABLED'}
+                        </strong>
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p className="py-6 text-center text-sm text-slate-500">
-                {isVi ? 'Chưa có hợp đồng phân phối nào.' : 'No distribution agreements found.'}
-              </p>
-            )}
+                ))
+              ) : (
+                <p className="py-6 text-center text-sm text-slate-500">
+                  {isVi ? 'Chưa có hợp đồng phân phối nào.' : 'No distribution agreements found.'}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-
+        )}
         {/* Distribution Programs */}
         <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/40 p-6 backdrop-blur-sm">
           <div className="flex items-center justify-between">
@@ -449,6 +470,14 @@ export function GymPassDistributionPage() {
             </div>
             <button
               type="button"
+              disabled={!gym?.canManageInventory || loading || Boolean(error)}
+              title={
+                !gym?.canManageInventory
+                  ? isVi
+                    ? 'Chỉ Gym Admin quản lý chương trình.'
+                    : 'Programs are managed by the Gym Admin.'
+                  : undefined
+              }
               onClick={() => setShowProgramModal(true)}
               className="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-1.5 text-xs font-medium text-purple-300 transition hover:bg-purple-500/20"
             >

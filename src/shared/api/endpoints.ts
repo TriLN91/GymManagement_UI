@@ -41,29 +41,6 @@ export const ENDPOINTS = {
     resetPassword: '/identity/reset-password',
     changePassword: '/identity/change-password',
   },
-  wallets: {
-    me: '/wallets/me',
-    byId: (id: string) => `/wallets/${id}`,
-    transactions: (id: string, page = 1, pageSize = 50) =>
-      `/wallets/${id}/transactions?page=${page}&pageSize=${pageSize}`,
-  },
-  withdrawals: {
-    request: '/withdrawals/request',
-    myRequests: '/withdrawals/my-requests',
-    list: (params?: { walletId?: string; status?: number }) => {
-      const q = new URLSearchParams();
-      if (params?.walletId) q.set('walletId', params.walletId);
-      if (params?.status) q.set('status', String(params.status));
-      const str = q.toString();
-      return str ? `/withdrawals?${str}` : '/withdrawals';
-    },
-    byId: (id: string) => `/withdrawals/${id}`,
-    approve: (id: string) => `/withdrawals/${id}/approve`,
-    reject: (id: string) => `/withdrawals/${id}/reject`,
-    dispatch: (id: string) => `/withdrawals/${id}/dispatch`,
-    reconcile: (olderThanMinutes = 15) =>
-      `/withdrawals/reconcile?olderThanMinutes=${olderThanMinutes}`,
-  },
   gymSubscription: {
     packages: '/gym-subscription/packages',
     current: '/gym-subscription/current',
@@ -118,6 +95,8 @@ export const ENDPOINTS = {
     decline: (id: string) => `/appointments/${id}/decline`,
     cancel: (id: string) => `/appointments/${id}/cancel`,
     complete: (id: string) => `/appointments/${id}/complete`,
+    confirm: (id: string) => `/appointments/${id}/confirm`,
+    dispute: (id: string) => `/appointments/${id}/dispute`,
     noShow: (id: string) => `/appointments/${id}/no-show`,
     trainerNoShow: (id: string) => `/appointments/${id}/trainer-no-show`,
     reschedule: (id: string) => `/appointments/${id}/reschedule`,
